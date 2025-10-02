@@ -345,7 +345,7 @@ MonoBehaviour:
   clientMaxMsgsPerTick: 1000
   sendTimeout: 5000
   receiveTimeout: 20000
-  noDelay: 1
+  noDelay: 0
   sslEnabled: 0
   sslProtocols: 3072
   sslCertJson: ./cert.json
@@ -400,7 +400,9 @@ MonoBehaviour:
   playerPrefab: {fileID: 7407657446918099747, guid: f53076ce59542194c8079c7ce61a1830, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 6615417209147677211, guid: 0f514e34452242943bde1e495d1a754e, type: 3}
+  - {fileID: 7407657446918099747, guid: f53076ce59542194c8079c7ce61a1830, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
