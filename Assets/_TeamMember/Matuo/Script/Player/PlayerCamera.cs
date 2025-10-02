@@ -1,15 +1,19 @@
 using UnityEngine;
 
+// プレイヤーに追従するカメラのスクリプト
 public class PlayerCamera : MonoBehaviour {
     // プレイヤーとカメラの位置
     public Transform player;
-    public Vector3 normalOffset = new Vector3(1.7f, 0.6f, -3.1f);
+    public Vector3 normalOffset = new Vector3(0.0f, 1.0f, -4.0f);
 
-    // 壁判定用
+    // 壁判定用のレイヤー(これに指定されたものはカメラが貫通しません)
     public LayerMask collisionMask;
-    public float minDistance = 0.5f;
-    public float moveSpeed = 10f;
 
+    // カメラの補間速度と距離
+    private float minDistance = 0.5f;
+    private float moveSpeed = 10f;
+
+    // カメラのオフセット
     private Vector3 currentOffset;
     private Vector3 targetOffset;
 
