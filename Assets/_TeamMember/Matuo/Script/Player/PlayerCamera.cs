@@ -6,7 +6,7 @@ public class PlayerCamera : MonoBehaviour {
     public Transform player;
     public Vector3 normalOffset = new Vector3(0.0f, 1.0f, -4.0f);
 
-    // 壁判定用のレイヤー(これに指定されたものはカメラが貫通しません)
+    // 壁判定用のレイヤー(これに指定されたレイヤーの物はカメラが貫通しない)
     public LayerMask collisionMask;
 
     // カメラの補間速度と距離
