@@ -5,6 +5,8 @@ public class Player : NetworkBehaviour
 {
     [SerializeField]
     private GameObject bullet = null;
+    [SerializeField]
+    private Transform fire = null;
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
@@ -33,7 +35,7 @@ public class Player : NetworkBehaviour
 
     [Command]
     void CmdShootBullet() {
-        GameObject obj = Instantiate(bullet,transform);
-        NetworkServer.Spawn(obj);
+        GameObject obj = Instantiate(bullet,fire.position,fire.rotation);
+        NetworkServer.Spawn(obj,connectionToClient);
     }
 }
