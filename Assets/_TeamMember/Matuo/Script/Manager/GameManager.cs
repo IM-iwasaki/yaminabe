@@ -1,8 +1,10 @@
 using UnityEngine;
 using Mirror;
 
-// ゲーム全体の開始・終了を管理するマネージャー
-// NetworkSystemObjectを継承
+/// <summary>
+/// ゲーム全体の開始・終了を管理するマネージャー
+/// NetworkSystemObjectを継承
+/// <summary>
 
 // ＜猿でもわかる使い方(ゲームの開始と終了)＞ 
 // GameManager.Instance.StartGame(); 
