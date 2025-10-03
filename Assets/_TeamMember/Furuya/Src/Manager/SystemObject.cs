@@ -1,28 +1,29 @@
+// SystemObject.cs
 using UnityEngine;
 
-//マネージャーを生成する際システムオブジェクトを継承すること
-//public class マネージャー名 : SystemObject<マネージャー名>
-//Startの代わりにInitializeを使うこと
-
-public abstract class SystemObject<T> : MonoBehaviour where T : Component {
+/// <summary>
+/// 通常の（非ネットワーク）シングルトン用ベースクラス。
+/// Initialize() と InitializationOrder を提供する。
+/// </summary>
+public abstract class SystemObject<T> : MonoBehaviour, ISystem where T : Component {
     private static T _instance;
-
     public static T Instance {
         get {
             if (_instance == null) {
-                // シーン内に既に存在するか確認
                 _instance = FindObjectOfType<T>();
-
                 if (_instance == null) {
-                    // 存在しない場合は新しく生成
                     GameObject obj = new GameObject(typeof(T).Name);
                     _instance = obj.AddComponent<T>();
-                    DontDestroyOnLoad(obj); // シーンをまたいで保持
+                    DontDestroyOnLoad(obj);
                 }
             }
             return _instance;
         }
     }
+
+    [SerializeField, Tooltip("初期化の優先度 (小さいほど先に初期化)")]
+    protected int initializationOrder = 0;
+    public virtual int InitializationOrder => initializationOrder;
 
     protected virtual void Awake() {
         if (_instance == null) {
@@ -30,10 +31,11 @@ public abstract class SystemObject<T> : MonoBehaviour where T : Component {
             DontDestroyOnLoad(gameObject);
         }
         else if (_instance != this) {
-            Destroy(gameObject); // 重複インスタンスを防止
+            Destroy(gameObject);
+            return;
         }
     }
 
-    //初期化処理
+    /// <summary>派生先で初期化処理を実装する（Start の代わりに使う）</summary>
     public virtual void Initialize() { }
 }
