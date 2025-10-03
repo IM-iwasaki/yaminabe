@@ -15,7 +15,12 @@ public class DemoPlayer : NetworkBehaviour {
        
     }
     private void Start() {
-        
+        if (isLocalPlayer) {
+            playerCamera.gameObject.SetActive(true);
+        }
+        else {
+            playerCamera.gameObject.SetActive(false);
+        }
     }
 
     public override void OnStartLocalPlayer() {
@@ -52,17 +57,5 @@ public class DemoPlayer : NetworkBehaviour {
     void CmdShootBullet() {
         GameObject obj = Instantiate(bullet, fire.position, fire.rotation);
         NetworkServer.Spawn(obj, connectionToClient);
-    }
-
-    [SyncVar(hook = nameof(OnValueChanged))]
-    int hp = 100;
-    int power = 10;
-    private void OnValueChanged(int _oldValue ,int _newValue) {
-        return;
-    }
-
-    [Command]
-    private void CmdAddDamage(DemoPlayer _target) {
-        _target.hp -= power;
     }
 }
