@@ -176,7 +176,7 @@ MonoBehaviour:
   syncInterval: 0
   bullet: {fileID: 6615417209147677211, guid: 0f514e34452242943bde1e495d1a754e, type: 3}
   fire: {fileID: 4497746721169078360}
-  playerCamera: {fileID: 1780813697056427360, guid: 50ee67a04dc32354eb106769f5e80e61, type: 3}
+  playerCamera: {fileID: 7066726323953406176}
 --- !u!114 &6845701714260324742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,6 +249,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 1780813697056427360, guid: 50ee67a04dc32354eb106769f5e80e61, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3583113831626463576, guid: 50ee67a04dc32354eb106769f5e80e61, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -301,5 +305,10 @@ PrefabInstance:
 --- !u!4 &5590854822458139433 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3583113831626463576, guid: 50ee67a04dc32354eb106769f5e80e61, type: 3}
+  m_PrefabInstance: {fileID: 8948498378984520305}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &7066726323953406176 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 2179036315342006929, guid: 50ee67a04dc32354eb106769f5e80e61, type: 3}
   m_PrefabInstance: {fileID: 8948498378984520305}
   m_PrefabAsset: {fileID: 0}

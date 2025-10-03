@@ -74,6 +74,8 @@ public class ItemSpawnManager : MonoBehaviour {
 
                 // アイテム生成
                 GameObject obj = Instantiate(data.prefab, spawnPoint.position, Quaternion.identity);
+                //  ネットワーク処理後にコメントを外してこっちを使用する
+                //GameObject obj = SpawnManager.Instance.SpawnObject(data.prefab, spawnPoint.position, Quaternion.identity);
                 spawnedObjects.Add(obj);
             }
         }
