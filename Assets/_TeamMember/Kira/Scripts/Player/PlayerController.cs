@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour {
     private Vector2 moveInput;
     private Vector3 moveDirection;
 
+    //
+    private Vector2 lookInput;
+
     //RigidBodyをキャッシュ
     private Rigidbody rb;
 
@@ -20,12 +23,18 @@ public class PlayerController : MonoBehaviour {
         moveInput = context.ReadValue<Vector2>();
     }
 
+    public void OnLook(InputAction.CallbackContext context) {
+        lookInput = context.ReadValue<Vector2>();
+    }
+
     public void Awake() {
         rb = GetComponent<Rigidbody>();
     }
 
     public void Update() {
         //カメラの向きを取得
+
+
         Transform cameraTransform = Camera.main.transform;
         //進行方向のベクトルを取得
         Vector3 forward = cameraTransform.forward;
@@ -46,8 +55,8 @@ public class PlayerController : MonoBehaviour {
         }
 
         // 移動方向にキャラクターを向ける
-        Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+        //Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
 
         rb.velocity = new Vector3(moveDirection.x * moveSpeed, rb.velocity.y, moveDirection.z * moveSpeed);
     }
