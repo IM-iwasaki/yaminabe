@@ -1,6 +1,7 @@
 using UnityEngine;
 
 // プレイヤーに追従するカメラのスクリプト
+// プレイヤーの子にカメラを入れてそのカメラにアタッチして使う
 public class PlayerCamera : MonoBehaviour {
     // プレイヤーとカメラの位置
     public Transform player;
