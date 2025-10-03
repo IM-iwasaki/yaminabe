@@ -1,0 +1,24 @@
+using UnityEngine;
+
+/// <summary>
+/// アイテムの基底クラス
+/// - 武器・消費アイテム共通の処理をまとめる
+/// </summary>
+public abstract class ItemBase : MonoBehaviour {
+    [Header("アイテム名")]
+    public string itemName; // アイテムの名前
+
+    [Header("説明文")]
+    [TextArea]
+    public string description; // 説明文
+
+    [Header("アイテムのアイコン")]
+    public Sprite icon; // UI用アイコン（必要なら）
+
+    /// <summary>
+    /// アイテムを使用する処理
+    /// プレイヤー処理に依存 → コメントで枠だけ用意
+    /// </summary>
+    /// <param name="player">使用対象のプレイヤー</param>
+    public abstract void Use(GameObject player);
+}
