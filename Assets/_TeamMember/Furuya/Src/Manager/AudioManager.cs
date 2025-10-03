@@ -12,7 +12,7 @@ using Mirror;  // Mirror を追加
 /// AudioManager.Instance.PlayBGM("名前", フェードイン時間)
 /// AudioManager.Instance.StopBGM(フェードアウト時間)
 /// </summary>
-public class AudioManager : SystemObject<AudioManager> {
+public class AudioManager : NetworkSystemObject<AudioManager> {
     [System.Serializable]
     public class AudioData {
         public string name;
