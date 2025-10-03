@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-abstract class CharacterBase {
+abstract class CharacterBase : MonoBehaviour {
     //現在の体力
     [SerializeField] protected int HP;
     [SerializeField] protected int maxHP;
@@ -26,8 +26,10 @@ abstract class CharacterBase {
 
     protected void OnTriggerStay(Collider collider) {
         if (collider.CompareTag("Item")) {
-            //キー入力入れる
-            
+            //アイテム使用キー入力入れる
+            ItemBase item = collider.GetComponent<ItemBase>();
+            //仮。挙動確認。
+            item.Use(gameObject);
         }
     }
 }
