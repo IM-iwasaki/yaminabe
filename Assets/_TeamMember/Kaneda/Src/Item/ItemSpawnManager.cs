@@ -29,8 +29,10 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
     [Header("spawnProbabilityPercentは0から100％で\nそれぞれのプールの中で生成されるか否かの確立を決めれる")]
     #endregion
 
-    [Header("スポーンポイント（重複しないように選ばれる）")]
-    [SerializeField] private Transform[] spawnPoints;
+    [Header("スポーンポイントを探すタグ名")]
+    [SerializeField] private string spawnPointTag = "ItemSpawnPoint";
+
+    private Transform[] spawnPoints;
 
     [Header("武器カテゴリ")]
     [SerializeField] private ItemCategory weaponCategory;
@@ -45,6 +47,13 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
 
     public override void Initialize() {
         if (isServer) {
+            // タグでスポーンポイントを探す
+            GameObject[] points = GameObject.FindGameObjectsWithTag(spawnPointTag);
+            spawnPoints = new Transform[points.Length];
+            for (int i = 0; i < points.Length; i++) {
+                spawnPoints[i] = points[i].transform;
+            }
+
             SpawnAllItems();
             InvokeRepeating(nameof(RespawnAllItems), respawnInterval, respawnInterval);
         }

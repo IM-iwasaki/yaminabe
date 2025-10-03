@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 30975587}
   m_Layer: 0
   m_Name: SpawnPoint (5)
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -644,7 +644,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4092477806368122936, guid: 076a19d8d656c454088a4abd8f87a02c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1587501265}
   m_SourcePrefab: {fileID: 100100000, guid: 076a19d8d656c454088a4abd8f87a02c, type: 3}
 --- !u!1 &913326076
 GameObject:
@@ -657,7 +660,7 @@ GameObject:
   - component: {fileID: 913326077}
   m_Layer: 0
   m_Name: SpawnPoint
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -688,7 +691,7 @@ GameObject:
   - component: {fileID: 938652099}
   m_Layer: 0
   m_Name: SpawnPoint (1)
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -719,7 +722,7 @@ GameObject:
   - component: {fileID: 1037236350}
   m_Layer: 0
   m_Name: SpawnPoint (6)
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -750,7 +753,7 @@ GameObject:
   - component: {fileID: 1111639899}
   m_Layer: 0
   m_Name: SpawnPoint (4)
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -781,7 +784,7 @@ GameObject:
   - component: {fileID: 1242443006}
   m_Layer: 0
   m_Name: SpawnPoint (8)
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -812,7 +815,7 @@ GameObject:
   - component: {fileID: 1364717275}
   m_Layer: 0
   m_Name: SpawnPoint (3)
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -832,6 +835,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 510798086}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1587501262 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4092477806368122936, guid: 076a19d8d656c454088a4abd8f87a02c, type: 3}
+  m_PrefabInstance: {fileID: 730200444}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1587501265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587501262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 674866477
+  _assetId: 1389675017
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &1829364051
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -940,7 +965,7 @@ GameObject:
   - component: {fileID: 1908892939}
   m_Layer: 0
   m_Name: SpawnPoint (7)
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -971,7 +996,7 @@ GameObject:
   - component: {fileID: 1960354770}
   m_Layer: 0
   m_Name: SpawnPoint (2)
-  m_TagString: Untagged
+  m_TagString: ItemSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
