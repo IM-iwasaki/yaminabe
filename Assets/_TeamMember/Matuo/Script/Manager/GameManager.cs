@@ -1,15 +1,13 @@
 using UnityEngine;
 
-/// <summary>
-/// ゲーム全体の開始・終了と制限時間を管理するマネージャー
-/// SystemObjectを継承
-/// 
-/// ＜使い方＞
-/// GameManager.Instance.StartGame(); これでスタートを呼べる
-/// 
-/// float remaining = GameManager.Instance.GetRemainingTime();  /// 時間取得
-/// uiText.text = $"残り時間: {remaining:F1} 秒";    /// UIに表示したい時はこんな感じ
-/// </summary>
+
+// ゲーム全体の開始・終了と制限時間を管理するマネージャー
+// SystemObjectを継承
+
+// ＜猿でもわかる使い方＞
+// GameManager.Instance.StartGame(); これでスタートを呼べる
+// float remaining = GameManager.Instance.GetRemainingTime();  /// 時間取得
+// uiText.text = $"残り時間: {remaining:F1} 秒";    /// UIに表示したい時はこんな感じ
 public class GameManager : SystemObject<GameManager> {
     private bool isGameRunning = false;
 
@@ -43,8 +41,7 @@ public class GameManager : SystemObject<GameManager> {
     /// </summary>
     public void EndGame() {
         if (!isGameRunning) return;
-        isGameRunning = false;
-        
+        isGameRunning = false;      
         // リザルトなどはここ
 
     }
