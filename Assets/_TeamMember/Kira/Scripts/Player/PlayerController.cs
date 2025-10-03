@@ -33,8 +33,6 @@ public class PlayerController : MonoBehaviour {
 
     public void Update() {
         //カメラの向きを取得
-
-
         Transform cameraTransform = Camera.main.transform;
         //進行方向のベクトルを取得
         Vector3 forward = cameraTransform.forward;
@@ -45,7 +43,7 @@ public class PlayerController : MonoBehaviour {
         right.y = 0f;
         right.Normalize();
         //2つのベクトルを合成
-        moveDirection = (forward * moveInput.y + right * moveInput.x);
+        moveDirection = forward * moveInput.y + right * moveInput.x;
 
         // カメラの向いている方向をプレイヤーの正面に
         Vector3 aimForward = forward; // 水平面だけを考慮
