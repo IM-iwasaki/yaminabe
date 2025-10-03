@@ -1,11 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// TPSカメラ制御スクリプト
-/// Input SystemのLook入力でカメラを回転させ、
-/// 壁補正を行いながらスムーズにプレイヤーを追従する。
-/// </summary>
+// TPSカメラ制御スクリプト
+// 壁にめり込まないよ
 public class PlayerCamera : MonoBehaviour {
     [Header("プレイヤー参照")]
     public Transform player;
@@ -30,7 +27,7 @@ public class PlayerCamera : MonoBehaviour {
     private float pitch; // 上下回転角度
 
     // 入力
-    private PlayerInputActions input; // ← Input Actionsで生成されたクラス名に合わせて変更
+    private PlayerInputActions input;
     private Vector2 lookInput;
 
     /// <summary>
