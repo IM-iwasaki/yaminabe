@@ -13,6 +13,7 @@ abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] protected int maxHP;
     [SerializeField] protected int Attack;
     [SerializeField] protected int moveSpeed;
+    public int MoveSpeed => moveSpeed;  //読み取り専用
 
     //次派生クラスで定義
     //近接

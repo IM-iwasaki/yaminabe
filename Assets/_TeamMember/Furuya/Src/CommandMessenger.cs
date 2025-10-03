@@ -33,7 +33,7 @@ public class CommandMessenger : NetworkBehaviour {
     private void CmdMove(Vector3 direction) {
         // サーバーで物理処理
         Rigidbody rb = GetComponent<Rigidbody>();
-        rb.MovePosition(rb.position + direction * status.speed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + direction * status.MoveSpeed * Time.fixedDeltaTime);
 
         // 移動アニメーションなど
         RpcPlayMoveAnimation(direction);
@@ -42,7 +42,6 @@ public class CommandMessenger : NetworkBehaviour {
     [Command]
     private void CmdAttack() {
         // 攻撃処理（ダメージ判定など）
-        status.TakeDamage(10);
 
         // 全クライアントに攻撃エフェクト通知
         RpcPlayAttackEffect();
