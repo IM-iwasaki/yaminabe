@@ -5,6 +5,7 @@ using UnityEngine;
 /// - 武器・消費アイテム共通の処理をまとめる
 /// </summary>
 public abstract class ItemBase : MonoBehaviour {
+
     [Header("アイテム名")]
     public string itemName; // アイテムの名前
 
