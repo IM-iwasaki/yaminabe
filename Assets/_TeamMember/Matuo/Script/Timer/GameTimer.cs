@@ -1,8 +1,10 @@
 using UnityEngine;
 using Mirror;
 
-// 制限時間を管理するクラス
-// GameManagerと連携して動作する
+/// <summary>
+/// 制限時間を管理するクラス
+/// GameManagerと連携して動作する
+/// <summary>
 
 // ＜猿でもわかる使い方(時間の取得とUI表示)＞
 // float remaining = GameManager.Instance.GetComponent<GameTimer>().GetRemainingTime(); //現在時間取得

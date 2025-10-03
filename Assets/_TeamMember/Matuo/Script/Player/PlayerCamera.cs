@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// TPSカメラ制御スクリプト
-// 壁にめり込まないよ
+/// <summary>
+/// TPSカメラ制御スクリプト
+/// 壁にめり込まないよ
+/// <summary>
 public class PlayerCamera : MonoBehaviour {
     [Header("プレイヤー参照")]
     public Transform player;
