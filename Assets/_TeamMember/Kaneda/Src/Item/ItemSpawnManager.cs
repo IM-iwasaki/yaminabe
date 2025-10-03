@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class ItemSpawnData {
 /// <summary>
 /// アイテムのスポーン/リスポーンを管理
 /// </summary>
-public class ItemSpawnManager : MonoBehaviour {
+public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
     [Header("スポーンさせたいアイテムリスト")]
     public List<ItemSpawnData> spawnItems = new List<ItemSpawnData>();
 
@@ -30,13 +31,15 @@ public class ItemSpawnManager : MonoBehaviour {
     // 現在生成されているアイテムのリスト
     private List<GameObject> spawnedObjects = new List<GameObject>();
 
-    void Start() {
-        StartCoroutine(RespawnRoutine());
+    public override void Initialize() {
+        if (isServer)
+            StartCoroutine(RespawnRoutine());
     }
 
     /// <summary>
     /// リスポーン処理
     /// </summary>
+    [Server]
     private IEnumerator RespawnRoutine() {
         while (true) {
             // 既存アイテム削除
@@ -56,7 +59,10 @@ public class ItemSpawnManager : MonoBehaviour {
     /// <summary>
     /// アイテムをすべて生成（場所かぶりなし）
     /// </summary>
+    [Server]
     private void SpawnAllItems() {
+        if (!isServer)
+            return;
         // スポーンポイントを一時リストにコピー
         List<Transform> availablePoints = new List<Transform>(spawnPoints);
 
