@@ -1,23 +1,30 @@
 using Mirror;
 using UnityEngine;
 
-public class Player : NetworkBehaviour {
+public class DemoPlayer : NetworkBehaviour {
     [SerializeField]
     private GameObject bullet = null;
     [SerializeField]
     private Transform fire = null;
     [SerializeField]
-    private GameObject playerCamera = null;
+    private Camera playerCamera = null;
+
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
+       
     }
     private void Start() {
-        if (!isLocalPlayer) {
-            playerCamera.SetActive(false);
+        
+    }
+
+    public override void OnStartLocalPlayer() {
+        //base.OnStartLocalPlayer();
+        if (isLocalPlayer) {
+            playerCamera.gameObject.SetActive(true);
         }
         else {
-            playerCamera.SetActive(true);
+            playerCamera.gameObject.SetActive(false);
         }
     }
 
@@ -32,7 +39,7 @@ public class Player : NetworkBehaviour {
 
             CmdPlayerMove(x, z);
         }
-
+        
 
     }
     [Command]
@@ -45,5 +52,17 @@ public class Player : NetworkBehaviour {
     void CmdShootBullet() {
         GameObject obj = Instantiate(bullet, fire.position, fire.rotation);
         NetworkServer.Spawn(obj, connectionToClient);
+    }
+
+    [SyncVar(hook = nameof(OnValueChanged))]
+    int hp = 100;
+    int power = 10;
+    private void OnValueChanged(int _oldValue ,int _newValue) {
+        return;
+    }
+
+    [Command]
+    private void CmdAddDamage(DemoPlayer _target) {
+        _target.hp -= power;
     }
 }
