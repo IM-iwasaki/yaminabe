@@ -1,22 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Mirror;  // Mirror を追加
 
 /// <summary>
 /// AudioManager使い方
-/// 音源をインスペクターで登録する
-/// 音量、ピッチ(再生速度)が選べる
-/// ※再生できない場合はピッチが変わってないことがある。0.1以上にすること
-/// 呼び出したい音源をコードに書く、以下使用例
-/// AudioManager.Instance.PlaySE("ここに登録名");
-/// AudioManager.Instance.PlayBGM("名前",フェードイン時間(float))
-/// AudioManager.Instance.StopBGM(フェードアウト時間(float))
+/// サーバー上で一つだけ存在
+/// クライアントは RPC で再生指示を受ける
+/// 
+/// AudioManager.Instance.PlaySE("登録名");
+/// AudioManager.Instance.PlayBGM("名前", フェードイン時間)
+/// AudioManager.Instance.StopBGM(フェードアウト時間)
 /// </summary>
-
-
 public class AudioManager : SystemObject<AudioManager> {
-
     [System.Serializable]
     public class AudioData {
         public string name;
@@ -29,26 +25,35 @@ public class AudioManager : SystemObject<AudioManager> {
     public List<AudioData> seList;
 
     private AudioSource bgmSource;
-
     private List<AudioSource> seSources = new List<AudioSource>();
     public int initialSESourceCount = 5;
 
     private Coroutine fadeCoroutine;
 
-    //初期化処理
+    // --- 初期化処理 ---
     public override void Initialize() {
+        if (!NetworkServer.active) return; // サーバーのみ初期化
 
         bgmSource = gameObject.AddComponent<AudioSource>();
         bgmSource.loop = true;
 
-        // SE用AudioSourceを初期化
-        for (int i = 0; i < initialSESourceCount; i++) {
+        // SE用AudioSourceを初期化
+        for (int i = 0; i < initialSESourceCount; i++) {
             AudioSource source = gameObject.AddComponent<AudioSource>();
             seSources.Add(source);
         }
     }
 
+    // ======================
+    // --- BGM 関連処理 ---
+    // ======================
     public void PlayBGM(string name, float fadeTime = 1f) {
+        if (!NetworkServer.active) {
+            // クライアントはサーバーにリクエスト送信
+            CmdPlayBGM(name, fadeTime);
+            return;
+        }
+
         AudioData data = bgmList.Find(b => b.name == name);
         if (data == null) {
             Debug.LogWarning("BGM not found: " + name);
@@ -60,12 +65,23 @@ public class AudioManager : SystemObject<AudioManager> {
     }
 
     public void StopBGM(float fadeTime = 1f) {
+        if (!NetworkServer.active) {
+            CmdStopBGM(fadeTime);
+            return;
+        }
+
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
         fadeCoroutine = StartCoroutine(FadeOutBGM(fadeTime));
     }
 
-
+    // ======================
+    // --- SE 関連処理 ---
+    // ======================
     public void PlaySE(string name) {
+        if (!NetworkServer.active) {
+            CmdPlaySE(name);
+            return;
+        }
 
         Debug.Log("PlaySE called with: " + name);
 
@@ -82,10 +98,7 @@ public class AudioManager : SystemObject<AudioManager> {
         source.volume = data.volume;
         source.pitch = data.pitch;
         source.Play();
-
-
     }
-
 
     private AudioSource GetAvailableSESource() {
         foreach (var source in seSources) {
@@ -93,13 +106,15 @@ public class AudioManager : SystemObject<AudioManager> {
                 return source;
         }
 
-        // すべて使用中なら新しいAudioSourceを追加
-        AudioSource newSource = gameObject.AddComponent<AudioSource>();
+        // すべて使用中なら新しいAudioSourceを追加
+        AudioSource newSource = gameObject.AddComponent<AudioSource>();
         seSources.Add(newSource);
         return newSource;
     }
 
-
+    // ======================
+    // --- フェード処理 ---
+    // ======================
     private IEnumerator FadeInBGM(AudioData data, float duration) {
         bgmSource.clip = data.clip;
         bgmSource.pitch = data.pitch;
@@ -128,5 +143,23 @@ public class AudioManager : SystemObject<AudioManager> {
 
         bgmSource.Stop();
         bgmSource.volume = startVolume;
+    }
+
+    // ======================
+    // --- Mirror 用 RPC ---
+    // ======================
+    [Command(requiresAuthority = false)]
+    private void CmdPlayBGM(string name, float fadeTime) {
+        PlayBGM(name, fadeTime);
+    }
+
+    [Command(requiresAuthority = false)]
+    private void CmdStopBGM(float fadeTime) {
+        StopBGM(fadeTime);
+    }
+
+    [Command(requiresAuthority = false)]
+    private void CmdPlaySE(string name) {
+        PlaySE(name);
     }
 }
