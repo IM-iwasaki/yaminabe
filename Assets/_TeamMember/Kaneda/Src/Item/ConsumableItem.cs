@@ -33,6 +33,9 @@ public class ConsumableItem : ItemBase {
             case ConsumableType.AttackBoost:
                 break;
         }
-        
+
+        // 使用後にアイテムを削除
+        Destroy(gameObject);
+
     }
 }

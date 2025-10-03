@@ -15,8 +15,8 @@ public enum WeaponType {
 public class WeaponItem : ItemBase {
     [Header("武器タイプ")]
     public WeaponType weaponType;
-
     //  武器で取得する能力値などを追加する
+
 
     /// <summary>
     /// 使用処理
@@ -24,6 +24,8 @@ public class WeaponItem : ItemBase {
     public override void Use(GameObject player) {
         //  プレイヤー処理(プレイヤーが出来次第追加)
 
-        
+
+        // 使用後にアイテムを削除
+        Destroy(gameObject);
     }
 }

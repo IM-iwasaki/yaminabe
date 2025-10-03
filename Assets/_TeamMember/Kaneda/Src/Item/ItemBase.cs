@@ -15,6 +15,13 @@ public abstract class ItemBase : MonoBehaviour {
     [Header("アイテムのアイコン")]
     public Sprite icon; // UI用アイコン（必要なら）
 
+    //  アイテムを毎秒どれだけ回転させるか
+    private Vector3 weaponRotation = new Vector3(0, 50f, 0);
+    private void Update() {
+        //  オブジェクトを回転させる
+        transform.Rotate(weaponRotation * Time.deltaTime);
+    }
+
     /// <summary>
     /// アイテムを使用する処理
     /// プレイヤー処理に依存 → コメントで枠だけ用意
