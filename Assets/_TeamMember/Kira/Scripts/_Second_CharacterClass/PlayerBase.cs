@@ -16,7 +16,7 @@ class PlayerBase : CharacterBase {
         right.y = 0f;
         right.Normalize();
         //2つのベクトルを合成
-        moveDirection = forward * moveInput.y + right * moveInput.x;
+        MoveDirection = forward * MoveInput.y + right * MoveInput.x;
 
         // カメラの向いている方向をプレイヤーの正面に
         Vector3 aimForward = forward; // 水平面だけを考慮
@@ -26,10 +26,10 @@ class PlayerBase : CharacterBase {
         }
 
         // 移動方向にキャラクターを向ける
-        //Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+        //Quaternion targetRotation = Quaternion.LookRotation(MoveDirection);
         //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
 
-        rigidbody.velocity = new Vector3(moveDirection.x * moveSpeed, rigidbody.velocity.y, moveDirection.z * moveSpeed);
+        rigidbody.velocity = new Vector3(MoveDirection.x * MoveSpeed, rigidbody.velocity.y, MoveDirection.z * MoveSpeed);
     }
 
     protected override void StartAttack() {
