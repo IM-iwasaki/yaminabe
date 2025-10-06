@@ -12,11 +12,8 @@ public class ServerManager : NetworkBehaviour {
     public List<TeamData> teams = null;
     private int maxTeamPlayer;
     bool isSkip = false;
-
-    private void Start() {
-        maxTeamPlayer = connectPlayer.Count / teams.Count;
-    }
     public override void OnStartServer() {
+        instance = this;
         CreateTeam();
     }
 
@@ -25,6 +22,9 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     private void CreateTeam() {
         teams = new List<TeamData>((int)teamColor.ColorMax);
+        if (teams.Count == 0) maxTeamPlayer = 1;
+        else
+            maxTeamPlayer = connectPlayer.Count / teams.Count;
         //ランダム
         if (isSkip) {
             JoinRandomTeam();
@@ -45,13 +45,20 @@ public class ServerManager : NetworkBehaviour {
         }
         teams.Clear();
         //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
-        teams = new List<TeamData>(_teamCount);
+        for(int i = 0; i < _teamCount; i++) {
+            teams.Add(new TeamData());
+        }
         for (int i = 0, max = connectPlayer.Count; i < max; i++) {
             int teamIndex = Random.Range(0, teams.Count);
-            if (teams[teamIndex].teamPlayerList.Count > maxTeamPlayer)
-                teams[teamIndex + 1].teamPlayerList.Add(connectPlayer[i]);
-            else
+            //チームが既定の人数を超えていたら一個次のチームに入れる
+            if (teams[teamIndex].teamPlayerList.Count >= maxTeamPlayer) {
+                teams[(teamIndex + 1) % teams.Count].teamPlayerList.Add(connectPlayer[i]);
+            }
+            //それ以外はランダムにぶち込む
+            else {
                 teams[teamIndex].teamPlayerList.Add(connectPlayer[i]);
+            }
+                
             //teams[teamIndex].teamPlayerList[i].GetComponent<PlayerBase>().teamID = teamIndex;
         }
 

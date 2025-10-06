@@ -27,6 +27,7 @@ public class DemoPlayer : NetworkBehaviour {
         //base.OnStartLocalPlayer();
         if (isLocalPlayer) {
             playerCamera.gameObject.SetActive(true);
+            ServerManager.instance.connectPlayer.Add(gameObject.GetComponent<NetworkIdentity>());
         }
         else {
             playerCamera.gameObject.SetActive(false);
