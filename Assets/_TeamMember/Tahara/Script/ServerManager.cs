@@ -2,6 +2,7 @@ using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
 using static TeamData;
+using TMPro;
 /// <summary>
 /// ServerManager
 /// サーバー側での処理を管理するクラス(Playerのステータス更新やオブジェクトの生成等)
@@ -12,12 +13,19 @@ public class ServerManager : NetworkBehaviour {
     public List<TeamData> teams = null;
     private int maxTeamPlayer;
     bool isSkip = false;
+    [SerializeField]
+    TextMeshProUGUI text = null;
+
     private void Awake() {
         instance = this;
     }
     public override void OnStartServer() {
         
         CreateTeam();
+    }
+
+    public void Update() {
+        text.text = connectPlayer.Count.ToString();
     }
 
     /// <summary>
@@ -71,11 +79,6 @@ public class ServerManager : NetworkBehaviour {
     public void RandomTeamDecide() {
         isSkip = true;
         CreateTeam();
-        for(int i = 0,max = (int)teamColor.ColorMax; i < max; i++) {
-            if (teams[i].teamPlayerList[0] == null) continue;
-
-            Debug.Log(teams[i].teamPlayerList[0]);
-        }
     }
 
 }
