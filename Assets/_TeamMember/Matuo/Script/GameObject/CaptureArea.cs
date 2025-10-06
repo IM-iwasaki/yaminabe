@@ -27,9 +27,9 @@ public class CaptureArea : CaptureObjectBase {
     }
 
     /// <summary>
-    /// 進行度計算
+    /// カウント計算
     /// </summary>
-    /// <returns>加算する進行度</returns>
+    /// <returns>加算するカウント</returns>
     protected override float CalculateProgress() {
         if (playersInArea.Count == 0) return 0f;
 

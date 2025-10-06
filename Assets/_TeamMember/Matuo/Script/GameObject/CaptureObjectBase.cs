@@ -3,7 +3,7 @@ using Mirror;
 
 /// <summary>
 /// CaptureObject系共通基底
-/// エリア・ホコの進行度計算を共通化
+/// エリア・ホコのカウント計算を共通化
 /// </summary>
 public abstract class CaptureObjectBase : NetworkBehaviour {
     [SyncVar] protected int ownerTeamId = -1;   // 制圧したチーム
@@ -16,7 +16,7 @@ public abstract class CaptureObjectBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 進行度計算（派生クラスで実装）
+    /// カウント計算（派生クラスで実装）
     /// </summary>
     protected abstract float CalculateProgress();
 

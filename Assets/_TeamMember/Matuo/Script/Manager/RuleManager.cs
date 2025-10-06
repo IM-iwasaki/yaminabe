@@ -12,6 +12,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
     public Dictionary<GameRuleType, float> winScores = new()
     {
+        // ゲームルール , 勝利に必要なカウント
         { GameRuleType.AreaControl, 15f },
         { GameRuleType.Hoko, 20f },
         { GameRuleType.DeathMatch, 0f } // デスマッチは時間終了後判定
@@ -32,7 +33,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     }
 
     /// <summary>
-    /// 進行度通知
+    /// カウント通知
     /// </summary>
     [Server]
     public void OnCaptureProgress(int teamId, float amount) {

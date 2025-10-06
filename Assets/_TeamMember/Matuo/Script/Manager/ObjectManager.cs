@@ -33,7 +33,7 @@ public class ObjectManager : NetworkSystemObject<ObjectManager> {
     }
 
     /// <summary>
-    /// 進行度通知
+    /// カウント通知
     /// </summary>
     [Server]
     public void NotifyCaptureProgress(int teamId, float amount) {

@@ -21,7 +21,7 @@ public class CaptureHoko : CaptureObjectBase {
     /// <summary>
     /// プレイヤーがホコを拾う
     /// </summary>
-    /// <param name="player">保持するプレイヤー</param>
+    /// <param name="player">ホコ餅プレイヤー</param>
     [Server]
     public void TryPickup(NetworkIdentity player) {
         if (isHeld) return;
@@ -50,9 +50,9 @@ public class CaptureHoko : CaptureObjectBase {
     }
 
     /// <summary>
-    /// 進行度計算
+    /// カウント計算
     /// </summary>
-    /// <returns>加算する進行度</returns>
+    /// <returns>加算するカウント</returns>
     protected override float CalculateProgress() {
         if (!isHeld || holder == null) return 0f;
         return countSpeed;
