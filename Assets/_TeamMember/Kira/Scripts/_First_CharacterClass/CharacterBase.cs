@@ -17,14 +17,14 @@ abstract class CharacterBase : NetworkBehaviour {
     //基礎攻撃力
     public int Attack { get; private set; }
     //移動速度
-    public int MoveSpeed { get; private set; }
+    public int MoveSpeed { get; private set; } = 5;
     //持っている武器の文字列
     public string CurrentWeapon { get; private set; }
     //所属チームの番号
     [SyncVar]public int TeamID;
 
     //移動を要求する方向
-    protected Vector2 MoveInput { get; private set; }
+    protected Vector2 MoveInput;
     //実際に移動する方向
     public Vector3 MoveDirection { get; private set; }
 
@@ -40,7 +40,7 @@ abstract class CharacterBase : NetworkBehaviour {
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
     protected void Start() {
-         rigidbody = GetComponent<Rigidbody>();
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     #region 入力受付
