@@ -12,8 +12,11 @@ public class ServerManager : NetworkBehaviour {
     public List<TeamData> teams = null;
     private int maxTeamPlayer;
     bool isSkip = false;
-    public override void OnStartServer() {
+    private void Awake() {
         instance = this;
+    }
+    public override void OnStartServer() {
+        
         CreateTeam();
     }
 
@@ -64,9 +67,15 @@ public class ServerManager : NetworkBehaviour {
 
     }
 
+    //デバッグ用チーム振り分け確認
     public void RandomTeamDecide() {
         isSkip = true;
         CreateTeam();
+        for(int i = 0,max = (int)teamColor.ColorMax; i < max; i++) {
+            if (teams[i].teamPlayerList[0] == null) continue;
+
+            Debug.Log(teams[i].teamPlayerList[0]);
+        }
     }
 
 }
