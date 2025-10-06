@@ -17,14 +17,16 @@ abstract class CharacterBase : NetworkBehaviour {
     //基礎攻撃力
     public int Attack { get; private set; }
     //移動速度
-    public int MoveSpeed { get; private set; }
+    public int MoveSpeed { get; private set; } = 5;
     //持っている武器の文字列
     public string CurrentWeapon { get; private set; }
+    //所属チームの番号
+    [SyncVar]public int TeamID;
 
     //移動を要求する方向
-    protected Vector2 MoveInput { get; private set; }
+    protected Vector2 MoveInput;
     //実際に移動する方向
-    public Vector3 MoveDirection { get; set; }
+    public Vector3 MoveDirection { get; private set; }
 
     //視点を要求する方向
     public Vector2 LookInput { get; private set; }
@@ -35,23 +37,13 @@ abstract class CharacterBase : NetworkBehaviour {
     //コンポーネント情報
     protected new Rigidbody rigidbody;
 
-    //次派生クラスで定義
-    //近接
-    protected int MaxAttackSpeed { get; private set; }
-    //魔法
-    protected int MP { get; private set; }
-    protected int MaxMP { get; private set; }
-    //弾倉
-    protected int Magazine { get; private set; }
-    protected int MaxMagazine { get; private set; }
-
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
     protected void Start() {
-         rigidbody = GetComponent<Rigidbody>();
+        rigidbody = GetComponent<Rigidbody>();
     }
 
-    //入力系を取る。
+    #region 入力受付
 
     //移動入力を受け付けるコンテキスト
     public void OnMove(InputAction.CallbackContext context) {
@@ -70,15 +62,9 @@ abstract class CharacterBase : NetworkBehaviour {
         if (context.performed) Interact();
     }
 
-    //当たり判定関係
-    protected void OnTriggerStay(Collider _collider) {
-        if (_collider.CompareTag("Item")) {
-            //アイテム使用キー入力入れる
-            ItemBase item = _collider.GetComponent<ItemBase>();
-            //仮。挙動確認。
-            item.Use(gameObject);
-        }
-    }
+    #endregion
+
+    #region 入力実行関数
 
     //攻撃関数
     abstract protected void StartAttack();
@@ -118,6 +104,18 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //インタラクト関数
     protected void Interact() {
+    }
+
+    #endregion
+
+    //当たり判定関係
+    protected void OnTriggerStay(Collider _collider) {
+        if (_collider.CompareTag("Item")) {
+            //アイテム使用キー入力入れる
+            ItemBase item = _collider.GetComponent<ItemBase>();
+            //仮。挙動確認。
+            item.Use(gameObject);
+        }
     }
 
     //被弾関数
