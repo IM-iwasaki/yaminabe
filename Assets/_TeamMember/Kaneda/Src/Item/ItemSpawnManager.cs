@@ -52,7 +52,7 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
 
     [Header("=== 比率設定 ===")]
     [Range(0f, 1f)]
-    [Header("スポーンポイント全体に対して武器が生成される比率（例：0.4で全体の40％が武器）")]
+    [Header("スポーンポイント全体に対して武器が生成される比率\n（例：0.4で全体の40％が武器）")]
     [SerializeField] private float weaponSpawnRatio = 0.4f;
 
     [Header("=== リスポーン設定 ===")]
@@ -142,7 +142,7 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
                 continue;
 
             // スポーン位置を少し上げる（地面貫通防止）
-            Vector3 spawnPos = point.position + Vector3.up * 2f;
+            Vector3 spawnPos = point.position + Vector3.up * 1f;
 
             // プレハブ生成
             GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
