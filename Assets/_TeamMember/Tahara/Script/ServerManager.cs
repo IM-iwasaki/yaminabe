@@ -64,8 +64,9 @@ public class ServerManager : NetworkBehaviour {
 
     }
 
-    [Command]
-    private void CmdJoinTeam(teamColor _color, NetworkIdentity _player) {
-        teams[(int)_color].teamPlayerList.Add(_player);
+    public void RandomTeamDecide() {
+        isSkip = true;
+        CreateTeam();
     }
+
 }
