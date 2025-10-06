@@ -11,7 +11,7 @@ using UnityEngine.InputSystem;
 
 abstract class CharacterBase : NetworkBehaviour {
     //Œ»İ‚Ì‘Ì—Í
-    public int HP{ get; private set; }
+    [SyncVar]public int HP;
     //Å‘å‚Ì‘Ì—Í
     public int MaxHP { get; private set; }
     //Šî‘bUŒ‚—Í
