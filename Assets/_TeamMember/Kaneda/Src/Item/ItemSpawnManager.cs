@@ -1,131 +1,220 @@
-
 using Mirror;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// アイテムスポーンを管理するマネージャー
-/// 武器と消費アイテムをカテゴリごとにランダム生成
+/// 【Mirror対応】
+/// アイテムスポーン全体を管理するマネージャー。
+/// - 各カテゴリ（武器／消費アイテム）から確率に応じてランダム生成。
+/// - 各アイテムにはカテゴリ内での個別生成確率を設定可能。
+/// - 定期的に全アイテムをリスポーンする。
 /// </summary>
 public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
 
+    // ==========================================
+    // ▼ 各アイテム個別設定クラス
+    // ==========================================
+    [System.Serializable]
+    public class SpawnableItem {
+        [Header("生成するプレハブ")]
+        public GameObject prefab;   // 実際に生成するアイテムプレハブ
+
+        [Range(0, 100)]
+        [Header("このアイテムがカテゴリ内で生成される確率（％）")]
+        public int spawnChancePercent = 100;   // カテゴリ内での個別出現確率
+    }
+
+    // ==========================================
+    // ▼ カテゴリ（武器・消費アイテムなど）設定クラス
+    // ==========================================
     [System.Serializable]
     public class ItemCategory {
-        public List<GameObject> prefabs; // このカテゴリに属するプレハブ群
-        public int spawnCount;           // 生成する合計数
+        [Header("このカテゴリに含まれるアイテム群")]
+        public List<SpawnableItem> items = new List<SpawnableItem>(); // 登録されたアイテム群
+
         [Range(0, 100)]
-        public int spawnProbabilityPercent = 100; // 生成確率 (％)
+        [Header("カテゴリ全体として生成される確率（％）")]
+        public int spawnProbabilityPercent = 100; // カテゴリ全体が生成される確率（カテゴリスキップ用）
     }
 
-    #region 仕様説明用ヘッダー欄
-    [Header("-仕様説明-")]
-    [Header("weaponとconsumableはそれぞれ生成用のプール")]
-    [Header("プールの中からランダムに抽選され\nspawnCount分生成される")]
-    [Header("生成はスポーンポイントに重複せずに\n設定された場所に生成される")]
-    [Header("それぞれのプールの中に生成したいプレハブを入れる")]
-    [Header("下のspawnCountにはプールの中から何個生成したいか書く")]
-    [Header("注意：スポーンポイントとそれぞれのプールの中から\n生成される合計量を一緒にすること")]
-    [Header("spawnProbabilityPercentは0から100％で\nそれぞれのプールの中で生成されるか否かの確立を決めれる")]
-    #endregion
+    #region === インスペクター設定項目 ===
 
-    [Header("スポーンポイントを探すタグ名")]
-    [SerializeField] private string spawnPointTag = "ItemSpawnPoint";
+    [Header("=== スポーン設定 ===")]
+    [Header("シーン内のスポーンポイントを探すためのタグ名")]
+    [SerializeField] private string spawnPointTag = "ItemSpawnPoint"; // スポーンポイントタグ名
 
-    private Transform[] spawnPoints;
+    [Header("=== カテゴリ設定 ===")]
+    [Header("武器カテゴリの生成設定")]
+    [SerializeField] private ItemCategory weaponCategory = new ItemCategory();      // 武器カテゴリ
+    [Header("消費アイテムカテゴリの生成設定")]
+    [SerializeField] private ItemCategory consumableCategory = new ItemCategory();  // 消費アイテムカテゴリ
 
-    [Header("武器カテゴリ")]
-    [SerializeField] private ItemCategory weaponCategory;
+    [Header("=== 比率設定 ===")]
+    [Range(0f, 1f)]
+    [Header("スポーンポイント全体に対して武器が生成される比率（例：0.4で全体の40％が武器）")]
+    [SerializeField] private float weaponSpawnRatio = 0.4f;
 
-    [Header("消費アイテムカテゴリ")]
-    [SerializeField] private ItemCategory consumableCategory;
-
-    [Header("リスポーン間隔（秒）")]
+    [Header("=== リスポーン設定 ===")]
+    [Header("すべてのアイテムをリセットして再生成する間隔（秒）")]
     [SerializeField] private float respawnInterval = 30f;
 
-    private List<GameObject> spawnedItems = new List<GameObject>();
+    #endregion
 
+    // ==========================================
+    // ▼ 内部変数
+    // ==========================================
+    private Transform[] spawnPoints;                                            // スポーンポイント一覧
+    private readonly List<GameObject> spawnedItems = new List<GameObject>();    // 現在シーンに存在している生成済みアイテム一覧
+
+    // ==========================================
+    // ▼ 初期化処理（サーバー側のみ実行）
+    // ==========================================
     public override void Initialize() {
-        if (isServer) {
-            // タグでスポーンポイントを探す
-            GameObject[] points = GameObject.FindGameObjectsWithTag(spawnPointTag);
-            spawnPoints = new Transform[points.Length];
-            for (int i = 0; i < points.Length; i++) {
-                spawnPoints[i] = points[i].transform;
-            }
+        if (!isServer) return; // Mirrorの仕様上、生成はサーバー側でのみ行う
 
-            SpawnAllItems();
-            InvokeRepeating(nameof(RespawnAllItems), respawnInterval, respawnInterval);
+        // タグからスポーンポイントを全取得
+        GameObject[] points = GameObject.FindGameObjectsWithTag(spawnPointTag);
+        spawnPoints = points.Select(p => p.transform).ToArray();
+
+        if (spawnPoints.Length == 0) {
+            Debug.LogWarning($"[ItemSpawnManager] スポーンポイント（タグ: {spawnPointTag}）が見つかりません。");
+            return;
         }
+
+        // 初回スポーン実行
+        SpawnAllItems();
+
+        // 一定時間ごとにリスポーン処理を自動呼び出し
+        InvokeRepeating(nameof(RespawnAllItems), respawnInterval, respawnInterval);
     }
 
-    /// <summary>
-    /// すべてのアイテムをカテゴリごとに生成
-    /// </summary>
+    // ==========================================
+    // ▼ 全カテゴリからの一括スポーン処理
+    // ==========================================
     [Server]
     private void SpawnAllItems() {
-        // 使用可能なスポーンポイントをシャッフル
+        // スポーンポイントのリストを複製してシャッフル
         List<Transform> availablePoints = new List<Transform>(spawnPoints);
         Shuffle(availablePoints);
 
-        // 武器カテゴリをスポーン
-        SpawnCategoryItems(weaponCategory, availablePoints);
+        // 全ポイント数から比率に応じてカテゴリごとの生成数を算出
+        int totalPoints = availablePoints.Count;
+        int weaponPoints = Mathf.RoundToInt(totalPoints * weaponSpawnRatio); // 武器の生成数
+        int consumablePoints = totalPoints - weaponPoints;                  // 消費アイテム生成数
 
-        // 消費カテゴリをスポーン
-        SpawnCategoryItems(consumableCategory, availablePoints);
+        // カテゴリごとの生成を実行
+        int weaponSpawned = SpawnCategoryItems(weaponCategory, availablePoints, weaponPoints);
+        int consumableSpawned = SpawnCategoryItems(consumableCategory, availablePoints, consumablePoints);
+
+        // デバッグ出力
+        Debug.Log($"[ItemSpawnManager] 武器: {weaponSpawned}/{weaponPoints}, 消費: {consumableSpawned}/{consumablePoints}");
     }
 
-    /// <summary>
-    /// 指定カテゴリのアイテムを生成
-    /// </summary>
-    private void SpawnCategoryItems(ItemCategory category, List<Transform> availablePoints) {
-        for (int i = 0; i < category.spawnCount; i++) {
-            if (availablePoints.Count == 0) break; // スポーンポイント切れ
+    // ==========================================
+    // ▼ 指定カテゴリから指定数のアイテムをスポーン
+    // ==========================================
+    [Server]
+    private int SpawnCategoryItems(ItemCategory category, List<Transform> availablePoints, int spawnPointsCount) {
+        // カテゴリ内にアイテムが登録されていない場合はスキップ
+        if (category.items.Count == 0) {
+            Debug.LogWarning($"[ItemSpawnManager] カテゴリにプレハブが登録されていません。");
+            return 0;
+        }
 
-            // スポーンポイントをランダムに取得
+        int spawned = 0; // 実際に生成された数
+
+        // スポーンポイントごとにループ
+        for (int i = 0; i < spawnPointsCount && availablePoints.Count > 0; i++) {
+            // ランダムなスポーンポイントを選択し、リストから除外
             int index = Random.Range(0, availablePoints.Count);
             Transform point = availablePoints[index];
-            availablePoints.RemoveAt(index); // 使用済みなので削除
+            availablePoints.RemoveAt(index);
 
-            // 確率チェック（％管理）
-            int rand = Random.Range(0, 100); // 0～99
-            if (rand >= category.spawnProbabilityPercent) {
-                // この場合は何も生成せず、スポーンポイントだけ消費される
+            // カテゴリ全体の生成確率を判定
+            // 例：カテゴリ確率が80なら、20％の確率でスキップされる
+            if (Random.Range(0, 100) >= category.spawnProbabilityPercent)
+                continue;
+
+            // カテゴリ内の個別アイテム確率をもとにプレハブを抽選
+            GameObject prefab = GetItemByChance(category.items);
+            if (prefab == null)
+                continue;
+
+            // スポーン位置を少し上げる（地面貫通防止）
+            Vector3 spawnPos = point.position + Vector3.up * 2f;
+
+            // プレハブ生成
+            GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+
+            // Mirrorで同期させるためにNetworkIdentityを必須チェック
+            var identity = obj.GetComponent<NetworkIdentity>();
+            if (identity == null) {
+                Debug.LogError($"[ItemSpawnManager] {prefab.name} に NetworkIdentity がありません。");
+                Destroy(obj);
                 continue;
             }
 
-            // このカテゴリからランダムに1つ選択
-            GameObject prefab = category.prefabs[Random.Range(0, category.prefabs.Count)];
+            // Mirror経由で全クライアントに生成を通知
+            NetworkServer.Spawn(obj);
 
-            // 生成
-            GameObject obj = Instantiate(prefab, point.position, Quaternion.identity);
+            // 管理リストに追加
             spawnedItems.Add(obj);
+            spawned++;
         }
+
+        return spawned;
     }
 
-    /// <summary>
-    /// リスポーン処理（古いアイテムを削除して再生成）
-    /// </summary>
+    // ==========================================
+    // ▼ カテゴリ内アイテムの「重み付き確率抽選」
+    // ==========================================
+    private GameObject GetItemByChance(List<SpawnableItem> items) {
+        // 登録されているすべてのアイテムの確率を合計
+        int totalChance = items.Sum(item => item.spawnChancePercent);
+        if (totalChance <= 0)
+            return null; // 全アイテムが確率0の場合はスキップ
+
+        // 0～合計値の範囲でランダム値を取得
+        int randomValue = Random.Range(0, totalChance);
+        int cumulative = 0;
+
+        // 累積値で範囲を超えた最初のアイテムを採用
+        foreach (var item in items) {
+            cumulative += item.spawnChancePercent;
+            if (randomValue < cumulative)
+                return item.prefab;
+        }
+
+        return null;
+    }
+
+    // ==========================================
+    // ▼ 全アイテムを破棄し、再生成するリスポーン処理
+    // ==========================================
     [Server]
     private void RespawnAllItems() {
-        if (!isServer)
-            return;
+        if (!isServer) return;
+
+        // 既存アイテムをすべて破棄
         foreach (var obj in spawnedItems) {
-            if (obj != null) Destroy(obj);
+            if (obj != null)
+                NetworkServer.Destroy(obj);
         }
-        spawnedItems.Clear();
+
+        spawnedItems.Clear(); // リストも初期化
+
+        // 新たに全アイテムを再生成
         SpawnAllItems();
     }
 
-    /// <summary>
-    /// リストをシャッフル
-    /// </summary>
+    // ==========================================
+    // ▼ 汎用シャッフル処理（リストの順序をランダム化）
+    // ==========================================
     private void Shuffle<T>(List<T> list) {
         for (int i = 0; i < list.Count; i++) {
             int rand = Random.Range(i, list.Count);
-            T temp = list[i];
-            list[i] = list[rand];
-            list[rand] = temp;
+            (list[i], list[rand]) = (list[rand], list[i]);
         }
     }
 }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6306890441653015320}
   - component: {fileID: 2240362789225859556}
+  - component: {fileID: 7566513130517295199}
   m_Layer: 0
   m_Name: ItemSpawnManager
   m_TagString: Untagged
@@ -44,6 +45,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3e10b42537e726419dccecad3dd0b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnItems: []
-  spawnPoints: []
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  initializationOrder: 0
+  spawnPointTag: ItemSpawnPoint
+  noSpawnChance: 10
+  weaponCategory:
+    prefabs: []
+    spawnProbabilityPercent: 100
+  consumableCategory:
+    prefabs: []
+    spawnProbabilityPercent: 100
+  weaponSpawnRatio: 0.4
   respawnInterval: 30
+--- !u!114 &7566513130517295199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4092477806368122936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 1389675017
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
