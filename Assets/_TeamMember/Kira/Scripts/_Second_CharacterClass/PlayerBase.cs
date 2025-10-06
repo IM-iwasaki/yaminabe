@@ -1,0 +1,49 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+class PlayerBase : CharacterBase {
+
+    protected override void MoveControl() {
+        //カメラの向きを取得
+        Transform cameraTransform = Camera.main.transform;
+        //進行方向のベクトルを取得
+        Vector3 forward = cameraTransform.forward;
+        forward.y = 0f;
+        forward.Normalize();
+        //右方向のベクトルを取得
+        Vector3 right = cameraTransform.right;
+        right.y = 0f;
+        right.Normalize();
+        //2つのベクトルを合成
+        moveDirection = forward * moveInput.y + right * moveInput.x;
+
+        // カメラの向いている方向をプレイヤーの正面に
+        Vector3 aimForward = forward; // 水平面だけを考慮
+        if (aimForward != Vector3.zero) {
+            Quaternion targetRot = Quaternion.LookRotation(aimForward);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, PlayerConst.TURN_SPEED * Time.deltaTime);
+        }
+
+        // 移動方向にキャラクターを向ける
+        //Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+
+        rigidbody.velocity = new Vector3(moveDirection.x * moveSpeed, rigidbody.velocity.y, moveDirection.z * moveSpeed);
+    }
+
+    protected override void StartAttack() {
+       
+    }
+
+    // Start is called before the first frame update
+    protected void Start() {
+        base.Start();        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}
