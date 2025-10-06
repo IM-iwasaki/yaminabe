@@ -32,18 +32,28 @@ class PlayerBase : CharacterBase {
         rigidbody.velocity = new Vector3(MoveDirection.x * MoveSpeed, rigidbody.velocity.y, MoveDirection.z * MoveSpeed);
     }
 
+    protected override void LookControl() {
+        
+    }
+
     protected override void StartAttack() {
        
     }
 
+    protected override void Interact() {
+
+    }
+
     // Start is called before the first frame update
-    protected void Start() {
+    protected new void Start() {
         base.Start();        
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update() {
+        MoveControl();
+        LookControl();
     }
+
+    
 }

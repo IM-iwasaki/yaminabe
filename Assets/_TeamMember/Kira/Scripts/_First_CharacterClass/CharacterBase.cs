@@ -18,6 +18,8 @@ abstract class CharacterBase : NetworkBehaviour {
     public int Attack { get; private set; }
     //移動速度
     public int MoveSpeed { get; private set; }
+    //持っている武器の文字列
+    public string CurrentWeapon { get; private set; }
 
     //移動を要求する方向
     protected Vector2 MoveInput { get; private set; }
@@ -35,13 +37,13 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //次派生クラスで定義
     //近接
-    [SerializeField] protected int MaxAttackSpeed { get; private set; }
+    protected int MaxAttackSpeed { get; private set; }
     //魔法
-    [SerializeField] protected int MP { get; private set; }
-    [SerializeField] protected int MaxMP { get; private set; }
+    protected int MP { get; private set; }
+    protected int MaxMP { get; private set; }
     //弾倉
-    [SerializeField] protected int Magazine { get; private set; }
-    [SerializeField] protected int MaxMagazine { get; private set; }
+    protected int Magazine { get; private set; }
+    protected int MaxMagazine { get; private set; }
 
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
@@ -63,6 +65,10 @@ abstract class CharacterBase : NetworkBehaviour {
     public void OnAttack(InputAction.CallbackContext context) {
         if (context.performed) StartAttack();
     }
+    //インタラクト入力を受け付けるコンテキスト
+    public void OnInteract(InputAction.CallbackContext context) {
+        if (context.performed) Interact();
+    }
 
     //当たり判定関係
     protected void OnTriggerStay(Collider _collider) {
@@ -79,6 +85,12 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //移動関数
     abstract protected void MoveControl();
+
+    //視点移動関数
+    abstract protected void LookControl();
+
+    //インタラクト関数
+    abstract protected void Interact();
 
     //被弾関数
     public void TakeDamage(int _damage) {
