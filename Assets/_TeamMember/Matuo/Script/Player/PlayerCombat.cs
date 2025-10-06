@@ -2,7 +2,7 @@ using UnityEngine;
 using Mirror;
 
 /// <summary>
-/// プレイヤー戦闘処理
+/// デスマッチ用戦闘処理
 /// </summary>
 public class PlayerCombat : NetworkBehaviour {
     [SyncVar] public int teamId = 0;
