@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// TPSカメラ制御スクリプト
 /// 壁にめり込まないよ
-/// <summary>
+/// </summary>
 public class PlayerCamera : MonoBehaviour {
     [Header("プレイヤー参照")]
     public Transform player;
@@ -28,32 +28,8 @@ public class PlayerCamera : MonoBehaviour {
     private float yaw;   // 左右回転角度
     private float pitch; // 上下回転角度
 
-    // 入力
-    private PlayerInputActions input;
+    // 入力（PlayerInputイベントで受け取る）
     private Vector2 lookInput;
-
-    /// <summary>
-    /// InputActionsを初期化
-    /// </summary>
-    private void Awake() {
-        input = new PlayerInputActions();
-        input.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
-        input.Player.Look.canceled += _ => lookInput = Vector2.zero;
-    }
-
-    /// <summary>
-    /// Input Systemを有効化。
-    /// </summary>
-    private void OnEnable() {
-        input.Enable();
-    }
-
-    /// <summary>
-    /// Input Systemを無効化。
-    /// </summary>
-    private void OnDisable() {
-        input.Disable();
-    }
 
     /// <summary>
     /// カメラオフセットを初期化。
@@ -64,11 +40,14 @@ public class PlayerCamera : MonoBehaviour {
     }
 
     /// <summary>
+    /// PlayerInput の "Look" アクションイベントから呼ばれる関数
+    /// </summary>
+    public void OnLook(InputAction.CallbackContext context) {
+        lookInput = context.ReadValue<Vector2>();
+    }
+
+    /// <summary>
     /// プレイヤー位置を基準にカメラの位置・回転を更新する。
-    /// 入力に応じてyaw・pitchを更新
-    /// オフセットを回転させて目標位置を決定
-    /// 壁との衝突を補正
-    /// カメラの位置と向きを反映
     /// </summary>
     private void LateUpdate() {
         if (!player) return;
@@ -99,6 +78,6 @@ public class PlayerCamera : MonoBehaviour {
 
         // カメラ更新
         transform.position = desiredPos;
-        transform.LookAt(player.position + Vector3.up * 1.0f); // プレイヤーを見る
+        transform.LookAt(player.position + Vector3.up * 1.0f);
     }
 }
