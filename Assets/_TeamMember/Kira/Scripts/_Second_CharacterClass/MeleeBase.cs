@@ -6,6 +6,10 @@ using UnityEngine;
 //  @file   Second_CharacterClass
 //
 class MeleeBase : CharacterBase {
+    //ãﬂê⁄
+    protected int AttackSpeed { get; private set; }
+    protected int MaxAttackSpeed { get; private set; }
+
     protected override void StartAttack() {
         
     }

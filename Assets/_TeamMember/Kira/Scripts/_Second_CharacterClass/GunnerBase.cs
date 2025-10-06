@@ -6,6 +6,10 @@ using UnityEngine;
 //  @file   Second_CharacterClass
 //
 class GunnerBase : CharacterBase {
+    //’e‘q
+    protected int Magazine { get; private set; }
+    protected int MaxMagazine { get; private set; }
+
     protected override void StartAttack() {
         
     }
