@@ -2,76 +2,73 @@ using UnityEngine;
 using Mirror;
 
 /// <summary>
-/// ゲーム全体の開始・終了を管理するマネージャー
-/// NetworkSystemObjectを継承
-/// <summary>
+/// ゲーム全体の進行管理
+/// ゲーム開始・終了、ルール切替、タイマー管理
+/// </summary>
 
 // ＜猿でもわかる使い方(ゲームの開始と終了)＞ 
 // GameManager.Instance.StartGame(); 
 // GameManager.Instance.EndGame();
 public class GameManager : NetworkSystemObject<GameManager> {
-    [SyncVar]
-    private bool isGameRunning = false; // サーバーとクライアントで同期されるゲーム進行状態
-
+    [SyncVar] private bool isGameRunning = false;
     private GameTimer gameTimer;
+    private RuleManager ruleManager;
 
     /// <summary>
-    /// 初期化処理
-    /// SystemManagerから呼ばれる
+    /// 初期化
     /// </summary>
     public override void Initialize() {
         base.Initialize();
 
-        // GameTimerコンポーネントを取得、無ければ追加
         gameTimer = GetComponent<GameTimer>();
-        if (gameTimer == null) {
+        if (gameTimer == null)
             gameTimer = gameObject.AddComponent<GameTimer>();
-        }
+
+        ruleManager = FindAnyObjectByType<RuleManager>();
     }
 
     /// <summary>
-    /// ゲームを開始する (サーバー専用)
+    /// ゲーム開始
     /// </summary>
+    /// <param name="rule">開始するルールタイプ</param>
     [Server]
-    public void StartGame() {
+    public void StartGame(GameRuleType rule) {
         if (isGameRunning) return;
 
         isGameRunning = true;
+        ruleManager.currentRule = rule;
 
         // タイマー開始
         gameTimer.StartTimer();
 
-        // マップ生成などはここで
-
+        // デスマッチの場合はGameTimerのイベントで終了処理に移行
+        if (rule == GameRuleType.DeathMatch) {
+            gameTimer.OnTimerFinished += () => {
+                ruleManager.EndDeathMatch();
+                EndGame();
+            };
+        }
     }
 
     /// <summary>
-    /// ゲームを終了する (サーバー専用)
+    /// ゲーム終了
     /// </summary>
     [Server]
     public void EndGame() {
         if (!isGameRunning) return;
 
         isGameRunning = false;
-
-        // タイマー停止
         gameTimer.StopTimer();
-
-        // リザルト表示などはここで
-
+        Debug.Log("ゲーム終了");
     }
 
     /// <summary>
-    /// ゲームが進行中かどうかを返す (サーバーとクライアントで同期)
+    /// ゲーム進行中か
     /// </summary>
-    public bool IsGameRunning() {
-        return isGameRunning;
-    }
+    public bool IsGameRunning() => isGameRunning;
 
     /// <summary>
-    /// 残り時間を取得 (クライアントも参照可能)
+    /// 残り時間取得
     /// </summary>
-    public float GetRemainingTime() {
-        return gameTimer != null ? gameTimer.GetRemainingTime() : 0f;
-    }
+    public float GetRemainingTime() => gameTimer != null ? gameTimer.GetRemainingTime() : 0f;
 }
