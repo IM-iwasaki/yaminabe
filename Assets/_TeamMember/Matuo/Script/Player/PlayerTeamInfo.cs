@@ -1,5 +1,5 @@
-using Mirror;
 using UnityEngine;
+using Mirror;
 
 /// <summary>
 /// プレイヤーのチーム情報(仮)
