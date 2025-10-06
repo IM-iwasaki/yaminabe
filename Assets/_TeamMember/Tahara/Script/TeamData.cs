@@ -15,7 +15,7 @@ public class TeamData{
 
         ColorMax,
     }
-    public List<NetworkIdentity> teamPlayerList;
+    public List<NetworkIdentity> teamPlayerList = new List<NetworkIdentity>(3);
 
     int Score;
 }
