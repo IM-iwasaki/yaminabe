@@ -1,20 +1,26 @@
 using UnityEngine;
 using Mirror;
+using System;
 
 /// <summary>
-/// 制限時間を管理するクラス
-/// GameManagerと連携して動作する
-/// <summary>
+/// 制限時間管理
+/// GameManagerと連携して使用
+/// </summary>
 
 // ＜猿でもわかる使い方(時間の取得とUI表示)＞
 // float remaining = GameManager.Instance.GetComponent<GameTimer>().GetRemainingTime(); //現在時間取得
 // uiText.text = $"残り時間: {remaining:F1} 秒";  // UIに表示
 public class GameTimer : NetworkBehaviour {
     [Header("制限時間(秒)")]
-    [SerializeField] private float limitTime = 180f; // 一旦3分想定
+    [SerializeField] private float limitTime = 180f; // (仮で3分想定)
 
-    [SyncVar] private float elapsedTime = 0f; // サーバーとクライアントで同期される経過時間
+    [SyncVar] private float elapsedTime = 0f; // サーバーとクライアントで同期
     private bool isRunning = false;
+
+    /// <summary>
+    /// タイマー終了時に発火するイベント
+    /// </summary>
+    public event Action OnTimerFinished;
 
     /// <summary>
     /// タイマーを開始する (サーバー専用)
@@ -34,8 +40,18 @@ public class GameTimer : NetworkBehaviour {
     }
 
     /// <summary>
+    /// タイマーを一時停止または再開する (サーバー専用)
+    /// </summary>
+    /// <param name="running">trueで再開、falseで停止</param>
+    [Server]
+    public void SetRunning(bool running) {
+        isRunning = running;
+    }
+
+    /// <summary>
     /// 経過時間を取得
     /// </summary>
+    /// <returns>経過時間(秒)</returns>
     public float GetElapsedTime() {
         return elapsedTime;
     }
@@ -43,13 +59,14 @@ public class GameTimer : NetworkBehaviour {
     /// <summary>
     /// 残り時間を取得
     /// </summary>
+    /// <returns>残り時間(秒)</returns>
     public float GetRemainingTime() {
         return Mathf.Max(limitTime - elapsedTime, 0f);
     }
 
     /// <summary>
     /// サーバー側で毎フレームタイマーを更新
-    /// 時間切れ時にはGameManagerに通知
+    /// 終了時にはイベント発火
     /// </summary>
     [ServerCallback]
     private void Update() {
@@ -58,8 +75,11 @@ public class GameTimer : NetworkBehaviour {
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime >= limitTime) {
+            elapsedTime = limitTime;
             isRunning = false;
-            GameManager.Instance?.EndGame();
+
+            // タイマー終了イベント
+            OnTimerFinished?.Invoke();
         }
     }
 }
