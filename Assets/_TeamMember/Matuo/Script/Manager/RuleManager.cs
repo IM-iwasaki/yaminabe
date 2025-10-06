@@ -8,12 +8,12 @@ using System.Collections.Generic;
 /// </summary>
 public class RuleManager : NetworkSystemObject<RuleManager> {
     private Dictionary<int, float> teamScores = new();
-    public GameRuleType currentRule = GameRuleType.AreaControl;
+    public GameRuleType currentRule = GameRuleType.Area;
 
     public Dictionary<GameRuleType, float> winScores = new()
     {
         // ゲームルール , 勝利に必要なカウント
-        { GameRuleType.AreaControl, 15f },
+        { GameRuleType.Area, 15f },
         { GameRuleType.Hoko, 20f },
         { GameRuleType.DeathMatch, 0f } // デスマッチは時間終了後判定
     };
