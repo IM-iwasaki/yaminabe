@@ -1,26 +1,27 @@
 using UnityEngine;
 using Mirror;
 
-/// <summary>
-/// 持ち運び型オブジェクト（保持中にスコア加算）
-/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class CaptureHoko : CaptureObjectBase {
     [Header("ホコ設定")]
-    public float countSpeed = 1f;  // ホコ保持中のカウント進行速度
+    public float countSpeed = 1f;
 
     [SyncVar] private bool isHeld = false;
     [SyncVar] private NetworkIdentity holder;
     private Rigidbody rb;
 
+    /// <summary>
+    /// 初期化処理
+    /// </summary>
     protected override void Start() {
         base.Start();
         rb = GetComponent<Rigidbody>();
     }
 
     /// <summary>
-    /// プレイヤーがホコを拾う処理
+    /// プレイヤーがホコを拾う
     /// </summary>
+    /// <param name="player">保持するプレイヤー</param>
     [Server]
     public void TryPickup(NetworkIdentity player) {
         if (isHeld) return;
@@ -35,7 +36,7 @@ public class CaptureHoko : CaptureObjectBase {
     }
 
     /// <summary>
-    /// ホコを落とす処理
+    /// ホコを落とす
     /// </summary>
     [Server]
     public void Drop() {
@@ -49,8 +50,9 @@ public class CaptureHoko : CaptureObjectBase {
     }
 
     /// <summary>
-    /// ホコ保持中のカウント進行度計算
+    /// 進行度計算
     /// </summary>
+    /// <returns>加算する進行度</returns>
     protected override float CalculateProgress() {
         if (!isHeld || holder == null) return 0f;
         return countSpeed;

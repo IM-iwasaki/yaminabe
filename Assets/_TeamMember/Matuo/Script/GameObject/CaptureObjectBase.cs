@@ -2,27 +2,26 @@ using UnityEngine;
 using Mirror;
 
 /// <summary>
-/// CaptureObject系の共通基底クラス
-/// 保持中/制圧中の進行度を計算し、ObjectManagerへ通知
+/// CaptureObject系共通基底
+/// エリア・ホコの進行度計算を共通化
 /// </summary>
 public abstract class CaptureObjectBase : NetworkBehaviour {
-    [SyncVar] protected int ownerTeamId = -1; // 現在制圧しているチーム
+    [SyncVar] protected int ownerTeamId = -1;   // 制圧したチーム
     protected ObjectManager objectManager;
 
     protected virtual void Start() {
         objectManager = FindAnyObjectByType<ObjectManager>();
-        if (isServer) {
+        if (isServer)
             objectManager?.RegisterObject(this);
-        }
     }
 
     /// <summary>
-    /// 派生クラスごとに進行度を計算する
+    /// 進行度計算（派生クラスで実装）
     /// </summary>
     protected abstract float CalculateProgress();
 
     /// <summary>
-    /// 毎フレーム進行度をObjectManagerに通知
+    /// 毎フレーム進行度通知
     /// </summary>
     protected virtual void Update() {
         if (!isServer) return;
@@ -34,7 +33,7 @@ public abstract class CaptureObjectBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// オブジェクト制圧完了時に呼ばれる
+    /// 制圧完了通知
     /// </summary>
     [Server]
     protected void NotifyCaptured(int teamId) {
