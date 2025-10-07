@@ -3,10 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //
-//  @file   Second_CharacterClass_Test
+//  @file   Second_CharacterClass
 //
-class PlayerBase : CharacterBase {
+class MeleeCharacter : CharacterBase {
+    [Tooltip("インポートするステータスのScriptableObject")]
+    [SerializeField]CharacterStatus InputStatus;
+    //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
+    CharacterStatus RunTimeStatus;
+
     protected override void StatusInport() {
+        RunTimeStatus = InputStatus;
+        MaxHP = RunTimeStatus.MaxHP;
+        Attack = RunTimeStatus.Attack;
+        MoveSpeed = RunTimeStatus.MoveSpeed;
     }
 
     protected override void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {       
@@ -23,5 +32,5 @@ class PlayerBase : CharacterBase {
     // Update is called once per frame
     void Update() {
         MoveControl();
-    }    
+    }   
 }

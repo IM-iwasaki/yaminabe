@@ -5,7 +5,7 @@ using UnityEngine;
 //
 //  @file   Second_CharacterClass
 //
-class GunnerBase : CharacterBase {
+class GunnerCharacter : CharacterBase {
     //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。レベルアップで最大弾容量が増加。
     protected int Magazine { get; private set; }
     protected int MaxMagazine { get; private set; }
@@ -13,8 +13,10 @@ class GunnerBase : CharacterBase {
     protected override void StatusInport() {
     }
 
-    protected override void StartAttack() {
-        
+    protected override void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {       
+    }
+
+    protected override void StartUseSkill() {
     }
 
     // Start is called before the first frame update
@@ -25,6 +27,5 @@ class GunnerBase : CharacterBase {
     // Update is called once per frame
     void Update() {
         MoveControl();
-        LookControl();
     }
 }
