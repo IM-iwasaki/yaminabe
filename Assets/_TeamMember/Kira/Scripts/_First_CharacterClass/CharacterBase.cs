@@ -44,7 +44,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
 
     //•Ší‚Ìg—p‚·‚é‚½‚ß
-    [SerializeField] protected WeaponController weaponController;
+    [SerializeField] protected NetworkWeapon weaponController;
 
     protected void Start() {
         rigidbody = GetComponent<Rigidbody>();

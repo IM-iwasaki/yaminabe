@@ -17,7 +17,6 @@ class GunnerBase : CharacterBase {
         }
 
         if (weaponController != null) {
-            weaponController.TryAttack();
             Magazine--;
         }
     }
