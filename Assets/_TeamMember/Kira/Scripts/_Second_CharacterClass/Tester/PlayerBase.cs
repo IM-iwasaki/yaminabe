@@ -11,11 +11,15 @@ class PlayerBase : CharacterBase {
         throw new System.NotImplementedException();
     }
 
-    protected override void StartAttack() {
+    protected override void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {
         if (weaponController == null) return;
 
         // 武器が攻撃可能かチェックしてサーバー命令を送る
-        weaponController.CmdRequestAttack();
+        weaponController.CmdRequestAttack();      
+    }
+
+    protected override void StartUseSkill() {
+
     }
 
     // Start is called before the first frame update
@@ -26,7 +30,5 @@ class PlayerBase : CharacterBase {
     // Update is called once per frame
     void Update() {
         MoveControl();
-        LookControl();
-    }
-
+    }    
 }
