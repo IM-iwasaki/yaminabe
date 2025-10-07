@@ -8,10 +8,6 @@ public class TeamData{
         Invalid = -1,
         Red,
         Blue,
-        Green,
-        Yellow,
-        Black,
-        White,
 
         ColorMax,
     }

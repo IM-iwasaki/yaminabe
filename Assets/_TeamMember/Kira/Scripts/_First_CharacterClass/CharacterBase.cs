@@ -1,4 +1,5 @@
 using Mirror;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -29,7 +30,9 @@ abstract class CharacterBase : NetworkBehaviour {
     public Vector3 MoveDirection { get; private set; }
 
     //視点を要求する方向
-    public Vector2 LookInput { get; private set; }
+    protected Vector2 LookInput { get; private set; }
+    //向いている方向
+    public Vector3 LookDirection { get; private set; }
 
     //プレイヤーの状態
     protected bool IsDead { get; private set; } = false;
@@ -41,6 +44,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
     protected void Start() {
         rigidbody = GetComponent<Rigidbody>();
+
     }
 
     #region 入力受付
@@ -100,6 +104,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //視点移動関数
     protected void LookControl() {
+
     }
 
     //インタラクト関数

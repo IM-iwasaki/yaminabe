@@ -1,16 +1,17 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Mirror.Examples.MultipleMatch;
 
 /// <summary>
-/// エリア制圧型オブジェクト
-/// 一定時間同じチームのみが範囲にいると制圧完了
+/// エリア制圧オブジェクト
+/// 範囲内に同じチームが一定時間いると制圧
 /// </summary>
 public class CaptureArea : CaptureObjectBase {
     [Header("エリア設定")]
-    public float captureTime = 3f;        // 制圧に必要な時間(仮で今は3秒)
-    public Collider areaCollider;         // 制圧判定用コライダー
+    public float captureTime = 3f;
+    public Collider areaCollider;
 
-    private List<PlayerTeamInfo> playersInArea = new List<PlayerTeamInfo>();
+    private List<PlayerTeamInfo> playersInArea = new();
     private float captureProgress = 0f;
 
     private void OnTriggerEnter(Collider other) {
@@ -26,14 +27,14 @@ public class CaptureArea : CaptureObjectBase {
     }
 
     /// <summary>
-    /// エリア制圧進行度を計算
+    /// カウント計算
     /// </summary>
+    /// <returns>加算するカウント</returns>
     protected override float CalculateProgress() {
         if (playersInArea.Count == 0) return 0f;
 
         int teamId = playersInArea[0].teamId;
         bool sameTeam = playersInArea.TrueForAll(p => p.teamId == teamId);
-
         if (!sameTeam) return 0f;
 
         captureProgress += Time.deltaTime;
@@ -43,6 +44,6 @@ public class CaptureArea : CaptureObjectBase {
         }
 
         ownerTeamId = teamId;
-        return Time.deltaTime; // ObjectManagerに渡すカウント進行度
+        return Time.deltaTime;
     }
 }
