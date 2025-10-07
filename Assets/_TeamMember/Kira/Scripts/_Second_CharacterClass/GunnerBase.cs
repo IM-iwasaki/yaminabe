@@ -14,12 +14,24 @@ class GunnerBase : CharacterBase {
     }
 
     protected override void StartAttack() {
-        
+        if (Magazine <= 0) {
+            Debug.Log("弾切れ。リロードが必要です。");
+            return;
+        }
+
+        if (weaponController != null) {
+            Magazine--;
+        }
+    }
+    public void Reload() {
+        Magazine = MaxMagazine;
     }
 
     // Start is called before the first frame update
     protected new void Start() {
         base.Start();
+        MaxMagazine = 30;
+        Magazine = MaxMagazine;
     }
 
     // Update is called once per frame

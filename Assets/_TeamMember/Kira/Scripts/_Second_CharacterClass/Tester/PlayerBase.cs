@@ -6,11 +6,15 @@ using UnityEngine;
 //  @file   Second_CharacterClass_Test
 //
 class PlayerBase : CharacterBase {
+
     protected override void StatusInport() {
     }
 
     protected override void StartAttack() {
-       
+        if (weaponController == null) return;
+
+        // 武器が攻撃可能かチェックしてサーバー命令を送る
+        weaponController.CmdRequestAttack();
     }
 
     // Start is called before the first frame update
