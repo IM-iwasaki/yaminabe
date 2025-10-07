@@ -2,6 +2,7 @@ using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static TeamData;
 
 [RequireComponent(typeof(NetworkIdentity))]
 [RequireComponent(typeof(PlayerInput))]
@@ -142,10 +143,10 @@ abstract class CharacterBase : NetworkBehaviour {
                 item.Use(gameObject);
             }
             if (_collider.CompareTag("RedTeam")) {
-                ServerManager.instance.CmdJoinTeam(netIdentity, TeamData.teamColor.Red);
+                CmdJoinTeam(netIdentity, TeamData.teamColor.Red);
             }
             if (_collider.CompareTag("BlueTeam")) {
-                ServerManager.instance.CmdJoinTeam(netIdentity, TeamData.teamColor.Blue);
+                CmdJoinTeam(netIdentity, TeamData.teamColor.Blue);
             }
         }       
     }
@@ -160,5 +161,31 @@ abstract class CharacterBase : NetworkBehaviour {
         HP -= _damage;
         //HPが0以下になったらisDeadを真にする
         if (HP <= 0) IsDead = true;
+    }
+    [Command]
+    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+        CharacterBase player = _player.GetComponent<CharacterBase>();
+        int currentTeam = player.TeamID;
+        int newTeam = (int)_color;
+
+        //加入しようとしてるチームが埋まっていたら
+        if (ServerManager.instance.teams[(newTeam)].teamPlayerList.Count >= TEAMMATE_MAX) {
+            Debug.Log("チームの人数が最大です！");
+            return;
+        }
+        //既に同じチームに入っていたら
+        if (newTeam == currentTeam) {
+            Debug.Log("今そのチームにいます!");
+            return;
+        }
+        //新たなチームに加入する時
+        //今加入しているチームから抜けてIDをリセット
+        ServerManager.instance.teams[_player.GetComponent<CharacterBase>().TeamID].teamPlayerList.Remove(_player);
+        player.TeamID = -1;
+        //新しいチームに加入
+        ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
+        player.TeamID = newTeam;
+        //ログを表示
+        Debug.Log(_player.ToString() + "は" + newTeam + "番目のチームに加入しました！");
     }
 }
