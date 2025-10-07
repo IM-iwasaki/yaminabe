@@ -12,7 +12,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
     public Dictionary<GameRuleType, float> winScores = new()
     {
-        // ゲームルール , 勝利に必要なカウント
+        // ゲームルール , 勝利に必要なカウント(デスマッチは最終的なキル数で決める)
         { GameRuleType.Area, 15f },
         { GameRuleType.Hoko, 20f },
         { GameRuleType.DeathMatch, 0f } // デスマッチは時間終了後判定
