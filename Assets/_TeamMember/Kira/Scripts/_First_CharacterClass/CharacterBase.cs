@@ -130,12 +130,14 @@ abstract class CharacterBase : NetworkBehaviour {
     /// 当たり判定関係
     /// </summary>
     protected void OnTriggerStay(Collider _collider) {
-        if (_collider.CompareTag("Item")) {
-            //アイテム使用キー入力入れる
-            ItemBase item = _collider.GetComponent<ItemBase>();
-            //仮。挙動確認。
-            item.Use(gameObject);
-        }
+        if (isLocalPlayer) {
+            if (_collider.CompareTag("Item")) {
+                //アイテム使用キー入力入れる
+                ItemBase item = _collider.GetComponent<ItemBase>();
+                //仮。挙動確認。
+                item.Use(gameObject);
+            }
+        }       
     }
 
     /// <summary>
