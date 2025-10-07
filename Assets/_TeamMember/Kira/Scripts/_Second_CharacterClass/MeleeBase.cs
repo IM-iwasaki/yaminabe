@@ -10,6 +10,9 @@ class MeleeBase : CharacterBase {
     protected int AttackSpeed { get; private set; }
     protected int MaxAttackSpeed { get; private set; }
 
+    protected override void StatusInport() {
+    }
+
     protected override void StartAttack() {
         
     }
