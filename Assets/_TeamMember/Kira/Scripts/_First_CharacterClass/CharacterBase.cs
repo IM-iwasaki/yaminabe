@@ -42,6 +42,10 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
+
+    //武器の使用するため
+    [SerializeField] protected WeaponController weaponController;
+
     protected void Start() {
         rigidbody = GetComponent<Rigidbody>();
 
