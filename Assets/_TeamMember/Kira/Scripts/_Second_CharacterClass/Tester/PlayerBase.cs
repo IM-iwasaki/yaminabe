@@ -7,6 +7,9 @@ using UnityEngine;
 //
 class PlayerBase : CharacterBase {
 
+    protected override void StatusInport() {
+        throw new System.NotImplementedException();
+    }
 
     protected override void StartAttack() {
         if (weaponController == null) return;
