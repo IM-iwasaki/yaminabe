@@ -7,8 +7,6 @@ using UnityEngine;
 //
 class PlayerBase : CharacterBase {
 
-    protected override void StatusInport() {
-    }
 
     protected override void StartAttack() {
         if (weaponController == null) return;
@@ -28,5 +26,4 @@ class PlayerBase : CharacterBase {
         LookControl();
     }
 
-    
 }
