@@ -154,7 +154,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾関数、死亡判定
     /// </summary>
-    [Server]public void TakeDamage(int _damage) {
+    [Command]public void TakeDamage(int _damage) {
         //ダメージが0以下だったら帰る
         if (_damage <= 0) return;
         //HPの減算処理
