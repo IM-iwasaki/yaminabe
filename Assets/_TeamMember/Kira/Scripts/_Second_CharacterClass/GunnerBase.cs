@@ -10,6 +10,9 @@ class GunnerBase : CharacterBase {
     protected int Magazine { get; private set; }
     protected int MaxMagazine { get; private set; }
 
+    protected override void StatusInport() {
+    }
+
     protected override void StartAttack() {
         
     }

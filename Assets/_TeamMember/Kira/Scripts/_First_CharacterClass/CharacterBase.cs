@@ -47,21 +47,34 @@ abstract class CharacterBase : NetworkBehaviour {
 
     }
 
+    /// <summary>
+    /// ステータスのインポート
+    /// </summary>
+    protected abstract void StatusInport();
+
     #region 入力受付
 
-    //移動入力を受け付けるコンテキスト
+    /// <summary>
+    /// 移動入力を受け付けるコンテキスト
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context) {
         MoveInput = context.ReadValue<Vector2>();
     }
-    //視点入力を受け付けるコンテキスト
+    /// <summary>
+    /// 視点入力を受け付けるコンテキスト
+    /// </summary>
     public void OnLook(InputAction.CallbackContext context) {
         LookInput = context.ReadValue<Vector2>();
     }
-    //攻撃入力を受け付けるコンテキスト
+    /// <summary>
+    /// 攻撃入力を受け付けるコンテキスト
+    /// </summary
     public void OnAttack(InputAction.CallbackContext context) {
         if (context.performed) StartAttack();
     }
-    //インタラクト入力を受け付けるコンテキスト
+    /// <summary>
+    /// インタラクト入力を受け付けるコンテキスト
+    /// </summary>
     public void OnInteract(InputAction.CallbackContext context) {
         if (context.performed) Interact();
     }
@@ -113,17 +126,23 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
-    //当たり判定関係
+    /// <summary>
+    /// 当たり判定関係
+    /// </summary>
     protected void OnTriggerStay(Collider _collider) {
-        if (_collider.CompareTag("Item")) {
-            //アイテム使用キー入力入れる
-            ItemBase item = _collider.GetComponent<ItemBase>();
-            //仮。挙動確認。
-            item.Use(gameObject);
-        }
+        if (isLocalPlayer) {
+            if (_collider.CompareTag("Item")) {
+                //アイテム使用キー入力入れる
+                ItemBase item = _collider.GetComponent<ItemBase>();
+                //仮。挙動確認。
+                item.Use(gameObject);
+            }
+        }       
     }
 
-    //被弾関数
+    /// <summary>
+    /// 被弾関数、死亡判定
+    /// </summary>
     [Server]public void TakeDamage(int _damage) {
         //ダメージが0以下だったら帰る
         if (_damage <= 0) return;

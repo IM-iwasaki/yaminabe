@@ -10,6 +10,9 @@ class WizardBase : CharacterBase {
     protected int MP { get; private set; }
     protected int MaxMP { get; private set; }
 
+    protected override void StatusInport() {
+    }
+
     protected override void StartAttack() {
         
     }
