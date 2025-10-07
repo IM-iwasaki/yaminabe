@@ -50,9 +50,9 @@ public class GachaSystem : MonoBehaviour {
     }
 
     /// <summary>
-    /// 指定したアイテムの生成
+    /// 指定したアイテムを獲得したことを知らせる
     /// </summary>
-    /// <param name="item">生成するアイテム</param>
+    /// <param name="item">獲得したアイテム</param>
     private void SpawnItem(GachaItem item) {
         Debug.Log("ガチャで " + item.itemName + " を当てました！");
     }
