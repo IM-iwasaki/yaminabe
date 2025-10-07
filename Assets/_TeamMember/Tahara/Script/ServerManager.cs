@@ -84,34 +84,6 @@ public class ServerManager : NetworkBehaviour {
         }
 
     }
-
-    [Command]
-    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
-        CharacterBase player = _player.GetComponent<CharacterBase>();
-        int currentTeam = player.TeamID;
-        int newTeam = (int)_color;
-
-        //加入しようとしてるチームが埋まっていたら
-        if (teams[(newTeam)].teamPlayerList.Count >= TEAMMATE_MAX) {
-            Debug.Log("チームの人数が最大です！");
-            return;
-        }
-        //既に同じチームに入っていたら
-        if (newTeam == currentTeam) {
-            Debug.Log("今そのチームにいます!");
-            return;
-        }
-        //新たなチームに加入する時
-        //今加入しているチームから抜けてIDをリセット
-        teams[_player.GetComponent<CharacterBase>().TeamID].teamPlayerList.Remove(_player);
-       player.TeamID = -1;
-        //新しいチームに加入
-        teams[newTeam].teamPlayerList.Add(_player);
-        player.TeamID = newTeam;
-        //ログを表示
-        Debug.Log(_player.ToString() + "は" + newTeam + "番目のチームに加入しました！");
-    }
-
     //デバッグ用チーム振り分け確認
     public void RandomTeamDecide() {
         isSkip = true;
