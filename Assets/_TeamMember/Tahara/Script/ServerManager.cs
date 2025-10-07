@@ -2,6 +2,7 @@ using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
 using static TeamData;
+using TMPro;
 /// <summary>
 /// ServerManager
 /// サーバー側での処理を管理するクラス(Playerのステータス更新やオブジェクトの生成等)
@@ -12,12 +13,19 @@ public class ServerManager : NetworkBehaviour {
     public List<TeamData> teams = null;
     private int maxTeamPlayer;
     bool isSkip = false;
+    [SerializeField]
+    TextMeshProUGUI text = null;
 
-    private void Start() {
-        maxTeamPlayer = connectPlayer.Count / teams.Count;
+    private void Awake() {
+        instance = this;
     }
     public override void OnStartServer() {
+        
         CreateTeam();
+    }
+
+    public void Update() {
+        text.text = connectPlayer.Count.ToString();
     }
 
     /// <summary>
@@ -25,6 +33,9 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     private void CreateTeam() {
         teams = new List<TeamData>((int)teamColor.ColorMax);
+        if (teams.Count == 0) maxTeamPlayer = 1;
+        else
+            maxTeamPlayer = connectPlayer.Count / teams.Count;
         //ランダム
         if (isSkip) {
             JoinRandomTeam();
@@ -45,20 +56,29 @@ public class ServerManager : NetworkBehaviour {
         }
         teams.Clear();
         //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
-        teams = new List<TeamData>(_teamCount);
+        for(int i = 0; i < _teamCount; i++) {
+            teams.Add(new TeamData());
+        }
         for (int i = 0, max = connectPlayer.Count; i < max; i++) {
             int teamIndex = Random.Range(0, teams.Count);
-            if (teams[teamIndex].teamPlayerList.Count > maxTeamPlayer)
-                teams[teamIndex + 1].teamPlayerList.Add(connectPlayer[i]);
-            else
+            //チームが既定の人数を超えていたら一個次のチームに入れる
+            if (teams[teamIndex].teamPlayerList.Count >= maxTeamPlayer) {
+                teams[(teamIndex + 1) % teams.Count].teamPlayerList.Add(connectPlayer[i]);
+            }
+            //それ以外はランダムにぶち込む
+            else {
                 teams[teamIndex].teamPlayerList.Add(connectPlayer[i]);
+            }
+                
             //teams[teamIndex].teamPlayerList[i].GetComponent<PlayerBase>().teamID = teamIndex;
         }
 
     }
 
-    [Command]
-    private void CmdJoinTeam(teamColor _color, NetworkIdentity _player) {
-        teams[(int)_color].teamPlayerList.Add(_player);
+    //デバッグ用チーム振り分け確認
+    public void RandomTeamDecide() {
+        isSkip = true;
+        CreateTeam();
     }
+
 }
