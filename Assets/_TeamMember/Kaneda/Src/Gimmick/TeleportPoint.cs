@@ -1,11 +1,11 @@
 using UnityEngine;
-using System.Linq;
 using System.Collections;
+using System.Linq;
 
 /// <summary>
-/// TPの種類をEnumで管理
-/// Random: シーン内の他のTPオブジェクトにランダムでワープ
-/// Pair: Inspectorで設定したリンク先にワープ
+/// テレポートタイプ（Enum）
+/// Random: ランダムな他のTPポイントへ移動
+/// Pair: ペア指定のTPポイントへ移動
 /// </summary>
 public enum TPType {
     Random,
@@ -13,101 +13,150 @@ public enum TPType {
 }
 
 /// <summary>
-/// TPS用テレポートポイント
-/// - 前滞在(preDelay)
-/// - ワープ(TP)
-/// - 後硬直(postDelay)
-/// - 全体クールタイム管理(cooldown)
+/// テレポートポイント制御クラス
+/// - プレイヤーが3秒間トリガー内に留まるとワープ
+/// - ワープ前後に待機時間を設ける
+/// - 全体クールタイムで連続ワープを防止
 /// </summary>
+[RequireComponent(typeof(Collider))]
 public class TeleportPoint : MonoBehaviour {
     [Header("＝＝＝テレポート設定＝＝＝")]
-    [Header("TPタイプ（ランダムか二点間か）")]
-    public TPType tpType = TPType.Random;       // TPタイプ（Random or Pair）
-    [Header("二点間の際のTP先(Randomの場合は何も入れない)")]
-    public TeleportPoint linkedPoint = null;    // ペアTPのリンク先
-    [Header("クールタイム")]
-    public float cooldown = 2f;                 // 全体クールタイム（秒）
-    [Header("TP前の滞在時間")]
-    public float preDelay = 3f;                 // TP前滞在時間（秒）
-    [Header("TP後の硬直時間")]
-    public float postDelay = 0.5f;              // TP後硬直時間（秒）
+    [Header("TPタイプ（ランダム or ペア）")]
+    public TPType tpType = TPType.Random;          // ランダム or ペア
+    [Header("ペア指定時のTP先（ランダム時はnull）")]
+    public TeleportPoint linkedPoint = null;       // ペア先
+    [Header("TPポイント全体のタグ名（ランダムTPで使用）")]
+    public string tpTag = "Teleport";              // 全TP共通タグ
+    [Header("TPできるまでクールタイム（秒）")]
+    public float cooldown = 2f;                    // 全TP共通のクールタイム
+    [Header("TP前滞在時間（秒）")]
+    public float preDelay = 3f;                    // ワープまでの滞在時間
+    [Header("TP後硬直時間（秒）")]
+    public float postDelay = 0.5f;                 // ワープ後の硬直時間
 
-    private float lastTPTime = -Mathf.Infinity; // 最後にTPした時間を記録（全体管理）
-    private bool isTeleporting = false;         // ワープ中フラグ（同時ワープ防止）
+    // 内部状態管理
+    private float lastTPTime = -Mathf.Infinity; // 全体クールタイム管理（全インスタンス共通）
+    private bool isTeleporting = false;                // ワープ中フラグ
+    private Coroutine stayCoroutine = null;            // 滞在監視コルーチン
+    private GameObject currentPlayer = null;           // 現在トリガー内のプレイヤー参照
+
+    // --- プレイヤーがトリガー内に入った時 ---
+    private void OnTriggerEnter(Collider other) {
+        // Playerタグで判定
+        if (!other.CompareTag("Player")) return;
+
+        // 既に監視中またはワープ中なら無視
+        if (stayCoroutine != null || isTeleporting) return;
+
+        // 現在のプレイヤーを記録
+        currentPlayer = other.gameObject;
+
+        // 一定時間留まったかを監視開始
+        stayCoroutine = StartCoroutine(StayCheckCoroutine(currentPlayer));
+    }
+
+    // --- プレイヤーがトリガー外に出た時 ---
+    private void OnTriggerExit(Collider other) {
+        // Playerタグでない場合は無視
+        if (!other.CompareTag("Player")) return;
+
+        // 離脱したプレイヤーが現在監視中のプレイヤーであればキャンセル
+        if (other.gameObject == currentPlayer) {
+            // 滞在監視を停止
+            if (stayCoroutine != null) {
+                StopCoroutine(stayCoroutine);
+                stayCoroutine = null;
+            }
+            currentPlayer = null;
+        }
+    }
 
     /// <summary>
-    /// ワープ開始トリガー
-    /// - 全体クールタイム中またはワープ中は何もしない
+    /// 一定時間留まっていたか監視するコルーチン
     /// </summary>
-    /// <param name="player">ワープ対象のプレイヤーオブジェクト</param>
-    public void TryTeleport(GameObject player) {
-        if (player == null) return; // nullチェック
+    private IEnumerator StayCheckCoroutine(GameObject player) {
+        // 滞在時間計測
+        float timer = 0f;
+        while (timer < preDelay) {
+            // プレイヤーが離れたら中断
+            if (currentPlayer == null) yield break;
 
-        // 全体クールタイムまたは現在ワープ中なら処理しない
+            // 経過時間を加算
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // 一定時間滞在した場合のみワープを実行
+        TryTeleport(player);
+
+        // 監視コルーチン終了
+        stayCoroutine = null;
+    }
+
+    /// <summary>
+    /// ワープ開始処理（クールタイム・状態チェック含む）
+    /// </summary>
+    private void TryTeleport(GameObject player) {
+        if (player == null) return;
+
+        // 全体クールタイムまたは現在ワープ中なら無視
         if (Time.time - lastTPTime < cooldown || isTeleporting) return;
 
-        // Coroutineで前滞在 → TP → 後硬直を順番に処理
+        // ワープ処理開始
         StartCoroutine(TeleportCoroutine(player));
     }
 
     /// <summary>
-    /// ワープ処理コルーチン
+    /// 実際のワープ処理を行うコルーチン
     /// </summary>
-    /// <param name="player">ワープ対象のプレイヤーオブジェクト</param>
     private IEnumerator TeleportCoroutine(GameObject player) {
-        isTeleporting = true; // ワープ中フラグON
+        isTeleporting = true; // フラグON
 
-        // TP前滞在時間待機
-        yield return new WaitForSeconds(preDelay);
-
-        TeleportPoint target = null; // ワープ先を格納する変数
+        TeleportPoint target = null; // ワープ先
 
         switch (tpType) {
             case TPType.Random:
-                // 自分自身以外の全TPオブジェクトを取得
-                var points = FindObjectsOfType<TeleportPoint>()
-                                .Where(tp => tp != this)
-                                .ToArray();
+                // 指定タグを持つ全オブジェクトを取得
+                var objs = GameObject.FindGameObjectsWithTag(tpTag)
+                                     .Select(go => go.GetComponent<TeleportPoint>())
+                                     .Where(tp => tp != null && tp != this)
+                                     .ToArray();
 
-                // 対象がいなければ警告を出して終了
-                if (points.Length == 0) {
-                    Debug.LogWarning("Random TP対象が存在しません！");
+                // 対象が存在しない場合は警告を出して中断
+                if (objs.Length == 0) {
+                    Debug.LogWarning($"[{name}] ランダムTP対象が見つかりません！");
                     isTeleporting = false;
                     yield break;
                 }
 
-                // ランダムで1つ選択
-                target = points[Random.Range(0, points.Length)];
+                // ランダムに1つ選択
+                target = objs[Random.Range(0, objs.Length)];
                 break;
 
             case TPType.Pair:
-                // リンク先が設定されていなければ警告を出して終了
+                // ペア指定がない場合は中断
                 if (linkedPoint == null) {
-                    Debug.LogWarning($"Pair TPのリンク先が未設定: {gameObject.name}");
+                    Debug.LogWarning($"[{name}] ペアTP先が設定されていません！");
                     isTeleporting = false;
                     yield break;
                 }
-
-                // リンク先をターゲットに設定
                 target = linkedPoint;
                 break;
         }
 
+        // 実際にTPを行う
         if (target != null) {
-            // ワープ実行（少し浮かせて着地）
+            // 少し浮かせて配置
             player.transform.position = target.transform.position + Vector3.up;
-
-            // TP後硬直時間待機
-            yield return new WaitForSeconds(postDelay);
 
             // 全体クールタイムを更新
             lastTPTime = Time.time;
 
-            // ここでパーティクルやSEなどワープ演出を追加可能
-
+            // ワープ後硬直
+            yield return new WaitForSeconds(postDelay);
         }
 
-        // ワープ処理完了、フラグOFF
+        // 状態リセット
         isTeleporting = false;
     }
 }
