@@ -7,7 +7,7 @@ using Mirror;
 /// </summary>
 
 // ＜猿でもわかる使い方(ゲームの開始と終了)＞ 
-// GameManager.Instance.StartGame(); 
+// GameManager.Instance.StartGame(GameRuleType.Area); この場合エリアが始まる(残りはGameRuleTypeを見て)
 // GameManager.Instance.EndGame();
 public class GameManager : NetworkSystemObject<GameManager> {
     [SyncVar] private bool isGameRunning = false;

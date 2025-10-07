@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Mirror.Examples.MultipleMatch;
 
 /// <summary>
 /// エリア制圧オブジェクト

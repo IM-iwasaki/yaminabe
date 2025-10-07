@@ -2,7 +2,7 @@
 /// ゲームルールタイプ
 /// </summary>
 public enum GameRuleType {
-    AreaControl,   // エリア
+    Area,   // エリア
     Hoko,          // ホコ
     DeathMatch     // デスマッチ
 }
