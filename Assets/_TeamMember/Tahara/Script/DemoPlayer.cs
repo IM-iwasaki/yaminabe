@@ -8,7 +8,7 @@ public class DemoPlayer : NetworkBehaviour {
     private Transform fire = null;
     [SerializeField]
     private Camera playerCamera = null;
-
+    public int TeamID;
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;

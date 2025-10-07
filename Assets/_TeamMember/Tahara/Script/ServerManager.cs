@@ -25,6 +25,12 @@ public class ServerManager : NetworkBehaviour {
     /// このタイミングで必要なマネージャーを全て生成する
     /// </summary>
     public override void OnStartServer() {
+        //リストを生成して、新しいデータを追加
+        int teamMax = (int)teamColor.ColorMax;
+        teams = new List<TeamData>(teamMax);
+        for(int i = 0;i < teamMax; i++) {
+            teams.Add(new TeamData());
+        }
     }
 
     public void Update() {
@@ -51,7 +57,7 @@ public class ServerManager : NetworkBehaviour {
         //まずはチームを全てリセット
         foreach (var resetTeam in teams) {
             for (int i = 0, max = resetTeam.teamPlayerList.Count; i < max; i++) {
-                resetTeam.teamPlayerList[i].GetComponent<CharacterBase>().TeamID = -1;
+                resetTeam.teamPlayerList[i].GetComponent<DemoPlayer>().TeamID = -1;
             }
             resetTeam.teamPlayerList.Clear();
         }
@@ -66,13 +72,15 @@ public class ServerManager : NetworkBehaviour {
             //チームが既定の人数を超えていたら一個次のチームに入れる(チームの最後尾なら先頭のチームに加入)
             if (teams[teamIndex].teamPlayerList.Count >= TEAMMATE_MAX) {
                 teams[(teamIndex + 1) % teams.Count].teamPlayerList.Add(connectPlayer[i]);
+                
             }
             //それ以外はランダムにぶち込む
             else {
                 teams[teamIndex].teamPlayerList.Add(connectPlayer[i]);
             }
             //プレイヤーのチームIDを設定
-            player.GetComponent<CharacterBase>().TeamID = teamIndex;
+            player.GetComponent<DemoPlayer>().TeamID = teamIndex;
+            Debug.Log(player + "は" + teamIndex + "番目のチームに入りました!");
         }
 
     }
