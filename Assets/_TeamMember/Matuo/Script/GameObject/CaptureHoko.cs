@@ -2,12 +2,16 @@ using UnityEngine;
 using Mirror;
 
 [RequireComponent(typeof(Rigidbody))]
+/// <summary>
+/// ホコオブジェクト
+/// プレイヤーがホコを持っている間スコア加算
+/// </summary>
 public class CaptureHoko : CaptureObjectBase {
     [Header("ホコ設定")]
     public float countSpeed = 1f;
 
-    [SyncVar] private bool isHeld = false;
-    [SyncVar] private NetworkIdentity holder;
+    [SyncVar] private bool isHeld = false;             // プレイヤーが保持しているか
+    [SyncVar] private NetworkIdentity holder;          // ホコを持つプレイヤー
     private Rigidbody rb;
 
     /// <summary>
@@ -32,7 +36,8 @@ public class CaptureHoko : CaptureObjectBase {
         transform.SetParent(player.transform);
         transform.localPosition = new Vector3(0, 1.2f, 0);
 
-        ownerTeamId = player.GetComponent<PlayerTeamInfo>().teamId;
+        // チームIDを CharacterBase から取得
+        ownerTeamId = player.GetComponent<CharacterBase>().TeamID;
     }
 
     /// <summary>
@@ -51,8 +56,9 @@ public class CaptureHoko : CaptureObjectBase {
 
     /// <summary>
     /// カウント計算
+    /// ホコを持っている場合のみ加算
     /// </summary>
-    /// <returns>加算するカウント</returns>
+    /// <returns>ObjectManager に通知する進行度</returns>
     protected override float CalculateProgress() {
         if (!isHeld || holder == null) return 0f;
         return countSpeed;
