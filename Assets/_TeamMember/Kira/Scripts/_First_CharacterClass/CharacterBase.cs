@@ -137,6 +137,12 @@ abstract class CharacterBase : NetworkBehaviour {
                 //仮。挙動確認。
                 item.Use(gameObject);
             }
+            if (_collider.CompareTag("RedTeam")) {
+                ServerManager.instance.CmdJoinTeam(netIdentity, TeamData.teamColor.Red);
+            }
+            if (_collider.CompareTag("BlueTeam")) {
+                ServerManager.instance.CmdJoinTeam(netIdentity, TeamData.teamColor.Blue);
+            }
         }       
     }
 
