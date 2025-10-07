@@ -6,13 +6,6 @@ public class WeaponController : MonoBehaviour {
 
     public Transform firePoint; // 発射点 or 判定基準点
 
-    void Update() {
-        // 入力はここで受けても良いし、上位のPlayerInputで呼んでも良い
-        if (Input.GetButtonDown("Fire1")) {
-            TryAttack();
-        }
-    }
-
     public void TryAttack() {
         if (currentWeapon == null) return;
         if (Time.time < lastAttackTime + currentWeapon.cooldown) return;
@@ -23,6 +16,7 @@ public class WeaponController : MonoBehaviour {
         else if (currentWeapon.type == WeaponType.Gun)
             AttackRanged();
     }
+
 
     void AttackMelee() {
         // 簡単なオフライン判定（サーバー処理はNetworkWeaponで行う）
