@@ -6,26 +6,37 @@ public class SlideWall : NetworkBehaviour {
     [Header("移動設定")]
     public Vector3 moveDirection = Vector3.right;  // 初期方向
     public float moveSpeed = 3f;                   // 移動速度
+    public float bounceCooldown = 0.2f;            // 再反転までの待機時間
 
     private Rigidbody rb;
+    private bool canBounce = true;                 // 反転可能かどうか
 
     void Start() {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
-        rb.isKinematic = true; // MovePositionではなくTransformを直接操作
+        rb.isKinematic = false; // 衝突を有効に
     }
 
     void FixedUpdate() {
-        // サーバーだけ動かす
         if (!isServer) return;
 
-        transform.position += moveDirection.normalized * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + moveDirection.normalized * moveSpeed * Time.fixedDeltaTime);
     }
 
     void OnCollisionEnter(Collision collision) {
-        if (!isServer) return;
+        if (!isServer || !canBounce) return;
 
-        // 当たったら進行方向を真逆にする
+        // 反転処理
         moveDirection = -moveDirection;
+        rb.position += moveDirection.normalized * 0.1f; // 少し押し戻す
+        canBounce = false;
+
+        // 一定時間後に再び反転可能にする
+        StartCoroutine(ResetBounceCooldown());
+    }
+
+    private System.Collections.IEnumerator ResetBounceCooldown() {
+        yield return new WaitForSeconds(bounceCooldown);
+        canBounce = true;
     }
 }
