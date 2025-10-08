@@ -3,32 +3,28 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// TPSカメラ制御スクリプト
-/// 壁にめり込まないよ
+/// 壁にめり込まないよう距離補正を行う
 /// </summary>
 public class PlayerCamera : MonoBehaviour {
     [Header("プレイヤー参照")]
     public Transform player;
-    public Vector3 normalOffset = new Vector3(0.0f, 1.0f, -4.0f);
+    public Vector3 normalOffset = new Vector3(0f, 1f, -4f);
 
     [Header("壁判定用のレイヤー")]
     public LayerMask collisionMask;
 
     [Header("カメラ設定")]
-    public float rotationSpeed = 120f; // 回転速度（マウス感度）
-    public float minPitch = -30f;      // 下方向の制限角度
-    public float maxPitch = 70f;       // 上方向の制限角度
-    public float moveSpeed = 10f;      // 補間速度
-    private float minDistance = 0.1f;  // 壁にめり込まない最小距離
+    public float rotationSpeed = 120f;
+    public float minPitch = -30f;
+    public float maxPitch = 70f;
+    public float moveSpeed = 10f;
+    private float minDistance = 0.3f;  // カメラがプレイヤーに近づきすぎない距離
 
     // 現在と目標のオフセット
     private Vector3 currentOffset;
     private Vector3 targetOffset;
-
-    // 回転制御
-    private float yaw;   // 左右回転角度
-    private float pitch; // 上下回転角度
-
-    // 入力（PlayerInputイベントで受け取る）
+    private float yaw;
+    private float pitch;
     private Vector2 lookInput;
 
     /// <summary>
@@ -52,32 +48,31 @@ public class PlayerCamera : MonoBehaviour {
     private void LateUpdate() {
         if (!player) return;
 
-        // 入力による回転更新
+        // 入力で回転更新
         yaw += lookInput.x * rotationSpeed * Time.deltaTime;
         pitch -= lookInput.y * rotationSpeed * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
         // 回転計算
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
-
-        // ターゲットオフセット
         targetOffset = rotation * normalOffset;
+
+        // スムーズに補間
         currentOffset = Vector3.Lerp(currentOffset, targetOffset, moveSpeed * Time.deltaTime);
 
-        // プレイヤー基準位置
-        Vector3 targetPos = player.position;
+        // プレイヤー位置
+        Vector3 targetPos = player.position + Vector3.up * 1.0f;
         Vector3 desiredPos = targetPos + currentOffset;
 
-        // 壁補正
-        if (Physics.Linecast(targetPos, desiredPos, out RaycastHit hit, collisionMask)) {
-            float dist = Vector3.Distance(targetPos, hit.point);
-            dist = Mathf.Max(dist, minDistance);
-            Vector3 dir = (desiredPos - targetPos).normalized;
-            desiredPos = targetPos + dir * dist;
+        // 壁補正（距離のみ調整）
+        if (Physics.SphereCast(targetPos, 0.2f, currentOffset.normalized, out RaycastHit hit,
+                               normalOffset.magnitude, collisionMask)) {
+            float hitDist = Mathf.Clamp(hit.distance, minDistance, normalOffset.magnitude);
+            desiredPos = targetPos + currentOffset.normalized * hitDist;
         }
 
-        // カメラ更新
+        // カメラ位置・回転更新
         transform.position = desiredPos;
-        transform.LookAt(player.position + Vector3.up * 1.0f);
+        transform.LookAt(targetPos);
     }
 }
