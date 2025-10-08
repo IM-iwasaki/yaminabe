@@ -4533,7 +4533,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   moveDirection: {x: 5, y: 0, z: 0}
-  moveSpeed: 2
+  moveSpeed: 5
 --- !u!114 &4465122394871728736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4547,7 +4547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 0
+  _assetId: 2952687487
   serverOnly: 0
   visibility: 1
   hasSpawned: 0
@@ -4576,7 +4576,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!65 &6119931804363351802
 BoxCollider:
@@ -5387,7 +5387,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   moveDirection: {x: 5, y: 0, z: 0}
-  moveSpeed: 2
+  moveSpeed: 5
 --- !u!114 &8531425019573151960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5401,7 +5401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 0
+  _assetId: 2952687487
   serverOnly: 0
   visibility: 1
   hasSpawned: 0
@@ -5430,7 +5430,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!65 &3734790896793752898
 BoxCollider:
