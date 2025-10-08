@@ -55,21 +55,50 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
+    #region ～アクション用変数～
+
     //武器を使用するため
     [SerializeField] protected NetworkWeapon weaponController;
+
+    //ジャンプ力
+    protected float jumpForce = 5f;
+    //GroundLayer
+    private LayerMask groundLayer;
+    //足元の確認用Transform
+    [SerializeField] private Transform groundCheck;
+    //地面判定の距離(長くすると判定が甘くなる)
+    private readonly float groundDistance = 0.3f;
+    //接地しているか
+    [SerializeField] private bool isGrounded;
 
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
     #endregion
 
+    #endregion
+
     protected void Start() {
         rigidbody = GetComponent<Rigidbody>();
+
+        // "Ground" という名前のレイヤーを取得してマスク化
+        int groundLayerIndex = LayerMask.NameToLayer("Ground");
+        groundLayer = 1 << groundLayerIndex;
     }
 
     /// <summary>
     /// ステータスのインポート
     /// </summary>
     protected abstract void StatusInport();
+
+    /// <summary>
+    /// StatusInportでnullが発生した時にデフォルトの値で初期化する
+    /// </summary>
+    protected void DefaultStatusInport() {
+        MaxHP = PlayerConst.DEFAULT_MAXHP;
+        HP = MaxHP;
+        Attack = PlayerConst.DEFAULT_ATTACK;
+        MoveSpeed = PlayerConst.DEFAULT_MOVESPEED;
+    }
 
     /// <summary>
     /// 当たり判定関係
@@ -89,7 +118,7 @@ abstract class CharacterBase : NetworkBehaviour {
                 CmdJoinTeam(netIdentity, teamColor.Blue);
             }
         }
-    }
+    }   
 
     #region ～プレイヤー状態更新関数～
 
@@ -169,6 +198,15 @@ abstract class CharacterBase : NetworkBehaviour {
         LookInput = context.ReadValue<Vector2>();
     }
     /// <summary>
+    /// ジャンプ
+    /// </summary>
+    public void OnJump(InputAction.CallbackContext context) {
+        // ボタンが押された瞬間だけ反応させる
+        if (context.performed && isGrounded) {
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+    /// <summary>
     /// メイン攻撃
     /// </summary
     public void OnAttack_Main(InputAction.CallbackContext context) {
@@ -223,6 +261,14 @@ abstract class CharacterBase : NetworkBehaviour {
         //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
 
         rigidbody.velocity = new Vector3(MoveDirection.x * MoveSpeed, rigidbody.velocity.y, MoveDirection.z * MoveSpeed);
+    }
+
+    /// <summary>
+    /// ジャンプ管理関数
+    /// </summary>
+    protected void JumpControl() {
+        // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
     }
 
     /// <summary>
