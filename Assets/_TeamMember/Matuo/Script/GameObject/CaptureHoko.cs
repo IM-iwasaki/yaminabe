@@ -2,6 +2,7 @@ using UnityEngine;
 using Mirror;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider))] // コライダーが必要
 /// <summary>
 /// ホコオブジェクト
 /// プレイヤーがホコを持っている間スコア加算
@@ -13,6 +14,8 @@ public class CaptureHoko : CaptureObjectBase {
     [SyncVar] private bool isHeld = false;             // プレイヤーが保持しているか
     [SyncVar] private NetworkIdentity holder;          // ホコを持つプレイヤー
     private Rigidbody rb;
+    [SerializeField]
+    private Collider hokoCollider;
 
     /// <summary>
     /// 初期化処理
@@ -20,6 +23,22 @@ public class CaptureHoko : CaptureObjectBase {
     protected override void Start() {
         base.Start();
         rb = GetComponent<Rigidbody>();
+        hokoCollider = GetComponent<Collider>();
+        hokoCollider.isTrigger = true;
+    }
+
+    /// <summary>
+    /// 衝突判定
+    /// プレイヤーが当たったら拾う処理を呼び出す
+    /// </summary>
+    /// <param name="other">衝突したコライダー</param>
+    [ServerCallback]
+    private void OnTriggerEnter(Collider other) {
+        if (isHeld) return;
+        var player = other.GetComponent<CharacterBase>();
+        if (player != null && player.netIdentity != null) {
+            TryPickup(player.netIdentity);
+        }
     }
 
     /// <summary>
@@ -58,7 +77,7 @@ public class CaptureHoko : CaptureObjectBase {
     /// カウント計算
     /// ホコを持っている場合のみ加算
     /// </summary>
-    /// <returns>ObjectManager に通知する進行度</returns>
+    /// <returns>ObjectManager に通知するカウント</returns>
     protected override float CalculateProgress() {
         if (!isHeld || holder == null) return 0f;
         return countSpeed;

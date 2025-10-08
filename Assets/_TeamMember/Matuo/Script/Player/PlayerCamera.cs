@@ -18,7 +18,7 @@ public class PlayerCamera : MonoBehaviour {
     public float minPitch = -30f;      // 下方向の制限角度
     public float maxPitch = 70f;       // 上方向の制限角度
     public float moveSpeed = 10f;      // 補間速度
-    private float minDistance = 0.5f;  // 壁にめり込まない最小距離
+    private float minDistance = 0.1f;  // 壁にめり込まない最小距離
 
     // 現在と目標のオフセット
     private Vector3 currentOffset;

@@ -34,10 +34,10 @@ public class CaptureArea : CaptureObjectBase {
     }
 
     /// <summary>
-    /// 制圧進行度を計算
+    /// カウント進行度を計算
     /// 同じチームのプレイヤーだけがいる場合に加算
     /// </summary>
-    /// <returns>ObjectManager に通知する進行度</returns>
+    /// <returns>ObjectManager に通知するカウント</returns>
     protected override float CalculateProgress() {
         if (playersInArea.Count == 0) return 0f;
 
@@ -46,7 +46,7 @@ public class CaptureArea : CaptureObjectBase {
         bool sameTeam = playersInArea.TrueForAll(p => p.TeamID == teamId);
         if (!sameTeam) return 0f;
 
-        // 制圧進行
+        // カウント進行
         captureProgress += Time.deltaTime;
         if (captureProgress >= captureTime) {
             NotifyCaptured(teamId);

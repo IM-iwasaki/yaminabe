@@ -12,10 +12,10 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
     public Dictionary<GameRuleType, float> winScores = new()
     {
-        // ゲームルール , 勝利に必要なカウント(デスマッチは最終的なキル数で決める)
-        { GameRuleType.Area, 15f },
-        { GameRuleType.Hoko, 20f },
-        { GameRuleType.DeathMatch, 0f } // デスマッチは時間終了後判定
+        // ゲームルール , 勝利に必要なカウント(デスマッチは最終的なキル数で決めるため0)
+        { GameRuleType.Area, 50f },
+        { GameRuleType.Hoko, 50f },
+        { GameRuleType.DeathMatch, 0f } // デスマッチは時間終了後に判定
     };
 
     public override void Initialize() {
@@ -24,8 +24,10 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     }
 
     /// <summary>
-    /// オブジェクト制圧時の通知
+    /// オブジェクトを取った時の通知
     /// </summary>
+    /// <param name="obj">勝利オブジェクト</param>
+    /// <param name="teamId">取ったチーム</param>
     [Server]
     public void OnObjectCaptured(CaptureObjectBase obj, int teamId) {
         if (currentRule != GameRuleType.DeathMatch)
@@ -33,7 +35,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     }
 
     /// <summary>
-    /// カウント通知
+    /// カウント通知 (エリアやホコなどのカウントを使うルール用)
     /// </summary>
     [Server]
     public void OnCaptureProgress(int teamId, float amount) {
@@ -42,7 +44,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     }
 
     /// <summary>
-    /// キル通知
+    /// キル通知 (デスマッチ用)
     /// </summary>
     [Server]
     public void OnTeamKill(int teamId, int kills) {
@@ -66,7 +68,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     }
 
     /// <summary>
-    /// 勝利条件チェック（エリア制圧・ホコ）
+    /// 勝利条件チェック（エリアとホコ）
     /// </summary>
     [Server]
     private void CheckWinConditionAllTeams() {
@@ -109,7 +111,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         }
 
         if (winningTeam >= 0) {
-            Debug.Log($"デスマッチ終了！Team {winningTeam} の勝利！");
+            Debug.Log($"Team {winningTeam} の勝利！");
         }
     }
 }
