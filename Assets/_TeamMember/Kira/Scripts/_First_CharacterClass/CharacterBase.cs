@@ -91,6 +91,8 @@ abstract class CharacterBase : NetworkBehaviour {
         }
     }
 
+    #region ～プレイヤー状態更新関数～
+
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
@@ -149,6 +151,8 @@ abstract class CharacterBase : NetworkBehaviour {
         //ログを表示
         Debug.Log(_player.ToString() + "は" + newTeam + "番目のチームに加入しました！");
     }
+
+    #endregion
 
     #region 入力受付・入力実行関数
 

@@ -4,7 +4,7 @@ using UnityEngine;
 public class MeleeCharacterStatus : CharacterStatus {
     //職業の割り当て
     public CharacterTypeEnum.CharaterType ChatacterType = CharacterTypeEnum.CharaterType.Melee;
-    //キャラクターID。いらないかも。コメントアウト。
+    //キャラクターID。いらないかも、要相談。コメントアウト。
     //[Tooltip("キャラクターID。(int型)\nキャラクターを識別するのに使用します。\n(基本、他と同IDを割り当てないでください。)")]
     //[SerializeField] int CharacterID = 0; 
 
