@@ -3,6 +3,7 @@ using UnityEngine;
 public class HideArea : MonoBehaviour {
     // プレイヤーがエリアに入ったとき
     private void OnTriggerEnter(Collider other) {
+        Debug.Log("隠れる");
         // Playerタグを持つオブジェクトだけ処理
         if (other.CompareTag("Player")) {
             // PlayerHide コンポーネントを取得
