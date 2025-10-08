@@ -61,7 +61,7 @@ abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] protected NetworkWeapon weaponController;
 
     //ジャンプ力
-    protected float jumpForce = 5f;
+    protected float jumpForce = 8f;
     //GroundLayer
     private LayerMask groundLayer;
     //足元の確認用Transform
