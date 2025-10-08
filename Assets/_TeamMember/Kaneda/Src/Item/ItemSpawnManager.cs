@@ -73,6 +73,20 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
     public override void Initialize() {
         if (!isServer) return; // Mirrorの仕様上、生成はサーバー側でのみ行う
 
+        //  開始時にスポーンポイントを取得・アイテム生成
+        SetupSpawnPoint();
+
+    }
+
+    // ====================================================================================
+    // ▼ ステージ生成時にスポーンポイントを取得・アイテム生成を開始する処理
+    // ====================================================================================
+    public void SetupSpawnPoint() {
+        if (!isServer) return; // Mirrorの仕様上、生成はサーバー側でのみ行う
+
+        //  一度全部リセットする
+        ResetSpawnPoint();
+
         // タグからスポーンポイントを全取得
         GameObject[] points = GameObject.FindGameObjectsWithTag(spawnPointTag);
         spawnPoints = points.Select(p => p.transform).ToArray();
@@ -87,6 +101,24 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
 
         // 一定時間ごとにリスポーン処理を自動呼び出し
         InvokeRepeating(nameof(RespawnAllItems), respawnInterval, respawnInterval);
+    }
+
+    // ==========================================
+    // ▼ スポーン関連のリセット
+    // ==========================================
+    public void ResetSpawnPoint() {
+        // 既存Invokeを解除
+        CancelInvoke(nameof(RespawnAllItems));
+
+        // 既存アイテムを削除
+        foreach (var obj in spawnedItems) {
+            if (obj != null)
+                NetworkServer.Destroy(obj);
+        }
+        spawnedItems.Clear();
+
+        //  既存スポーンポイントを削除
+        spawnPoints = null;
     }
 
     // ==========================================
