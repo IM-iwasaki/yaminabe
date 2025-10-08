@@ -15,13 +15,13 @@ abstract class CharacterBase : NetworkBehaviour {
     //現在の体力
     [SyncVar]public int HP;
     //最大の体力
-    public int MaxHP { get; private set; }
+    public int MaxHP { get; protected set; }
     //基礎攻撃力
-    public int Attack { get; private set; }
+    public int Attack { get; protected set; }
     //移動速度
-    public int MoveSpeed { get; private set; } = 5;
+    public int MoveSpeed { get; protected set; } = 5;
     //持っている武器の文字列
-    public string CurrentWeapon { get; private set; }
+    public string CurrentWeapon { get; protected set; }
     //所属チームの番号
     [SyncVar]public int TeamID;
 
@@ -49,7 +49,6 @@ abstract class CharacterBase : NetworkBehaviour {
 
     protected void Start() {
         rigidbody = GetComponent<Rigidbody>();
-
     }
 
     /// <summary>
@@ -72,10 +71,23 @@ abstract class CharacterBase : NetworkBehaviour {
         LookInput = context.ReadValue<Vector2>();
     }
     /// <summary>
-    /// 攻撃入力を受け付けるコンテキスト
+    /// メイン攻撃入力を受け付けるコンテキスト
     /// </summary
-    public void OnAttack(InputAction.CallbackContext context) {
-        if (context.performed) StartAttack();
+    public void OnAttack_Main(InputAction.CallbackContext context) {
+        if (context.performed) StartAttack(PlayerConst.AttackType.Main);
+    }
+    /// <summary>
+    /// サブ攻撃入力を受け付けるコンテキスト
+    /// </summary
+    public void OnAttack_Sub(InputAction.CallbackContext context) {
+        if (context.performed) StartAttack(PlayerConst.AttackType.Sub);
+    }
+    /// <summary>
+    /// スキル入力を受け付けるコンテキスト
+    /// </summary
+    public void OnUseSkill(InputAction.CallbackContext context) {
+        if (context.performed)
+            StartUseSkill();
     }
     /// <summary>
     /// インタラクト入力を受け付けるコンテキスト
@@ -86,12 +98,11 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
-    #region 入力実行関数
+    #region 入力実行関数   
 
-    //攻撃関数
-    abstract protected void StartAttack();
-
-    //移動関数
+    /// <summary>
+    /// 移動関数
+    /// </summary>
     protected void MoveControl(){
         //カメラの向きを取得
         Transform cameraTransform = Camera.main.transform;
@@ -120,10 +131,13 @@ abstract class CharacterBase : NetworkBehaviour {
         rigidbody.velocity = new Vector3(MoveDirection.x * MoveSpeed, rigidbody.velocity.y, MoveDirection.z * MoveSpeed);
     }
 
-    //視点移動関数
-    protected void LookControl() {
+    /// <summary>
+    /// 攻撃関数
+    /// </summary>
+    abstract protected void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main);
 
-    }
+    //スキル使用関数
+    abstract protected void StartUseSkill();
 
     //インタラクト関数
     protected void Interact() {
