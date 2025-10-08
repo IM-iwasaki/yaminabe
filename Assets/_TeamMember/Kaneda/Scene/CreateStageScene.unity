@@ -311,6 +311,14 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 13400000, guid: 75410a6c0f956b54995e5008d0de932d, type: 2}
+    - target: {fileID: 4251673832122164471, guid: dc30ae14b26238344bd059295ae5adb8, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251673832122164471, guid: dc30ae14b26238344bd059295ae5adb8, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: 75410a6c0f956b54995e5008d0de932d, type: 2}
     - target: {fileID: 5478059386412428429, guid: dc30ae14b26238344bd059295ae5adb8, type: 3}
       propertyPath: m_Name
       value: _Player
