@@ -2,6 +2,10 @@ using Mirror;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// 全部デバッグ用クラス
+/// </summary>
+
 public class DemoPlayer : NetworkBehaviour {
     [SerializeField]
     private GameObject bullet = null;
