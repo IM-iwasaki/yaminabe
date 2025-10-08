@@ -81,8 +81,9 @@ public class ServerManager : NetworkBehaviour {
             //プレイヤーのチームIDを設定
             player.GetComponent<DemoPlayer>().TeamID = teamIndex;
             Debug.Log(player + "は" + teamIndex + "番目のチームに入りました!");
+            
         }
-
+        
     }
     //デバッグ用チーム振り分け確認
     public void RandomTeamDecide() {

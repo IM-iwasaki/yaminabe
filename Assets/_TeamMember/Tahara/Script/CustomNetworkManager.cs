@@ -6,6 +6,11 @@ public class CustomNetworkManager : NetworkManager
     [SerializeField]
     private ServerManager serverManager = null;
 
+    /// <summary>
+    /// サーバーに接続したタイミングで処理される
+    /// 主にサーバー接続可能人数を判定
+    /// </summary>
+    /// <param name="_conn"></param>
     public override void OnServerConnect(NetworkConnectionToClient _conn) {
         //もし参加人数が既定の数超えていたら
         if(NetworkServer.connections.Count >= maxConnections) {
