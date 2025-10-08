@@ -37,6 +37,7 @@ public class ExplosiveObject : MonoBehaviour {
             // Playerタグを持つオブジェクトだけ処理
             if (nearby.CompareTag("Player")) {
                 // ダメージが処理などをかける
+                Debug.Log("爆発");
 
             }
         }
