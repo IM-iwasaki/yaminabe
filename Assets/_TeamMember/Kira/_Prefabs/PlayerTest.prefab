@@ -291,6 +291,9 @@ MonoBehaviour:
   syncInterval: 0
   HP: 0
   TeamID: 0
+  weaponController: {fileID: 0}
+  groundCheck: {fileID: 0}
+  InputStatus: {fileID: 0}
 --- !u!114 &6569234324281975778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,7 +307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 129581446
+  _assetId: 3461728517
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

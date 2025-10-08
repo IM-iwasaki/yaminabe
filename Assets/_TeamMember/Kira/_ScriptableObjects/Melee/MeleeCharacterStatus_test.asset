@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81a47841f18dfa64a9ad62f65fad0765, type: 3}
   m_Name: MeleeCharacterStatus_test
   m_EditorClassIdentifier: 
-  BaseStatus: {fileID: 0}
-  MaxHPCorrection: 0
+  BaseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
+  DisplayName: "\u30C6\u30B9\u30C8"
+  ChatacterType: 0
+  MaxHPCorrection: 20
   AttackCorrection: 0
-  MoveSpeedCorrection: 0
-  AttackSpeed: 1
-  MaxAttackSpeed: 2
+  SpeedCorrection: 0

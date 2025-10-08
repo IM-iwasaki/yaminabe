@@ -3,8 +3,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Character/MeleeCharacterStatus(近接職)")]
 public class MeleeCharacterStatus : CharacterStatus {
     //職業の割り当て
+    [Tooltip("職業タイプを選択してください。\n・Melee(近接職)\n・Wizard(魔法職)\n・Gunner(間接職)")]
     public CharacterTypeEnum.CharaterType ChatacterType = CharacterTypeEnum.CharaterType.Melee;
-    //キャラクターID。いらないかも。コメントアウト。
+    //キャラクターID。いらないかも、要相談。コメントアウト。
     //[Tooltip("キャラクターID。(int型)\nキャラクターを識別するのに使用します。\n(基本、他と同IDを割り当てないでください。)")]
     //[SerializeField] int CharacterID = 0; 
 

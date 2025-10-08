@@ -6,9 +6,25 @@ using UnityEngine;
 //  @file   Second_CharacterClass_Test
 //
 class PlayerBase : CharacterBase {
+    [Tooltip("インポートするステータスのScriptableObject")]
+    [SerializeField] CharacterStatus InputStatus;
+    //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
+    CharacterStatus RunTimeStatus;
 
     protected override void StatusInport() {
-        throw new System.NotImplementedException();
+        //InputStatusがnullだったら警告を出してデフォルト値で初期化
+        if(InputStatus == null) {
+            Debug.LogWarning("InputStatusがnullになっています。デフォルトの値で初期化を行います。");
+            DefaultStatusInport();
+            return;
+        }
+
+        RunTimeStatus = InputStatus;
+        MaxHP = RunTimeStatus.MaxHP;
+        HP = MaxHP;
+        Attack = RunTimeStatus.Attack;
+        MoveSpeed = RunTimeStatus.MoveSpeed;
+        Debug.Log("MeleeCharacter.cs : StatusInportを実行しました。\nMaxHP:" + MaxHP + " Attack:" + Attack + " MoveSpeed:" + MoveSpeed);
     }
 
     protected override void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {
