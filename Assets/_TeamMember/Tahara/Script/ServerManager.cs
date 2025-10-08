@@ -9,13 +9,13 @@ using TMPro;
 /// </summary>
 public class ServerManager : NetworkBehaviour {
     public static ServerManager instance = null;
+    [Header("現在接続している人数")]
     public List<NetworkIdentity> connectPlayer = null;
+    [Header("チームデータの総数")]
     public List<TeamData> teams = null;
-    bool isSkip = false;
+    bool isSkipJoinTeam = false;
     [SerializeField]
     TextMeshProUGUI text = null;
-
-    bool joinRedTeam = false;
 
     private void Awake() {
         instance = this;
@@ -35,10 +35,6 @@ public class ServerManager : NetworkBehaviour {
 
     public void Update() {
         text.text = connectPlayer.Count.ToString();
-
-        if (joinRedTeam) {
-            joinRedTeam = false;
-        }
     }
 
     /// <summary>
@@ -46,7 +42,7 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     private void CreateTeam() {
         //ランダム
-        if (isSkip) {
+        if (isSkipJoinTeam) {
             JoinRandomTeam();
         }
         //任意のチーム
@@ -81,12 +77,13 @@ public class ServerManager : NetworkBehaviour {
             //プレイヤーのチームIDを設定
             player.GetComponent<DemoPlayer>().TeamID = teamIndex;
             Debug.Log(player + "は" + teamIndex + "番目のチームに入りました!");
+            
         }
-
+        
     }
     //デバッグ用チーム振り分け確認
     public void RandomTeamDecide() {
-        isSkip = true;
+        isSkipJoinTeam = true;
         CreateTeam();
     }
 

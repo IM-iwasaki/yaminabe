@@ -373,6 +373,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 965558364763553816, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
+      propertyPath: m_CastShadows
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3298340454437890975, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
       propertyPath: m_Name
       value: BlueTeamZone
@@ -380,6 +384,10 @@ PrefabInstance:
     - target: {fileID: 3298340454437890975, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
       propertyPath: m_TagString
       value: BlueTeam
+      objectReference: {fileID: 0}
+    - target: {fileID: 3298340454437890975, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3857364986207757965, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -681,7 +689,7 @@ MonoBehaviour:
   offlineSceneLoadDelay: 0
   transport: {fileID: 828024025}
   networkAddress: localhost
-  maxConnections: 100
+  maxConnections: 6
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
