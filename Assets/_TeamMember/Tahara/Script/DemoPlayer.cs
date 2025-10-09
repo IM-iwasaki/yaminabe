@@ -17,17 +17,15 @@ public class DemoPlayer : NetworkBehaviour {
     public int TeamID = -1;
 
     [SerializeField, SyncVar(hook = nameof(ChangedHP))]
-    private int HP = 100;
+    private int HP;
     [SerializeField]
-    TextMeshProUGUI text = null;
+    private const int MaxHP = 100;
     [SerializeField]
-    private Canvas playerUI = null;
-    [SerializeField]
-    Slider slider = null;
+    UIManager uiManager = null;
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
-
+        HP = MaxHP;
     }
     private void Start() {
         if (isLocalPlayer) {
@@ -35,7 +33,7 @@ public class DemoPlayer : NetworkBehaviour {
         }
         else {
             playerCamera.gameObject.SetActive(false);
-            playerUI.gameObject.SetActive(false);
+            uiManager.gameObject.SetActive(false);
         }
     }
 
@@ -46,13 +44,17 @@ public class DemoPlayer : NetworkBehaviour {
         }
         else {
             playerCamera.gameObject.SetActive(false);
-            playerUI.gameObject.SetActive(false);
+            uiManager.gameObject.SetActive(false);
         }
     }
     private void Update() {
         if (!isLocalPlayer) return;
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
             CmdTestHPRemove();
+        if (Input.GetKeyDown(KeyCode.R))
+            CmdTestHPReset();
+
+
     }
 
     private void FixedUpdate() {
@@ -83,13 +85,16 @@ public class DemoPlayer : NetworkBehaviour {
     }
     private void ChangedHP(int _oldHP, int _newHP) {
         if (isLocalPlayer) {
-            text.text = _newHP.ToString();
-            slider.value = _newHP;
+            uiManager.ChangHPUI(MaxHP,_newHP);
         }
 
     }
     [Command]
     private void CmdTestHPRemove() {
-        HP -= 1;
+        HP -= 20;
+    }
+    [Command]
+    private void CmdTestHPReset() {
+        HP = MaxHP;
     }
 }

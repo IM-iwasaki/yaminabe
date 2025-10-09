@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2731302660585755927}
   - component: {fileID: 1696765413413212514}
   - component: {fileID: 5520744034200242267}
+  - component: {fileID: 4162438782688230031}
   m_Layer: 5
   m_Name: PlayerUI
   m_TagString: Untagged
@@ -106,6 +107,31 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &4162438782688230031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315588222078360348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1903f66ce46752841b63e2fe94718024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hpText: {fileID: 7368427217428250375}
+  hpBar: {fileID: 5131962789528474815}
+  hpBarImage: {fileID: 4821233452961541389}
+  magazineText: {fileID: 4335652478248339972}
+  magazineBar: {fileID: 2316918064692390302}
+  magazineBarImage: {fileID: 6512966643974392218}
+  mpText: {fileID: 5663948788277209843}
+  mpBar: {fileID: 6542088650102232978}
+  mpBarImage: {fileID: 2654231338861512374}
+  timerText: {fileID: 8658265404880232426}
+  countTexts:
+  - {fileID: 1946722540377137088}
+  - {fileID: 11837814285797803}
 --- !u!1 &1828047553491859224
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +322,7 @@ GameObject:
   - component: {fileID: 3600193405729872912}
   - component: {fileID: 4335652478248339972}
   m_Layer: 5
-  m_Name: HPValue
+  m_Name: MagazineValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -506,7 +532,7 @@ GameObject:
   - component: {fileID: 6261845803440196728}
   - component: {fileID: 4821233452961541389}
   m_Layer: 5
-  m_Name: Fill
+  m_Name: HPFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1089,7 +1115,7 @@ GameObject:
   - component: {fileID: 8084516405833805270}
   - component: {fileID: 2654231338861512374}
   m_Layer: 5
-  m_Name: Fill
+  m_Name: MPFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1236,7 +1262,7 @@ GameObject:
   - component: {fileID: 2308225690203493108}
   - component: {fileID: 6512966643974392218}
   m_Layer: 5
-  m_Name: Fill
+  m_Name: MagazineFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1581,7 +1607,7 @@ GameObject:
   - component: {fileID: 8575889761983562784}
   - component: {fileID: 5663948788277209843}
   m_Layer: 5
-  m_Name: HPValue
+  m_Name: MPValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
