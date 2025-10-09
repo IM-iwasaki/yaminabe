@@ -47,8 +47,6 @@ GameObject:
   - component: {fileID: 4471876732249457369}
   - component: {fileID: 6845701714260324742}
   - component: {fileID: 375425767984611474}
-  - component: {fileID: -1062025836981266196}
-  - component: {fileID: 6824628903639922366}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -169,7 +167,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7407657446918099747}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ca427209df53d549877fd9d684f51cf, type: 3}
   m_Name: 
@@ -182,9 +180,7 @@ MonoBehaviour:
   playerCamera: {fileID: 7066726323953406176}
   TeamID: -1
   HP: 100
-  text: {fileID: 6388831483032562015}
-  playerUI: {fileID: 1950006608773153615}
-  slider: {fileID: 8777582842160055015}
+  uiManager: {fileID: 516697782710267095}
 --- !u!114 &6845701714260324742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,57 +241,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 32
   m_CollisionDetection: 0
---- !u!114 &-1062025836981266196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7407657446918099747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
---- !u!114 &6824628903639922366
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7407657446918099747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5a7cac5bf9f7e349a415c3203e4956a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  HP: 0
-  TeamID: 0
-  weaponController: {fileID: 0}
-  groundCheck: {fileID: 5811262716405050514}
-  isGrounded: 0
-  InputStatus: {fileID: 11400000, guid: 40acd8b124764da4da5c5bf0596741c2, type: 2}
 --- !u!1001 &4532971850600126040
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -409,20 +354,15 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 959820a90753d7949b8bbf37de9533e7, type: 3}
---- !u!223 &1950006608773153615 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 2731302660585755927, guid: 959820a90753d7949b8bbf37de9533e7, type: 3}
-  m_PrefabInstance: {fileID: 4532971850600126040}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &6388831483032562015 stripped
+--- !u!114 &516697782710267095 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7368427217428250375, guid: 959820a90753d7949b8bbf37de9533e7, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4162438782688230031, guid: 959820a90753d7949b8bbf37de9533e7, type: 3}
   m_PrefabInstance: {fileID: 4532971850600126040}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 1903f66ce46752841b63e2fe94718024, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &8339617812475725127 stripped
@@ -430,17 +370,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5572113646051349279, guid: 959820a90753d7949b8bbf37de9533e7, type: 3}
   m_PrefabInstance: {fileID: 4532971850600126040}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8777582842160055015 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5131962789528474815, guid: 959820a90753d7949b8bbf37de9533e7, type: 3}
-  m_PrefabInstance: {fileID: 4532971850600126040}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &8948498378984520305
 PrefabInstance:
   m_ObjectHideFlags: 0
