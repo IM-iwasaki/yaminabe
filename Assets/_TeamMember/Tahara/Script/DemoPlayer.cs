@@ -15,7 +15,7 @@ public class DemoPlayer : NetworkBehaviour {
     [SerializeField]
     private Camera playerCamera = null;
     public int TeamID = -1;
-    
+
     [SerializeField, SyncVar(hook = nameof(ChangedHP))]
     private int HP = 100;
     [SerializeField]
@@ -24,13 +24,10 @@ public class DemoPlayer : NetworkBehaviour {
     private Canvas playerUI = null;
     [SerializeField]
     Slider slider = null;
-    private float timer = 0;
-    private float interval = 1;
-
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
-       
+
     }
     private void Start() {
         if (isLocalPlayer) {
@@ -52,13 +49,9 @@ public class DemoPlayer : NetworkBehaviour {
         }
     }
     private void Update() {
-        timer += Time.deltaTime;
-        
-        if(HP > 0 && timer > interval) {
-            HP -= 1;
-            timer = 0;
-        }
-        
+        if (!isLocalPlayer) return;
+        if (Input.GetKeyDown(KeyCode.Space))
+            CmdTestHPRemove();
     }
 
     private void FixedUpdate() {
@@ -71,9 +64,9 @@ public class DemoPlayer : NetworkBehaviour {
             float z = Input.GetAxis("Vertical");
 
             CmdPlayerMove(x, z);
-            
+
         }
-        
+
 
     }
     [Command]
@@ -87,11 +80,15 @@ public class DemoPlayer : NetworkBehaviour {
         GameObject obj = Instantiate(bullet, fire.position, fire.rotation);
         NetworkServer.Spawn(obj, connectionToClient);
     }
-    private void ChangedHP(int _old,int _new) {
+    private void ChangedHP(int _oldHP, int _newHP) {
         if (isLocalPlayer) {
-            text.text = _new.ToString();
-            slider.value = HP;
+            text.text = _newHP.ToString();
+            slider.value = _newHP;
         }
-       
+
+    }
+    [Command]
+    private void CmdTestHPRemove() {
+        HP -= 1;
     }
 }
