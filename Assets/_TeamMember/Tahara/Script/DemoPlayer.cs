@@ -21,7 +21,7 @@ public class DemoPlayer : NetworkBehaviour {
     [SerializeField]
     private const int MaxHP = 100;
     [SerializeField]
-    UIManager uiManager = null;
+    PlayerUIManager uiManager = null;
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
