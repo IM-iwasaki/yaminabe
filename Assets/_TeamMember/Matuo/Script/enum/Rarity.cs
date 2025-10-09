@@ -1,8 +1,8 @@
 /// <summary>
-/// ガチャから排出されるもののレアリティ
+/// アイテムのレアリティ
 /// </summary>
 public enum Rarity {
-    Normal,
+    Common,
     Rare,
     Epic,
     Legendary
