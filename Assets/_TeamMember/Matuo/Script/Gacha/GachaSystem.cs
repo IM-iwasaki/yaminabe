@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ガチャの抽選処理を行うクラス
-/// GachaDataを参照、PlayerWalletと連携して支払いと抽選を管理すりゅ
+/// レアリティ考慮型ガチャシステム
 /// </summary>
 public class GachaSystem : MonoBehaviour {
     [Header("ガチャ設定")]
@@ -13,10 +12,16 @@ public class GachaSystem : MonoBehaviour {
     [Min(0)]
     public int gachaCost = 100;
 
+    [Header("レアリティごとの出現率(%)")]
+    [Range(0, 100)] public int commonRate = 70;
+    [Range(0, 100)] public int rareRate = 20;
+    [Range(0, 100)] public int epicRate = 9;
+    [Range(0, 100)] public int legendaryRate = 1;
+
     /// <summary>
     /// 単発ガチャを引く
     /// </summary>
-    /// <returns>排出されたアイテム 貧乏ならnull</returns>
+    /// <returns>貧乏ならnull</returns>
     public GachaItem PullSingle() {
         // 所持金チェック
         if (PlayerWallet.Instance == null) return null;
@@ -27,21 +32,18 @@ public class GachaSystem : MonoBehaviour {
             return null;
         }
 
-        // 抽選（内部ロジック共通化）
+        // 抽選
         return PullSingleInternal();
     }
 
     /// <summary>
-    /// 複数回ガチャ（10連など）を引く
+    /// 複数回ガチャを引く
     /// </summary>
     /// <param name="count">引く回数</param>
     /// <returns>排出されたアイテムリスト</returns>
     public List<GachaItem> PullMultiple(int count) {
         List<GachaItem> results = new List<GachaItem>();
-
         if (PlayerWallet.Instance == null) return results;
-        
-
         if (count <= 0) return results;
 
         int totalCost = gachaCost * count;
@@ -54,35 +56,46 @@ public class GachaSystem : MonoBehaviour {
 
         // 指定回数分抽選
         for (int i = 0; i < count; i++) {
-            var item = PullSingleInternal(); // 抽選
-            if (item != null)
-                results.Add(item);
+            var item = PullSingleInternal();
+            if (item != null) results.Add(item);
         }
 
         return results;
     }
 
     /// <summary>
-    /// 抽選だけを行う内部関数
+    /// ガチャの抽選
     /// </summary>
     private GachaItem PullSingleInternal() {
         if (database == null || database.items == null || database.items.Count == 0)
             return null;
 
+        // レアリティ決定
+        int roll = Random.Range(0, 100);
+        Rarity selectedRarity;
+
+        if (roll < legendaryRate)
+            selectedRarity = Rarity.Legendary;
+        else if (roll < legendaryRate + epicRate)
+            selectedRarity = Rarity.Epic;
+        else if (roll < legendaryRate + epicRate + rareRate)
+            selectedRarity = Rarity.Rare;
+        else
+            selectedRarity = Rarity.Common;
+
+        // 選ばれたレアリティのアイテムを抽選
+        List<GachaItem> pool = database.items.FindAll(i => i.rarity == selectedRarity);
+        if (pool.Count == 0) return null;
+
         int totalRate = 0;
-        foreach (var item in database.items) {
-            if (item != null && item.rate > 0)
-                totalRate += item.rate;
-        }
+        foreach (var item in pool) totalRate += item.rate;
 
         if (totalRate <= 0) return null;
 
         // 0からtotalRateの範囲でランダム
         int randomValue = Random.Range(0, totalRate);
         int current = 0;
-
-        // ランダム値に応じてアイテムを選択
-        foreach (var item in database.items) {
+        foreach (var item in pool) {
             current += item.rate;
             if (randomValue < current) {
                 SpawnItem(item);
@@ -102,8 +115,8 @@ public class GachaSystem : MonoBehaviour {
         if (item == null) return;
         Debug.Log($"ガチャ結果: {item.itemName} ({item.rarity})");
 
-        // 景品プレハブを生成するならこんな感じ?
+        // 景品プレハブを出すならこんな感じ
         // if (item.prize != null)
-        //     Instantiate(item.prize, Vector3.zero, Quaternion.identity);
+        // Instantiate(item.prize, Vector3.zero, Quaternion.identity);
     }
 }
