@@ -46,6 +46,7 @@ public class DemoPlayer : NetworkBehaviour {
         }
         else {
             playerCamera.gameObject.SetActive(false);
+            playerUI.gameObject.SetActive(false);
         }
     }
     private void Update() {

@@ -13,9 +13,6 @@ public class ServerManager : NetworkBehaviour {
     public List<NetworkIdentity> connectPlayer = null;
     [Header("チームデータの総数")]
     public List<TeamData> teams = null;
-    [SerializeField]
-    TextMeshProUGUI text = null;
-
     private void Awake() {
         instance = this;
     }
@@ -31,13 +28,7 @@ public class ServerManager : NetworkBehaviour {
             teams.Add(new TeamData());
         }
     }
-    /// <summary>
-    /// デバッグ用Update
-    /// </summary>
-    public void Update() {
-        text.text = connectPlayer.Count.ToString();
-    }
-
+    
     
     private void JoinRandomTeam(int _teamCount = 2) {
         //まずはチームを全てリセット
