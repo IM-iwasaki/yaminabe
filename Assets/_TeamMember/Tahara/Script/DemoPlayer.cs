@@ -1,6 +1,7 @@
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 全部デバッグ用クラス
@@ -14,14 +15,19 @@ public class DemoPlayer : NetworkBehaviour {
     [SerializeField]
     private Camera playerCamera = null;
     public int TeamID = -1;
-    [SyncVar(hook = nameof(Changed))]
-    float speed = 0;
+
+    [SerializeField, SyncVar(hook = nameof(ChangedHP))]
+    private int HP = 100;
     [SerializeField]
-    private TextMeshProUGUI text = null;
+    TextMeshProUGUI text = null;
+    [SerializeField]
+    private Canvas playerUI = null;
+    [SerializeField]
+    Slider slider = null;
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
-       
+
     }
     private void Start() {
         if (isLocalPlayer) {
@@ -29,6 +35,7 @@ public class DemoPlayer : NetworkBehaviour {
         }
         else {
             playerCamera.gameObject.SetActive(false);
+            playerUI.gameObject.SetActive(false);
         }
     }
 
@@ -41,6 +48,11 @@ public class DemoPlayer : NetworkBehaviour {
             playerCamera.gameObject.SetActive(false);
         }
     }
+    private void Update() {
+        if (!isLocalPlayer) return;
+        if (Input.GetKeyDown(KeyCode.Space))
+            CmdTestHPRemove();
+    }
 
     private void FixedUpdate() {
         if (isLocalPlayer) {
@@ -52,9 +64,9 @@ public class DemoPlayer : NetworkBehaviour {
             float z = Input.GetAxis("Vertical");
 
             CmdPlayerMove(x, z);
-            speed = GetComponent<Rigidbody>().velocity.x;
+
         }
-        
+
 
     }
     [Command]
@@ -68,9 +80,15 @@ public class DemoPlayer : NetworkBehaviour {
         GameObject obj = Instantiate(bullet, fire.position, fire.rotation);
         NetworkServer.Spawn(obj, connectionToClient);
     }
+    private void ChangedHP(int _oldHP, int _newHP) {
+        if (isLocalPlayer) {
+            text.text = _newHP.ToString();
+            slider.value = _newHP;
+        }
 
-    private void Changed(float _old, float _new) {
-        speed = _new;
-        text.text = (speed).ToString();
+    }
+    [Command]
+    private void CmdTestHPRemove() {
+        HP -= 1;
     }
 }

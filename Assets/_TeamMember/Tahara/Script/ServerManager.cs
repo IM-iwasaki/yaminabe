@@ -13,7 +13,6 @@ public class ServerManager : NetworkBehaviour {
     public List<NetworkIdentity> connectPlayer = null;
     [Header("チームデータの総数")]
     public List<TeamData> teams = null;
-    bool isSkipJoinTeam = false;
     [SerializeField]
     TextMeshProUGUI text = null;
 
@@ -32,23 +31,14 @@ public class ServerManager : NetworkBehaviour {
             teams.Add(new TeamData());
         }
     }
-
+    /// <summary>
+    /// デバッグ用Update
+    /// </summary>
     public void Update() {
         text.text = connectPlayer.Count.ToString();
     }
 
-    /// <summary>
-    /// チーム生成
-    /// </summary>
-    private void CreateTeam() {
-        //ランダム
-        if (isSkipJoinTeam) {
-            JoinRandomTeam();
-        }
-        //任意のチーム
-
-    }
-
+    
     private void JoinRandomTeam(int _teamCount = 2) {
         //まずはチームを全てリセット
         foreach (var resetTeam in teams) {
@@ -81,10 +71,11 @@ public class ServerManager : NetworkBehaviour {
         }
         
     }
-    //デバッグ用チーム振り分け確認
+    /// <summary>
+    /// ランダムチーム生成
+    /// </summary>
     public void RandomTeamDecide() {
-        isSkipJoinTeam = true;
-        CreateTeam();
+        JoinRandomTeam();
     }
 
 
