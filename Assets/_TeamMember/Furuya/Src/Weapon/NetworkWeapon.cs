@@ -1,34 +1,40 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Mirror;
-using Mirror.Examples.Tanks;
+using System.Collections;
 
 public class NetworkWeapon : NetworkBehaviour {
     public WeaponData weaponData;
     public Transform firePoint;
+    float lastAttackTime;
 
-    [Command] // ƒNƒ‰ƒCƒAƒ“ƒg‚©‚çƒT[ƒo[‚ÖuUŒ‚‚µ‚ÄIv‚ğ‘—‚é
+    [Command]
     public void CmdRequestAttack() {
         if (!CanAttack()) return;
         lastAttackTime = Time.time;
-        if (weaponData.type == WeaponType.Melee)
-            ServerMeleeAttack();
-        else if (weaponData.type == WeaponType.Gun)
-            ServerRangedAttack();
+
+        switch (weaponData.type) {
+            case WeaponType.Melee:
+                ServerMeleeAttack();
+                break;
+            case WeaponType.Gun:
+                ServerRangedAttack();
+                break;
+        }
     }
 
-    float lastAttackTime;
-    bool CanAttack() => Time.time >= lastAttackTime + weaponData.cooldown;
+    bool CanAttack() {
+        return weaponData != null && Time.time >= lastAttackTime + weaponData.cooldown;
+    }
 
+    // ==========
+    // è¿‘æ¥æ”»æ’ƒ
+    // ==========
+    [Server]
     void ServerMeleeAttack() {
-#if UNITY_EDITOR
-        // UŒ‚”ÍˆÍ‚Ì‰Â‹‰»i1•b•\¦j
-        DrawDebugSphere(firePoint.position, weaponData.range, Color.red, 1f);
-#endif
-        Collider[] hitBuffer = new Collider[16]; // “¯‚É“–‚½‚éÅ‘å”‚ğ‘z’è
-        int hitCount = Physics.OverlapSphereNonAlloc(firePoint.position, weaponData.range, hitBuffer);
+        Collider[] hits = Physics.OverlapSphere(firePoint.position, weaponData.range);
+        RpcShowMeleeRange(firePoint.position, weaponData.range);
 
-        for (int i = 0; i < hitCount; i++) {
-            var c = hitBuffer[i];
+        foreach (var c in hits) {
             var hp = c.GetComponent<CharacterBase>();
             if (hp != null && IsValidTarget(hp.gameObject)) {
                 hp.TakeDamage(weaponData.damage);
@@ -36,32 +42,79 @@ public class NetworkWeapon : NetworkBehaviour {
             }
         }
     }
-    void DrawDebugSphere(Vector3 center, float radius, Color color, float duration = 0.5f) {
-        int segments = 24;
-        Vector3 prevPoint = center + new Vector3(0, 0, radius);
-        for (int i = 1; i <= segments; i++) {
-            float angle = i * Mathf.PI * 2 / segments;
-            Vector3 nextPoint = center + new Vector3(Mathf.Sin(angle) * radius, 0, Mathf.Cos(angle) * radius);
-            Debug.DrawLine(prevPoint, nextPoint, color, duration);
-            prevPoint = nextPoint;
-        }
-    }
 
+    // ==========
+    // é è·é›¢æ”»æ’ƒ
+    // ==========
+    [Server]
     void ServerRangedAttack() {
-        var proj = Instantiate(weaponData.projectilePrefab, firePoint.position, firePoint.rotation);
-        var netObj = proj.GetComponent<NetworkIdentity>();
-        NetworkServer.Spawn(proj); // ‘SƒNƒ‰ƒCƒAƒ“ƒg‚ÉƒvƒƒWƒFƒNƒgƒ‹¶¬‚ğ’Ê’m
-        var pb = proj.GetComponent<Projectile>();
-        if (pb != null) pb.Init(weaponData.damage, weaponData.projectileSpeed);
+        if (weaponData.projectilePrefab == null) return;
+
+        // ãƒ—ãƒ¼ãƒ«ã‹ã‚‰å–å¾—
+        var proj = EffectPoolManager.Instance.GetFromPool(
+            weaponData.projectilePrefab,
+            firePoint.position,
+            firePoint.rotation
+        );
+
+        var projComp = proj.GetComponent<ProjectileBase>();
+        if (projComp != null)
+            projComp.Init(gameObject, weaponData.projectileSpeed, weaponData.damage);
+
+        // Mirrorã®åŒæœŸã‚’ä¿ã¤ãŸã‚ã€Spawnæ™‚ã«NetworkServer.Spawnã‚’å‘¼ã¶å¿…è¦ã‚ã‚Š
+        if (!proj.TryGetComponent<NetworkIdentity>(out var netId))
+            proj.AddComponent<NetworkIdentity>();
+
+        if (!proj.activeInHierarchy)
+            proj.SetActive(true);
+
+        NetworkServer.Spawn(proj);
+        RpcSpawnMuzzleEffect(firePoint.position, firePoint.rotation);
     }
 
-    bool IsValidTarget(GameObject target) {
-        // ƒ`[ƒ€”»’è‚â–¡•û”»’è‚ğ‚±‚±‚Ås‚¤
-        return true;
+    // ==========
+    // RPCé€šçŸ¥
+    // ==========
+    [ClientRpc]
+    void RpcSpawnHitEffect(Vector3 pos) {
+        if (weaponData.hitEffectPrefab == null) return;
+        var effect = EffectPoolManager.Instance.GetFromPool(weaponData.hitEffectPrefab, pos, Quaternion.identity);
+        EffectPoolManager.Instance.ReturnToPool(effect, 1.5f);
     }
 
     [ClientRpc]
-    void RpcSpawnHitEffect(Vector3 pos) {
-        if (weaponData.hitEffectPrefab) Instantiate(weaponData.hitEffectPrefab, pos, Quaternion.identity);
+    void RpcSpawnMuzzleEffect(Vector3 pos, Quaternion rot) {
+        if (weaponData.muzzleFlashPrefab == null) return;
+        var effect = EffectPoolManager.Instance.GetFromPool(weaponData.muzzleFlashPrefab, pos, rot);
+        EffectPoolManager.Instance.ReturnToPool(effect, 1.5f);
+    }
+
+    [ClientRpc]
+    void RpcShowMeleeRange(Vector3 center, float range) {
+        StartCoroutine(ShowSphereDebug(center, range, 0.2f));
+    }
+
+    IEnumerator ShowSphereDebug(Vector3 center, float radius, float time) {
+        float elapsed = 0f;
+        while (elapsed < time) {
+            elapsed += Time.deltaTime;
+            DebugDrawSphere(center, radius, Color.red);
+            yield return null;
+        }
+    }
+
+    void DebugDrawSphere(Vector3 center, float radius, Color color) {
+        int segments = 20;
+        for (int i = 0; i < segments; i++) {
+            float angle1 = (i / (float) segments) * Mathf.PI * 2;
+            float angle2 = ((i + 1) / (float) segments) * Mathf.PI * 2;
+            Vector3 p1 = center + new Vector3(Mathf.Cos(angle1), 0, Mathf.Sin(angle1)) * radius;
+            Vector3 p2 = center + new Vector3(Mathf.Cos(angle2), 0, Mathf.Sin(angle2)) * radius;
+            Debug.DrawLine(p1, p2, color, 0.02f);
+        }
+    }
+
+    bool IsValidTarget(GameObject obj) {
+        return obj != gameObject;
     }
 }
