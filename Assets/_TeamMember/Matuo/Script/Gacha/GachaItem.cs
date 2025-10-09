@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// ガチャの1つのアイテム情報を保持するクラス
+/// ガチャのアイテム情報を保持するクラス
 /// </summary>
 [System.Serializable]
 public class GachaItem {
