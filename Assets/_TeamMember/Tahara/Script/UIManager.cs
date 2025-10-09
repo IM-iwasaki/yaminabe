@@ -38,10 +38,9 @@ public class UIManager : MonoBehaviour
 
 
     /// <summary>
-    /// HPのUI更新
+    /// 体力のUI更新
     /// </summary>
-    /// <param name="_player"></param>
-    /// <param name="_oldValue"></param>
+    /// <param name="_maxHP"></param>
     /// <param name="_hp"></param>
     public void ChangHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
@@ -51,7 +50,11 @@ public class UIManager : MonoBehaviour
         else
             hpBarImage.gameObject.SetActive(true);
     }
-
+    /// <summary>
+    /// 残弾数のUI更新
+    /// </summary>
+    /// <param name="_maxMagazine"></param>
+    /// <param name="_magazine"></param>
     public void ChangeMagazineUI(int _maxMagazine, int _magazine) {
         magazineText.text = _magazine.ToString();
         magazineBar.value = (float)_magazine / _maxMagazine * FIXED_RATIO;
@@ -60,6 +63,11 @@ public class UIManager : MonoBehaviour
         else
             magazineBarImage.gameObject.SetActive(true);
     }
+    /// <summary>
+    /// MPのUI更新
+    /// </summary>
+    /// <param name="_maxMP"></param>
+    /// <param name="_mp"></param>
     public void ChangeMPUI(int _maxMP, int _mp) {
         mpText.text = _mp.ToString();
         mpBar.value = (float)_mp / _maxMP * FIXED_RATIO;
@@ -68,11 +76,18 @@ public class UIManager : MonoBehaviour
         else
             mpBarImage.gameObject.SetActive(true);
     }
-
+    /// <summary>
+    /// 残り時間のUI更新
+    /// </summary>
+    /// <param name="_currentTime"></param>
     public void ChangeTimerUI(int _currentTime) {
         timerText.text = _currentTime.ToString();
     }
-
+    /// <summary>
+    /// 各チームのカウントのUI更新
+    /// </summary>
+    /// <param name="_teamID"></param>
+    /// <param name="_count"></param>
     public void ChangeTeamCountUI(int _teamID, int _count) {
         countTexts[_teamID].text = _count.ToString();
     }
