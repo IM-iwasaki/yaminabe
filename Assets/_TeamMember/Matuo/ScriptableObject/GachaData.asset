@@ -13,15 +13,19 @@ MonoBehaviour:
   m_Name: GachaData
   m_EditorClassIdentifier: 
   items:
-  - itemName: "\u5263"
+  - itemName: "\u30B3\u30E2\u30F3\u306E\u5263"
     rarity: 0
+    rate: 50
+    prize: {fileID: 0}
+  - itemName: "\u30EC\u30A2\u306E\u9283"
+    rarity: 1
     rate: 40
     prize: {fileID: 0}
-  - itemName: "\u9283"
-    rarity: 1
-    rate: 30
-    prize: {fileID: 0}
-  - itemName: "\u9B54\u6CD5"
+  - itemName: "\u30A8\u30D4\u30C3\u30AF\u306E\u9B54\u6CD5"
     rarity: 2
     rate: 30
+    prize: {fileID: 0}
+  - itemName: "\u30EC\u30B8\u30A7\u30F3\u30C0\u30EA\u30FC\u306E\u30AD\u30E3\u30E9"
+    rarity: 3
+    rate: 20
     prize: {fileID: 0}
