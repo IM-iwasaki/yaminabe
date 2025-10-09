@@ -9,6 +9,11 @@ public class PlayerConst {
 
     public const float TURN_SPEED = 8.0f;
 
+    //ƒWƒƒƒ“ƒv—Í
+    public const float JUMP_FORCE = 10.0f;
+    //’n–Ê”»’è‚Ì‹——£(’·‚­‚·‚é‚Æ”»’è‚ªŠÃ‚­‚È‚é)
+    public const float GROUND_DISTANCE = 0.3f;
+
     public enum AttackType {
         Main = 0,
         Sub = 1,

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// キャラクタースキルの基底クラス
+/// </summary>
 public abstract class SkillBase : ScriptableObject {
     //スキル名(ゲーム内で表示する名前)
     public string SkillName;
@@ -12,6 +15,8 @@ public abstract class SkillBase : ScriptableObject {
     //スキルが発動中か
     public bool IsSkillUse;
 
-    // 抽象メソッド：スキル固有の動作を実装する
+    /// <summary>
+    /// Abstruct : スキル固有の動作(引数はスキルの発動者。)
+    /// </summary>
     public abstract void Activate(GameObject user);
 }
