@@ -649,7 +649,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8189418fa9cbabe46960dfc58758a76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pools: []
+  pools:
+  - tag: FireMagic
+    prefab: {fileID: 107947191535415832, guid: 5bedee4d4d724544688148cd86c7451f, type: 3}
+    size: 10
 --- !u!4 &1262116134
 Transform:
   m_ObjectHideFlags: 0
@@ -1015,6 +1018,7 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 8584663488555818686, guid: 85a0d588d9638a04aaa3c1596a30a193, type: 3}
+  - {fileID: 107947191535415832, guid: 5bedee4d4d724544688148cd86c7451f, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2

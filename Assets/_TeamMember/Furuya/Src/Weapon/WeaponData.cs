@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum WeaponType { Melee, Gun, Magic }
+public enum WeaponType { Melee, Gun, Magic}
 
 [CreateAssetMenu(menuName = "Weapons/WeaponData")]
 public class WeaponData : ScriptableObject {

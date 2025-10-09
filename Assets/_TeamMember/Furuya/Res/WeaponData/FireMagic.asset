@@ -13,17 +13,14 @@ MonoBehaviour:
   m_Name: FireMagic
   m_EditorClassIdentifier: 
   weaponName: FireMagic
-  icon: {fileID: 0}
   type: 2
   damage: 20
+  range: 10
   cooldown: 0.5
-  range: 5
   projectilePrefab: {fileID: 107947191535415832, guid: 5bedee4d4d724544688148cd86c7451f, type: 3}
   projectileSpeed: 20
-  hitEffectPrefab: {fileID: 8172394614802003838, guid: 7d3425a96b729534e9e11b2591f8fd20, type: 3}
   muzzleFlashPrefab: {fileID: 4186470608034871016, guid: 8bc41e1472c45464980c8feeed5f1649, type: 3}
-  effectIndex: 0
-  chargeParticles: {fileID: 0}
-  chargeTime: 0
-  muzzleFlashEffect: {fileID: 7917120168021017062, guid: 8bc41e1472c45464980c8feeed5f1649, type: 3}
-  hitEffect: {fileID: 3039980818029749698, guid: 7d3425a96b729534e9e11b2591f8fd20, type: 3}
+  hitEffectPrefab: {fileID: 8172394614802003838, guid: 7d3425a96b729534e9e11b2591f8fd20, type: 3}
+  chargeEffect: {fileID: 0}
+  chargeTime: 1
+  areaEffect: 0

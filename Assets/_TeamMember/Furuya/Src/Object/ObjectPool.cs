@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// プールの使い方例
@@ -8,53 +8,55 @@ using UnityEngine;
 /// ObjectPool.Instance.SpawnFromPool("MuzzleFlash", firePoint.position, firePoint.rotation);
 /// </summary>
 
-public class ObjectPool : MonoBehaviour {
-    public static ObjectPool Instance;
+public class ObjectPoolManager : MonoBehaviour {
+    public static ObjectPoolManager Instance;
 
     [System.Serializable]
-    public class Pool {
-        public string tag;
+    public class PoolItem {
+        public string name;
         public GameObject prefab;
         public int size;
     }
 
-    public List<Pool> pools;
-    private Dictionary<string, Queue<GameObject>> poolDictionary;
+    public List<PoolItem> pools;
+
+    private Dictionary<string, Queue<GameObject>> poolDictionary = new();
 
     void Awake() {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
+        Instance = this;
 
-    void Start() {
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
-
-        foreach (Pool pool in pools) {
+        foreach (var pool in pools) {
             Queue<GameObject> objectPool = new Queue<GameObject>();
-
             for (int i = 0; i < pool.size; i++) {
                 GameObject obj = Instantiate(pool.prefab);
                 obj.SetActive(false);
-                obj.transform.SetParent(transform); // Hierarchy整理
                 objectPool.Enqueue(obj);
             }
-
-            poolDictionary.Add(pool.tag, objectPool);
+            poolDictionary.Add(pool.name, objectPool);
         }
     }
 
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation) {
-        if (!poolDictionary.ContainsKey(tag)) {
-            Debug.LogWarning($"Pool with tag {tag} doesn't exist!");
+    // プールから取得
+    public GameObject Get(string name, Vector3 pos, Quaternion rot) {
+        if (!poolDictionary.ContainsKey(name)) {
+            Debug.LogWarning($"Pool {name} が存在しません");
             return null;
         }
 
-        GameObject objToSpawn = poolDictionary[tag].Dequeue();
-        objToSpawn.SetActive(true);
-        objToSpawn.transform.SetPositionAndRotation(position, rotation);
+        GameObject obj = poolDictionary[name].Dequeue();
+        obj.transform.position = pos;
+        obj.transform.rotation = rot;
+        obj.SetActive(true);
+        poolDictionary[name].Enqueue(obj);
 
-        poolDictionary[tag].Enqueue(objToSpawn);
+        // ParticleSystemなら再生
+        var ps = obj.GetComponent<ParticleSystem>();
+        if (ps != null) {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Play();
+        }
 
-        return objToSpawn;
+        return obj;
     }
 }
+
