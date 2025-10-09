@@ -38,7 +38,7 @@ public class ServerManager : NetworkBehaviour {
             }
             resetTeam.teamPlayerList.Clear();
         }
-        teams.Clear();
+        teams = new List<TeamData>(TEAMMATE_MAX);
         //‚±‚±‚ÅV‚½‚Éƒ`[ƒ€‚ğ¶¬(Player‚ÌteamID‚àİ’è‚µ‚È‚¨‚µ)
         for (int i = 0; i < _teamCount; i++) {
             teams.Add(new TeamData());
