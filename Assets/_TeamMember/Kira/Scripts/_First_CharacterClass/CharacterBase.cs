@@ -62,6 +62,8 @@ abstract class CharacterBase : NetworkBehaviour {
     //武器を使用するため
     [SerializeField] protected NetworkWeapon weaponController;
 
+    //ジャンプ入力をしたか
+    private bool IsJumpPressed = false;
     //GroundLayer
     private LayerMask GroundLayer;
     //足元の確認用Transform
@@ -83,6 +85,9 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
+    /// <summary>
+    /// 初期化をここで行う。
+    /// </summary>
     protected void Start() {
         rigidbody = GetComponent<Rigidbody>();
 
@@ -214,7 +219,7 @@ abstract class CharacterBase : NetworkBehaviour {
     public void OnJump(InputAction.CallbackContext context) {
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && IsGrounded) {
-            rigidbody.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
+            IsJumpPressed = true;
         }
     }
     /// <summary>
@@ -278,6 +283,29 @@ abstract class CharacterBase : NetworkBehaviour {
     /// ジャンプ管理関数
     /// </summary>
     protected void JumpControl() {
+        // ジャンプ判定
+        if (IsJumpPressed && IsGrounded) {
+            // 現在の速度をリセットしてから上方向に力を加える
+            Vector3 velocity = rigidbody.velocity;
+            velocity.y = 0f;
+            rigidbody.velocity = velocity;
+
+            rigidbody.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
+            IsJumpPressed = false; // 連打防止
+        }
+
+        //ベクトルが上方向に働いている時
+        if (rigidbody.velocity.y > 0) {
+            //追加の重力補正を掛ける
+            rigidbody.velocity += Vector3.up * Physics.gravity.y * (PlayerConst.JUMP_UPFORCE - 1) * Time.deltaTime;
+        } 
+        // ベクトルが下方向に働いている時
+        else if (rigidbody.velocity.y < 0) {
+            //追加の重力補正を掛ける
+            rigidbody.velocity += Vector3.up * Physics.gravity.y * (PlayerConst.JUMP_DOWNFORCE - 1) * Time.deltaTime;
+        }
+
+
         // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
         IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }
@@ -298,10 +326,9 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #region ～バフ・ステータス操作系～
     /// <summary>
-    /// HP回復（時間経過で徐々に回復）
+    /// HP回復（時間経過で徐々に回復）発動
     /// </summary>
-    [Command]
-    public void Heal(float _value, float _usingTime) {
+    [Command]public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
         // 総回復量を MaxHP の割合で計算（例：_value=0.2 → 20％回復）
@@ -310,7 +337,9 @@ abstract class CharacterBase : NetworkBehaviour {
         healCoroutine = StartCoroutine(HealOverTime(_value, _usingTime));
     }
 
-    //  時間まで徐々に回復させていく実行処理（コルーチン）
+    /// <summary>
+    ///  時間まで徐々に回復させていく実行処理（コルーチン）
+    /// </summary>
     private IEnumerator HealOverTime(float totalHeal, float duration) {
         float elapsed = 0f;
         float healPerSec = totalHeal / duration;
@@ -326,15 +355,16 @@ abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 攻撃力上昇バフ
+    /// 攻撃力上昇バフ発動
     /// </summary>
-    [Command]
-    public void AttackBuff(float _value, float _usingTime) {
+    [Command]public void AttackBuff(float _value, float _usingTime) {
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
     }
 
-    //  時間まで攻撃力を上げておく実行処理（コルーチン）
+    /// <summary>
+    ///  時間まで攻撃力を上げておく実行処理（コルーチン）
+    /// </summary>
     private IEnumerator AttackBuffRoutine(float value, float duration) {
         Attack = Mathf.RoundToInt(defaultAttack * value);
         yield return new WaitForSeconds(duration);
@@ -343,15 +373,16 @@ abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 移動速度上昇バフ
+    /// 移動速度上昇バフ発動
     /// </summary>
-    [Command]
-    public void MoveSpeedBuff(float _value, float _usingTime) {
+    [Command]public void MoveSpeedBuff(float _value, float _usingTime) {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
 
-    //  時間まで移動速度を上げておく実行処理（コルーチン）
+    /// <summary>
+    ///  時間まで移動速度を上げておく実行処理（コルーチン）
+    /// </summary>
     private IEnumerator SpeedBuffRoutine(float value, float duration) {
         MoveSpeed = Mathf.RoundToInt(defaultMoveSpeed * value);
         yield return new WaitForSeconds(duration);
@@ -362,8 +393,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// すべてのバフを即解除
     /// </summary>
-    [Command]
-    public void RemoveBuff() {
+    [Command]public void RemoveBuff() {
         StopAllCoroutines();
         MoveSpeed = defaultMoveSpeed;
         Attack = defaultAttack;

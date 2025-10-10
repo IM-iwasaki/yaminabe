@@ -186,7 +186,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5478059386412428429}
   serializedVersion: 4
-  m_Mass: 10
+  m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -406,8 +406,8 @@ MonoBehaviour:
   HP: 0
   TeamID: 0
   weaponController: {fileID: 2825701905452532873}
-  groundCheck: {fileID: 4807031412442243011}
-  isGrounded: 0
+  GroundCheck: {fileID: 4807031412442243011}
+  IsGrounded: 0
   InputStatus: {fileID: 11400000, guid: 40acd8b124764da4da5c5bf0596741c2, type: 2}
 --- !u!114 &2825701905452532873
 MonoBehaviour:
