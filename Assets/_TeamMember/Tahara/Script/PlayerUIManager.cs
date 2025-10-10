@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// プレイヤーUIにコンポーネント済みで、各Playerのメンバとして持たせてほしい
 /// </summary>
-public class PlayerUIManager : MonoBehaviour
+public class PlayerUIManager : NetworkBehaviour
 {
     public static PlayerUIManager instance = null;
     [SerializeField]
@@ -134,8 +134,10 @@ public class PlayerUIManager : MonoBehaviour
     }
     
     public void CreateTeammateUI(NetworkIdentity _player) {
-        if (!_player.isLocalPlayer) return;
-        GameObject madeUI = Instantiate(teammateUI, teamMateUIRoot);
+        if (!_player.isLocalPlayer || !_player.isClient) return;
+        Transform createUIRoot = GameObject.Find("NonBattleUIRoot/TeammateUIRoot").transform;
+
+        GameObject madeUI = Instantiate(teammateUI, createUIRoot);
         madeUI.GetComponent<TeammateUI>().Initialize(_player);
     }
 

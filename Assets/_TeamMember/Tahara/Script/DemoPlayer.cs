@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +22,7 @@ public class DemoPlayer : NetworkBehaviour {
     [SerializeField]
     private const int MaxHP = 100;
     [SerializeField]
-    public PlayerUIManager uiManager = null;
+    public PlayerUIManager playerUI = null;
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
@@ -43,12 +44,13 @@ public class DemoPlayer : NetworkBehaviour {
             playerCamera.gameObject.SetActive(true);
             //UIÇê∂ê¨
             GameObject canvas = GameObject.Find("GameUI");
-            PlayerUIManager uiM = Instantiate(uiManager, canvas.transform);
-            uiManager = uiM;
+            PlayerUIManager uiM = Instantiate(playerUI, canvas.transform);
+            uiM.transform.position /= 2;
+            playerUI = uiM.GetComponent<PlayerUIManager>();
         }
         else {
             playerCamera.gameObject.SetActive(false);
-            uiManager.gameObject.SetActive(false);
+            playerUI.gameObject.SetActive(false);
         }
     }
     private void Update() {
@@ -90,7 +92,7 @@ public class DemoPlayer : NetworkBehaviour {
     }
     private void ChangedHP(int _oldHP, int _newHP) {
         if (isLocalPlayer) {
-            uiManager.ChangHPUI(MaxHP,_newHP);
+            playerUI.ChangHPUI(MaxHP,_newHP);
         }
 
     }
@@ -107,4 +109,17 @@ public class DemoPlayer : NetworkBehaviour {
     private void CmdRequestRandomTeam() {
         ServerManager.instance.RandomTeamDecide();
     }
+
+
+    [TargetRpc]
+    public void TargetSendTeamList(NetworkConnection target, uint[] teammateIds) {
+        foreach (uint id in teammateIds) {
+            if (NetworkClient.spawned.TryGetValue(id, out var teammate)) {
+                playerUI.ResetTeammateUI();
+                playerUI.CreateTeammateUI(teammate);
+            }
+        }
+    }
+
+
 }
