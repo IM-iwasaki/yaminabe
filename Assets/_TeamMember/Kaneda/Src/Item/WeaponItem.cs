@@ -1,15 +1,6 @@
 using UnityEngine;
 
 /// <summary>
-/// 武器の種類
-/// </summary>
-public enum WeaponType {
-    Melee,      //  近接
-    Gun,        //  銃
-    Magic,      //  魔法
-}
-
-/// <summary>
 /// 武器アイテムクラス
 /// </summary>
 public class WeaponItem : ItemBase {

@@ -1,34 +1,37 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Mirror;
-using Mirror.Examples.Tanks;
 
 public class NetworkWeapon : NetworkBehaviour {
     public WeaponData weaponData;
     public Transform firePoint;
+    float lastAttackTime;
 
-    [Command] // ƒNƒ‰ƒCƒAƒ“ƒg‚©‚çƒT[ƒo[‚ÖuUŒ‚‚µ‚ÄIv‚ğ‘—‚é
+    [Command] // ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆ â†’ ã‚µãƒ¼ãƒãƒ¼ã¸æ”»æ’ƒãƒªã‚¯ã‚¨ã‚¹ãƒˆ
     public void CmdRequestAttack() {
         if (!CanAttack()) return;
         lastAttackTime = Time.time;
-        if (weaponData.type == WeaponType.Melee)
-            ServerMeleeAttack();
-        else if (weaponData.type == WeaponType.Gun)
-            ServerRangedAttack();
+
+        switch (weaponData.type) {
+            case WeaponType.Melee:
+                ServerMeleeAttack();
+                break;
+            case WeaponType.Gun:
+                ServerRangedAttack();
+                break;
+            case WeaponType.Magic:
+                ServerMagicAttack();
+                break;
+        }
     }
 
-    float lastAttackTime;
-    bool CanAttack() => Time.time >= lastAttackTime + weaponData.cooldown;
+    bool CanAttack() {
+        return weaponData != null && Time.time >= lastAttackTime + weaponData.cooldown;
+    }
 
+    // --- è¿‘æ¥æ”»æ’ƒ ---
     void ServerMeleeAttack() {
-#if UNITY_EDITOR
-        // UŒ‚”ÍˆÍ‚Ì‰Â‹‰»i1•b•\¦j
-        DrawDebugSphere(firePoint.position, weaponData.range, Color.red, 1f);
-#endif
-        Collider[] hitBuffer = new Collider[16]; // “¯‚É“–‚½‚éÅ‘å”‚ğ‘z’è
-        int hitCount = Physics.OverlapSphereNonAlloc(firePoint.position, weaponData.range, hitBuffer);
-
-        for (int i = 0; i < hitCount; i++) {
-            var c = hitBuffer[i];
+        Collider[] hits = Physics.OverlapSphere(firePoint.position, weaponData.range);
+        foreach (var c in hits) {
             var hp = c.GetComponent<CharacterBase>();
             if (hp != null && IsValidTarget(hp.gameObject)) {
                 hp.TakeDamage(weaponData.damage);
@@ -36,32 +39,77 @@ public class NetworkWeapon : NetworkBehaviour {
             }
         }
     }
-    void DrawDebugSphere(Vector3 center, float radius, Color color, float duration = 0.5f) {
-        int segments = 24;
-        Vector3 prevPoint = center + new Vector3(0, 0, radius);
-        for (int i = 1; i <= segments; i++) {
-            float angle = i * Mathf.PI * 2 / segments;
-            Vector3 nextPoint = center + new Vector3(Mathf.Sin(angle) * radius, 0, Mathf.Cos(angle) * radius);
-            Debug.DrawLine(prevPoint, nextPoint, color, duration);
-            prevPoint = nextPoint;
-        }
-    }
 
+    // --- éŠƒæ’ƒ ---
     void ServerRangedAttack() {
-        var proj = Instantiate(weaponData.projectilePrefab, firePoint.position, firePoint.rotation);
-        var netObj = proj.GetComponent<NetworkIdentity>();
-        NetworkServer.Spawn(proj); // ‘SƒNƒ‰ƒCƒAƒ“ƒg‚ÉƒvƒƒWƒFƒNƒgƒ‹¶¬‚ğ’Ê’m
-        var pb = proj.GetComponent<Projectile>();
-        if (pb != null) pb.Init(weaponData.damage, weaponData.projectileSpeed);
+        if (weaponData.projectilePrefab == null) return;
+
+        GameObject proj = Instantiate(weaponData.projectilePrefab, firePoint.position, firePoint.rotation);
+        NetworkServer.Spawn(proj);
+
+        // Rigidbodyã§å‰é€²ã•ã›ã‚‹
+        Rigidbody rb = proj.GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.velocity = firePoint.forward * weaponData.projectileSpeed;
+
+        // ç™ºå°„ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿ
+        RpcPlayMuzzleFlash(firePoint.position, firePoint.rotation);
     }
 
-    bool IsValidTarget(GameObject target) {
-        // ƒ`[ƒ€”»’è‚â–¡•û”»’è‚ğ‚±‚±‚Ås‚¤
-        return true;
+    // --- é­”æ³•æ”»æ’ƒ ---
+    void ServerMagicAttack() {
+        MagicWeaponData magicData = weaponData as MagicWeaponData;
+        if (magicData == null || magicData.projectilePrefab == null) return;
+
+        GameObject proj = Instantiate(magicData.projectilePrefab, firePoint.position, firePoint.rotation);
+        NetworkServer.Spawn(proj);
+
+        // å¼¾ã®åˆæœŸåŒ–
+        MagicProjectile projScript = proj.GetComponent<MagicProjectile>();
+        if (projScript != null) {
+            projScript.Init(
+                gameObject,
+                magicData,
+                magicData.magicType,
+                magicData.projectileSpeed,
+                magicData.initialHeightSpeed,
+                magicData.damage
+            );
+        }
+
+        // ç™ºå°„ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿ
+        RpcPlayMagicEffect(firePoint.position, firePoint.rotation);
     }
 
+    // --- ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã§ãƒ’ãƒƒãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿï¼ˆãƒ—ãƒ¼ãƒ«å¯¾å¿œï¼‰ ---
     [ClientRpc]
     void RpcSpawnHitEffect(Vector3 pos) {
-        if (weaponData.hitEffectPrefab) Instantiate(weaponData.hitEffectPrefab, pos, Quaternion.identity);
+        if (weaponData.hitEffectPrefab == null) return;
+
+        var fx = EffectPoolManager.Instance.GetFromPool(weaponData.hitEffectPrefab, pos, Quaternion.identity);
+        EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
+    }
+
+    // --- é€šå¸¸éŠƒã®ãƒã‚ºãƒ«ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ ---
+    [ClientRpc]
+    void RpcPlayMuzzleFlash(Vector3 pos, Quaternion rot) {
+        if (weaponData.muzzleFlashPrefab == null) return;
+
+        var fx = EffectPoolManager.Instance.GetFromPool(weaponData.muzzleFlashPrefab, pos, rot);
+        EffectPoolManager.Instance.ReturnToPool(fx, 0.8f);
+    }
+
+    // --- é­”æ³•ç”¨ãƒã‚ºãƒ«ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ ---
+    [ClientRpc]
+    void RpcPlayMagicEffect(Vector3 pos, Quaternion rot) {
+        MagicWeaponData magicData = weaponData as MagicWeaponData;
+        if (magicData == null || magicData.muzzleFlashPrefab == null) return;
+
+        var fx = EffectPoolManager.Instance.GetFromPool(magicData.muzzleFlashPrefab, pos, rot);
+        EffectPoolManager.Instance.ReturnToPool(fx, 1.2f);
+    }
+
+    bool IsValidTarget(GameObject obj) {
+        return obj != gameObject; // è‡ªåˆ†ä»¥å¤–ã‚’å¯¾è±¡
     }
 }

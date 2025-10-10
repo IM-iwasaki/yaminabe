@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2528645953918375878}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0.902}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -49,7 +49,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2528645953918375878}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -101,7 +101,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -116,11 +116,11 @@ GameObject:
   - component: {fileID: 7413419872618115794}
   - component: {fileID: 1360399582838204275}
   - component: {fileID: 1707105725094462554}
+  - component: {fileID: -3193030553623676158}
+  - component: {fileID: 5417666782627650743}
   - component: {fileID: 6363639642452133455}
   - component: {fileID: 9189960311207587785}
   - component: {fileID: 3529359854004236344}
-  - component: {fileID: 5417666782627650743}
-  - component: {fileID: -3193030553623676158}
   - component: {fileID: 2467981929197791590}
   m_Layer: 0
   m_Name: PlayerTest
@@ -196,6 +196,41 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-3193030553623676158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8042436119583077381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3da15fae01a63634fa54741be99c0f74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  weaponData: {fileID: 11400000, guid: d8bae2cb7337d764fbb1bb72c96d65f3, type: 2}
+  firePoint: {fileID: 2641770865133754544}
+--- !u!114 &5417666782627650743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8042436119583077381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d39ae5ef675209a4b8db8ceeead5feee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  HP: 0
+  TeamID: 0
+  weaponController: {fileID: -3193030553623676158}
 --- !u!136 &6363639642452133455
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -307,7 +342,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5417666782627650743}
         m_TargetAssemblyTypeName: CharacterBase, Assembly-CSharp
-        m_MethodName: OnAttack
+        m_MethodName: OnAttack_Main
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -380,41 +415,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &5417666782627650743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8042436119583077381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d39ae5ef675209a4b8db8ceeead5feee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  HP: 0
-  TeamID: 0
-  weaponController: {fileID: -3193030553623676158}
---- !u!114 &-3193030553623676158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8042436119583077381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3da15fae01a63634fa54741be99c0f74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  weaponData: {fileID: 11400000, guid: 65f33203894ea6347a555f19cb947044, type: 2}
-  firePoint: {fileID: 2641770865133754544}
 --- !u!114 &2467981929197791590
 MonoBehaviour:
   m_ObjectHideFlags: 0
