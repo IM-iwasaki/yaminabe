@@ -7,7 +7,7 @@ public class NetworkWeapon : NetworkBehaviour {
     float lastAttackTime;
 
     [Command] // クライアント → サーバーへ攻撃リクエスト
-    public void CmdRequestAttack() {
+    public void CmdRequestAttack(Vector3 direction) {
         if (!CanAttack()) return;
         lastAttackTime = Time.time;
 
@@ -16,10 +16,10 @@ public class NetworkWeapon : NetworkBehaviour {
                 ServerMeleeAttack();
                 break;
             case WeaponType.Gun:
-                ServerRangedAttack();
+                //ServerRangedAttack(direction);
                 break;
             case WeaponType.Magic:
-                ServerMagicAttack();
+                ServerMagicAttack(direction);
                 break;
         }
     }
@@ -32,7 +32,6 @@ public class NetworkWeapon : NetworkBehaviour {
         weaponData = data;
     }
 
-
     // --- 近接攻撃 ---
     void ServerMeleeAttack() {
         Collider[] hits = Physics.OverlapSphere(firePoint.position, weaponData.range);
@@ -40,7 +39,7 @@ public class NetworkWeapon : NetworkBehaviour {
             var hp = c.GetComponent<CharacterBase>();
             if (hp != null && IsValidTarget(hp.gameObject)) {
                 hp.TakeDamage(weaponData.damage);
-                RpcSpawnHitEffect(c.transform.position);
+                RpcSpawnHitEffect(c.transform.position, weaponData.hitEffectType);
             }
         }
     }
@@ -52,66 +51,55 @@ public class NetworkWeapon : NetworkBehaviour {
         GameObject proj = Instantiate(weaponData.projectilePrefab, firePoint.position, firePoint.rotation);
         NetworkServer.Spawn(proj);
 
-        // Rigidbodyで前進させる
         Rigidbody rb = proj.GetComponent<Rigidbody>();
         if (rb != null)
             rb.velocity = firePoint.forward * weaponData.projectileSpeed;
 
-        // 発射エフェクト再生
-        RpcPlayMuzzleFlash(firePoint.position, firePoint.rotation);
+        RpcPlayMuzzleFlash(firePoint.position, weaponData.muzzleFlashType);
     }
 
     // --- 魔法攻撃 ---
-    void ServerMagicAttack() {
+    void ServerMagicAttack(Vector3 direction) {
         MagicWeaponData magicData = weaponData as MagicWeaponData;
         if (magicData == null || magicData.projectilePrefab == null) return;
 
-        GameObject proj = Instantiate(magicData.projectilePrefab, firePoint.position, firePoint.rotation);
+        GameObject proj = Instantiate(magicData.projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
         NetworkServer.Spawn(proj);
 
-        // 弾の初期化
         MagicProjectile projScript = proj.GetComponent<MagicProjectile>();
         if (projScript != null) {
             projScript.Init(
                 gameObject,
-                magicData,
                 magicData.magicType,
                 magicData.projectileSpeed,
                 magicData.initialHeightSpeed,
-                magicData.damage
+                magicData.damage,
+                direction
             );
         }
 
-        // 発射エフェクト再生
-        RpcPlayMagicEffect(firePoint.position, firePoint.rotation);
+        // 発射エフェクト
+        RpcPlayMuzzleFlash(firePoint.position, magicData.muzzleFlashType);
     }
 
-    // --- クライアントでヒットエフェクト再生（プール対応） ---
+    // --- クライアントでヒットエフェクト再生 ---
     [ClientRpc]
-    void RpcSpawnHitEffect(Vector3 pos) {
-        if (weaponData.hitEffectPrefab == null) return;
-
-        var fx = EffectPoolManager.Instance.GetFromPool(weaponData.hitEffectPrefab, pos, Quaternion.identity);
-        EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
+    void RpcSpawnHitEffect(Vector3 pos, EffectType type) {
+        GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(type);
+        if (prefab != null) {
+            var fx = EffectPoolManager.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
+        }
     }
 
-    // --- 通常銃のマズルフラッシュ ---
+    // --- クライアントでマズルフラッシュ再生 ---
     [ClientRpc]
-    void RpcPlayMuzzleFlash(Vector3 pos, Quaternion rot) {
-        if (weaponData.muzzleFlashPrefab == null) return;
-
-        var fx = EffectPoolManager.Instance.GetFromPool(weaponData.muzzleFlashPrefab, pos, rot);
-        EffectPoolManager.Instance.ReturnToPool(fx, 0.8f);
-    }
-
-    // --- 魔法用マズルフラッシュ ---
-    [ClientRpc]
-    void RpcPlayMagicEffect(Vector3 pos, Quaternion rot) {
-        MagicWeaponData magicData = weaponData as MagicWeaponData;
-        if (magicData == null || magicData.muzzleFlashPrefab == null) return;
-
-        var fx = EffectPoolManager.Instance.GetFromPool(magicData.muzzleFlashPrefab, pos, rot);
-        EffectPoolManager.Instance.ReturnToPool(fx, 1.2f);
+    void RpcPlayMuzzleFlash(Vector3 pos, EffectType type) {
+        GameObject prefab = WeaponPoolRegistry.Instance.GetMuzzleFlash(type);
+        if (prefab != null) {
+            var fx = EffectPoolManager.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            EffectPoolManager.Instance.ReturnToPool(fx, 0.8f);
+        }
     }
 
     bool IsValidTarget(GameObject obj) {

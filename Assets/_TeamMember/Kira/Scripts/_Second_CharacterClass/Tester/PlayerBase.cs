@@ -31,7 +31,8 @@ class PlayerBase : CharacterBase {
         if (weaponController == null) return;
 
         // 武器が攻撃可能かチェックしてサーバー命令を送る
-        weaponController.CmdRequestAttack();      
+        Vector3 shootDir = GetShootDirection();
+        weaponController.CmdRequestAttack(shootDir);      
     }
 
     protected override void StartUseSkill() {
