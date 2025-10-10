@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using Mirror;
+using System.Collections;
 
 public class MagicProjectile : NetworkBehaviour {
-    [Header("Projectile Settings")]
     public ProjectileType type = ProjectileType.Linear;
     public float speed = 20f;
     public float initialHeightSpeed = 5f;
@@ -10,32 +10,31 @@ public class MagicProjectile : NetworkBehaviour {
 
     private Rigidbody rb;
     private GameObject owner;
-    private WeaponData weaponData;
+    private EffectType hitEffectType;
 
-    public void Init(GameObject shooter, WeaponData data, ProjectileType _type, float _speed, float _initialHeightSpeed, int _damage) {
+    public void Init(GameObject shooter, ProjectileType _type, float _speed, float _initialHeightSpeed, int _damage, Vector3 direction) {
         owner = shooter;
-        weaponData = data;
         type = _type;
         speed = _speed;
         initialHeightSpeed = _initialHeightSpeed;
         damage = _damage;
 
         rb = GetComponent<Rigidbody>();
-        if (type == ProjectileType.Parabola && rb != null) {
-            rb.useGravity = true;
-            rb.velocity = transform.forward * speed + Vector3.up * initialHeightSpeed;
-        }
-        else if (rb != null) {
-            rb.useGravity = false;
-            rb.velocity = transform.forward * speed;
+        if (rb != null) {
+            if (type == ProjectileType.Parabola) {
+                rb.useGravity = true;
+                rb.velocity = direction * speed + Vector3.up * initialHeightSpeed;
+            }
+            else {
+                rb.useGravity = false;
+                rb.velocity = direction * speed;
+            }
         }
     }
 
     void FixedUpdate() {
-        if (!isServer) return; // サーバーのみで移動制御
-        if (type == ProjectileType.Linear && rb == null) {
-            transform.position += transform.forward * speed * Time.fixedDeltaTime;
-        }
+        if (!isServer) return;
+        if (type == ProjectileType.Linear && rb == null) transform.position += transform.forward * speed * Time.fixedDeltaTime;
     }
 
     void OnTriggerEnter(Collider other) {
@@ -43,35 +42,23 @@ public class MagicProjectile : NetworkBehaviour {
         if (other.gameObject == owner) return;
 
         CharacterBase target = other.GetComponent<CharacterBase>();
-        if (target != null) {
-            target.TakeDamage(damage);
-        }
+        if (target != null) target.TakeDamage(damage);
 
-        // 💥 先にエフェクト呼び出し（破壊前）
-        RpcPlayHitEffect(transform.position);
-
-        // 少し待ってから破壊（RPCが確実に届くように）
+        RpcPlayHitEffect(transform.position, hitEffectType);
         StartCoroutine(DelayedDestroy());
     }
 
-    System.Collections.IEnumerator DelayedDestroy() {
+    IEnumerator DelayedDestroy() {
         yield return new WaitForSeconds(0.05f);
-        if (this != null && gameObject != null)
-            NetworkServer.Destroy(gameObject);
+        if (this != null && gameObject != null) NetworkServer.Destroy(gameObject);
     }
 
     [ClientRpc]
-    void RpcPlayHitEffect(Vector3 pos) {
-        if (weaponData == null || weaponData.hitEffectPrefab == null)
-            return;
-
-        GameObject fx = EffectPoolManager.Instance.GetFromPool(
-            weaponData.hitEffectPrefab,
-            pos,
-            Quaternion.identity
-        );
-
-        if (fx != null)
+    void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
+        GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
+        if (prefab != null) {
+            var fx = EffectPoolManager.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
+        }
     }
 }

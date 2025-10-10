@@ -5,66 +5,33 @@ public class ProjectileBase : NetworkBehaviour {
     public float speed = 20f;
     public float lifeTime = 3f;
     public int damage = 10;
-
     private float lifeTimer;
-    public GameObject owner;
+    private GameObject owner;
 
-    private Rigidbody rb;
-
-    public void Init(GameObject owner, float speed, int damage) {
-        this.owner = owner;
-        this.speed = speed;
-        this.damage = damage;
-        lifeTimer = 0f;
-
-        rb = GetComponent<Rigidbody>();
-        if (rb != null) {
-            rb.velocity = transform.forward * speed;
-        }
-    }
-
-    void OnEnable() {
+    public void Init(GameObject shooter, float _speed, int _damage) {
+        owner = shooter;
+        speed = _speed;
+        damage = _damage;
         lifeTimer = 0f;
     }
 
-    void Update() {
-        // Rigidbody がある場合は物理で動くので Update で動かさない
-        if (rb == null) {
-            transform.position += transform.forward * speed * Time.deltaTime;
-        }
+    void FixedUpdate() {
+        if (!isServer) return; // サーバーのみ移動
+        transform.position += transform.forward * speed * Time.fixedDeltaTime;
 
-        lifeTimer += Time.deltaTime;
+        lifeTimer += Time.fixedDeltaTime;
         if (lifeTimer >= lifeTime)
-            Despawn();
+            NetworkServer.Destroy(gameObject);
     }
 
-    [ServerCallback]
     void OnTriggerEnter(Collider other) {
+        if (!isServer) return;
         if (other.gameObject == owner) return;
 
-        CharacterBase target = other.GetComponent<CharacterBase>();
-        if (target != null) {
+        var target = other.GetComponent<CharacterBase>();
+        if (target != null)
             target.TakeDamage(damage);
-        }
 
-        // ヒットエフェクト再生（クライアント側）
-        RpcPlayHitEffect(transform.position);
-
-        Despawn();
-    }
-
-    [ClientRpc]
-    void RpcPlayHitEffect(Vector3 pos) {
-        if (WeaponPoolRegistry.Instance.hitEffect != null) {
-            var fx = EffectPoolManager.Instance.GetFromPool(
-                WeaponPoolRegistry.Instance.hitEffect, pos, Quaternion.identity
-            );
-            EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
-        }
-    }
-
-    public void Despawn() {
-        gameObject.SetActive(false);
-        rb?.Sleep();
+        NetworkServer.Destroy(gameObject);
     }
 }

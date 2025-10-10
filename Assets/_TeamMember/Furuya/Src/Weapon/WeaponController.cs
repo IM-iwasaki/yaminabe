@@ -1,5 +1,8 @@
 using UnityEngine;
 
+//現在は使用していない
+//制作進行上完全に使わないことが確定したら削除
+
 public class WeaponController : MonoBehaviour {
     public WeaponData currentWeapon;
     float lastAttackTime;
@@ -25,8 +28,8 @@ public class WeaponController : MonoBehaviour {
             var hp = c.GetComponent<CharacterBase>();
             if (hp != null) {
                 hp.TakeDamage(currentWeapon.damage);
-                if (currentWeapon.hitEffectPrefab)
-                    Instantiate(currentWeapon.hitEffectPrefab, c.transform.position, Quaternion.identity);
+                //if (currentWeapon.hitEffectPrefab)
+                    //Instantiate(currentWeapon.hitEffectPrefab, c.transform.position, Quaternion.identity);
             }
         }
     }

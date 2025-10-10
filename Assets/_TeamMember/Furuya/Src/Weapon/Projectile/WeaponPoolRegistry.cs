@@ -1,13 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponPoolRegistry : MonoBehaviour {
     public static WeaponPoolRegistry Instance;
-    public GameObject hitEffect;
-    public GameObject muzzleEffect;
 
-    private void Awake() {
-        Instance = this;
+    [System.Serializable]
+    public struct EffectMapping { public EffectType type; public GameObject prefab; }
+    public EffectMapping[] hitEffects;
+    public EffectMapping[] muzzleFlashes;
+
+    void Awake() { Instance = this; }
+
+    public GameObject GetHitEffect(EffectType type) {
+        foreach (var e in hitEffects) if (e.type == type) return e.prefab;
+        return null;
+    }
+
+    public GameObject GetMuzzleFlash(EffectType type) {
+        foreach (var e in muzzleFlashes) if (e.type == type) return e.prefab;
+        return null;
     }
 }

@@ -17,7 +17,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #region ～ステータス～
     //現在の体力
-    [SyncVar]public int HP;
+    [SyncVar] public int HP;
     //最大の体力
     public int MaxHP { get; protected set; }
     //基礎攻撃力
@@ -27,7 +27,7 @@ abstract class CharacterBase : NetworkBehaviour {
     //持っている武器の文字列
     public string CurrentWeapon { get; protected set; }
     //所属チームの番号
-    [SyncVar]public int TeamID;
+    [SyncVar] public int TeamID;
 
     #endregion
 
@@ -44,6 +44,9 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //リスポーン地点
     public Vector3 RespownPosition { get; protected set; }
+
+    //射撃位置
+    public Transform firePoint;
 
     #endregion
 
@@ -135,7 +138,8 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Command]public void TakeDamage(int _damage) {
+    [Command]
+    public void TakeDamage(int _damage) {
         //ダメージが0以下だったら帰る
         if (_damage <= 0)
             return;
@@ -144,13 +148,14 @@ abstract class CharacterBase : NetworkBehaviour {
         //HPが0以下になったらisDeadを真にする
         if (HP <= 0)
             RemoveBuff();
-            IsDead = true;
+        IsDead = true;
     }
 
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Command]public void Respown() {
+    [Command]
+    public void Respown() {
         //死んでいなかったら即抜け
         if (!IsDead)
             return;
@@ -166,10 +171,11 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
-    [Command]public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+    [Command]
+    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
         CharacterBase player = _player.GetComponent<CharacterBase>();
         int currentTeam = player.TeamID;
-        int newTeam = (int)_color;
+        int newTeam = (int) _color;
 
         //加入しようとしてるチームが埋まっていたら
         if (ServerManager.instance.teams[(newTeam)].teamPlayerList.Count >= TEAMMATE_MAX) {
@@ -286,6 +292,30 @@ abstract class CharacterBase : NetworkBehaviour {
     /// 攻撃関数
     /// </summary>
     abstract protected void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main);
+
+    /// <summary>
+    /// 攻撃に使用する向いている方向を取得する関数
+    /// </summary>
+    /// <returns></returns>
+    protected Vector3 GetShootDirection() {
+        Camera cam = Camera.main;
+        Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
+        Ray ray = cam.ScreenPointToRay(screenCenter);
+
+        RaycastHit hit;
+        Vector3 targetPoint;
+
+        if (Physics.Raycast(ray, out hit, 100f)) {
+            targetPoint = hit.point;
+        }
+        else {
+            targetPoint = ray.GetPoint(50f); // 当たらなければ50m先
+        }
+
+        // firePoint → レティクル命中点 の方向に補正
+        return (targetPoint - firePoint.position).normalized;
+    }
+
 
     //スキル使用関数
     abstract protected void StartUseSkill();

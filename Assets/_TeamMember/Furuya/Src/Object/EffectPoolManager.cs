@@ -1,8 +1,9 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectPoolManager : MonoBehaviour {
+public class EffectPoolManager : NetworkBehaviour {
     public static EffectPoolManager Instance;
 
     [System.Serializable]
