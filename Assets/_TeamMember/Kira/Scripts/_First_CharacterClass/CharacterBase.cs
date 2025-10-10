@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static TeamData;
@@ -72,6 +73,14 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
+    #region ～バフ管理用変数～
+    private Coroutine healCoroutine;
+    private Coroutine speedCoroutine;
+    private Coroutine attackCoroutine;
+    private int defaultMoveSpeed;
+    private int defaultAttack;
+    #endregion
+
     #endregion
 
     protected void Start() {
@@ -80,6 +89,10 @@ abstract class CharacterBase : NetworkBehaviour {
         // "Ground" という名前のレイヤーを取得してマスク化
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
         GroundLayer = 1 << groundLayerIndex;
+
+        // デフォルト値保存
+        defaultMoveSpeed = MoveSpeed;
+        defaultAttack = Attack;
     }
 
     /// <summary>
@@ -115,7 +128,7 @@ abstract class CharacterBase : NetworkBehaviour {
                 CmdJoinTeam(netIdentity, teamColor.Blue);
             }
         }
-    }   
+    }
 
     #region ～プレイヤー状態更新関数～
 
@@ -130,6 +143,7 @@ abstract class CharacterBase : NetworkBehaviour {
         HP -= _damage;
         //HPが0以下になったらisDeadを真にする
         if (HP <= 0)
+            RemoveBuff();
             IsDead = true;
     }
 
@@ -280,5 +294,81 @@ abstract class CharacterBase : NetworkBehaviour {
     protected void Interact() {
     }
 
-    #endregion    
+    #endregion
+
+    #region ～バフ・ステータス操作系～
+    /// <summary>
+    /// HP回復（時間経過で徐々に回復）
+    /// </summary>
+    [Command]
+    public void Heal(float _value, float _usingTime) {
+        if (healCoroutine != null) StopCoroutine(healCoroutine);
+
+        // 総回復量を MaxHP の割合で計算（例：_value=0.2 → 20％回復）
+        float totalHeal = MaxHP * _value;
+        //  回復実行（コルーチンで回す）
+        healCoroutine = StartCoroutine(HealOverTime(_value, _usingTime));
+    }
+
+    //  時間まで徐々に回復させていく実行処理（コルーチン）
+    private IEnumerator HealOverTime(float totalHeal, float duration) {
+        float elapsed = 0f;
+        float healPerSec = totalHeal / duration;
+
+        while (elapsed < duration) {
+            if (IsDead) yield break; // 死亡時は即終了
+            HP = Mathf.Min(HP + Mathf.RoundToInt(healPerSec * Time.deltaTime), MaxHP);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        healCoroutine = null;
+    }
+
+    /// <summary>
+    /// 攻撃力上昇バフ
+    /// </summary>
+    [Command]
+    public void AttackBuff(float _value, float _usingTime) {
+        if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+        attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
+    }
+
+    //  時間まで攻撃力を上げておく実行処理（コルーチン）
+    private IEnumerator AttackBuffRoutine(float value, float duration) {
+        Attack = Mathf.RoundToInt(defaultAttack * value);
+        yield return new WaitForSeconds(duration);
+        Attack = defaultAttack;
+        attackCoroutine = null;
+    }
+
+    /// <summary>
+    /// 移動速度上昇バフ
+    /// </summary>
+    [Command]
+    public void MoveSpeedBuff(float _value, float _usingTime) {
+        if (speedCoroutine != null) StopCoroutine(speedCoroutine);
+        speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
+    }
+
+    //  時間まで移動速度を上げておく実行処理（コルーチン）
+    private IEnumerator SpeedBuffRoutine(float value, float duration) {
+        MoveSpeed = Mathf.RoundToInt(defaultMoveSpeed * value);
+        yield return new WaitForSeconds(duration);
+        MoveSpeed = defaultMoveSpeed;
+        speedCoroutine = null;
+    }
+
+    /// <summary>
+    /// すべてのバフを即解除
+    /// </summary>
+    [Command]
+    public void RemoveBuff() {
+        StopAllCoroutines();
+        MoveSpeed = defaultMoveSpeed;
+        Attack = defaultAttack;
+        healCoroutine = speedCoroutine = attackCoroutine = null;
+    }
+    #endregion
+
 }
