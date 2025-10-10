@@ -4,7 +4,6 @@ using System;
 /// <summary>
 /// プレイヤーのお金を管理するクラス
 /// シングルトン構造でゲーム全体から参照可能
-/// セーブ機能などにも拡張できる
 /// </summary>
 public class PlayerWallet : MonoBehaviour {
     // シングルトン
@@ -13,7 +12,7 @@ public class PlayerWallet : MonoBehaviour {
     [Header("初期設定")]
     [SerializeField] private int startMoney = 0;
 
-    [Header("現在の所持金（読み取り専用）")]
+    [Header("現在の所持金")]
     [SerializeField] private int currentMoney;
 
     /// <summary>
@@ -29,8 +28,7 @@ public class PlayerWallet : MonoBehaviour {
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // ゲーム開始時に初期金額を設定
-        currentMoney = startMoney;
+        LoadMoney();
     }
 
     /// <summary>
@@ -44,10 +42,9 @@ public class PlayerWallet : MonoBehaviour {
     /// <param name="amount">追加する金額（負数で減算）</param>
     public void AddMoney(int amount) {
         currentMoney += amount;
-        if (currentMoney < 0)
-            currentMoney = 0;
-
+        if (currentMoney < 0) currentMoney = 0;
         OnMoneyChanged?.Invoke(currentMoney);
+        SaveMoney();
     }
 
     /// <summary>
@@ -57,22 +54,42 @@ public class PlayerWallet : MonoBehaviour {
     /// <returns>成功したらtrue</returns>
     public bool SpendMoney(int amount) {
         // 金額が無効な場合(マイナスなど)
-        if (amount <= 0) return false;       
+        if (amount <= 0) return false;
         // お金が足りない場合
         if (currentMoney < amount) return false;
-        
 
         currentMoney -= amount;
         OnMoneyChanged?.Invoke(currentMoney);
-        Debug.Log($"{amount} 円支払った,　残高: {currentMoney}");
+        SaveMoney();
+        Debug.Log($"{amount} 円支払った, 残高: {currentMoney}");
         return true;
     }
 
     /// <summary>
-    /// 所持金をリセットする（例：新規データ作成時）
+    /// 所持金のリセット
     /// </summary>
     public void ResetMoney() {
         currentMoney = startMoney;
+        OnMoneyChanged?.Invoke(currentMoney);
+        SaveMoney();
+    }
+
+    /// <summary>
+    /// 所持金のセーブ
+    /// </summary>
+    private void SaveMoney() {
+        // 既存データをロードして所持金だけ更新
+        var data = SaveSystem.Load();
+        data.currentMoney = currentMoney;
+        SaveSystem.Save(data);
+    }
+
+    /// <summary>
+    /// セーブされている所持金のロード
+    /// </summary>
+    private void LoadMoney() {
+        var data = SaveSystem.Load();
+        currentMoney = data.currentMoney > 0 ? data.currentMoney : startMoney;
         OnMoneyChanged?.Invoke(currentMoney);
     }
 }

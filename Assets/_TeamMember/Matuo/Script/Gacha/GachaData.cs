@@ -1,37 +1,62 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
-/// ガチャのアイテムリストをレアリティ別に保持するScriptableObject
+/// ガチャのアイテムとレアリティ確率を保持する ScriptableObject
 /// </summary>
 [CreateAssetMenu(fileName = "GachaData", menuName = "Gacha/GachaData")]
 public class GachaData : ScriptableObject {
+    [System.Serializable]
+    public class RarityRate {
+        public string rarityName;
+        public Rarity rarity;
+        [Range(0, 100)] public int rate;
+    }
+
+    [Header("それぞれのレアリティ出現率(合計100%にして)")]
+    public List<RarityRate> rarityRates = new() {
+        new RarityRate { rarity = Rarity.Common, rate = 70 },
+        new RarityRate { rarity = Rarity.Rare, rate = 20 },
+        new RarityRate { rarity = Rarity.Epic, rate = 9 },
+        new RarityRate { rarity = Rarity.Legendary, rate = 1 }
+    };
+
     [Header("レアリティごとのアイテムリスト")]
-    public List<GachaItem> commonItems = new List<GachaItem>();
-    public List<GachaItem> rareItems = new List<GachaItem>();
-    public List<GachaItem> epicItems = new List<GachaItem>();
-    public List<GachaItem> legendaryItems = new List<GachaItem>();
+    public List<GachaItem> commonItems = new();
+    public List<GachaItem> rareItems = new();
+    public List<GachaItem> epicItems = new();
+    public List<GachaItem> legendaryItems = new();
 
     /// <summary>
     /// レアリティに応じたアイテムリストを返す
     /// </summary>
-    public List<GachaItem> GetItemsByRarity(Rarity rarity) {
-        return rarity switch {
-            Rarity.Common => commonItems,
-            Rarity.Rare => rareItems,
-            Rarity.Epic => epicItems,
-            Rarity.Legendary => legendaryItems,
-            _ => new List<GachaItem>()
-        };
+    public List<GachaItem> GetItemsByRarity(Rarity rarity) => rarity switch {
+        Rarity.Common => commonItems,
+        Rarity.Rare => rareItems,
+        Rarity.Epic => epicItems,
+        Rarity.Legendary => legendaryItems,
+        _ => new List<GachaItem>()
+    };
+
+    /// <summary>
+    /// GachaData 内のすべてのアイテムをまとめて取得する
+    /// </summary>
+    /// <returns>Common、Rare、Epic、Legendary の全アイテムを含むリスト</returns>
+    public List<GachaItem> GetAllItems() {
+        List<GachaItem> allItems = new List<GachaItem>();
+        allItems.AddRange(commonItems);
+        allItems.AddRange(rareItems);
+        allItems.AddRange(epicItems);
+        allItems.AddRange(legendaryItems);
+        return allItems;
     }
+
 #if UNITY_EDITOR
-    // デバッグの時のレアリティ確認用
-    public Rarity GetRarityOfItem(GachaItem item) {
-        if (commonItems.Contains(item)) return Rarity.Common;
-        if (rareItems.Contains(item)) return Rarity.Rare;
-        if (epicItems.Contains(item)) return Rarity.Epic;
-        if (legendaryItems.Contains(item)) return Rarity.Legendary;
-        return Rarity.Common; // デフォルト
+    private void OnValidate() {
+        int total = 0;
+        foreach (var r in rarityRates) total += r.rate;
+        if (total != 100)
+            Debug.LogWarning($"レアリティ出現率の合計が {total}% にねってえるから100%ぴったにして");
     }
 #endif
 }
