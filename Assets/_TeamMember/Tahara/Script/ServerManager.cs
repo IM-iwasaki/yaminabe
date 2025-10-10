@@ -37,11 +37,13 @@ public class ServerManager : NetworkBehaviour {
                 resetTeam.teamPlayerList[i].GetComponent<DemoPlayer>().TeamID = -1;
             }
             resetTeam.teamPlayerList.Clear();
+            PlayerUIManager.instance.ResetTeammateUI();
         }
         teams = new List<TeamData>(TEAMMATE_MAX);
         //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
         for (int i = 0; i < _teamCount; i++) {
-            teams.Add(new TeamData());
+            TeamData newTeam = new TeamData();
+            teams.Add(newTeam);
         }
         for (int i = 0, max = connectPlayer.Count; i < max; i++) {
             var player = connectPlayer[i];
@@ -55,9 +57,10 @@ public class ServerManager : NetworkBehaviour {
             else {
                 teams[teamIndex].teamPlayerList.Add(connectPlayer[i]);
             }
-            //プレイヤーのチームIDを設定
+            //プレイヤーのチームIDやUIを設定
             player.GetComponent<DemoPlayer>().TeamID = teamIndex;
             Debug.Log(player + "は" + teamIndex + "番目のチームに入りました!");
+            player.GetComponent<DemoPlayer>().uiManager.CreateTeammateUI(player);
             
         }
         

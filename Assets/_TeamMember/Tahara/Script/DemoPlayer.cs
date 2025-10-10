@@ -21,26 +21,30 @@ public class DemoPlayer : NetworkBehaviour {
     [SerializeField]
     private const int MaxHP = 100;
     [SerializeField]
-    PlayerUIManager uiManager = null;
+    public PlayerUIManager uiManager = null;
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
         HP = MaxHP;
     }
-    private void Start() {
-        if (isLocalPlayer) {
-            playerCamera.gameObject.SetActive(true);
-        }
-        else {
-            playerCamera.gameObject.SetActive(false);
-            uiManager.gameObject.SetActive(false);
-        }
-    }
+    //private void Start() {
+    //    if (isLocalPlayer) {
+    //        playerCamera.gameObject.SetActive(true);
+    //    }
+    //    else {
+    //        playerCamera.gameObject.SetActive(false);
+    //        uiManager.gameObject.SetActive(false);
+    //    }
+    //}
 
     public override void OnStartLocalPlayer() {
         //base.OnStartLocalPlayer();
         if (isLocalPlayer) {
             playerCamera.gameObject.SetActive(true);
+            //UIÇê∂ê¨
+            GameObject canvas = GameObject.Find("GameUI");
+            PlayerUIManager uiM = Instantiate(uiManager, canvas.transform);
+            uiManager = uiM;
         }
         else {
             playerCamera.gameObject.SetActive(false);
@@ -53,7 +57,8 @@ public class DemoPlayer : NetworkBehaviour {
             CmdTestHPRemove();
         if (Input.GetKeyDown(KeyCode.R))
             CmdTestHPReset();
-
+        if (Input.GetKeyDown(KeyCode.Return))
+            CmdRequestRandomTeam();
 
     }
 
@@ -96,5 +101,10 @@ public class DemoPlayer : NetworkBehaviour {
     [Command]
     private void CmdTestHPReset() {
         HP = MaxHP;
+    }
+
+    [Command]
+    private void CmdRequestRandomTeam() {
+        ServerManager.instance.RandomTeamDecide();
     }
 }

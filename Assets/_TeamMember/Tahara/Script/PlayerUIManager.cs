@@ -134,8 +134,15 @@ public class PlayerUIManager : MonoBehaviour
     }
     
     public void CreateTeammateUI(NetworkIdentity _player) {
-        Instantiate(teammateUI, teamMateUIRoot);
-        teammateUI.GetComponent<TeammateUI>().Initialize(_player);
+        if (!_player.isLocalPlayer) return;
+        GameObject madeUI = Instantiate(teammateUI, teamMateUIRoot);
+        madeUI.GetComponent<TeammateUI>().Initialize(_player);
+    }
+
+    public void ResetTeammateUI() {
+        for(int i = 0,max = teamMateUIRoot.childCount; i < max; i++) {
+            Destroy(teamMateUIRoot.GetChild(i).gameObject);
+        }
     }
 
 }
