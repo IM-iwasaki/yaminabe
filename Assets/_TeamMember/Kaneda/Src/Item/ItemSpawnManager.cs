@@ -177,18 +177,7 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
             Vector3 spawnPos = point.position + Vector3.up * 1f;
 
             // プレハブ生成
-            GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
-
-            // Mirrorで同期させるためにNetworkIdentityを必須チェック
-            var identity = obj.GetComponent<NetworkIdentity>();
-            if (identity == null) {
-                Debug.LogError($"[ItemSpawnManager] {prefab.name} に NetworkIdentity がありません。");
-                Destroy(obj);
-                continue;
-            }
-
-            // Mirror経由で全クライアントに生成を通知
-            NetworkServer.Spawn(obj);
+            GameObject obj = SpawnManager.Instance.SpawnObject(prefab, spawnPos, Quaternion.identity);
 
             // 管理リストに追加
             spawnedItems.Add(obj);
