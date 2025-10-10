@@ -15,8 +15,12 @@ public class PlayerConst {
 
     //ジャンプ力
     public const float JUMP_FORCE = 10.0f;
+    //ジャンプ上昇時の重力補正
+    public const float JUMP_UPFORCE = 1.8f;
+    //ジャンプ上昇終了時の重力補正
+    public const float JUMP_DOWNFORCE = 2.5f;
     //地面判定の距離(長くすると判定が甘くなる)
-    public const float GROUND_DISTANCE = 0.3f;
+    public const float GROUND_DISTANCE = 0.15f;
 
     /// <summary>
     /// メイン攻撃かサブ攻撃かを判別する列挙体
