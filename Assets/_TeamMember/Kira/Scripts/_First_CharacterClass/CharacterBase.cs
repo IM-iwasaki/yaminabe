@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using static TeamData;
 
 [RequireComponent(typeof(NetworkIdentity))]
+[RequireComponent(typeof(NetworkTransformHybrid))]
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Rigidbody))]
 
@@ -60,16 +61,12 @@ abstract class CharacterBase : NetworkBehaviour {
     //武器を使用するため
     [SerializeField] protected NetworkWeapon weaponController;
 
-    //ジャンプ力
-    protected float jumpForce = 8f;
     //GroundLayer
-    private LayerMask groundLayer;
+    private LayerMask GroundLayer;
     //足元の確認用Transform
-    [SerializeField] private Transform groundCheck;
-    //地面判定の距離(長くすると判定が甘くなる)
-    private readonly float groundDistance = 0.3f;
+    [SerializeField] private Transform GroundCheck;
     //接地しているか
-    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool IsGrounded;
 
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
@@ -82,7 +79,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
         // "Ground" という名前のレイヤーを取得してマスク化
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
-        groundLayer = 1 << groundLayerIndex;
+        GroundLayer = 1 << groundLayerIndex;
     }
 
     /// <summary>
@@ -202,8 +199,8 @@ abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void OnJump(InputAction.CallbackContext context) {
         // ボタンが押された瞬間だけ反応させる
-        if (context.performed && isGrounded) {
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        if (context.performed && IsGrounded) {
+            rigidbody.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
         }
     }
     /// <summary>
@@ -268,7 +265,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void JumpControl() {
         // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
+        IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }
 
     /// <summary>
