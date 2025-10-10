@@ -107,14 +107,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  normalOffset: {x: 0, y: 1, z: -3}
+  normalOffset: {x: 0, y: 0, z: -4}
+  rotationSpeed: 60
+  minPitch: -30
+  maxPitch: 40
+  moveSpeed: 10
+  minDistance: 0.3
+  upOffsetAmount: 0
   collisionMask:
     serializedVersion: 2
     m_Bits: 1
-  rotationSpeed: 120
-  minPitch: -30
-  maxPitch: 60
-  moveSpeed: 10
+  leftOffsetAmount: 1
 --- !u!114 &2965182569160454427
 MonoBehaviour:
   m_ObjectHideFlags: 0

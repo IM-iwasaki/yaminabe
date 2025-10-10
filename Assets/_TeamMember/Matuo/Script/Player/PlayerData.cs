@@ -1,11 +1,7 @@
 using System.Collections.Generic;
-using UnityEngine;
 
-/// <summary>
-/// セーブするプレイヤーのデータ
-/// </summary>
 [System.Serializable]
 public class PlayerData {
-    public int currentMoney;
-    public List<string> obtainedItems; // 獲得したアイテム名のリスト
+    public int currentMoney;                       // プレイヤーの所持金
+    public List<PlayerItemStatus> items = new();  // 取得済みアイテムリスト
 }
