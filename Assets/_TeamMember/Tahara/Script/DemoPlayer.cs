@@ -50,9 +50,15 @@ public class DemoPlayer : NetworkBehaviour {
         }
         else {
             playerCamera.gameObject.SetActive(false);
-            playerUI.gameObject.SetActive(false);
+            //playerUI.gameObject.SetActive(false);
         }
     }
+
+    public override void OnStopLocalPlayer() {
+
+        playerUI.ResetTeammateUI();
+    }
+
     private void Update() {
         if (!isLocalPlayer) return;
         if (Input.GetKeyDown(KeyCode.LeftShift))
