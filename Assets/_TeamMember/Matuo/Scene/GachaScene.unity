@@ -624,6 +624,52 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1365727465
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1365727466}
+  - component: {fileID: 1365727467}
+  m_Layer: 0
+  m_Name: GachaController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1365727466
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365727465}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -9.7818365, y: -9.954564, z: -5.0146317}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1365727467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365727465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4af18637d64f5b4eb19e4eed0ce7b27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gachaSystem: {fileID: 7752081480317012297}
+  itemManager: {fileID: 2024267573}
 --- !u!1 &1374467034
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,8 +1005,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2024267572}
+  - component: {fileID: 2024267573}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: PlayerItemManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -981,6 +1028,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2024267573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024267571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b931917047a8c9448b461cbadac630c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2060197931
 GameObject:
   m_ObjectHideFlags: 0
@@ -1184,6 +1243,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6547544664050026645, guid: 2dee4b7c60ed5184894681fe4035a584, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: 1c12d92106e220b45852f1a69fb4ca51, type: 2}
+    - target: {fileID: 6547544664050026645, guid: 2dee4b7c60ed5184894681fe4035a584, type: 3}
       propertyPath: gachaCost
       value: 1
       objectReference: {fileID: 0}
@@ -1192,6 +1255,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2dee4b7c60ed5184894681fe4035a584, type: 3}
+--- !u!114 &7752081480317012297 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6547544664050026645, guid: 2dee4b7c60ed5184894681fe4035a584, type: 3}
+  m_PrefabInstance: {fileID: 7752081480317012296}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38c6bbb075fa73843a97dfd150ef79da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1203,3 +1277,4 @@ SceneRoots:
   - {fileID: 1507438340}
   - {fileID: 433200902}
   - {fileID: 2024267572}
+  - {fileID: 1365727466}

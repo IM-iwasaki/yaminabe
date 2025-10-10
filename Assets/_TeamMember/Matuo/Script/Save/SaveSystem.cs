@@ -1,10 +1,15 @@
 using System.IO;
 using UnityEngine;
 
+/// <summary>
+/// プレイヤーデータのセーブ／ロードを行う静的クラス
+/// </summary>
 public static class SaveSystem {
     private static string filePath => Path.Combine(Application.persistentDataPath, "playerData.json");
 
-    // 保存
+    /// <summary>
+    /// プレイヤーデータを JSON に保存する
+    /// </summary>
     public static void Save(PlayerData data) {
 #if UNITY_EDITOR
         // エディターで実行中はセーブしない
@@ -16,16 +21,16 @@ public static class SaveSystem {
         Debug.Log("データを保存しました: " + filePath);
     }
 
-    // 読み込み
+    /// <summary>
+    /// プレイヤーデータをロードする
+    /// ファイルが無ければ初期状態のデータを返す
+    /// </summary>
     public static PlayerData Load() {
-#if UNITY_EDITOR
-        // エディターで実行中はロードしない
-        if (Application.isPlaying)
-            return new PlayerData { currentMoney = 0, obtainedItems = new System.Collections.Generic.List<string>() };
-#endif
         if (!File.Exists(filePath)) {
-            // セーブファイルが無かったら新規作成
-            return new PlayerData { currentMoney = 0, obtainedItems = new System.Collections.Generic.List<string>() };
+            return new PlayerData {
+                currentMoney = 0,
+                items = new System.Collections.Generic.List<PlayerItemStatus>()
+            };
         }
 
         string json = File.ReadAllText(filePath);
