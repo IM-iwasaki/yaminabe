@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,11 +7,12 @@ using UnityEngine.UI;
 /// <summary>
 /// プレイヤーUIにコンポーネント済みで、各Playerのメンバとして持たせてほしい
 /// </summary>
-public class PlayerUIManager : MonoBehaviour
+public class PlayerUIManager : NetworkBehaviour
 {
+    public static PlayerUIManager instance = null;
     [SerializeField]
     private List<Transform> UIRoots = null;
-
+    
     #region 戦闘用UI
     #region プレイヤー体力管理用UI
     private const int FIXED_RATIO = 100;
@@ -48,9 +50,17 @@ public class PlayerUIManager : MonoBehaviour
 
     [SerializeField,Header("チームメイト確認用UI※人数が変わってもいいように親オブジェクトを取得")]
     Transform teamMateUIRoot = null;
-
+    [SerializeField,Header("生成されるチームメイトUI")]
+    private GameObject teammateUI = null;
 
     #endregion
+
+    private void Awake() {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
+    }
 
     #region hook関数で呼ぶ想定の関数
     /// <summary>
@@ -121,6 +131,20 @@ public class PlayerUIManager : MonoBehaviour
     /// <param name="_index"></param>
     public void HideUI(int _index) {
         UIRoots[_index].gameObject.SetActive(false);
+    }
+    
+    public void CreateTeammateUI(NetworkIdentity _player) {
+        if (!_player.isLocalPlayer || !_player.isClient) return;
+        Transform createUIRoot = GameObject.Find("NonBattleUIRoot/TeammateUIRoot").transform;
+
+        GameObject madeUI = Instantiate(teammateUI, createUIRoot);
+        madeUI.GetComponent<TeammateUI>().Initialize(_player);
+    }
+
+    public void ResetTeammateUI() {
+        for(int i = 0,max = teamMateUIRoot.childCount; i < max; i++) {
+            Destroy(teamMateUIRoot.GetChild(i).gameObject);
+        }
     }
 
 }
