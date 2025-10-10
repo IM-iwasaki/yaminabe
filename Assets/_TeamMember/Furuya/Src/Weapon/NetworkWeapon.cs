@@ -28,6 +28,11 @@ public class NetworkWeapon : NetworkBehaviour {
         return weaponData != null && Time.time >= lastAttackTime + weaponData.cooldown;
     }
 
+    public void SetWeaponData(WeaponData data) {
+        weaponData = data;
+    }
+
+
     // --- 近接攻撃 ---
     void ServerMeleeAttack() {
         Collider[] hits = Physics.OverlapSphere(firePoint.position, weaponData.range);
