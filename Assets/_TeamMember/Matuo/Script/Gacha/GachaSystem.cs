@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// レアリティ考慮型ガチャシステム
+/// ガチャのシステム
 /// </summary>
 public class GachaSystem : MonoBehaviour {
     [Header("ガチャ設定")]
@@ -47,7 +47,6 @@ public class GachaSystem : MonoBehaviour {
         if (count <= 0) return results;
 
         int totalCost = gachaCost * count;
-
         // 支払い処理
         if (!PlayerWallet.Instance.SpendMoney(totalCost)) {
             Debug.Log("貧乏過ぎて引けないよん");
@@ -64,11 +63,10 @@ public class GachaSystem : MonoBehaviour {
     }
 
     /// <summary>
-    /// ガチャの抽選
+    /// ガチャ抽選処理
     /// </summary>
     private GachaItem PullSingleInternal() {
-        if (database == null || database.items == null || database.items.Count == 0)
-            return null;
+        if (database == null) return null;
 
         // レアリティ決定
         int roll = Random.Range(0, 100);
@@ -83,10 +81,14 @@ public class GachaSystem : MonoBehaviour {
         else
             selectedRarity = Rarity.Common;
 
-        // 選ばれたレアリティのアイテムを抽選
-        List<GachaItem> pool = database.items.FindAll(i => i.rarity == selectedRarity);
-        if (pool.Count == 0) return null;
+        // 選ばれたレアリティのプールから抽選
+        List<GachaItem> pool = database.GetItemsByRarity(selectedRarity);
+        if (pool == null || pool.Count == 0) {
+            Debug.LogWarning($"選ばれたレアリティ {selectedRarity} にアイテムが存在しません。");
+            return null;
+        }
 
+        // 各アイテムの rate に応じた抽選
         int totalRate = 0;
         foreach (var item in pool) totalRate += item.rate;
 
@@ -113,7 +115,12 @@ public class GachaSystem : MonoBehaviour {
     /// <param name="item">獲得したアイテム</param>
     private void SpawnItem(GachaItem item) {
         if (item == null) return;
-        Debug.Log($"ガチャ結果: {item.itemName} ({item.rarity})");
+
+        // デバッグ用
+#if UNITY_EDITOR
+        Rarity rarity = database.GetRarityOfItem(item);
+        Debug.Log($"ガチャ結果: {item.itemName} ({rarity})");
+#endif
 
         // 景品プレハブを出すならこんな感じ
         // if (item.prize != null)
