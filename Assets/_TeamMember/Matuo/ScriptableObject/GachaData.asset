@@ -12,52 +12,59 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f665c86ddc01dd4192ad8980947dd0d, type: 3}
   m_Name: GachaData
   m_EditorClassIdentifier: 
+  rarityRates:
+  - rarityName: "\u30B3\u30E2\u30F3"
+    rarity: 0
+    rate: 70
+  - rarityName: "\u30EC\u30A2"
+    rarity: 1
+    rate: 20
+  - rarityName: "\u30A8\u30D4\u30C3\u30AF"
+    rarity: 2
+    rate: 9
+  - rarityName: "\u30EC\u30B8\u30A7\u30F3\u30C0\u30EA\u30FC"
+    rarity: 3
+    rate: 1
   commonItems:
-  - itemName: "\u30B9\u30BF\u30F3\u30D7"
+  - itemName: "\u30B9\u30BF\u30F3\u30D7(OO)"
+    rate: 10
+    prize: {fileID: 0}
+  - itemName: "\u30D0\u30CA\u30FC(OO)"
     rate: 100
     prize: {fileID: 0}
-  - itemName: "\u30D0\u30CA\u30FC"
+  - itemName: "\u30AD\u30EB\u30A8\u30D5\u30A7\u30AF\u30C8(OO)"
     rate: 100
     prize: {fileID: 0}
-  - itemName: "\u30A8\u30E2\u30FC\u30C8"
+  - itemName: "\u30A8\u30E2\u30FC\u30C8(OO)"
     rate: 100
     prize: {fileID: 0}
   rareItems:
-  - itemName: "\u30AD\u30EB\u30A8\u30D5\u30A7\u30AF\u30C8"
+  - itemName: "\u30AD\u30EB\u30A8\u30D5\u30A7\u30AF\u30C8(OO)"
     rate: 100
     prize: {fileID: 0}
-  - itemName: "\u30A8\u30E2\u30FC\u30C8"
+  - itemName: "\u30A8\u30E2\u30FC\u30C8(OO)"
     rate: 100
     prize: {fileID: 0}
-  - itemName: "\u30D0\u30CA\u30FC"
-    rate: 100
-    prize: {fileID: 0}
-  - itemName: "\u30B9\u30BF\u30F3\u30D7"
-    rate: 100
-    prize: {fileID: 0}
-  - itemName: "\u30B9\u30AD\u30F3"
+  - itemName: "\u30B9\u30AD\u30F3(OO)"
     rate: 100
     prize: {fileID: 0}
   epicItems:
-  - itemName: "\u30A8\u30E2\u30FC\u30C8"
+  - itemName: "\u30AD\u30EB\u30A8\u30D5\u30A7\u30AF\u30C8(OO)"
     rate: 100
     prize: {fileID: 0}
-  - itemName: "\u30B9\u30AD\u30F3"
+  - itemName: "\u30A8\u30E2\u30FC\u30C8(OO)"
     rate: 100
     prize: {fileID: 0}
-  - itemName: "\u30AD\u30E3\u30E9"
-    rate: 100
-    prize: {fileID: 0}
-  - itemName: "\u30AD\u30EB\u30A8\u30D5\u30A7\u30AF\u30C8"
+  - itemName: "\u30B9\u30AD\u30F3(OO)"
     rate: 100
     prize: {fileID: 0}
   legendaryItems:
-  - itemName: "\u30AD\u30E3\u30E9(\u30CB\u30EF\u30C8\u30EA)"
+  - itemName: "\u30A8\u30E2\u30FC\u30C8(\u4E2D\u6307)"
     rate: 100
     prize: {fileID: 0}
   - itemName: "\u30B9\u30AD\u30F3(\u9EC4\u91D1\u30CB\u30EF\u30C8\u30EA)"
     rate: 100
     prize: {fileID: 0}
-  - itemName: "\u30A8\u30E2\u30FC\u30C8(\u4E2D\u6307)"
+  - itemName: "\u30AD\u30E3\u30E9(\u30CB\u30EF\u30C8\u30EA)"
     rate: 100
     prize: {fileID: 0}
