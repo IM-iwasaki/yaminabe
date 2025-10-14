@@ -428,7 +428,6 @@ MonoBehaviour:
   syncInterval: 0
   weaponData: {fileID: 0}
   firePoint: {fileID: 878125566127400802}
-  playerCamera: {fileID: 0}
 --- !u!114 &8394261901866962481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -576,6 +575,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1403119992907617473}
     m_Modifications:
+    - target: {fileID: 815203248878056852, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5245321708682595989, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
       propertyPath: player
       value: 
@@ -627,6 +630,14 @@ PrefabInstance:
     - target: {fileID: 8398179391942609884, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
       propertyPath: m_Name
       value: Main Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 8398179391942609884, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8398179391942609884, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

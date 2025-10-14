@@ -28,6 +28,11 @@ abstract class CharacterBase : NetworkBehaviour {
     public string CurrentWeapon { get; protected set; }
     //所属チームの番号
     [SyncVar] public int TeamID;
+    //プレイヤーの名前
+    //TODO:仮。ここの実装は要相談。
+    protected string PlayerName = "Player_Test";
+    //ランキング用変数の仮定義
+    public int Score { get; protected set; } = 0;
 
     #endregion
 
@@ -57,7 +62,6 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //コンポーネント情報
     protected new Rigidbody rigidbody;
-
     [SerializeField] protected PlayerUIManager UI;
 
     #endregion
@@ -105,13 +109,20 @@ abstract class CharacterBase : NetworkBehaviour {
         defaultAttack = Attack;
     }
 
+    /// <summary>
+    /// ネットワーク上での初期化。
+    /// </summary>
     public override void OnStartLocalPlayer() {
         if (isLocalPlayer) {
             GameObject GameUIRoot = GameObject.Find("GameUI");
             var playerUI = Instantiate(UI,GameUIRoot.transform);
             UI = playerUI.GetComponent<PlayerUIManager>();
 
+            Camera camera = GetComponentInChildren<Camera>();
+            camera.tag = "MainCamera";
+            camera.enabled = true;
         }
+
     }
 
     /// <summary>
