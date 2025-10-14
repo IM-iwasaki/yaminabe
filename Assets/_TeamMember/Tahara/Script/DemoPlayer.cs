@@ -42,7 +42,7 @@ public class DemoPlayer : NetworkBehaviour {
         //base.OnStartLocalPlayer();
         if (isLocalPlayer) {
             playerCamera.gameObject.SetActive(true);
-            //UIÇê∂ê¨
+            //UIÇê∂ê¨(é¿ç€Ç…ÇÕå©Ç¶ÇƒÇ»Ç¢)
             GameObject canvas = GameObject.Find("GameUI");
             PlayerUIManager uiM = Instantiate(playerUI, canvas.transform);
             uiM.transform.position /= 2;
@@ -50,9 +50,15 @@ public class DemoPlayer : NetworkBehaviour {
         }
         else {
             playerCamera.gameObject.SetActive(false);
-            playerUI.gameObject.SetActive(false);
+            //playerUI.gameObject.SetActive(false);
         }
     }
+
+    public override void OnStopLocalPlayer() {
+
+        playerUI.ResetTeammateUI();
+    }
+
     private void Update() {
         if (!isLocalPlayer) return;
         if (Input.GetKeyDown(KeyCode.LeftShift))

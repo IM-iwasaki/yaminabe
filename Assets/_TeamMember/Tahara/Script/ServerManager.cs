@@ -64,6 +64,7 @@ public class ServerManager : NetworkBehaviour {
             player.GetComponent<DemoPlayer>().TeamID = teamIndex;
             Debug.Log(player + "は" + teamIndex + "番目のチームに入りました!");
 
+            //チームメイトのIDをプレイヤーに送る
             List<uint> teammateIds = new List<uint>();
             foreach (var teammate in teams[teamIndex].teamPlayerList) {
                 teammateIds.Add(teammate.netId);

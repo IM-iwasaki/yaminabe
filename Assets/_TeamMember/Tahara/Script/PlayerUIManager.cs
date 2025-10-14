@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// プレイヤーUIにコンポーネント済みで、各Playerのメンバとして持たせてほしい
+/// 各ローカルプレイヤーに複製してもらうので別に子オブジェクトとかにしなくていい
 /// </summary>
 public class PlayerUIManager : NetworkBehaviour
 {
@@ -35,14 +36,6 @@ public class PlayerUIManager : NetworkBehaviour
     [SerializeField, Header("MPのバーのイメージ※デフォルトで設定済み")]
     private Image mpBarImage = null;
     #endregion
-    
-    #region ルール関連管理用UI
-    [SerializeField, Header("残り時間のテキスト※デフォルトで設定済み")]
-    private TextMeshProUGUI timerText = null;
-
-    [SerializeField, Header("勝利条件のテキスト※デフォルトで設定済み")]
-    private List<TextMeshProUGUI> countTexts = null;
-    #endregion
 
     #endregion
 
@@ -60,6 +53,11 @@ public class PlayerUIManager : NetworkBehaviour
             instance = this;
         else
             Destroy(gameObject);
+
+        hpBar.interactable = false;
+        magazineBar.interactable = false;
+        mpBar.interactable = false;
+
     }
 
     #region hook関数で呼ぶ想定の関数
@@ -71,10 +69,21 @@ public class PlayerUIManager : NetworkBehaviour
     public void ChangHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar.value = (float)_hp / _maxHP * FIXED_RATIO;
-        if (_hp < 1)
+        if(hpBar.value <= _maxHP / 5 && hpBar.value > _maxHP / 2) {
+            hpBarImage.color = Color.red;
+        }
+
+        else if(hpBar.value <= _maxHP / 2 && hpBar.value > 1) {
+            hpBarImage.color = Color.yellow;
+        }
+
+        else if (_hp <= 1)
             hpBarImage.gameObject.SetActive(false);
-        else
+        else {
             hpBarImage.gameObject.SetActive(true);
+            hpBarImage.color = Color.green;
+        }
+            
     }
     /// <summary>
     /// 残弾数のUI更新
@@ -102,37 +111,45 @@ public class PlayerUIManager : NetworkBehaviour
         else
             mpBarImage.gameObject.SetActive(true);
     }
-    /// <summary>
-    /// 残り時間のUI更新
-    /// </summary>
-    /// <param name="_currentTime"></param>
-    public void ChangeTimerUI(int _currentTime) {
-        timerText.text = _currentTime.ToString();
-    }
-    /// <summary>
-    /// 各チームのカウントのUI更新
-    /// </summary>
-    /// <param name="_teamID"></param>
-    /// <param name="_count"></param>
-    public void ChangeTeamCountUI(int _teamID, int _count) {
-        countTexts[_teamID].text = _count.ToString();
-    }
     #endregion
+
     /// <summary>
-    /// 特定のUI群を表示する
+    /// 特定の"UI群"を表示する
     /// </summary>
     /// <param name="_index"></param>
-    public void ShowUI(int _index) {
+    public void ShowUIRoot(int _index) {
         UIRoots[_index].gameObject.SetActive(true);
     }
     /// <summary>
     /// 特定のUI群を非表示にする
     /// </summary>
     /// <param name="_index"></param>
-    public void HideUI(int _index) {
+    public void HideUIRoot(int _index) {
         UIRoots[_index].gameObject.SetActive(false);
     }
+
+    /// <summary>
+    /// 特定の"UI"を表示させる
+    /// </summary>
+    /// <param name="_uiName"></param>
+    public void ShowUI(string _uiName) {
+        GameObject.Find(_uiName).SetActive(true);
+    }
+
+    /// <summary>
+    /// 特定の"UI"を非表示させる
+    /// </summary>
+    /// <param name="_uiName"></param>
+    public void HideUI(string _uiName) {
+        GameObject.Find(_uiName).SetActive(false);
+    }
+
+
     
+    /// <summary>
+    /// チームメイトが誰なのかを表示するUIを作り出す
+    /// </summary>
+    /// <param name="_player"></param>
     public void CreateTeammateUI(NetworkIdentity _player) {
         if (!_player.isLocalPlayer || !_player.isClient) return;
         Transform createUIRoot = GameObject.Find("NonBattleUIRoot/TeammateUIRoot").transform;
@@ -141,6 +158,9 @@ public class PlayerUIManager : NetworkBehaviour
         madeUI.GetComponent<TeammateUI>().Initialize(_player);
     }
 
+    /// <summary>
+    /// チームメイトUIを削除
+    /// </summary>
     public void ResetTeammateUI() {
         for(int i = 0,max = teamMateUIRoot.childCount; i < max; i++) {
             Destroy(teamMateUIRoot.GetChild(i).gameObject);
