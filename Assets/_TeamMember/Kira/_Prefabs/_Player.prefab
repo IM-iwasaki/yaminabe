@@ -101,8 +101,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2758425806128069930}
-  - {fileID: 6994502211391782063}
   - {fileID: 4807031412442243011}
+  - {fileID: 1924772973200123176}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8153773122267771096
@@ -405,6 +405,7 @@ MonoBehaviour:
   syncInterval: 0
   HP: 0
   TeamID: 0
+  firePoint: {fileID: 0}
   weaponController: {fileID: 2825701905452532873}
   GroundCheck: {fileID: 4807031412442243011}
   IsGrounded: 0
@@ -565,7 +566,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1001 &4180037772060908206
+--- !u!1001 &4730229130690986793
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -583,7 +584,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6562602856469702145, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6562602856469702145, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -626,8 +627,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
---- !u!4 &6994502211391782063 stripped
+--- !u!4 &1924772973200123176 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6562602856469702145, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
-  m_PrefabInstance: {fileID: 4180037772060908206}
+  m_PrefabInstance: {fileID: 4730229130690986793}
   m_PrefabAsset: {fileID: 0}
