@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using Mirror;
+using Mirror.BouncyCastle.Asn1.Pkcs;
 
 public class NetworkWeapon : NetworkBehaviour {
     public WeaponData weaponData;
     public Transform firePoint;
+    public Camera playerCamera; // TPSカメラをInspectorで設定
     float lastAttackTime;
 
-    [Command] // クライアント → サーバーへ攻撃リクエスト
+    // --- 攻撃リクエスト ---
+    [Command]
     public void CmdRequestAttack(Vector3 direction) {
         if (!CanAttack()) return;
         lastAttackTime = Time.time;
@@ -16,7 +19,7 @@ public class NetworkWeapon : NetworkBehaviour {
                 ServerMeleeAttack();
                 break;
             case WeaponType.Gun:
-                //ServerRangedAttack(direction);
+                ServerGunAttack(direction);
                 break;
             case WeaponType.Magic:
                 ServerMagicAttack(direction);
@@ -44,30 +47,47 @@ public class NetworkWeapon : NetworkBehaviour {
         }
     }
 
-    // --- 銃撃 ---
-    void ServerRangedAttack() {
+    // --- 銃撃処理（TPSレティクル方向） ---
+    void ServerGunAttack(Vector3 direction) {
         if (weaponData.projectilePrefab == null) return;
 
-        GameObject proj = Instantiate(weaponData.projectilePrefab, firePoint.position, firePoint.rotation);
+        // カメラ中央からRayを飛ばして狙い位置を決定
+        Ray ray = new Ray(playerCamera.transform.position, direction);
+        Vector3 targetPoint = ray.GetPoint(100f);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            targetPoint = hit.point;
+
+        // 銃口からターゲットへの方向を求める
+        Vector3 shootDir = (targetPoint - firePoint.position).normalized;
+
+        // 弾生成
+        GameObject proj = Instantiate(weaponData.projectilePrefab, firePoint.position, Quaternion.LookRotation(shootDir));
         NetworkServer.Spawn(proj);
 
-        Rigidbody rb = proj.GetComponent<Rigidbody>();
-        if (rb != null)
-            rb.velocity = firePoint.forward * weaponData.projectileSpeed;
+        if (proj.TryGetComponent(out Projectile projScript)) {
+            projScript.Init(
+                weaponData.damage,
+                weaponData.projectileSpeed
+            );
+        }
 
+        // 弾速を与える
+        if (proj.TryGetComponent(out Rigidbody rb))
+            rb.velocity = shootDir * weaponData.projectileSpeed;
+
+        // エフェクト
         RpcPlayMuzzleFlash(firePoint.position, weaponData.muzzleFlashType);
     }
 
     // --- 魔法攻撃 ---
     void ServerMagicAttack(Vector3 direction) {
-        MagicWeaponData magicData = weaponData as MagicWeaponData;
-        if (magicData == null || magicData.projectilePrefab == null) return;
+        if (weaponData is not MagicWeaponData magicData || magicData.projectilePrefab == null)
+            return;
 
         GameObject proj = Instantiate(magicData.projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
         NetworkServer.Spawn(proj);
 
-        MagicProjectile projScript = proj.GetComponent<MagicProjectile>();
-        if (projScript != null) {
+        if (proj.TryGetComponent(out MagicProjectile projScript)) {
             projScript.Init(
                 gameObject,
                 magicData.magicType,
@@ -78,7 +98,6 @@ public class NetworkWeapon : NetworkBehaviour {
             );
         }
 
-        // 発射エフェクト
         RpcPlayMuzzleFlash(firePoint.position, magicData.muzzleFlashType);
     }
 
@@ -103,6 +122,6 @@ public class NetworkWeapon : NetworkBehaviour {
     }
 
     bool IsValidTarget(GameObject obj) {
-        return obj != gameObject; // 自分以外を対象
+        return obj != gameObject; // 自分以外
     }
 }
