@@ -6,6 +6,17 @@ public class CustomNetworkManager : NetworkManager
     [SerializeField]
     private ServerManager serverManager = null;
 
+    public override void OnStartServer() {
+        base.OnStartServer();
+        // サーバーが起動したタイミングで SystemManager に Network 系の Spawn を任せる
+        if (SystemManager.Instance != null) {
+            SystemManager.Instance.SpawnNetworkSystems();
+        }
+        else {
+            Debug.LogWarning("SystemManager が見つかりません。SystemManager は最初のシーンに配置しておいてください。");
+        }
+    }
+
     /// <summary>
     /// サーバーに接続したタイミングで処理される
     /// 主にサーバー接続可能人数を判定

@@ -80,9 +80,4 @@ public class ServerManager : NetworkBehaviour {
     public void RandomTeamDecide() {
         JoinRandomTeam();
     }
-
-
-
-
-
 }
