@@ -353,7 +353,13 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃関数
     /// </summary>
-    abstract protected void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main);
+    virtual protected void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main){
+        if (weaponController == null) return;
+
+        // 武器が攻撃可能かチェックしてサーバー命令を送る
+        Vector3 shootDir = GetShootDirection();
+        weaponController.CmdRequestAttack(shootDir);
+    }
 
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数

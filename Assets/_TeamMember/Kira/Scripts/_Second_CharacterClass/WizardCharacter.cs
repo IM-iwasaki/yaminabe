@@ -13,9 +13,6 @@ class WizardCharacter : CharacterBase {
     protected override void StatusInport() {
     }
 
-    protected override void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {       
-    }
-
     protected override void StartUseSkill() {
     }
 

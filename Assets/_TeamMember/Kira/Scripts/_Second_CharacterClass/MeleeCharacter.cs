@@ -26,9 +26,6 @@ class MeleeCharacter : CharacterBase {
         Debug.Log("MeleeCharacter.cs : スキルのインポートを行いました。\nインポートしたスキル: " + string.Join(", ", EquippedSkills.Where(i => i != null).Select(i => i.SkillName)));
     }
 
-    protected override void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {       
-    }
-
     protected override void StartUseSkill() {
         EquippedSkills[0].Activate(gameObject);
     }
