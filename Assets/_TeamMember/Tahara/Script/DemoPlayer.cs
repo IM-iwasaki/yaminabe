@@ -42,11 +42,13 @@ public class DemoPlayer : NetworkBehaviour {
         //base.OnStartLocalPlayer();
         if (isLocalPlayer) {
             playerCamera.gameObject.SetActive(true);
-            //UIÇê∂ê¨
+            //UIÇê∂ê¨(é¿ç€Ç…ÇÕå©Ç¶ÇƒÇ»Ç¢)
             GameObject canvas = GameObject.Find("GameUI");
             PlayerUIManager uiM = Instantiate(playerUI, canvas.transform);
             uiM.transform.position /= 2;
             playerUI = uiM.GetComponent<PlayerUIManager>();
+
+            playerUI.HideUI("Magazine");
         }
         else {
             playerCamera.gameObject.SetActive(false);

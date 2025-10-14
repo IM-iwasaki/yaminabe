@@ -60,6 +60,11 @@ public class PlayerUIManager : NetworkBehaviour
             instance = this;
         else
             Destroy(gameObject);
+
+        hpBar.interactable = false;
+        magazineBar.interactable = false;
+        mpBar.interactable = false;
+
     }
 
     #region hook関数で呼ぶ想定の関数
@@ -71,10 +76,21 @@ public class PlayerUIManager : NetworkBehaviour
     public void ChangHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar.value = (float)_hp / _maxHP * FIXED_RATIO;
-        if (_hp < 1)
+        if(hpBar.value <= _maxHP / 5 && hpBar.value > _maxHP / 2) {
+            hpBarImage.color = Color.red;
+        }
+
+        else if(hpBar.value <= _maxHP / 2 && hpBar.value > 1) {
+            hpBarImage.color = Color.yellow;
+        }
+
+        else if (_hp <= 1)
             hpBarImage.gameObject.SetActive(false);
-        else
+        else {
             hpBarImage.gameObject.SetActive(true);
+            hpBarImage.color = Color.green;
+        }
+            
     }
     /// <summary>
     /// 残弾数のUI更新
@@ -119,20 +135,42 @@ public class PlayerUIManager : NetworkBehaviour
     }
     #endregion
     /// <summary>
-    /// 特定のUI群を表示する
+    /// 特定の"UI群"を表示する
     /// </summary>
     /// <param name="_index"></param>
-    public void ShowUI(int _index) {
+    public void ShowUIRoot(int _index) {
         UIRoots[_index].gameObject.SetActive(true);
     }
     /// <summary>
     /// 特定のUI群を非表示にする
     /// </summary>
     /// <param name="_index"></param>
-    public void HideUI(int _index) {
+    public void HideUIRoot(int _index) {
         UIRoots[_index].gameObject.SetActive(false);
     }
+
+    /// <summary>
+    /// 特定の"UI"を表示させる
+    /// </summary>
+    /// <param name="_uiName"></param>
+    public void ShowUI(string _uiName) {
+        GameObject.Find(_uiName).SetActive(true);
+    }
+
+    /// <summary>
+    /// 特定の"UI"を非表示させる
+    /// </summary>
+    /// <param name="_uiName"></param>
+    public void HideUI(string _uiName) {
+        GameObject.Find(_uiName).SetActive(false);
+    }
+
+
     
+    /// <summary>
+    /// チームメイトが誰なのかを表示するUIを作り出す
+    /// </summary>
+    /// <param name="_player"></param>
     public void CreateTeammateUI(NetworkIdentity _player) {
         if (!_player.isLocalPlayer || !_player.isClient) return;
         Transform createUIRoot = GameObject.Find("NonBattleUIRoot/TeammateUIRoot").transform;
@@ -141,6 +179,9 @@ public class PlayerUIManager : NetworkBehaviour
         madeUI.GetComponent<TeammateUI>().Initialize(_player);
     }
 
+    /// <summary>
+    /// チームメイトUIを削除
+    /// </summary>
     public void ResetTeammateUI() {
         for(int i = 0,max = teamMateUIRoot.childCount; i < max; i++) {
             Destroy(teamMateUIRoot.GetChild(i).gameObject);
