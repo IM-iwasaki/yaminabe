@@ -98,7 +98,7 @@ public class DemoPlayer : NetworkBehaviour {
     }
     private void ChangedHP(int _oldHP, int _newHP) {
         if (isLocalPlayer) {
-            playerUI.ChangHPUI(MaxHP,_newHP);
+            playerUI.ChangeHPUI(MaxHP,_newHP);
         }
 
     }

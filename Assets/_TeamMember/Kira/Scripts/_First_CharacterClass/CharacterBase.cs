@@ -17,7 +17,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #region ～ステータス～
     //現在の体力
-    [SyncVar] public int HP;
+    [SyncVar(hook = nameof(TakeDamage))] public int HP;
     //最大の体力
     public int MaxHP { get; protected set; }
     //基礎攻撃力
@@ -57,6 +57,8 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //コンポーネント情報
     protected new Rigidbody rigidbody;
+
+    [SerializeField] protected PlayerUIManager UI;
 
     #endregion
 
@@ -101,6 +103,15 @@ abstract class CharacterBase : NetworkBehaviour {
         // デフォルト値保存
         defaultMoveSpeed = MoveSpeed;
         defaultAttack = Attack;
+    }
+
+    public override void OnStartLocalPlayer() {
+        if (isLocalPlayer) {
+            GameObject GameUIRoot = GameObject.Find("GameUI");
+            var playerUI = Instantiate(UI,GameUIRoot.transform);
+            UI = playerUI.GetComponent<PlayerUIManager>();
+
+        }
     }
 
     /// <summary>
@@ -150,6 +161,7 @@ abstract class CharacterBase : NetworkBehaviour {
             return;
         //HPの減算処理
         HP -= _damage;
+        UI.ChangeHPUI(MaxHP,HP);
         //HPが0以下になったらisDeadを真にする
         if (HP <= 0)
             RemoveBuff();

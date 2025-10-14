@@ -66,7 +66,7 @@ public class PlayerUIManager : NetworkBehaviour
     /// </summary>
     /// <param name="_maxHP"></param>
     /// <param name="_hp"></param>
-    public void ChangHPUI(int _maxHP, int _hp) {
+    public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar.value = (float)_hp / _maxHP * FIXED_RATIO;
         if(hpBar.value <= _maxHP / 5 && hpBar.value > _maxHP / 2) {
