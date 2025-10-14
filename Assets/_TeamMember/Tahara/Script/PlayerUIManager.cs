@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// プレイヤーUIにコンポーネント済みで、各Playerのメンバとして持たせてほしい
+/// 各ローカルプレイヤーに複製してもらうので別に子オブジェクトとかにしなくていい
 /// </summary>
 public class PlayerUIManager : NetworkBehaviour
 {
@@ -34,14 +35,6 @@ public class PlayerUIManager : NetworkBehaviour
     private Slider mpBar = null;
     [SerializeField, Header("MPのバーのイメージ※デフォルトで設定済み")]
     private Image mpBarImage = null;
-    #endregion
-    
-    #region ルール関連管理用UI
-    [SerializeField, Header("残り時間のテキスト※デフォルトで設定済み")]
-    private TextMeshProUGUI timerText = null;
-
-    [SerializeField, Header("勝利条件のテキスト※デフォルトで設定済み")]
-    private List<TextMeshProUGUI> countTexts = null;
     #endregion
 
     #endregion
@@ -118,22 +111,8 @@ public class PlayerUIManager : NetworkBehaviour
         else
             mpBarImage.gameObject.SetActive(true);
     }
-    /// <summary>
-    /// 残り時間のUI更新
-    /// </summary>
-    /// <param name="_currentTime"></param>
-    public void ChangeTimerUI(int _currentTime) {
-        timerText.text = _currentTime.ToString();
-    }
-    /// <summary>
-    /// 各チームのカウントのUI更新
-    /// </summary>
-    /// <param name="_teamID"></param>
-    /// <param name="_count"></param>
-    public void ChangeTeamCountUI(int _teamID, int _count) {
-        countTexts[_teamID].text = _count.ToString();
-    }
     #endregion
+
     /// <summary>
     /// 特定の"UI群"を表示する
     /// </summary>

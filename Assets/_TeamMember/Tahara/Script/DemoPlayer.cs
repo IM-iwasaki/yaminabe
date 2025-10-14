@@ -47,8 +47,6 @@ public class DemoPlayer : NetworkBehaviour {
             PlayerUIManager uiM = Instantiate(playerUI, canvas.transform);
             uiM.transform.position /= 2;
             playerUI = uiM.GetComponent<PlayerUIManager>();
-
-            playerUI.HideUI("Magazine");
         }
         else {
             playerCamera.gameObject.SetActive(false);
