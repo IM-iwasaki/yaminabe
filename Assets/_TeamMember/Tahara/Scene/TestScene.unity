@@ -175,6 +175,10 @@ PrefabInstance:
       value: RedTeamZone
       objectReference: {fileID: 0}
     - target: {fileID: 5375579139009417326, guid: 62553389156de1b4ea9bee0ad2f6a839, type: 3}
+      propertyPath: m_Layer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375579139009417326, guid: 62553389156de1b4ea9bee0ad2f6a839, type: 3}
       propertyPath: m_TagString
       value: RedTeam
       objectReference: {fileID: 0}
@@ -380,6 +384,10 @@ PrefabInstance:
     - target: {fileID: 3298340454437890975, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
       propertyPath: m_Name
       value: BlueTeamZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 3298340454437890975, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
+      propertyPath: m_Layer
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3298340454437890975, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
       propertyPath: m_TagString
@@ -798,7 +806,7 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 5478059386412428429, guid: dc30ae14b26238344bd059295ae5adb8, type: 3}
+  playerPrefab: {fileID: 7407657446918099747, guid: f53076ce59542194c8079c7ce61a1830, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:

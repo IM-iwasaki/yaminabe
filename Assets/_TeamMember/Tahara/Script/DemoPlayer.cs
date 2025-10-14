@@ -45,7 +45,7 @@ public class DemoPlayer : NetworkBehaviour {
             //UI‚ğ¶¬(ÀÛ‚É‚ÍŒ©‚¦‚Ä‚È‚¢)
             GameObject canvas = GameObject.Find("GameUI");
             PlayerUIManager uiM = Instantiate(playerUI, canvas.transform);
-            uiM.transform.position /= 2;
+            //uiM.transform.position /= 2;
             playerUI = uiM.GetComponent<PlayerUIManager>();
         }
         else {
