@@ -5,7 +5,6 @@ using Mirror.BouncyCastle.Asn1.Pkcs;
 public class NetworkWeapon : NetworkBehaviour {
     public WeaponData weaponData;
     public Transform firePoint;
-    public Camera playerCamera; // TPSカメラをInspectorで設定
     float lastAttackTime;
 
     // --- 攻撃リクエスト ---
@@ -51,29 +50,21 @@ public class NetworkWeapon : NetworkBehaviour {
     void ServerGunAttack(Vector3 direction) {
         if (weaponData.projectilePrefab == null) return;
 
-        // カメラ中央からRayを飛ばして狙い位置を決定
-        Ray ray = new Ray(playerCamera.transform.position, direction);
-        Vector3 targetPoint = ray.GetPoint(100f);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
-            targetPoint = hit.point;
-
-        // 銃口からターゲットへの方向を求める
-        Vector3 shootDir = (targetPoint - firePoint.position).normalized;
-
         // 弾生成
-        GameObject proj = Instantiate(weaponData.projectilePrefab, firePoint.position, Quaternion.LookRotation(shootDir));
+        GameObject proj = Instantiate(weaponData.projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
         NetworkServer.Spawn(proj);
 
         if (proj.TryGetComponent(out Projectile projScript)) {
             projScript.Init(
-                weaponData.damage,
-                weaponData.projectileSpeed
+                gameObject,
+                weaponData.projectileSpeed,
+                weaponData.damage
             );
         }
 
         // 弾速を与える
         if (proj.TryGetComponent(out Rigidbody rb))
-            rb.velocity = shootDir * weaponData.projectileSpeed;
+            rb.velocity = direction * weaponData.projectileSpeed;
 
         // エフェクト
         RpcPlayMuzzleFlash(firePoint.position, weaponData.muzzleFlashType);
