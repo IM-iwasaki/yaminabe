@@ -12,9 +12,10 @@ public class MagicProjectile : NetworkBehaviour {
     private GameObject owner;
     private EffectType hitEffectType;
 
-    public void Init(GameObject shooter, ProjectileType _type, float _speed, float _initialHeightSpeed, int _damage, Vector3 direction) {
+    public void Init(GameObject shooter, ProjectileType _type, EffectType hitEffect, float _speed, float _initialHeightSpeed, int _damage, Vector3 direction) {
         owner = shooter;
         type = _type;
+        hitEffectType = hitEffect;
         speed = _speed;
         initialHeightSpeed = _initialHeightSpeed;
         damage = _damage;

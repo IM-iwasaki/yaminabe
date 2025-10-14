@@ -478,9 +478,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  weaponData: {fileID: 11400000, guid: 1f3a1410330c86143851fc8c334926ac, type: 2}
+  weaponData: {fileID: 11400000, guid: d8bae2cb7337d764fbb1bb72c96d65f3, type: 2}
   firePoint: {fileID: 3447353945322428233}
-  playerCamera: {fileID: 0}
 --- !u!114 &2193388005794362336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -499,6 +498,7 @@ MonoBehaviour:
   HP: 0
   TeamID: 0
   firePoint: {fileID: 3447353945322428233}
+  UI: {fileID: 8169650326617316781, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   weaponController: {fileID: 1231651752017076771}
   GroundCheck: {fileID: 1128610168963250203}
   IsGrounded: 0

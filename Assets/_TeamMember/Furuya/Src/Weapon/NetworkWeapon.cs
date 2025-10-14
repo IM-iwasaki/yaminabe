@@ -82,6 +82,7 @@ public class NetworkWeapon : NetworkBehaviour {
             projScript.Init(
                 gameObject,
                 magicData.magicType,
+                magicData.hitEffectType,
                 magicData.projectileSpeed,
                 magicData.initialHeightSpeed,
                 magicData.damage,
