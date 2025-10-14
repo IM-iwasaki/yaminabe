@@ -112,12 +112,13 @@ MonoBehaviour:
   minPitch: -30
   maxPitch: 40
   moveSpeed: 10
-  minDistance: 0.3
   upOffsetAmount: 0
-  collisionMask:
+  leftOffsetAmount: -2
+  transparentMask:
     serializedVersion: 2
     m_Bits: 1
-  leftOffsetAmount: -2
+  fadeAlpha: 0.1
+  fadeSpeed: 5
 --- !u!114 &2965182569160454427
 MonoBehaviour:
   m_ObjectHideFlags: 0

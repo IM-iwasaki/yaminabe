@@ -19,7 +19,6 @@ public class PlayerItemManager : MonoBehaviour {
         playerData = SaveSystem.Load();
         if (playerData.items == null)
             playerData.items = new List<PlayerItemStatus>();
-        SyncDebugList();
     }
 
     private void SavePlayerData() {
@@ -44,22 +43,12 @@ public class PlayerItemManager : MonoBehaviour {
             playerData.items.Add(new PlayerItemStatus {
                 itemName = itemName,
                 isUnlocked = true,
-                isEquipped = false
             });
         } else {
             item.isUnlocked = true;
         }
 
         SavePlayerData();
-    }
-
-    /// <summary>
-    /// 現在使用中のアイテム名を取得
-    /// 使用中がなければ null
-    /// </summary>
-    public string GetEquippedItem() {
-        var item = playerData.items.Find(i => i.isEquipped);
-        return item != null ? item.itemName : null;
     }
 
     /// <summary>
