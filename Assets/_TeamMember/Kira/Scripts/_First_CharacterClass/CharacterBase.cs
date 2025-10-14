@@ -17,7 +17,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #region `ƒXƒe[ƒ^ƒX`
     //Œ»İ‚Ì‘Ì—Í
-    [SyncVar(hook = nameof(TakeDamage))] public int HP;
+    [SyncVar(hook = nameof(ChangeHP))] public int HP;
     //Å‘å‚Ì‘Ì—Í
     public int MaxHP { get; protected set; }
     //Šî‘bUŒ‚—Í
@@ -161,11 +161,16 @@ abstract class CharacterBase : NetworkBehaviour {
             return;
         //HP‚ÌŒ¸Zˆ—
         HP -= _damage;
-        UI.ChangeHPUI(MaxHP,HP);
         //HP‚ª0ˆÈ‰º‚É‚È‚Á‚½‚çisDead‚ğ^‚É‚·‚é
         if (HP <= 0)
             RemoveBuff();
         IsDead = true;
+    }
+
+    public void ChangeHP(int newValue) {
+        if (isLocalPlayer) {
+            UI.ChangeHPUI(MaxHP, newValue);
+        }
     }
 
     /// <summary>
