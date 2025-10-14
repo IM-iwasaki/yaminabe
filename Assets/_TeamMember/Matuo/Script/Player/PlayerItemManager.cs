@@ -8,6 +8,9 @@ public class PlayerItemManager : MonoBehaviour {
     [Header("プレイヤーデータ")]
     private PlayerData playerData;
 
+    [SerializeField]
+    private List<PlayerItemStatus> unlockedItems = new();
+
     private void Awake() {
         LoadPlayerData();
     }
@@ -16,10 +19,20 @@ public class PlayerItemManager : MonoBehaviour {
         playerData = SaveSystem.Load();
         if (playerData.items == null)
             playerData.items = new List<PlayerItemStatus>();
+        SyncDebugList();
     }
 
     private void SavePlayerData() {
         SaveSystem.Save(playerData);
+        SyncDebugList();
+    }
+
+    /// <summary>
+    /// アイテムのリストに反映(デバッグ確認用)
+    /// </summary>
+    private void SyncDebugList()
+    {
+        unlockedItems = new List<PlayerItemStatus>(playerData.items);
     }
 
     /// <summary>
@@ -36,29 +49,6 @@ public class PlayerItemManager : MonoBehaviour {
         } else {
             item.isUnlocked = true;
         }
-
-        SavePlayerData();
-    }
-
-    /// <summary>
-    /// アイテムが使用可能か判定
-    /// </summary>
-    public bool CanUseItem(string itemName) {
-        var item = playerData.items.Find(i => i.itemName == itemName);
-        return item != null && item.isUnlocked;
-    }
-
-    /// <summary>
-    /// 指定アイテムを使用中にする
-    /// 他のアイテムは使用解除される
-    /// </summary>
-    public void EquipItem(string itemName) {
-        foreach (var i in playerData.items)
-            i.isEquipped = false;
-
-        var item = playerData.items.Find(i => i.itemName == itemName);
-        if (item != null && item.isUnlocked)
-            item.isEquipped = true;
 
         SavePlayerData();
     }

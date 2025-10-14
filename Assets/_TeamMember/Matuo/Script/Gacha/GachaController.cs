@@ -27,7 +27,7 @@ public class GachaController : MonoBehaviour {
         itemManager.UnlockItem(item.itemName);
 
         // 必要に応じてここで UI 表示や演出も呼べる
-        Debug.Log($"アイテムを取得{item.itemName}");
+
     }
 
     private void OnDestroy() {
