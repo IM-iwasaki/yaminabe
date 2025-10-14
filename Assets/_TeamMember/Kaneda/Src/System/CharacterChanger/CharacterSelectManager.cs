@@ -52,7 +52,7 @@ public class CharacterSelectManager : MonoBehaviour {
     /// <summary>
     /// キャラクター選択モードを終了
     /// </summary>
-    public void EndCharacterSelect(GameObject player) {
+    public void EndCharacterSelect() {
         if (currentPlayer == null) return;
 
         // UIを非表示（戻る操作開始時）

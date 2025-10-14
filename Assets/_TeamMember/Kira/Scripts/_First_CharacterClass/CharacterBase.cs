@@ -92,6 +92,7 @@ abstract class CharacterBase : NetworkBehaviour {
     private int defaultAttack;
     #endregion
 
+
     #endregion
 
     /// <summary>
@@ -150,6 +151,11 @@ abstract class CharacterBase : NetworkBehaviour {
                 ItemBase item = _collider.GetComponent<ItemBase>();
                 //仮。挙動確認。
                 item.Use(gameObject);
+            }
+            if (_collider.CompareTag("SelectCharacterObject")) {
+                //  なんかここにイントラクトのやつ呼んで
+                //  CharacterSelectManager select = _collider.GetComponent<CharacterSelectManager>();
+                //  select.StartCharacterSelect(gameObject);
             }
             if (_collider.CompareTag("RedTeam")) {
                 CmdJoinTeam(netIdentity, teamColor.Red);
