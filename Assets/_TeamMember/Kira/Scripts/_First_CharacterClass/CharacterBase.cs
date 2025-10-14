@@ -167,7 +167,7 @@ abstract class CharacterBase : NetworkBehaviour {
         IsDead = true;
     }
 
-    public void ChangeHP(int newValue) {
+    public void ChangeHP(int oldValue, int newValue) {
         if (isLocalPlayer) {
             UI.ChangeHPUI(MaxHP, newValue);
         }
