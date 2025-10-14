@@ -27,6 +27,7 @@ public class DemoPlayer : NetworkBehaviour {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
         HP = MaxHP;
+        playerCamera.enabled = false;
     }
     //private void Start() {
     //    if (isLocalPlayer) {
@@ -40,16 +41,13 @@ public class DemoPlayer : NetworkBehaviour {
 
     public override void OnStartLocalPlayer() {
         //base.OnStartLocalPlayer();
-        if (isLocalPlayer) {
-            playerCamera.gameObject.SetActive(true);
+        if(isLocalPlayer) {
+            playerCamera.enabled = true;
+            playerCamera.tag = "MainCamera";
             //UIÇê∂ê¨(é¿ç€Ç…ÇÕå©Ç¶ÇƒÇ»Ç¢)
             GameObject canvas = GameObject.Find("GameUI");
             PlayerUIManager uiM = Instantiate(playerUI, canvas.transform);
             playerUI = uiM.GetComponent<PlayerUIManager>();
-        }
-        else {
-            playerCamera.gameObject.SetActive(false);
-            //playerUI.gameObject.SetActive(false);
         }
     }
 
