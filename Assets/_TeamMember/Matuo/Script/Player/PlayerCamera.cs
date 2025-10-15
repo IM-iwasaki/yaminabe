@@ -4,41 +4,48 @@ using System.Collections.Generic;
 
 /// <summary>
 /// TPSカメラ制御スクリプト
-/// 壁貫通を許可しつつ、プレイヤーが見えにくくなる障害物を自動で透明化する
+/// プレイヤーとカメラの間の障害物を自動的に半透明化
 /// </summary>
 public class PlayerCamera : MonoBehaviour {
     [Header("プレイヤー参照")]
-    public Transform player;
-
-    public Vector3 normalOffset = new Vector3(0f, 0f, -4f);
+    public Transform player; // プレイヤー
 
     [Header("カメラ設定")]
-    public float rotationSpeed = 120f;
-    public float minPitch = -20f;
-    public float maxPitch = 60f;
-    public float moveSpeed = 10f;
-    public float upOffsetAmount = 0f;
-    public float leftOffsetAmount = -2f;
+    public Vector3 normalOffset = new Vector3(0f, 0f, -4f); // 通常時のカメラオフセット
+    public float rotationSpeed = 120f;                      // カメラ回転速度
+    public float minPitch = -20f;                           // カメラの下方向回転制限
+    public float maxPitch = 60f;                            // カメラの上方向回転制限
+    public float moveSpeed = 10f;                           // カメラ位置補間速度
+
+    [Header("画面位置調整")]
+    public float upOffsetAmount = 0f;    // 視点の上下オフセット
+    public float leftOffsetAmount = -2f; // 視点の左右オフセット
 
     [Header("透明化設定")]
-    public LayerMask transparentMask;  // 障害物レイヤー
-    public float fadeAlpha = 0.3f;     // 透明化したときのアルファ
-    public float fadeSpeed = 5f;       // フェード速度
+    public LayerMask transparentMask; // 障害物検出に使用するレイヤーマスク
+    public float fadeAlpha = 0.2f;    // 半透明化時の目標アルファ値
+    public float fadeSpeed = 5f;      // 透明化/復元の速度
 
-    private float yaw;
-    private float pitch;
-    private Vector2 lookInput;
-    private Vector3 currentOffset;
-    private Vector3 targetOffset;
+    private float yaw;                // カメラの水平回転角
+    private float pitch;              // カメラの垂直回転角
+    private Vector2 lookInput;        // 入力値
+    private Vector3 currentOffset;    // 現在のカメラオフセット
+    private Vector3 targetOffset;     // 目標オフセット
 
-    // 現在透明化しているオブジェクト
-    private Dictionary<Renderer, float> fadingObjects = new Dictionary<Renderer, float>();
+    /// <summary>
+    /// 現在フェード処理中のオブジェクトを管理
+    /// </summary>
+    private readonly Dictionary<Renderer, (float current, float original)> fadingObjects = new();
 
     private void Start() {
+        // 初期化
         currentOffset = normalOffset;
         targetOffset = normalOffset;
     }
 
+    /// <summary>
+    /// 入力アクションシステム
+    /// </summary>
     public void OnLook(InputAction.CallbackContext context) {
         lookInput = context.ReadValue<Vector2>();
     }
@@ -46,106 +53,144 @@ public class PlayerCamera : MonoBehaviour {
     private void LateUpdate() {
         if (!player) return;
 
-        // 回転入力処理
-        yaw += lookInput.x * rotationSpeed * Time.deltaTime;
-        pitch -= lookInput.y * rotationSpeed * Time.deltaTime;
-        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+        // カメラ回転制御
+        yaw += lookInput.x * rotationSpeed * Time.deltaTime; // 水平方向回転
+        pitch -= lookInput.y * rotationSpeed * Time.deltaTime; // 垂直方向回転
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch); // ピッチ角制限
 
-        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
+        // 回転情報からオフセットを計算
+        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
         targetOffset = rotation * normalOffset;
+
+        // スムーズにオフセットを補間
         currentOffset = Vector3.Lerp(currentOffset, targetOffset, moveSpeed * Time.deltaTime);
 
-        // プレイヤー位置
+        // プレイヤーの視点位置
         Vector3 playerPos = player.position + Vector3.up * 1.5f;
 
-        // 左寄せ
-        Vector3 leftScreenOffset = player.right * -leftOffsetAmount + player.up * upOffsetAmount;
-        Vector3 lookTarget = playerPos + leftScreenOffset;
-
-        // カメラ位置
+        // カメラの最終目標位置
         Vector3 desiredPos = playerPos + currentOffset;
         transform.position = desiredPos;
+
+        // 見るべきターゲット位置
+        Vector3 lookTarget = playerPos + (player.right * leftOffsetAmount) + (Vector3.up * upOffsetAmount);
         transform.LookAt(lookTarget);
 
-        // 透明化処理
+        // カメラとプレイヤーの間の障害物を透明化
         HandleTransparency(playerPos, desiredPos);
     }
 
     /// <summary>
-    /// プレイヤーとカメラの間にある複数のオブジェクトを透明化する
+    /// プレイヤーとカメラの間にある障害物を半透明化
     /// </summary>
     private void HandleTransparency(Vector3 playerPos, Vector3 cameraPos) {
-        // プレイヤーとの間を全Raycast
+        // カメラ方向のベクトル
         Vector3 dir = playerPos - cameraPos;
-        float distance = Vector3.Distance(playerPos, cameraPos);
-        RaycastHit[] hits = Physics.RaycastAll(cameraPos, dir.normalized, distance, transparentMask);
+        float dist = Vector3.Distance(playerPos, cameraPos);
 
-        // 現在ヒットしたオブジェクト
-        HashSet<Renderer> currentHits = new HashSet<Renderer>();
+        // レイキャストで間にある全障害物を取得
+        RaycastHit[] hits = Physics.RaycastAll(cameraPos, dir.normalized, dist, transparentMask);
 
+        // 今フレームでヒットしたRendererを記録
+        HashSet<Renderer> hitRenderers = new();
         foreach (var hit in hits) {
-            Renderer rend = hit.collider.GetComponent<Renderer>();
-            if (rend) {
-                currentHits.Add(rend);
-                if (!fadingObjects.ContainsKey(rend)) {
-                    fadingObjects[rend] = 1f;
-                }
+            Renderer r = hit.collider.GetComponent<Renderer>();
+            if (!r) continue;
+            hitRenderers.Add(r);
 
-                float currentAlpha = fadingObjects[rend];
-                currentAlpha = Mathf.MoveTowards(currentAlpha, fadeAlpha, Time.deltaTime * fadeSpeed);
-                SetRendererAlpha(rend, currentAlpha);
-                fadingObjects[rend] = currentAlpha;
+            // 初回ヒットなら登録
+            if (!fadingObjects.ContainsKey(r)) {
+                float baseAlpha = GetRendererAlpha(r);
+                fadingObjects[r] = (baseAlpha, baseAlpha);
             }
         }
 
-        // 削除リストを用意
-        List<Renderer> toRemove = new List<Renderer>();
+        // 登録済み全オブジェクトのアルファ値を更新
+        List<Renderer> keys = new(fadingObjects.Keys); // 列挙中の変更を避けるためコピー
+        foreach (Renderer r in keys) {
+            if (!r) { fadingObjects.Remove(r); continue; }
 
-        // 視界から外れたオブジェクトをフェードイン
-        foreach (var kvp in new List<KeyValuePair<Renderer, float>>(fadingObjects)) {
-            Renderer rend = kvp.Key;
-            if (!rend) {
-                toRemove.Add(rend);
-                continue;
-            }
+            // 現在と元のアルファ値を取得
+            (float current, float original) data = fadingObjects[r];
 
-            if (!currentHits.Contains(rend)) {
-                float currentAlpha = kvp.Value;
-                currentAlpha = Mathf.MoveTowards(currentAlpha, 1f, Time.deltaTime * fadeSpeed);
-                SetRendererAlpha(rend, currentAlpha);
-                fadingObjects[rend] = currentAlpha;
+            // 現在ヒット中ならfadeAlphaへ、ヒットしていなければ元に戻す
+            float targetAlpha = hitRenderers.Contains(r) ? fadeAlpha : data.original;
 
-                if (Mathf.Approximately(currentAlpha, 1f)) {
-                    toRemove.Add(rend);
-                }
-            }
+            // スムーズに目標アルファへ移行
+            data.current = Mathf.MoveTowards(data.current, targetAlpha, Time.deltaTime * fadeSpeed);
+            SetRendererAlpha(r, data.current); // 実際に透明度を反映
+            fadingObjects[r] = data;
+
+            // 元のアルファに戻ったら削除
+            if (!hitRenderers.Contains(r) && Mathf.Approximately(data.current, data.original))
+                fadingObjects.Remove(r);
+        }
+    }
+    #region マテリアル設定
+    /// <summary>
+    /// Rendererの現在アルファ値を取得
+    /// </summary>
+    private float GetRendererAlpha(Renderer rend) {
+        if (!rend || rend.sharedMaterial == null) return 1f;
+
+        Material mat = rend.sharedMaterial; // 共有マテリアル参照
+        if (mat.HasProperty("_BaseColor"))
+            return mat.GetColor("_BaseColor").a;
+        if (mat.HasProperty("_Color"))
+            return mat.GetColor("_Color").a;
+        return 1f;
+    }
+    
+    /// <summary>
+    /// Rendererの透明度を設定
+    /// </summary>
+    private void SetRendererAlpha(Renderer rend, float alpha) {
+        if (!rend) return;
+
+        Material mat = rend.material; // 個別インスタンスを取得
+
+        // マテリアルのアルファ値を変更
+        if (mat.HasProperty("_BaseColor")) {
+            Color c = mat.GetColor("_BaseColor");
+            c.a = alpha;
+            mat.SetColor("_BaseColor", c);
+        } else if (mat.HasProperty("_Color")) {
+            Color c = mat.GetColor("_Color");
+            c.a = alpha;
+            mat.SetColor("_Color", c);
         }
 
-        // ループ終了後に削除
-        foreach (var rend in toRemove) {
-            fadingObjects.Remove(rend);
-        }
+        // α値に応じて描画モードを自動的に切り替え
+        if (alpha < 0.99f)
+            SetMaterialToFade(mat);
+        else
+            SetMaterialToOpaque(mat);
     }
 
     /// <summary>
-    /// Rendererのマテリアル全ての透明度を設定する
+    /// マテリアルを半透明描画モードに設定
     /// </summary>
-    private void SetRendererAlpha(Renderer rend, float alpha) {
-        foreach (var mat in rend.materials) {
-            if (mat.HasProperty("_Color")) {
-                Color c = mat.color;
-                c.a = alpha;
-                mat.color = c;
-
-                // Transparent設定
-                mat.SetFloat("_Mode", 2);
-                mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                mat.SetInt("_ZWrite", 0);
-                mat.DisableKeyword("_ALPHATEST_ON");
-                mat.EnableKeyword("_ALPHABLEND_ON");
-                mat.renderQueue = 3000;
-            }
-        }
+    private void SetMaterialToFade(Material mat) {
+        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        mat.SetInt("_ZWrite", 0);
+        mat.DisableKeyword("_ALPHATEST_ON");
+        mat.EnableKeyword("_ALPHABLEND_ON");
+        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
     }
+
+    /// <summary>
+    /// マテリアルを不透明描画モードに戻す
+    /// </summary>
+    private void SetMaterialToOpaque(Material mat) {
+        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+        mat.SetInt("_ZWrite", 1);
+        mat.DisableKeyword("_ALPHATEST_ON");
+        mat.DisableKeyword("_ALPHABLEND_ON");
+        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        mat.renderQueue = -1;
+    }
+    #endregion
 }
