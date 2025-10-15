@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameSceneManager :NetworkBehaviour {
-    private string oldSceneName = null;
-
     public static GameSceneManager instance = null;
     [SerializeField, Header("読み込むロビーシーンの名前")]
     private string lobbySceneName = "LobbyScene";
@@ -18,22 +16,26 @@ public class GameSceneManager :NetworkBehaviour {
         Debug.Log(netIdentity.isServer + "," + netId);
     }
     
+
     public void LoadScene(string _sceneName) {
         //重ねるシーンをロード
-        SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
         CustomNetworkManager.singleton.ServerChangeScene(_sceneName);
     }
 
     /// <summary>
-    /// 全てのクライアントに対してゲームシーンを重ね、前のシーンを解放する
+    /// 特定のシーンに移行する(GameScene)
+    /// プレイヤーとカメラの同期がなくなってるので切り替えたタイミングで
+    /// OnSceneChanged()を呼ぶ
     /// ホストが特定のタイミングで呼び出す
     /// </summary>
-    [ClientRpc]
     public void LoadGameSceneForAll() {
+
         LoadScene(gameSceneName);
     }
 
-    [ClientRpc]
+    /// <summary>
+    /// 特定のシーンに移行する(LobbyScene)
+    /// </summary>
     public void LoadLobbySceneForAll() {
         LoadScene(lobbySceneName);
     }
