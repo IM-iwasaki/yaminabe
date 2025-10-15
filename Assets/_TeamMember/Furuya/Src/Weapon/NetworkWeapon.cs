@@ -75,8 +75,11 @@ public class NetworkWeapon : NetworkBehaviour {
         if (weaponData is not MagicWeaponData magicData || magicData.projectilePrefab == null)
             return;
 
-        GameObject proj = Instantiate(magicData.projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
-        NetworkServer.Spawn(proj);
+        GameObject proj = ProjectilePool.Instance.GetFromPool(
+            magicData.projectilePrefab,
+            firePoint.position,
+            Quaternion.LookRotation(direction)
+        );
 
         if (proj.TryGetComponent(out MagicProjectile projScript)) {
             projScript.Init(

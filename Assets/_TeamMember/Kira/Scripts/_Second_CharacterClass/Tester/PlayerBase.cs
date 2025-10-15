@@ -27,14 +27,6 @@ class PlayerBase : CharacterBase {
         Debug.Log("MeleeCharacter.cs : StatusInportを実行しました。\nMaxHP:" + MaxHP + " Attack:" + Attack + " MoveSpeed:" + MoveSpeed);
     }
 
-    protected override void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {
-        if (weaponController == null) return;
-
-        // 武器が攻撃可能かチェックしてサーバー命令を送る
-        Vector3 shootDir = GetShootDirection();
-        weaponController.CmdRequestAttack(shootDir);      
-    }
-
     protected override void StartUseSkill() {
 
     }

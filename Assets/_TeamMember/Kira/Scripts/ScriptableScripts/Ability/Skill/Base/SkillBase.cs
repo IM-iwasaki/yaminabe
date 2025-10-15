@@ -11,7 +11,7 @@ public abstract class SkillBase : ScriptableObject {
     //スキルのアイコン用
     public Sprite SkillIcon;
     //スキルのクールタイム
-    public float Cooldown;
+    [Range(0.1f,30.0f)]public float Cooldown;
     //スキルが発動中か
     public bool IsSkillUse;
 
