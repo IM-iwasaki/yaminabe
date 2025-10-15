@@ -19,7 +19,7 @@ public class PlayerCamera : MonoBehaviour {
 
     [Header("画面位置調整")]
     public float upOffsetAmount = 0f;    // 視点の上下オフセット
-    public float leftOffsetAmount = -2f; // 視点の左右オフセット
+    public float leftOffsetAmount = 2f; // 視点の左右オフセット
 
     [Header("透明化設定")]
     public LayerMask transparentMask; // 障害物検出に使用するレイヤーマスク
