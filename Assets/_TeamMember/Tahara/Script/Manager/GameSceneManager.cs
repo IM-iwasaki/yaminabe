@@ -1,31 +1,27 @@
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameSceneManager :NetworkSystemObject<GameSceneManager> {
+public class GameSceneManager :NetworkBehaviour {
     private string oldSceneName = null;
-    
+
+    public static GameSceneManager instance = null;
     [SerializeField, Header("読み込むロビーシーンの名前")]
     private string lobbySceneName = "LobbyScene";
     [SerializeField,Header("読み込むゲームシーンの名前")]
     private string gameSceneName = "GameScene";
-    
 
+    public override void OnStartServer() {
+        base.OnStartServer();
+        instance = this;
+
+        Debug.Log(netIdentity.isServer + "," + netId);
+    }
     
-    [Server]
     public void LoadScene(string _sceneName) {
-        //ロードする前(現在)のシーンの名前をキャッシュ
-        oldSceneName = SceneManager.GetActiveScene().name;
         //重ねるシーンをロード
         SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
-    }
-
-    [Server]
-    public void UnLoadScene(string _sceneName) {
-        //ロード時にキャッシュしたシーンを解放
-        SceneManager.UnloadSceneAsync(_sceneName);
+        CustomNetworkManager.singleton.ServerChangeScene(_sceneName);
     }
 
     /// <summary>
@@ -34,16 +30,24 @@ public class GameSceneManager :NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [ClientRpc]
     public void LoadGameSceneForAll() {
-
         LoadScene(gameSceneName);
-        UnLoadScene(oldSceneName);
     }
 
     [ClientRpc]
     public void LoadLobbySceneForAll() {
         LoadScene(lobbySceneName);
-        UnLoadScene(oldSceneName);
     }
+    //private IEnumerator LoadGameSceneRoutine() {
+    //    oldSceneName = SceneManager.GetActiveScene().name;
+
+    //    AsyncOperation loadOp = SceneManager.LoadSceneAsync(gameSceneName, LoadSceneMode.Additive);
+    //    yield return new WaitUntil(() => loadOp.isDone);
+
+    //    SceneManager.SetActiveScene(SceneManager.GetSceneByName(gameSceneName));
+
+    //    AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(oldSceneName);
+    //    yield return new WaitUntil(() => unloadOp.isDone);
+    //}
 
 
 }
