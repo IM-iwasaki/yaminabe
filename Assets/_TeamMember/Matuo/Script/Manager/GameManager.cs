@@ -32,8 +32,11 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// </summary>
     /// <param name="rule">開始するルールタイプ</param>
     [Server]
-    public void StartGame(GameRuleType rule) {
+    public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
+
+        // ステージ生成
+        StageManager.Instance.SpawnStage(stageData);
 
         isGameRunning = true;
         ruleManager.currentRule = rule;
@@ -48,6 +51,8 @@ public class GameManager : NetworkSystemObject<GameManager> {
                 EndGame();
             };
         }
+
+        Debug.Log($"ゲーム開始: ルール={rule}, ステージ={stageData.stageName}");
     }
 
     /// <summary>
