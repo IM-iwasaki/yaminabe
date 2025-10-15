@@ -55,4 +55,10 @@ public class CustomNetworkManager : NetworkManager
         base.OnServerDisconnect(_conn);
         
     }
+
+    public override void OnServerChangeScene(string newSceneName) {
+        base.OnServerChangeScene(newSceneName);
+
+        GameSceneManager.instance.ResetIsChangedScene();
+    }
 }

@@ -16,8 +16,8 @@ public class GameSceneManager :NetworkBehaviour {
 
         Debug.Log(netIdentity.isServer + "," + netId);
     }
-    
 
+    [Server]
     public void LoadScene(string _sceneName) {
         //重ねるシーンをロード
         CustomNetworkManager.singleton.ServerChangeScene(_sceneName);
@@ -41,17 +41,8 @@ public class GameSceneManager :NetworkBehaviour {
     public void LoadLobbySceneForAll() {
         LoadScene(lobbySceneName);
     }
-    //private IEnumerator LoadGameSceneRoutine() {
-    //    oldSceneName = SceneManager.GetActiveScene().name;
-
-    //    AsyncOperation loadOp = SceneManager.LoadSceneAsync(gameSceneName, LoadSceneMode.Additive);
-    //    yield return new WaitUntil(() => loadOp.isDone);
-
-    //    SceneManager.SetActiveScene(SceneManager.GetSceneByName(gameSceneName));
-
-    //    AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(oldSceneName);
-    //    yield return new WaitUntil(() => unloadOp.isDone);
-    //}
-
-
+    public void ResetIsChangedScene() {
+        isChanged = false;
+    }
+    
 }

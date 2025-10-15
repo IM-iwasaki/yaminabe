@@ -9,6 +9,11 @@ public class DebugNetwork : NetworkBehaviour {
         
     }
 
+    public override void OnStartClient() {
+        base.OnStartClient();
+        GameSceneManager.instance = GameObject.Find("GameSceneManager").GetComponent<GameSceneManager>();
+    }
+
     // Update is called once per frame
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Return))
