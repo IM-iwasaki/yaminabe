@@ -9,6 +9,7 @@ public class GameSceneManager :NetworkBehaviour {
     [SerializeField,Header("読み込むゲームシーンの名前")]
     private string gameSceneName = "GameScene";
 
+    private bool isChanged = false;
     public override void OnStartServer() {
         base.OnStartServer();
         instance = this;
@@ -20,6 +21,7 @@ public class GameSceneManager :NetworkBehaviour {
     public void LoadScene(string _sceneName) {
         //重ねるシーンをロード
         CustomNetworkManager.singleton.ServerChangeScene(_sceneName);
+        isChanged = true;
     }
 
     /// <summary>
@@ -29,7 +31,7 @@ public class GameSceneManager :NetworkBehaviour {
     /// ホストが特定のタイミングで呼び出す
     /// </summary>
     public void LoadGameSceneForAll() {
-
+        if(!isChanged)
         LoadScene(gameSceneName);
     }
 
