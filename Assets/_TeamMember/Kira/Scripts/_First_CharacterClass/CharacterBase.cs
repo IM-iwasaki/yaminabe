@@ -188,6 +188,10 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #region ～プレイヤー状態更新関数～
 
+    public void FlagReset(){
+
+    }
+
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
@@ -203,6 +207,9 @@ abstract class CharacterBase : NetworkBehaviour {
         IsDead = true;
     }
 
+    /// <summary>
+    /// UI用のHP更新関数
+    /// </summary>
     public void ChangeHP(int oldValue, int newValue) {
         if (isLocalPlayer) {
             UI.ChangeHPUI(MaxHP, newValue);
@@ -467,7 +474,6 @@ abstract class CharacterBase : NetworkBehaviour {
         // firePoint → レティクル命中点 の方向に補正
         return (targetPoint - firePoint.position).normalized;
     }
-
 
     //スキル使用関数
     abstract protected void StartUseSkill();
