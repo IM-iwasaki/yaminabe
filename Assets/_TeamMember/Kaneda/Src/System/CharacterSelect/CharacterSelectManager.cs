@@ -5,6 +5,8 @@ using UnityEngine;
 /// ・UI表示/非表示、プレイヤー操作停止、CameraChangeController呼び出しを管理
 /// </summary>
 public class CharacterSelectManager : MonoBehaviour {
+    #region 変数定義
+
     [Header("カメラ制御")]
     [SerializeField] private CameraChangeController cameraManager;  // カメラ移動用Controller
     [SerializeField] private Transform cameraTargetPoint;           // 選択画面カメラ位置
@@ -14,10 +16,24 @@ public class CharacterSelectManager : MonoBehaviour {
 
     private GameObject currentPlayer; // 現在選択中のプレイヤー
 
+    //  キャラクターを毎秒どれだけ回転させるか
+    private Vector3 characterRotation = new Vector3(0, 50f, 0);
+    [Header("オブジェクトを回す")]
+    [SerializeField] private GameObject rotateObject;
+    #endregion
+
+    #region Awake,Start,Update
     private void Awake() {
         selectUI.SetActive(false);
     }
 
+    private void Update() {
+        //  オブジェクトを回転させる
+        rotateObject.transform.Rotate(characterRotation * Time.deltaTime);
+    }
+    #endregion
+
+    #region キャラクター選択時のUI表示非表示、カメラの挙動
     /// <summary>
     /// キャラクター選択モードを開始
     /// </summary>
@@ -80,4 +96,8 @@ public class CharacterSelectManager : MonoBehaviour {
         if (selectUI != null)
             selectUI.SetActive(true);
     }
+    #endregion
+
+
+
 }
