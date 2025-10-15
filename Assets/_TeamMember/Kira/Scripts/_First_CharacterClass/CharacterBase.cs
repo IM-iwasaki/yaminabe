@@ -58,11 +58,21 @@ abstract class CharacterBase : NetworkBehaviour {
     #region ～状態管理・コンポーネント変数～
 
     //プレイヤーの状態
+
+    //死亡しているか
     protected bool IsDead { get; private set; } = false;
+    //攻撃中か
+    protected bool IsAttack { get; private set; } = false;
+
+    //アイテムを拾える状態か
+    protected bool IsCanPickup { get; private set; } = false;
+    //インタラクトできる状態か
+    protected bool IsCanInteruct { get; private set; } = false;
 
     //コンポーネント情報
     protected new Rigidbody rigidbody;
     [SerializeField] protected PlayerUIManager UI;
+    [SerializeField] private InputActionAsset inputActions;
 
     #endregion
 
@@ -98,7 +108,16 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 初期化をここで行う。
     /// </summary>
-    protected void Start() {
+    protected void Awake() {
+        //コンテキストの登録
+        var map = inputActions.FindActionMap("Player");
+        foreach (var action in map.actions) {
+            action.started += ctx => OnInputStarted(action.name, ctx);
+            action.performed += ctx => OnInputPerformed(action.name, ctx);
+            action.canceled += ctx => OnInputCanceled(action.name, ctx);
+        } 
+        map.Enable();
+
         rigidbody = GetComponent<Rigidbody>();
 
         // "Ground" という名前のレイヤーを取得してマスク化
@@ -148,14 +167,15 @@ abstract class CharacterBase : NetworkBehaviour {
         if (isLocalPlayer) {
             if (_collider.CompareTag("Item")) {
                 //アイテム使用キー入力入れる
+
                 ItemBase item = _collider.GetComponent<ItemBase>();
                 //仮。挙動確認。
                 item.Use(gameObject);
             }
             if (_collider.CompareTag("SelectCharacterObject")) {
-                //  なんかここにイントラクトのやつ呼んで
-                //  CharacterSelectManager select = _collider.GetComponent<CharacterSelectManager>();
-                //  select.StartCharacterSelect(gameObject);
+                // なんかここにイントラクトのやつ呼んで
+                // CharacterSelectManager select = _collider.GetComponent<CharacterSelectManager>();
+                // select.StartCharacterSelect(gameObject);
             }
             if (_collider.CompareTag("RedTeam")) {
                 CmdJoinTeam(netIdentity, teamColor.Red);
@@ -171,8 +191,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Command]
-    public void TakeDamage(int _damage) {
+    [Command]public void TakeDamage(int _damage) {
         //ダメージが0以下だったら帰る
         if (_damage <= 0)
             return;
@@ -193,8 +212,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Command]
-    public void Respown() {
+    [Command]public void Respown() {
         //死んでいなかったら即抜け
         if (!IsDead)
             return;
@@ -210,8 +228,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
-    [Command]
-    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+    [Command]public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
         CharacterBase player = _player.GetComponent<CharacterBase>();
         int currentTeam = player.TeamID;
         int newTeam = (int) _color;
@@ -242,13 +259,65 @@ abstract class CharacterBase : NetworkBehaviour {
     #region 入力受付・入力実行関数
 
     /// <summary>
+    /// 入力の共通ハンドラ
+    /// </summary>
+    private void OnInputStarted(string actionName, InputAction.CallbackContext ctx) {
+        switch (actionName) {
+            case "Jump":
+                OnJump(ctx);
+                break;
+            case "Fire_Main":
+            case "Fire_Sub":
+                HandleAttack(ctx, actionName == "Attack_Main"
+                    ? PlayerConst.AttackType.Main
+                    : PlayerConst.AttackType.Sub);
+                break;
+        }
+    }
+    private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
+        switch (actionName) {
+            case "Move":
+                OnMove(ctx);  
+                break;
+            case "Jump":
+                OnJump(ctx);
+                break;
+            case "Fire_Main":
+            case "Fire_Sub":
+                HandleAttack(ctx, actionName == "Attack_Main"
+                    ? PlayerConst.AttackType.Main
+                    : PlayerConst.AttackType.Sub);
+                break;
+            case "UseSkill":
+                OnUseSkill(ctx);
+                break;
+            case "Interact":
+                OnInteract(ctx);
+                break;
+        }
+    }
+    private void OnInputCanceled(string actionName, InputAction.CallbackContext ctx) {
+        switch (actionName) {
+            case "Move":
+                MoveInput = Vector2.zero;
+                break;
+            case "Fire_Main":
+            case "Fire_Sub":
+                HandleAttack(ctx, actionName == "Attack_Main"
+                    ? PlayerConst.AttackType.Main
+                    : PlayerConst.AttackType.Sub);
+                break;
+        }
+    }
+
+    /// <summary>
     /// 移動
     /// </summary>
     public void OnMove(InputAction.CallbackContext context) {
         MoveInput = context.ReadValue<Vector2>();
     }
     /// <summary>
-    /// 視点
+    /// 視点(現在未使用)
     /// </summary>
     public void OnLook(InputAction.CallbackContext context) {
         LookInput = context.ReadValue<Vector2>();
@@ -263,16 +332,16 @@ abstract class CharacterBase : NetworkBehaviour {
         }
     }
     /// <summary>
-    /// メイン攻撃
+    /// メイン攻撃(現在未使用)
     /// </summary
     public void OnAttack_Main(InputAction.CallbackContext context) {
-        if (context.performed) StartAttack(PlayerConst.AttackType.Main);
+        HandleAttack(context, PlayerConst.AttackType.Main);
     }
     /// <summary>
-    /// サブ攻撃
+    /// サブ攻撃(現在未使用)
     /// </summary
     public void OnAttack_Sub(InputAction.CallbackContext context) {
-        if (context.performed) StartAttack(PlayerConst.AttackType.Sub);
+       　HandleAttack(context, PlayerConst.AttackType.Sub);
     }
     /// <summary>
     /// スキル
@@ -351,6 +420,22 @@ abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 攻撃入力のハンドル分岐
+    /// </summary>
+    private void HandleAttack(InputAction.CallbackContext context, PlayerConst.AttackType _type) {
+        switch (context.phase) {
+            case InputActionPhase.Started:
+                IsAttack = true;
+                break;
+            case InputActionPhase.Performed:
+                StartAttack(_type);
+                break;
+            case InputActionPhase.Canceled:
+                IsAttack = false;
+                break;
+        }
+    }
+    /// <summary>
     /// 攻撃関数
     /// </summary>
     virtual protected void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main){
@@ -364,7 +449,6 @@ abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
     /// </summary>
-    /// <returns></returns>
     protected Vector3 GetShootDirection() {
         Camera cam = Camera.main;
         Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);

@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
-  m_NotificationBehavior: 2
+  m_NotificationBehavior: 3
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -405,8 +405,9 @@ MonoBehaviour:
   syncInterval: 0
   HP: 0
   TeamID: 0
-  firePoint: {fileID: 0}
+  firePoint: {fileID: 878125566127400802}
   UI: {fileID: 8169650326617316781, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
+  inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
   weaponController: {fileID: 2825701905452532873}
   GroundCheck: {fileID: 4807031412442243011}
   IsGrounded: 0

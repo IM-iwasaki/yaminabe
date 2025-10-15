@@ -31,8 +31,8 @@ class MeleeCharacter : CharacterBase {
     }
 
     // Start is called before the first frame update
-    protected new void Start() {
-        base.Start();
+    protected new void Awake() {
+        base.Awake();
         StatusInport();
     }
 
