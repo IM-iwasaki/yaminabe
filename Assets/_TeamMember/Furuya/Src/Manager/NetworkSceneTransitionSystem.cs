@@ -2,6 +2,9 @@ using UnityEngine;
 using Mirror;
 using System.Collections;
 
+//‚±‚ê‚ðŽg‚¢‚½‚¢‚Æ‚±‚ë‚ÅŒÄ‚Ô‚¾‚¯
+//NetworkSceneTransitionSystem.Instance.ChangeScene("NextSceneName");
+
 public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTransitionSystem> {
     [SerializeField] private float fadeDuration = 1f;
 
