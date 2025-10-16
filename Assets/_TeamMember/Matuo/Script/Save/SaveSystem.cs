@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// プレイヤーデータのセーブ／ロードを行う静的クラス（簡略版）
+/// プレイヤーデータのセーブ／ロードを行う静的クラス
 /// <summary>
 public static class SaveSystem {
     private static string filePath => Path.Combine(Application.persistentDataPath, "playerData.json");
