@@ -17,8 +17,19 @@ public class PlayerItemManager : MonoBehaviour {
 
     private void LoadPlayerData() {
         playerData = SaveSystem.Load();
+
         if (playerData.items == null)
             playerData.items = new List<string>();
+
+        // 最初のキャラクターとスキンを解放する処理
+        if (playerData.items.Count == 0) {
+            // CharacterDatabaseを参照する必要がある場合はインスタンスを渡す
+            var defaultCharacter = FindObjectOfType<CharacterDatabase>()?.characters;
+            if (defaultCharacter != null && defaultCharacter.Count > 0 && defaultCharacter[0].skins.Count > 0) {
+                string defaultItemName = $"{defaultCharacter[0].characterName}_{defaultCharacter[0].skins[0].skinName}";
+                playerData.items.Add(defaultItemName);
+            }
+        }
     }
 
     private void SavePlayerData() {
@@ -60,5 +71,22 @@ public class PlayerItemManager : MonoBehaviour {
     /// </summary>
     public bool HasSkin(string skinName) {
         return playerData.items.Contains(skinName);
+    }
+
+    /// <summary>
+    /// ガチャで入手したキャラクターを解放（スキン1つ目のみ）
+    /// </summary>
+    public void UnlockCharacterFromGacha(string characterName) {
+        var defaultSkinName = $"{characterName}_{GetFirstSkinName(characterName)}";
+        UnlockItem(defaultSkinName);
+    }
+
+    /// <summary>
+    /// キャラクターの最初のスキン名を取得
+    /// </summary>
+    private string GetFirstSkinName(string characterName) {
+        var database = FindObjectOfType<CharacterDatabase>();
+        var character = database.characters.Find(c => c.characterName == characterName);
+        return character != null && character.skins.Count > 0 ? character.skins[0].skinName : "";
     }
 }

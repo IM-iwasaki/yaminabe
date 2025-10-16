@@ -23,11 +23,16 @@ public class GachaController : MonoBehaviour {
     private void OnItemPulled(GachaItem item) {
         if (item == null) return;
 
-        // PlayerItemManager に登録
-        itemManager.UnlockItem(item.itemName);
+        // もしガチャアイテムがキャラクターなら、最初のスキンだけ解放
+        if (item.isCharacter)
+        {
+            itemManager.UnlockCharacterFromGacha(item.itemName);
+        } else {
+            // 通常アイテムはそのまま解放
+            itemManager.UnlockItem(item.itemName);
+        }
 
-        // 必要に応じてここで UI 表示や演出も呼べる
-
+        // 必要に応じて UI 表示や演出もここで呼べる
     }
 
     private void OnDestroy() {
