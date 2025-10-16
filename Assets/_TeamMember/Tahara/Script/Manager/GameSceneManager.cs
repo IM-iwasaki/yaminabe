@@ -36,7 +36,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     }
 
     /// <summary>
-    /// 特定のシーンに移行する(LobbyScene)
+    /// 特定のシーンに全員を移行する(LobbyScene)
     /// </summary>
     public void LoadLobbySceneForAll() {
         if (!isChanged) {
