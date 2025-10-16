@@ -69,6 +69,9 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //€–S‚µ‚Ä‚¢‚é‚©
     protected bool IsDead { get; private set; } = false;
+    //€–S‚µ‚Ä‚©‚ç‚ÌŒo‰ßŠÔ
+    protected float DeadAfterTime { get; private set; } = 0.0f;
+
     //UŒ‚’†‚©
     protected bool IsAttack { get; private set; } = false;
 
@@ -256,8 +259,12 @@ abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
-            case "Fire_Sub":
                 HandleAttack(ctx, actionName == "Attack_Main"
+                    ? PlayerConst.AttackType.Main
+                    : PlayerConst.AttackType.Sub);
+                break;
+            case "Fire_Sub":
+                HandleAttack(ctx, actionName == "Attack_Sub"
                     ? PlayerConst.AttackType.Main
                     : PlayerConst.AttackType.Sub);
                 break;
@@ -272,8 +279,12 @@ abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
-            case "Fire_Sub":
                 HandleAttack(ctx, actionName == "Attack_Main"
+                    ? PlayerConst.AttackType.Main
+                    : PlayerConst.AttackType.Sub);
+                break;
+            case "Fire_Sub":
+                HandleAttack(ctx, actionName == "Attack_Sub"
                     ? PlayerConst.AttackType.Main
                     : PlayerConst.AttackType.Sub);
                 break;
