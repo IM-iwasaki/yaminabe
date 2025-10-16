@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using TMPro;
 using UnityEngine;
 
@@ -7,9 +8,6 @@ public class SelectObjectManager : MonoBehaviour {
     //  値を変更させる定数
     private readonly int SUB_ONE_COUNT = -1;
     private readonly int ADD_ONE_COUNT = 1;
-
-    [Header("親オブジェクト")]
-    [SerializeField] private GameObject parent;
 
     [Header("キャラクターのステータスデータ")]
     [SerializeField] public CharacterStatus[] characterStatuses;
@@ -20,39 +18,50 @@ public class SelectObjectManager : MonoBehaviour {
     [Header("キャラクターステータステキスト")]
     [SerializeField] private TextMeshProUGUI statusText;
 
+    //  親オブジェクトを保存
+    private GameObject parent;
     //  数値を保存するカウンター
     private int count = 0;
     //  プレハブ化したオブジェクトを保存
     private GameObject obj;
 
+    //  表示する用のステータスデータ格納
+    private int HP = 0;
+    private int ATK = 0;
+    private int SPD = 0;
+
     //  初期は登録してあるプレハブの一番目を生成しておく
     private void Start() {
+        //  親オブジェクトを自身にする
+        parent = gameObject;
+
         if (prefabs == null) return;
 
         count = 0;
 
         //  子オブジェクトとして生成
-        obj = Instantiate(prefabs[count], parent.transform);
+        ChangeCharacterObject(count);
+        //  テキストを書き換える
+        ChangeStatusText(count);
     }
 
     //  左右切り替えボタン
     public void OnChangeLeft() {
-        ChangeCharacterObject(SUB_ONE_COUNT);
+        ChangeObject(SUB_ONE_COUNT);
     }
     public void OnChangeRight() {
-        ChangeCharacterObject(ADD_ONE_COUNT);
+        ChangeObject(ADD_ONE_COUNT);
     }
 
-    //  キャラクターを切り替える
-    public void ChangeCharacterObject(int num) {
+    //  キャラクター選択時のメイン処理
+    private void ChangeObject(int num) {
         //  数値を増減
         count = CheckCount(count, num);
         Debug.Log(count);
-        //  先に生成されているものがあるなら消す
-        if(obj != null) Destroy(obj);
-        //  子オブジェクトとして生成
-        obj = Instantiate(prefabs[count], parent.transform);
-
+        //  キャラクターを切り替える
+        ChangeCharacterObject(count);
+        //  ステータステキストを切り替える
+        ChangeStatusText(count);
     }
 
     //  数値を増減する（数値が一周したら戻す）
@@ -67,6 +76,36 @@ public class SelectObjectManager : MonoBehaviour {
         if (count < 0) return max;
         //  何もなければそのまま返す
         return count;
+    }
+
+    //  キャラクターを切り替える
+    private void ChangeCharacterObject(int count) {
+        //  先に生成されているものがあるなら消す
+        if(obj != null) Destroy(obj);
+        //  子オブジェクトとして生成
+        obj = Instantiate(prefabs[count], parent.transform);
+    }
+
+    //  ステータステキストを切り替える
+    private void ChangeStatusText(int count) {
+        SetStatusText(count);
+        //  テキストに変換
+        statusText.SetText("HP : " + HP + "\n"
+                           + "ATK : " + ATK + "\n"
+                           + "SPD : " + SPD + "\n");
+    }
+
+    //  ステータステキストにデータを代入
+    private void SetStatusText(int count) {
+        //  ステータスデータがなければ全て0にする
+        if (characterStatuses[count] == null) {
+            HP = ATK = SPD = 0;
+            return;
+        }
+        //  ステータスデータを代入する
+        HP = characterStatuses[count].MaxHP;
+        ATK = characterStatuses[count].Attack;
+        SPD = characterStatuses[count].MoveSpeed;
     }
 
 }
