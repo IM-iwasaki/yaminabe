@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e90a699723ed0a142ab66b039ccf5651, type: 3}
+  m_Name: CharacterDatabase
+  m_EditorClassIdentifier: 
+  characters:
+  - characterName: "\u30C7\u30D5\u30A9\u30EB\u30C8\u30AD\u30E3\u30E9"
+    statusData: {fileID: 0}
+    skins:
+    - skinName: "\u30C7\u30D5\u30A9\u30EB\u30C8"
+      skinPrefab: {fileID: 0}
+    - skinName: "\u9EC4\u91D1"
+      skinPrefab: {fileID: 0}
+    description: 
+  - characterName: "\u30CB\u30EF\u30C8\u30EA"
+    statusData: {fileID: 0}
+    skins:
+    - skinName: "\u30CB\u30EF\u30C8\u30EA(\u30C7\u30D5\u30A9\u30EB\u30C8)"
+      skinPrefab: {fileID: 0}
+    - skinName: "\u30CB\u30EF\u30C8\u30EA(\u9EC4\u91D1)"
+      skinPrefab: {fileID: 0}
+    description: 
