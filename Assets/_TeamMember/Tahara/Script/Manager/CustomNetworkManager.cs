@@ -66,4 +66,15 @@ public class CustomNetworkManager : NetworkManager
         FadeManager.Instance.StartFadeIn(0.5f);
         GameSceneManager.Instance.ResetIsChangedScene();
     }
+
+    /// <summary>
+    /// ƒV[ƒ“‚ª•Ï‚í‚Á‚½‚É
+    /// </summary>
+    /// <param name="newSceneName"></param>
+    /// <param name="sceneOperation"></param>
+    /// <param name="customHandling"></param>
+    public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
+        base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+        FadeManager.Instance.StartFadeIn(0.5f);
+    }
 }

@@ -18,13 +18,6 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         DontDestroyOnLoad(gameObject);
     }
 
-    [Server]
-    public void LoadScene(string _sceneName) {
-        //重ねるシーンをロード
-        CustomNetworkManager.singleton.ServerChangeScene(_sceneName);
-        isChanged = true;
-    }
-
     /// <summary>
     /// 特定のシーンに移行する(GameScene)
     /// プレイヤーとカメラの同期がなくなってるので切り替えたタイミングで
