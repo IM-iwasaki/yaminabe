@@ -51,12 +51,16 @@ public class NetworkWeapon : NetworkBehaviour {
         if (weaponData.projectilePrefab == null) return;
 
         // 弾生成
-        GameObject proj = Instantiate(weaponData.projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
-        NetworkServer.Spawn(proj);
+        GameObject proj = ProjectilePool.Instance.GetFromPool(
+            weaponData.projectilePrefab,
+            firePoint.position,
+            Quaternion.LookRotation(direction)
+        );
 
         if (proj.TryGetComponent(out Projectile projScript)) {
             projScript.Init(
                 gameObject,
+                weaponData.hitEffectType,
                 weaponData.projectileSpeed,
                 weaponData.damage
             );

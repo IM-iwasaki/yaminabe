@@ -6,14 +6,9 @@ using Mirror;
 /// プレハブは Inspector にアサインし、NetworkSystemPrefabs にこの SpawnManager のプレハブを登録しておく。
 /// </summary>
 public class SpawnManager : NetworkSystemObject<SpawnManager> {
-    [Header("生成用プレハブ")]
-    public GameObject bulletPrefab;
-    public GameObject enemyPrefab;
-    public GameObject playerPrefab;
 
     public override void Initialize() {
         base.Initialize();
-        Debug.Log("SpawnManager (server) 初期化完了");
     }
 
     /// <summary>サーバーでのみ呼べる汎用 Spawn</summary>
@@ -31,16 +26,4 @@ public class SpawnManager : NetworkSystemObject<SpawnManager> {
         NetworkServer.Destroy(go);
     }
 
-    [Server]
-    public GameObject SpawnPlayerForConnection(NetworkConnectionToClient conn, Vector3 pos, Quaternion rot) {
-        GameObject player = Instantiate(playerPrefab, pos, rot);
-        NetworkServer.AddPlayerForConnection(conn, player);
-        return player;
-    }
-
-    // 便利メソッド例
-    [Server]
-    public GameObject SpawnBullet(Vector3 pos, Quaternion rot) {
-        return SpawnObject(bulletPrefab, pos, rot);
-    }
 }
