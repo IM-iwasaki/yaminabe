@@ -3,13 +3,13 @@ using UnityEngine;
 
 /// <summary>
 /// プレイヤーの取得済みアイテム管理と使用判定
-/// </summary>
+/// <summary>
 public class PlayerItemManager : MonoBehaviour {
     [Header("プレイヤーデータ")]
     private PlayerData playerData;
 
     [SerializeField]
-    private List<PlayerItemStatus> unlockedItems = new();
+    private List<string> unlockedItems = new(); // デバッグ用リスト
 
     private void Awake() {
         LoadPlayerData();
@@ -18,7 +18,7 @@ public class PlayerItemManager : MonoBehaviour {
     private void LoadPlayerData() {
         playerData = SaveSystem.Load();
         if (playerData.items == null)
-            playerData.items = new List<PlayerItemStatus>();
+            playerData.items = new List<string>();
     }
 
     private void SavePlayerData() {
@@ -27,32 +27,38 @@ public class PlayerItemManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// アイテムのリストに反映(デバッグ確認用)
+    /// デバッグ用にリストを同期
     /// </summary>
-    private void SyncDebugList()
-    {
-        unlockedItems = new List<PlayerItemStatus>(playerData.items);
+    private void SyncDebugList() {
+        unlockedItems = new List<string>(playerData.items);
     }
 
     /// <summary>
     /// アイテムを取得済みにする
     /// </summary>
     public void UnlockItem(string itemName) {
-        var item = playerData.items.Find(i => i.itemName == itemName);
-        if (item == null) {
-            playerData.items.Add(new PlayerItemStatus {
-                itemName = itemName,
-                isUnlocked = true,
-            });
-        } else {
-            item.isUnlocked = true;
+        if (!playerData.items.Contains(itemName)) {
+            playerData.items.Add(itemName);
         }
-
         SavePlayerData();
     }
 
     /// <summary>
     /// 取得済みアイテムリストをコピーで取得
     /// </summary>
-    public List<PlayerItemStatus> GetOwnedItems() => new(playerData.items);
+    public List<string> GetOwnedItems() => new(playerData.items);
+
+    /// <summary>
+    /// 指定したキャラクターを持っているか判定
+    /// </summary>
+    public bool HasCharacter(string characterName) {
+        return playerData.items.Contains(characterName);
+    }
+
+    /// <summary>
+    /// 指定したスキンを持っているか判定
+    /// </summary>
+    public bool HasSkin(string skinName) {
+        return playerData.items.Contains(skinName);
+    }
 }
