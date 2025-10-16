@@ -382,6 +382,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4982128866425777382, guid: 77c66d64e7d1a8b458934029d50fcbf1, type: 3}
   m_PrefabInstance: {fileID: 7060221459070821213}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &1556564079 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8893633417293994655, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+  m_PrefabInstance: {fileID: 5928315245652676344}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1617363401 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2440554163675463382, guid: aa9e0e616408abf4896f703b691204ed, type: 3}
@@ -1758,6 +1763,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6764959418015424435, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: f9f7890e58221b94cbb4e2be8b09fa16, type: 2}
+    - target: {fileID: 6764959418015424435, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: skinButton
+      value: 
+      objectReference: {fileID: 7650126317225823707, guid: 5e666eb2e15a1bd43ad88752bad94580, type: 3}
+    - target: {fileID: 6764959418015424435, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: buttonParent
+      value: 
+      objectReference: {fileID: 1556564079}
     - target: {fileID: 7248327514413932830, guid: 746aa3385af7af440860aac3c083459b, type: 3}
       propertyPath: m_Name
       value: SelectCharacterObject
