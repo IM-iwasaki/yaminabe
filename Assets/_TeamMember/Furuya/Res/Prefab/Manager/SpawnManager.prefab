@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 5220416078365105118}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -279.60794, y: 0.06742774, z: -1.0367274}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -48,10 +48,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  initializationOrder: 0
-  bulletPrefab: {fileID: 0}
-  enemyPrefab: {fileID: 0}
-  playerPrefab: {fileID: 0}
+  initializationOrder: 5
 --- !u!114 &2724523940269758660
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,9 +9,17 @@ using static TeamData;
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Rigidbody))]
 
-//
-// @flie    First_CharacterClass
-//
+/*
+ @flie    First_CharacterClass
+
+ 本ファイルを改変する人へ・・・改変個所に改変者のイニシャルを記載の上、改変したところを//で囲ってください。
+                               (コード自体はコメントアウトしなくていいです)
+
+                               int test = 100;
+                           例：// K.W.
+                               test = 256;
+                               //
+*/
 abstract class CharacterBase : NetworkBehaviour {
     #region ～変数宣言～
 
@@ -26,10 +34,10 @@ abstract class CharacterBase : NetworkBehaviour {
     public int MoveSpeed { get; protected set; } = 5;
     //持っている武器の文字列
     public string CurrentWeapon { get; protected set; }
-    //所属チームの番号
-    [SyncVar] public int TeamID;
+    //所属チームの番号(-1は未所属。0、1はチーム所属。)
+    [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
-    //TODO:仮。ここの実装は要相談。
+    //TODO:プレイヤーセーブデータから取得できるようにする。
     protected string PlayerName = "Player_Test";
     //ランキング用変数の仮定義
     public int Score { get; protected set; } = 0;
@@ -102,8 +110,9 @@ abstract class CharacterBase : NetworkBehaviour {
     private int defaultAttack;
     #endregion
 
-
     #endregion
+
+    #region ～初期化関係関数～
 
     /// <summary>
     /// 初期化をここで行う。
@@ -160,31 +169,7 @@ abstract class CharacterBase : NetworkBehaviour {
         MoveSpeed = PlayerConst.DEFAULT_MOVESPEED;
     }
 
-    /// <summary>
-    /// 当たり判定関係
-    /// </summary>
-    protected void OnTriggerStay(Collider _collider) {
-        if (isLocalPlayer) {
-            if (_collider.CompareTag("Item")) {
-                //アイテム使用キー入力入れる
-
-                ItemBase item = _collider.GetComponent<ItemBase>();
-                //仮。挙動確認。
-                item.Use(gameObject);
-            }
-            if (_collider.CompareTag("SelectCharacterObject")) {
-                // なんかここにイントラクトのやつ呼んで
-                // CharacterSelectManager select = _collider.GetComponent<CharacterSelectManager>();
-                // select.StartCharacterSelect(gameObject);
-            }
-            if (_collider.CompareTag("RedTeam")) {
-                CmdJoinTeam(netIdentity, teamColor.Red);
-            }
-            if (_collider.CompareTag("BlueTeam")) {
-                CmdJoinTeam(netIdentity, teamColor.Blue);
-            }
-        }
-    }
+    #endregion
 
     #region ～プレイヤー状態更新関数～
 
@@ -203,6 +188,9 @@ abstract class CharacterBase : NetworkBehaviour {
         IsDead = true;
     }
 
+    /// <summary>
+    /// UI用のHP更新関数
+    /// </summary>
     public void ChangeHP(int oldValue, int newValue) {
         if (isLocalPlayer) {
             UI.ChangeHPUI(MaxHP, newValue);
@@ -256,7 +244,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
-    #region 入力受付・入力実行関数
+    #region 入力受付・入力実行・判定関数
 
     /// <summary>
     /// 入力の共通ハンドラ
@@ -306,6 +294,86 @@ abstract class CharacterBase : NetworkBehaviour {
                 HandleAttack(ctx, actionName == "Attack_Main"
                     ? PlayerConst.AttackType.Main
                     : PlayerConst.AttackType.Sub);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 当たり判定の中に入った瞬間に発動
+    /// </summary>
+    protected void OnTriggerEnter(Collider _collider) {
+        //早期return
+        if (!isLocalPlayer) return;
+
+        //switchで分岐。ここに順次追加していく。なんかうまく動いてなかったらここを下のifCompareTagに戻してみる
+        switch (_collider.tag) {
+            case "Item":
+                // フラグを立てる
+                IsCanPickup = true;
+
+                // TODO:この処理はアイテムを使う入力関数に移動。
+                ItemBase item = _collider.GetComponent<ItemBase>();
+                item.Use(gameObject);
+                break;
+            case "SelectCharacterObject":
+                // フラグを立てる
+                IsCanInteruct = true;
+
+                // TODO:この処理は該当する関数に移動。
+                CharacterSelectManager select = _collider.GetComponent<CharacterSelectManager>();
+                select.StartCharacterSelect(gameObject);
+                break;
+            case "RedTeam":
+                CmdJoinTeam(netIdentity, teamColor.Red);
+                break;
+            case "BlueTeam":
+                CmdJoinTeam(netIdentity, teamColor.Blue);
+                break;
+            default:
+                break;
+        }
+
+#if false
+        // ヒット対象がItemだった場合
+        if (_collider.CompareTag("Item")) {
+        }
+        // ヒット対象がSelectCharacterObjectだった場合
+        if (_collider.CompareTag("SelectCharacterObject")) {            
+        }
+        // チームチェンジ
+        if (_collider.CompareTag("RedTeam")) {
+            
+        }
+        if (_collider.CompareTag("BlueTeam")) {
+            
+        }
+#endif
+    }
+
+    /// <summary>
+    /// 当たり判定から抜けた瞬間に発動
+    /// </summary>
+    protected void OnTriggerExit(Collider _collider) {
+        //早期return
+        if (!isLocalPlayer) return;
+
+        //switchで分岐。ここに順次追加していく。
+        switch (_collider.tag) {
+            case "Item":
+                // フラグを下ろす
+                IsCanPickup = false;
+                break;
+            case "SelectCharacterObject":
+                // フラグを下ろす
+                IsCanInteruct = false;
+                break;
+            case "RedTeam":
+                //抜けたときは処理しない。何か処理があったら追加。
+                break;
+            case "BlueTeam":
+                //抜けたときは処理しない。何か処理があったら追加。
+                break;
+            default:
                 break;
         }
     }
@@ -467,7 +535,6 @@ abstract class CharacterBase : NetworkBehaviour {
         // firePoint → レティクル命中点 の方向に補正
         return (targetPoint - firePoint.position).normalized;
     }
-
 
     //スキル使用関数
     abstract protected void StartUseSkill();

@@ -55,6 +55,12 @@ MonoBehaviour:
   - name: FireballMuzzle
     prefab: {fileID: 4186470608034871016, guid: 8bc41e1472c45464980c8feeed5f1649, type: 3}
     size: 10
+  - name: MuzzleFlash
+    prefab: {fileID: 6980259576133684760, guid: 1f58a1dea6bbd9347843e4935585e6a2, type: 3}
+    size: 10
+  - name: bullet_hit
+    prefab: {fileID: 1370874438154576190, guid: c02083b1627cc40449e4e7c3ed1f2a65, type: 3}
+    size: 10
 --- !u!114 &6968258868527881071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,7 +74,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 0
+  _assetId: 4109680571
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

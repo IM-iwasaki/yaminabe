@@ -2305,12 +2305,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6763317598680910543, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6763317598680910543, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6763317598680910543, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6763317598680910543, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8358714206395223592, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
       propertyPath: m_Name
       value: GameLobby
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2817549992573173424, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
