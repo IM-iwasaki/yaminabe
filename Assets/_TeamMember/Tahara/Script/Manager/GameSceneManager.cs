@@ -2,8 +2,8 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameSceneManager :NetworkBehaviour {
-    public static GameSceneManager instance = null;
+public class GameSceneManager :NetworkSystemObject<GameSceneManager> {
+    //public static GameSceneManager instance = null;
     [SerializeField, Header("読み込むロビーシーンの名前")]
     private string lobbySceneName = "LobbyScene";
     [SerializeField,Header("読み込むゲームシーンの名前")]
@@ -12,9 +12,9 @@ public class GameSceneManager :NetworkBehaviour {
     private bool isChanged = false;
     public override void OnStartServer() {
         base.OnStartServer();
-        instance = this;
-
+        
         Debug.Log(netIdentity.isServer + "," + netId);
+        DontDestroyOnLoad(gameObject);
     }
 
     [Server]

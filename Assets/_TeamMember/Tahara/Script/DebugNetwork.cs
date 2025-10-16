@@ -9,10 +9,7 @@ public class DebugNetwork : NetworkBehaviour {
         
     }
 
-    public override void OnStartClient() {
-        base.OnStartClient();
-        GameSceneManager.instance = GameObject.Find("GameSceneManager").GetComponent<GameSceneManager>();
-    }
+    
 
     // Update is called once per frame
     private void Update() {
@@ -24,6 +21,6 @@ public class DebugNetwork : NetworkBehaviour {
     public void LoadScene() {
         if (!isServer) return;
 
-        GameSceneManager.instance.LoadGameSceneForAll();
+        GameSceneManager.Instance.LoadGameSceneForAll();
     }
 }
