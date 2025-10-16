@@ -69,6 +69,9 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //死亡しているか
     protected bool IsDead { get; private set; } = false;
+    //死亡してからの経過時間
+    protected float DeadAfterTime { get; private set; } = 0.0f;
+
     //攻撃中か
     protected bool IsAttack { get; private set; } = false;
 
@@ -163,6 +166,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する
     /// </summary>
     protected void DefaultStatusInport() {
+        Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
         MaxHP = PlayerConst.DEFAULT_MAXHP;
         HP = MaxHP;
         Attack = PlayerConst.DEFAULT_ATTACK;
@@ -255,8 +259,12 @@ abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
-            case "Fire_Sub":
                 HandleAttack(ctx, actionName == "Attack_Main"
+                    ? PlayerConst.AttackType.Main
+                    : PlayerConst.AttackType.Sub);
+                break;
+            case "Fire_Sub":
+                HandleAttack(ctx, actionName == "Attack_Sub"
                     ? PlayerConst.AttackType.Main
                     : PlayerConst.AttackType.Sub);
                 break;
@@ -271,8 +279,12 @@ abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
-            case "Fire_Sub":
                 HandleAttack(ctx, actionName == "Attack_Main"
+                    ? PlayerConst.AttackType.Main
+                    : PlayerConst.AttackType.Sub);
+                break;
+            case "Fire_Sub":
+                HandleAttack(ctx, actionName == "Attack_Sub"
                     ? PlayerConst.AttackType.Main
                     : PlayerConst.AttackType.Sub);
                 break;
@@ -536,10 +548,14 @@ abstract class CharacterBase : NetworkBehaviour {
         return (targetPoint - firePoint.position).normalized;
     }
 
-    //スキル使用関数
+    /// <summary>
+    /// スキル呼び出し関数
+    /// </summary>
     abstract protected void StartUseSkill();
 
-    //インタラクト関数
+    /// <summary>
+    /// インタラクト関数
+    /// </summary>
     protected void Interact() {
     }
 
