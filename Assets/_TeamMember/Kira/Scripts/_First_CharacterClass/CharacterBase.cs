@@ -163,6 +163,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する
     /// </summary>
     protected void DefaultStatusInport() {
+        Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
         MaxHP = PlayerConst.DEFAULT_MAXHP;
         HP = MaxHP;
         Attack = PlayerConst.DEFAULT_ATTACK;
@@ -536,10 +537,14 @@ abstract class CharacterBase : NetworkBehaviour {
         return (targetPoint - firePoint.position).normalized;
     }
 
-    //スキル使用関数
+    /// <summary>
+    /// スキル呼び出し関数
+    /// </summary>
     abstract protected void StartUseSkill();
 
-    //インタラクト関数
+    /// <summary>
+    /// インタラクト関数
+    /// </summary>
     protected void Interact() {
     }
 
