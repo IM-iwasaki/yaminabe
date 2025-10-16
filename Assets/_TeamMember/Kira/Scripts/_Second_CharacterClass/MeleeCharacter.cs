@@ -13,8 +13,15 @@ class MeleeCharacter : CharacterBase {
     private CharacterStatus RunTimeStatus;
     [Tooltip("使用するスキル")]
     private SkillBase[] EquippedSkills;
+    [Tooltip("使用するパッシブ")]
+    private PassiveBase[] EquippedPassives;
 
     protected override void StatusInport() {
+        if (InputStatus == null) {
+            DefaultStatusInport();
+            return;
+        }
+
         RunTimeStatus = InputStatus;
         MaxHP = RunTimeStatus.MaxHP;
         HP = MaxHP;
@@ -24,6 +31,8 @@ class MeleeCharacter : CharacterBase {
         EquippedSkills = RunTimeStatus.Skills;
         /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */
         Debug.Log("MeleeCharacter.cs : スキルのインポートを行いました。\nインポートしたスキル: " + string.Join(", ", EquippedSkills.Where(i => i != null).Select(i => i.SkillName)));
+        EquippedPassives = RunTimeStatus.Passives;
+        Debug.Log("MeleeCharacter.cs : パッシブのインポートを行いました。\nインポートしたパッシブ: " + string.Join(", ", EquippedPassives.Where(i => i != null).Select(i => i.PassiveName)));
     }
 
     protected override void StartUseSkill() {
