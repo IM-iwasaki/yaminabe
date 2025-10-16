@@ -1,10 +1,23 @@
 using Mirror;
 using UnityEngine;
 
-public class CustomNetworkManager : NetworkManager
-{
+public class CustomNetworkManager : NetworkManager {
     [SerializeField]
     private ServerManager serverManager = null;
+
+    public override void Awake() {
+        base.Awake();
+        if (TitleManager.instance.isHost)
+            //ホストとして開始
+            StartHost();
+        else {
+            //クライアントとして開始
+            networkAddress = TitleManager.instance.ipAddress;
+            StartClient();
+
+        }
+
+    }
 
     public override void OnStartServer() {
         base.OnStartServer();
@@ -15,6 +28,9 @@ public class CustomNetworkManager : NetworkManager
         else {
             Debug.LogWarning("SystemManager が見つかりません。SystemManager は最初のシーンに配置しておいてください。");
         }
+
+        //生成後ロビーシーンに遷移
+        //GameSceneManager.Instance.LoadLobbySceneForAll();
     }
 
     /// <summary>
@@ -24,7 +40,7 @@ public class CustomNetworkManager : NetworkManager
     /// <param name="_conn"></param>
     public override void OnServerConnect(NetworkConnectionToClient _conn) {
         //もし参加人数が既定の数超えていたら
-        if(NetworkServer.connections.Count >= maxConnections) {
+        if (NetworkServer.connections.Count >= maxConnections) {
             Debug.Log("参加人数をオーバーしています");
             _conn.Disconnect();
             return;
@@ -38,7 +54,7 @@ public class CustomNetworkManager : NetworkManager
     /// </summary>
     /// <param name="_conn"></param>
     public override void OnServerAddPlayer(NetworkConnectionToClient _conn) {
-        
+
         GameObject player = Instantiate(playerPrefab);
         NetworkServer.AddPlayerForConnection(_conn, player);
 
@@ -53,7 +69,7 @@ public class CustomNetworkManager : NetworkManager
     public override void OnServerDisconnect(NetworkConnectionToClient _conn) {
         serverManager.connectPlayer.Remove(_conn.identity);
         base.OnServerDisconnect(_conn);
-        
+
     }
     /// <summary>
     /// シーンが変わった時に発火
