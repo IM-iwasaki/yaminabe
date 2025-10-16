@@ -2,6 +2,6 @@ using System.Collections.Generic;
 
 [System.Serializable]
 public class PlayerData {
-    public int currentMoney;                       // プレイヤーの所持金
-    public List<PlayerItemStatus> items = new();   // 取得済みアイテムリスト
+    public int currentMoney;
+    public List<string> items = new();  // アイテム名を直接保持
 }
