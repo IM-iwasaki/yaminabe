@@ -55,10 +55,15 @@ public class CustomNetworkManager : NetworkManager
         base.OnServerDisconnect(_conn);
         
     }
-
+    /// <summary>
+    /// シーンが変わった時に発火
+    /// 主にルール系の変更とかを担当させるべき
+    /// </summary>
+    /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
         base.OnServerChangeScene(newSceneName);
 
+        FadeManager.Instance.StartFadeIn(0.5f);
         GameSceneManager.Instance.ResetIsChangedScene();
     }
 }
