@@ -9,6 +9,8 @@ public class DebugNetwork : NetworkBehaviour {
         
     }
 
+    
+
     // Update is called once per frame
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Return))
@@ -19,6 +21,6 @@ public class DebugNetwork : NetworkBehaviour {
     public void LoadScene() {
         if (!isServer) return;
 
-        GameSceneManager.instance.LoadGameSceneForAll();
+        GameSceneManager.Instance.LoadGameSceneForAll();
     }
 }

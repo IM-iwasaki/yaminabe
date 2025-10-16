@@ -2,8 +2,8 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameSceneManager :NetworkBehaviour {
-    public static GameSceneManager instance = null;
+public class GameSceneManager :NetworkSystemObject<GameSceneManager> {
+    //public static GameSceneManager instance = null;
     [SerializeField, Header("読み込むロビーシーンの名前")]
     private string lobbySceneName = "LobbyScene";
     [SerializeField,Header("読み込むゲームシーンの名前")]
@@ -12,12 +12,12 @@ public class GameSceneManager :NetworkBehaviour {
     private bool isChanged = false;
     public override void OnStartServer() {
         base.OnStartServer();
-        instance = this;
-
+        
         Debug.Log(netIdentity.isServer + "," + netId);
+        DontDestroyOnLoad(gameObject);
     }
-    
 
+    [Server]
     public void LoadScene(string _sceneName) {
         //重ねるシーンをロード
         CustomNetworkManager.singleton.ServerChangeScene(_sceneName);
@@ -41,17 +41,8 @@ public class GameSceneManager :NetworkBehaviour {
     public void LoadLobbySceneForAll() {
         LoadScene(lobbySceneName);
     }
-    //private IEnumerator LoadGameSceneRoutine() {
-    //    oldSceneName = SceneManager.GetActiveScene().name;
-
-    //    AsyncOperation loadOp = SceneManager.LoadSceneAsync(gameSceneName, LoadSceneMode.Additive);
-    //    yield return new WaitUntil(() => loadOp.isDone);
-
-    //    SceneManager.SetActiveScene(SceneManager.GetSceneByName(gameSceneName));
-
-    //    AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(oldSceneName);
-    //    yield return new WaitUntil(() => unloadOp.isDone);
-    //}
-
-
+    public void ResetIsChangedScene() {
+        isChanged = false;
+    }
+    
 }
