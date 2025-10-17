@@ -5,6 +5,9 @@ using UnityEngine;
 /// </summary>
 [System.Serializable]
 public class GachaItem {
+    [Header("キャラクター名")]
+    public string characterName;
+
     [Header("アイテム情報")]
     public string itemName;
 

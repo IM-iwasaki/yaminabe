@@ -26,18 +26,22 @@ MonoBehaviour:
     rarity: 3
     rate: 1
   commonItems:
-  - itemName: "\u30CB\u30EF\u30C8\u30EA"
-    isCharacter: 1
+  - characterName: "\u30CB\u30EF\u30C8\u30EA"
+    itemName: DefaultChicken
+    isCharacter: 0
     rate: 10
   rareItems:
-  - itemName: GoldDefault
+  - characterName: "\u30C7\u30D5\u30A9\u30EB\u30C8\u30AD\u30E3\u30E9"
+    itemName: GoldDefault
     isCharacter: 0
     rate: 10
   epicItems:
-  - itemName: CrazyChicken
+  - characterName: "\u30CB\u30EF\u30C8\u30EA"
+    itemName: CrazyChicken
     isCharacter: 0
     rate: 9
   legendaryItems:
-  - itemName: GoldChicken
+  - characterName: "\u30CB\u30EF\u30C8\u30EA"
+    itemName: GoldChicken
     isCharacter: 0
     rate: 10

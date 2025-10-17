@@ -60,6 +60,26 @@ public class PlayerItemManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// ガチャで入手したアイテムを解放
+    /// </summary>
+    public void UnlockGachaItem(GachaItem gachaItem) {
+        if (gachaItem == null) return;
+
+        string itemFullName;
+
+        if (gachaItem.isCharacter) {
+            // キャラクターを入手した場合 → 最初のスキン名を取得
+            string firstSkin = GetFirstSkinName(gachaItem.characterName);
+            itemFullName = $"{gachaItem.characterName}_{firstSkin}";
+        } else {
+            // スキンだけ入手した場合 → キャラクター名と結合
+            itemFullName = $"{gachaItem.characterName}_{gachaItem.itemName}";
+        }
+
+        UnlockItem(itemFullName); // ここで正しい形式で登録
+    }
+
+    /// <summary>
     /// アイテムを取得済みにする
     /// </summary>
     public void UnlockItem(string itemName) {

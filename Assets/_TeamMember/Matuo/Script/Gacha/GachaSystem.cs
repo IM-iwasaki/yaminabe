@@ -34,7 +34,9 @@ public class GachaSystem : MonoBehaviour {
         // íäëIèàóù
         var item = PullSingleInternal();
         if (item != null)
-            OnItemPulled?.Invoke(item);
+            PlayerItemManager.Instance.UnlockGachaItem(item);
+
+        OnItemPulled?.Invoke(item);
 
         return item;
     }
@@ -59,6 +61,7 @@ public class GachaSystem : MonoBehaviour {
             var item = PullSingleInternal();
             if (item != null) {
                 results.Add(item);
+                PlayerItemManager.Instance.UnlockGachaItem(item);
                 OnItemPulled?.Invoke(item);
             }
         }
