@@ -7,6 +7,9 @@ public class TitleManager : MonoBehaviour {
     public string ipAddress { get; private set; } = null;
     public bool isHost = false;
 
+    [SerializeField]
+    private string lobbySceneName = null;
+
     public TMP_InputField inputField = null;
     public TextMeshProUGUI stringIPAddress = null;
 
@@ -20,7 +23,7 @@ public class TitleManager : MonoBehaviour {
         //明示的にホスト状態をtrueにし、ロビーシーンに移行
         isHost = true;
 
-        SceneManager.LoadScene("LobbyScene");
+        SceneManager.LoadScene(lobbySceneName);
 
     }
 
@@ -30,7 +33,7 @@ public class TitleManager : MonoBehaviour {
             return;
         //明示的にホスト状態をfalseにし、ロビーシーンに移行
         isHost = false;
-        SceneManager.LoadScene("LobbyScene");
+        SceneManager.LoadScene(lobbySceneName);
 
     }
 

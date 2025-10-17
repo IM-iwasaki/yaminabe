@@ -2,7 +2,6 @@ using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
 using static TeamData;
-using TMPro;
 /// <summary>
 /// ServerManager
 /// サーバー側での処理を管理するクラス(Playerのステータス更新やオブジェクトの生成等)
