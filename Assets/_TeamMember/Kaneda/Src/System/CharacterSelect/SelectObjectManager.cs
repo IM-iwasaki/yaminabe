@@ -14,6 +14,9 @@ public class SelectObjectManager : MonoBehaviour {
     [Header("キャラクターデータ")]
     [SerializeField] private CharacterDatabase data;
 
+    [Header("解放していないキャラクターを代用で表示させる")]
+    [SerializeField] private GameObject unuseObject;
+
     [Header("キャラクターステータステキスト")]
     [SerializeField] private TextMeshProUGUI statusText;
 
@@ -80,12 +83,15 @@ public class SelectObjectManager : MonoBehaviour {
         characterCount = CheckCount(characterCount, num);
         //  characterCount番目のキャラクターを取得して格納
         character = data.characters[characterCount];
-        //  キャラクターを切り替える
-        ChangeCharacterObject(DEFAULT_SKIN_COUNT);
-        //  ステータステキストを切り替える
-        ChangeStatusText();
         //  スキン選択ボタンの取得
         GenerateButtons();
+        //  キャラクターがまだ取得されていない場合
+        //if (!PlayerItemManager.HasCharacter(character.characterName)) {
+        //    UnuseCharacter();
+        //    return;
+        //}
+        //  キャラクターを所持している場合はそのまま生成
+        UseCharacter();
     }
 
     //  数値を増減する（数値が一周したら戻す）
@@ -102,11 +108,32 @@ public class SelectObjectManager : MonoBehaviour {
         return count;
     }
 
+    //  使用不可能キャラクターなら
+    private void UnuseCharacter() {
+        //  先に生成されているものがあるなら消す
+        if (obj != null) Destroy(obj);
+        //  使用不可能専用オブジェクトに切り替える
+        Instantiate(unuseObject, parent.transform);
+        //  テキストを全て？にする
+        statusText.SetText("HP : ?" + "\n"
+                   + "ATK : ?" + "\n"
+                   + "SPD : ?" + "\n");
+    }
+
+    //  使用可能キャラクターなら
+    private void UseCharacter() {
+        //  キャラクターを切り替える
+        ChangeCharacterObject(DEFAULT_SKIN_COUNT);
+        //  ステータステキストを切り替える
+        ChangeStatusText();
+    }
+
     //  キャラクターを切り替える
     private void ChangeCharacterObject(int skinCount) {
         //  nullチェック、インデクスの範囲外防止
         if (character.skins == null || character.skins.Count == 0) return;
         skinCount = Mathf.Clamp(skinCount, 0, character.skins.Count - 1);
+        
         //  先に生成されているものがあるなら消す
         if (obj != null) Destroy(obj);
         GameObject prefab = character.skins[skinCount].skinPrefab;
