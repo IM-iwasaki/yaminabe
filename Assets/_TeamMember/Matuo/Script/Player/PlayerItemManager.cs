@@ -3,8 +3,10 @@ using UnityEngine;
 
 /// <summary>
 /// プレイヤーの取得済みアイテム管理と使用判定
-/// <summary>
+/// </summary>
 public class PlayerItemManager : MonoBehaviour {
+    public static PlayerItemManager Instance { get; private set; }
+
     [Header("プレイヤーデータ")]
     private PlayerData playerData;
 
@@ -12,6 +14,14 @@ public class PlayerItemManager : MonoBehaviour {
     private List<string> unlockedItems = new(); // デバッグ用リスト
 
     private void Awake() {
+        // シングルトン
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // シーンをまたいでも保持
+
         LoadPlayerData();
     }
 
@@ -23,13 +33,14 @@ public class PlayerItemManager : MonoBehaviour {
 
         // 最初のキャラクターとスキンを解放する処理
         if (playerData.items.Count == 0) {
-            // CharacterDatabaseを参照する必要がある場合はインスタンスを渡す
             var defaultCharacter = FindObjectOfType<CharacterDatabase>()?.characters;
             if (defaultCharacter != null && defaultCharacter.Count > 0 && defaultCharacter[0].skins.Count > 0) {
                 string defaultItemName = $"{defaultCharacter[0].characterName}_{defaultCharacter[0].skins[0].skinName}";
                 playerData.items.Add(defaultItemName);
             }
         }
+
+        SyncDebugList();
     }
 
     private void SavePlayerData() {
