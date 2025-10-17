@@ -10,6 +10,10 @@ public class PlayerItemManager : MonoBehaviour {
     [Header("プレイヤーデータ")]
     private PlayerData playerData;
 
+    //キャラクターデータベース
+    [SerializeField] 
+    private CharacterDatabase characterDatabase;
+
     [SerializeField]
     private List<string> unlockedItems = new(); // デバッグ用リスト
 
@@ -33,7 +37,7 @@ public class PlayerItemManager : MonoBehaviour {
 
         // 最初のキャラクターとスキンを解放する処理
         if (playerData.items.Count == 0) {
-            var defaultCharacter = FindObjectOfType<CharacterDatabase>()?.characters;
+            var defaultCharacter = characterDatabase?.characters;
             if (defaultCharacter != null && defaultCharacter.Count > 0 && defaultCharacter[0].skins.Count > 0) {
                 string defaultItemName = $"{defaultCharacter[0].characterName}_{defaultCharacter[0].skins[0].skinName}";
                 playerData.items.Add(defaultItemName);
