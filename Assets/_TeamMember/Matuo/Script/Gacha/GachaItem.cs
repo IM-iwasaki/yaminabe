@@ -5,14 +5,11 @@ using UnityEngine;
 /// </summary>
 [System.Serializable]
 public class GachaItem {
-    [Header("キャラクター名")]
+    [Header("このスキンを使うキャラクター名")]
     public string characterName;
 
     [Header("アイテム情報")]
     public string itemName;
-
-    [Header("アイテム種別")]
-    public bool isCharacter = false; // キャラクターかどうか
 
     [Header("確率設定")]
     [Range(0, 10)]
