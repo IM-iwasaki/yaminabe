@@ -1763,6 +1763,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3919236718448321231, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: m_text
+      value: "HP : \nATK : \nSPD : "
+      objectReference: {fileID: 0}
+    - target: {fileID: 3919236718448321231, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 3919236718448321231, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6764959418015424435, guid: 746aa3385af7af440860aac3c083459b, type: 3}
       propertyPath: data
       value: 

@@ -121,7 +121,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4878794832619421054}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterSelectManager, Assembly-CSharp
         m_MethodName: EndCharacterSelect
         m_Mode: 1
@@ -1050,7 +1050,6 @@ GameObject:
   - component: {fileID: 1498354795945709807}
   - component: {fileID: 3647793274577290313}
   - component: {fileID: 4933343816030633433}
-  - component: {fileID: 4878794832619421054}
   m_Layer: 0
   m_Name: PedestalObject
   m_TagString: SelectCharacterObject
@@ -1169,22 +1168,6 @@ CapsuleCollider:
   m_Height: 1.0352606
   m_Direction: 1
   m_Center: {x: 0, y: 0.19564216, z: 0}
---- !u!114 &4878794832619421054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6186052743204576145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6afe725cf6e1ff84584d934f392cb924, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraManager: {fileID: 63509298164854061}
-  cameraTargetPoint: {fileID: 7035619652033379610}
-  selectUI: {fileID: 7916676219407252184}
-  rotateObject: {fileID: 8461090423153784709}
 --- !u!1 &7248327514413932830
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,6 +1177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3418484265337197616}
+  - component: {fileID: 1808731845556936944}
   m_Layer: 0
   m_Name: SelectCharacterObject
   m_TagString: Untagged
@@ -1221,6 +1205,22 @@ Transform:
   - {fileID: 5451550288746359303}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1808731845556936944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7248327514413932830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6afe725cf6e1ff84584d934f392cb924, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraManager: {fileID: 63509298164854061}
+  cameraTargetPoint: {fileID: 7035619652033379610}
+  selectUI: {fileID: 7916676219407252184}
+  rotateObject: {fileID: 8461090423153784709}
 --- !u!1 &7916676219407252184
 GameObject:
   m_ObjectHideFlags: 0
