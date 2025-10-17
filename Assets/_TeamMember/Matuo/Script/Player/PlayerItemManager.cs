@@ -39,7 +39,7 @@ public class PlayerItemManager : MonoBehaviour {
         if (playerData.items.Count == 0) {
             var defaultCharacter = characterDatabase?.characters;
             if (defaultCharacter != null && defaultCharacter.Count > 0 && defaultCharacter[0].skins.Count > 0) {
-                string defaultItemName = $"{defaultCharacter[0].characterName}_{defaultCharacter[0].skins[0].skinName}";
+                string defaultItemName = $"{defaultCharacter[0].characterName}";
                 playerData.items.Add(defaultItemName);
             }
         }
