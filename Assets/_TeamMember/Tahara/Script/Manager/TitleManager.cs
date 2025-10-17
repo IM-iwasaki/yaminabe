@@ -13,7 +13,7 @@ public class TitleManager : MonoBehaviour {
     private void Awake() {
         DontDestroyOnLoad(gameObject);
 
-        instance = this;
+        instance = this;     
     }
 
     public void OnStartHostButton() {
