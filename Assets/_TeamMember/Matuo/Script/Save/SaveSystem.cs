@@ -18,7 +18,6 @@ public static class SaveSystem {
 #endif
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(filePath, json);
-        Debug.Log("ÉfÅ[É^Çï€ë∂ÇµÇ‹ÇµÇΩ: " + filePath);
     }
 
     /// <summary>

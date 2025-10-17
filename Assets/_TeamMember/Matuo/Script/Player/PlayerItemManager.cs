@@ -100,8 +100,10 @@ public class PlayerItemManager : MonoBehaviour {
     /// キャラクターの最初のスキン名を取得
     /// </summary>
     private string GetFirstSkinName(string characterName) {
-        var database = FindObjectOfType<CharacterDatabase>();
-        var character = database.characters.Find(c => c.characterName == characterName);
+        if (characterDatabase == null || characterDatabase.characters == null)
+            return "";
+
+        var character = characterDatabase.characters.Find(c => c.characterName == characterName);
         return character != null && character.skins.Count > 0 ? character.skins[0].skinName : "";
     }
 }
