@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2815917018304165606
+--- !u!1 &3199112813357734761
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,41 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1499553939213996996}
-  - component: {fileID: 6547544664050026645}
+  - component: {fileID: 4530564803309023525}
+  - component: {fileID: 4988771303012317964}
   m_Layer: 0
-  m_Name: GachaManager
+  m_Name: GachaController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1499553939213996996
+--- !u!4 &4530564803309023525
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2815917018304165606}
+  m_GameObject: {fileID: 3199112813357734761}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.7730305, y: -2.3713088, z: -4.3796535}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6547544664050026645
+--- !u!114 &4988771303012317964
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2815917018304165606}
+  m_GameObject: {fileID: 3199112813357734761}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38c6bbb075fa73843a97dfd150ef79da, type: 3}
+  m_Script: {fileID: 11500000, guid: c4af18637d64f5b4eb19e4eed0ce7b27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 1c12d92106e220b45852f1a69fb4ca51, type: 2}
-  gachaCost: 100
+  gachaSystem: {fileID: 0}
+  itemManager: {fileID: 0}
