@@ -16,6 +16,8 @@ public class SelectObjectManager : MonoBehaviour {
 
     [Header("解放していないキャラクターを代用で表示させる")]
     [SerializeField] private GameObject unuseObject;
+    [Header("解放していない場合に表示するUI")]
+    [SerializeField] private GameObject unuseUI;
 
     [Header("キャラクターステータステキスト")]
     [SerializeField] private TextMeshProUGUI statusText;
@@ -45,6 +47,7 @@ public class SelectObjectManager : MonoBehaviour {
     private void Start() {
         //  親オブジェクトを自身にする
         parent = gameObject;
+        unuseUI.SetActive(false);
 
         characterCount = 0;
 
@@ -86,10 +89,10 @@ public class SelectObjectManager : MonoBehaviour {
         //  スキン選択ボタンの取得
         GenerateButtons();
         //  キャラクターがまだ取得されていない場合
-        //if (!PlayerItemManager.HasCharacter(character.characterName)) {
-        //    UnuseCharacter();
-        //    return;
-        //}
+        if (!PlayerItemManager.Instance.HasCharacter(character.characterName)) {
+            UnuseCharacter();
+            return;
+        }
         //  キャラクターを所持している場合はそのまま生成
         UseCharacter();
     }
@@ -110,10 +113,11 @@ public class SelectObjectManager : MonoBehaviour {
 
     //  使用不可能キャラクターなら
     private void UnuseCharacter() {
+        unuseUI.SetActive(true);
         //  先に生成されているものがあるなら消す
         if (obj != null) Destroy(obj);
         //  使用不可能専用オブジェクトに切り替える
-        Instantiate(unuseObject, parent.transform);
+        obj = Instantiate(unuseObject, parent.transform);
         //  テキストを全て？にする
         statusText.SetText("HP : ?" + "\n"
                    + "ATK : ?" + "\n"
@@ -122,6 +126,7 @@ public class SelectObjectManager : MonoBehaviour {
 
     //  使用可能キャラクターなら
     private void UseCharacter() {
+        unuseUI.SetActive(false);
         //  キャラクターを切り替える
         ChangeCharacterObject(DEFAULT_SKIN_COUNT);
         //  ステータステキストを切り替える
@@ -133,7 +138,11 @@ public class SelectObjectManager : MonoBehaviour {
         //  nullチェック、インデクスの範囲外防止
         if (character.skins == null || character.skins.Count == 0) return;
         skinCount = Mathf.Clamp(skinCount, 0, character.skins.Count - 1);
-        
+        //  スキンがまだ取得されていない場合
+        if (!PlayerItemManager.Instance.HasSkin(character.skins[skinCount].skinName)) {
+            UnuseCharacter();
+            return;
+        }
         //  先に生成されているものがあるなら消す
         if (obj != null) Destroy(obj);
         GameObject prefab = character.skins[skinCount].skinPrefab;
