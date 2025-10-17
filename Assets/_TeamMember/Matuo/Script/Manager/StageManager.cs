@@ -72,7 +72,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// <summary>
     /// 共通リスポーン地点のリストを返す
     /// </summary>
-    public IReadOnlyList<Transform> GetCommonSpawnPoints() => normalRespawnPoints;
+    public IReadOnlyList<Transform> GetNormalSpawnPoints() => normalRespawnPoints;
 
     /// <summary>
     /// チームごとのリスポーン地点を返す
