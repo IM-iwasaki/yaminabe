@@ -120,10 +120,8 @@ public class SelectObjectManager : MonoBehaviour {
         if (obj != null) Destroy(obj);
         //  使用不可能専用オブジェクトに切り替える
         obj = Instantiate(unuseObject, parent.transform);
-        //  テキストを全て？にする
-        statusText.SetText("HP : ?" + "\n"
-                   + "ATK : ?" + "\n"
-                   + "SPD : ?" + "\n");
+        //  ステータステキストを切り替える
+        ChangeStatusText();
     }
 
     //  使用可能キャラクターなら
@@ -141,8 +139,10 @@ public class SelectObjectManager : MonoBehaviour {
         //  nullチェック、インデクスの範囲外防止
         if (character.skins == null || character.skins.Count == 0) return;
         skinCount = Mathf.Clamp(skinCount, 0, character.skins.Count - 1);
-        //  スキンがまだ取得されていない場合
-        if (!PlayerItemManager.Instance.HasSkin(character.characterName, character.skins[skinCount].skinName)) {
+        //  スキンがまだ取得されていない場合、またはデフォルトスキンを持っていない場合
+        if (!PlayerItemManager.Instance.HasSkin(character.characterName, character.skins[skinCount].skinName)
+            || !PlayerItemManager.Instance.HasSkin(character.characterName, character.skins[DEFAULT_SKIN_COUNT].skinName)) 
+        {
             UnuseCharacter();
             return;
         }
