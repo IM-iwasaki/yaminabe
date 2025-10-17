@@ -71,6 +71,10 @@ abstract class CharacterBase : NetworkBehaviour {
     protected bool IsDead { get; private set; } = false;
     //死亡してからの経過時間
     protected float DeadAfterTime { get; private set; } = 0.0f;
+    //復活後の無敵時間中であるか
+    protected bool IsInvincible { get; private set; } = false;
+    //復活してからの経過時間
+    protected float RespownAfterTime { get; private set; } = 0.0f;
 
     //攻撃中か
     protected bool IsAttack { get; private set; } = false;
@@ -182,13 +186,11 @@ abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]public void TakeDamage(int _damage) {
         //ダメージが0以下だったら帰る
-        if (_damage <= 0)
-            return;
+        if (_damage <= 0) return;
         //HPの減算処理
         HP -= _damage;
         //HPが0以下になったらisDeadを真にする
-        if (HP <= 0)
-            RemoveBuff();
+        if (HP <= 0) RemoveBuff();
         IsDead = true;
     }
 
@@ -196,9 +198,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// UI用のHP更新関数
     /// </summary>
     public void ChangeHP(int oldValue, int newValue) {
-        if (isLocalPlayer) {
-            UI.ChangeHPUI(MaxHP, newValue);
-        }
+        if (isLocalPlayer) UI.ChangeHPUI(MaxHP, newValue);
     }
 
     /// <summary>
@@ -206,15 +206,20 @@ abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]public void Respown() {
         //死んでいなかったら即抜け
-        if (!IsDead)
-            return;
+        if (!IsDead) return;
 
-        //死亡状態解除
+        //復活させる
         IsDead = false;
+        HP = MaxHP;
         //リスポーン地点に移動させる
-        transform.position = RespownPosition;
-        //リスポーン時に向きをリセットしたほうがいいかも。その場合ここに書く。
+        
 
+        //リスポーン後の無敵時間にする
+        IsInvincible = true;
+
+        //経過時間をリセット
+        DeadAfterTime = 0;
+        RespownAfterTime = 0;
     }
 
     /// <summary>
@@ -461,11 +466,16 @@ abstract class CharacterBase : NetworkBehaviour {
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, PlayerConst.TURN_SPEED * Time.deltaTime);
         }
 
-        // 移動方向にキャラクターを向ける
-        //Quaternion targetRotation = Quaternion.LookRotation(MoveDirection);
-        //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+        // 空中か地上で挙動を分ける
+        Vector3 velocity = rigidbody.velocity;
+        Vector3 targetVelocity = new(MoveDirection.x * MoveSpeed, velocity.y, MoveDirection.z * MoveSpeed);
 
-        rigidbody.velocity = new Vector3(MoveDirection.x * MoveSpeed, rigidbody.velocity.y, MoveDirection.z * MoveSpeed);
+        if (IsGrounded) {
+            rigidbody.velocity = targetVelocity;
+        } else {
+            // 空中では地上速度に向けてゆるやかに補間（慣性を残す）
+            rigidbody.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
+        }
     }
 
     /// <summary>
@@ -486,17 +496,39 @@ abstract class CharacterBase : NetworkBehaviour {
         //ベクトルが上方向に働いている時
         if (rigidbody.velocity.y > 0) {
             //追加の重力補正を掛ける
-            rigidbody.velocity += Vector3.up * Physics.gravity.y * (PlayerConst.JUMP_UPFORCE - 1) * Time.deltaTime;
+            rigidbody.velocity += (PlayerConst.JUMP_UPFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
         } 
         // ベクトルが下方向に働いている時
         else if (rigidbody.velocity.y < 0) {
             //追加の重力補正を掛ける
-            rigidbody.velocity += Vector3.up * Physics.gravity.y * (PlayerConst.JUMP_DOWNFORCE - 1) * Time.deltaTime;
+            rigidbody.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
         }
 
 
         // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
         IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, GroundLayer);
+    }
+
+    /// <summary>
+    /// リスポーン管理関数
+    /// </summary>
+    virtual protected void RespownControl() {
+        //死亡中であるときの処理
+        if (IsDead) {
+            //死亡してからの時間を加算
+            DeadAfterTime += Time.deltaTime;
+            //死亡後経過時間がリスポーンに必要な時間を過ぎたら
+            if (DeadAfterTime >= PlayerConst.RespownTime)  Respown();
+        }
+        //復活後であるときの処理
+        if (IsInvincible) {
+            //復活してからの時間を加算
+            RespownAfterTime += Time.deltaTime;
+            //規定時間経過後無敵状態を解除
+            if (RespownAfterTime >= PlayerConst.RespownInvincibleTime) {
+                IsInvincible = false;
+            }
+        }
     }
 
     /// <summary>
@@ -531,13 +563,12 @@ abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected Vector3 GetShootDirection() {
         Camera cam = Camera.main;
-        Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
+        Vector3 screenCenter = new(Screen.width / 2f, Screen.height / 2f, 0f);
         Ray ray = cam.ScreenPointToRay(screenCenter);
 
-        RaycastHit hit;
         Vector3 targetPoint;
 
-        if (Physics.Raycast(ray, out hit, 100f)) {
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f)) {
             targetPoint = hit.point;
         }
         else {
