@@ -3,8 +3,7 @@ using Mirror;
 using System.Collections.Generic;
 
 /// <summary>
-/// ステージ生成を管理するクラス
-/// ScriptableObjectのStageDataを参照してSpawnする
+/// ステージ生成とリスポーン地点管理
 /// </summary>
 public class StageManager : NetworkSystemObject<StageManager> {
     [Header("ステージ一覧")]
@@ -12,52 +11,114 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
     private GameObject currentStageInstance;
 
-    /// <summary>
-    /// ランダムでステージを選んで生成（サーバー専用）
-    /// </summary>
-    [Server]
-    public void SpawnRandomStage() {
-        if (stages == null || stages.Count == 0) return;
+    // リスポーン地点
+    private readonly List<Transform> normalRespawnPoints = new();
+    private readonly List<Transform> redRespawnPoints = new();
+    private readonly List<Transform> blueRespawnPoints = new();
 
-
-        StageData randomStage = stages[Random.Range(0, stages.Count)];
-        SpawnStage(randomStage);
-    }
+    // 現在のリスポーンモード
+    private RespawnMode currentRespawnMode = RespawnMode.Team;
 
     /// <summary>
-    /// 指定ステージを生成（サーバー専用）
+    /// ステージを生成（サーバー専用）
     /// </summary>
     [Server]
     public void SpawnStage(StageData stageData) {
         if (stageData == null || stageData.stagePrefab == null) return;
 
-        // 既存ステージ削除
+        // 既存ステージを削除
         if (currentStageInstance != null)
             NetworkServer.Destroy(currentStageInstance);
 
-        // 新しいステージ生成
-        GameObject stageObj = Instantiate(stageData.stagePrefab);
-        NetworkServer.Spawn(stageObj);
-        currentStageInstance = stageObj;
+        // ステージ生成
+        currentStageInstance = Instantiate(stageData.stagePrefab);
+        NetworkServer.Spawn(currentStageInstance);
 
-        Debug.Log($"ステージ生成: {stageData.stageName}");
+        // リスポーン地点登録
+        RegisterRespawnPoints(currentStageInstance);
     }
 
     /// <summary>
-    /// 現在のステージを破棄
+    /// ステージ内のリスポーン地点をタグから登録
     /// </summary>
-    [Server]
-    public void ClearStage() {
-        if (currentStageInstance != null) {
-            NetworkServer.Destroy(currentStageInstance);
-            currentStageInstance = null;
+    private void RegisterRespawnPoints(GameObject stageObj) {
+        normalRespawnPoints.Clear();
+        redRespawnPoints.Clear();
+        blueRespawnPoints.Clear();
+
+        foreach (Transform point in stageObj.GetComponentsInChildren<Transform>(true)) {
+            if (point.CompareTag("NormalRespawnPoint"))
+                normalRespawnPoints.Add(point);
+            else if (point.CompareTag("RedRespawnPoint"))
+                redRespawnPoints.Add(point);
+            else if (point.CompareTag("BlueRespawnPoint"))
+                blueRespawnPoints.Add(point);
         }
     }
 
     /// <summary>
-    /// クライアント側でも参照可能なステージ情報取得
+    /// リスポーンモード設定（サーバー側のみ）
     /// </summary>
-    public StageData GetStageDataByName(string name) {
-        return stages.Find(s => s.stageName == name);
+    [Server]
+    public void SetRespawnMode(RespawnMode mode) {
+        currentRespawnMode = mode;
     }
+
+    /// <summary>
+    /// 現在のリスポーンモードを取得
+    /// </summary>
+    public RespawnMode GetRespawnMode() => currentRespawnMode;
+
+    /// <summary>
+    /// 共通リスポーン地点のリストを返す
+    /// </summary>
+    public IReadOnlyList<Transform> GetCommonSpawnPoints() => normalRespawnPoints;
+
+    /// <summary>
+    /// チームごとのリスポーン地点を返す
+    /// </summary>
+    public IReadOnlyList<Transform> GetTeamSpawnPoints(TeamData.teamColor team) {
+        return team switch {
+            TeamData.teamColor.Red => redRespawnPoints,
+            TeamData.teamColor.Blue => blueRespawnPoints,
+            _ => normalRespawnPoints
+        };
+    }
+
+    /// <summary>
+    /// 現在のモードに応じてスポーン地点を1つ取得
+    /// （デスマッチなら共通ランダム、チーム戦ならチーム専用を使用）
+    /// </summary>
+    public Transform GetSpawnPoint(TeamData.teamColor team = TeamData.teamColor.Invalid) {
+        if (currentRespawnMode == RespawnMode.Random) {
+            if (normalRespawnPoints.Count == 0) return null;
+            return normalRespawnPoints[Random.Range(0, normalRespawnPoints.Count)];
+        } else {
+            var points = GetTeamSpawnPoints(team);
+            if (points.Count == 0) return null;
+            return points[Random.Range(0, points.Count)];
+        }
+    }
+
+    /// <summary>
+    /// 現在のステージを削除（サーバー専用）
+    /// </summary>
+    [Server]
+    public void ClearStage() {
+        if (currentStageInstance != null)
+            NetworkServer.Destroy(currentStageInstance);
+
+        currentStageInstance = null;
+        normalRespawnPoints.Clear();
+        redRespawnPoints.Clear();
+        blueRespawnPoints.Clear();
+    }
+}
+
+/// <summary>
+/// リスポーンモード
+/// </summary>
+public enum RespawnMode {
+    Random,
+    Team
 }

@@ -5,10 +5,6 @@ using Mirror;
 /// ゲーム全体の進行管理
 /// ゲーム開始・終了、ルール切替、タイマー管理
 /// </summary>
-
-// ＜猿でもわかる使い方(ゲームの開始と終了)＞ 
-// GameManager.Instance.StartGame(GameRuleType.Area); この場合エリアが始まる(残りはGameRuleTypeを見て)
-// GameManager.Instance.EndGame();
 public class GameManager : NetworkSystemObject<GameManager> {
     [SyncVar] private bool isGameRunning = false;
     private GameTimer gameTimer;
@@ -30,7 +26,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// <summary>
     /// ゲーム開始
     /// </summary>
-    /// <param name="rule">開始するルールタイプ</param>  
+    /// <param name="rule">開始するルールタイプ</param>
     /// <param name="stageData">生成するステージ</param>
     [Server]
     public void StartGame(GameRuleType rule, StageData stageData) {
@@ -39,21 +35,26 @@ public class GameManager : NetworkSystemObject<GameManager> {
         // ステージ生成
         StageManager.Instance.SpawnStage(stageData);
 
+        // ルールごとのリスポーン設定
+        if (rule == GameRuleType.DeathMatch) {
+            StageManager.Instance.SetRespawnMode(RespawnMode.Random);
+        } else {
+            StageManager.Instance.SetRespawnMode(RespawnMode.Team);
+        }
+
         isGameRunning = true;
         ruleManager.currentRule = rule;
 
         // タイマー開始
         gameTimer.StartTimer();
 
-        // デスマッチの場合はGameTimerのイベントで終了処理に移行
+        // デスマッチは時間切れで終了
         if (rule == GameRuleType.DeathMatch) {
             gameTimer.OnTimerFinished += () => {
                 ruleManager.EndDeathMatch();
                 EndGame();
             };
         }
-
-        Debug.Log($"ゲーム開始: ルール={rule}, ステージ={stageData.stageName}");
     }
 
     /// <summary>
@@ -65,7 +66,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         isGameRunning = false;
         gameTimer.StopTimer();
-        Debug.Log("ゲーム終了");
     }
 
     /// <summary>
