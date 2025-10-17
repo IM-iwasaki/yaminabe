@@ -47,6 +47,7 @@ public class SelectObjectManager : MonoBehaviour {
     private void Start() {
         //  親オブジェクトを自身にする
         parent = gameObject;
+        //  UIを非表示
         unuseUI.SetActive(false);
 
         characterCount = 0;
@@ -113,6 +114,7 @@ public class SelectObjectManager : MonoBehaviour {
 
     //  使用不可能キャラクターなら
     private void UnuseCharacter() {
+        //  UIを表示
         unuseUI.SetActive(true);
         //  先に生成されているものがあるなら消す
         if (obj != null) Destroy(obj);
@@ -126,6 +128,7 @@ public class SelectObjectManager : MonoBehaviour {
 
     //  使用可能キャラクターなら
     private void UseCharacter() {
+        //  UIを非表示
         unuseUI.SetActive(false);
         //  キャラクターを切り替える
         ChangeCharacterObject(DEFAULT_SKIN_COUNT);
@@ -139,10 +142,12 @@ public class SelectObjectManager : MonoBehaviour {
         if (character.skins == null || character.skins.Count == 0) return;
         skinCount = Mathf.Clamp(skinCount, 0, character.skins.Count - 1);
         //  スキンがまだ取得されていない場合
-        if (!PlayerItemManager.Instance.HasSkin(character.skins[skinCount].skinName)) {
+        if (!PlayerItemManager.Instance.HasSkin(character.characterName, character.skins[skinCount].skinName)) {
             UnuseCharacter();
             return;
         }
+        //  UIを非表示
+        unuseUI.SetActive(false);
         //  先に生成されているものがあるなら消す
         if (obj != null) Destroy(obj);
         GameObject prefab = character.skins[skinCount].skinPrefab;

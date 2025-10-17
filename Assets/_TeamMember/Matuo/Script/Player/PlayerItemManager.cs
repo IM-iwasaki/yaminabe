@@ -84,8 +84,8 @@ public class PlayerItemManager : MonoBehaviour {
     /// <summary>
     /// w’è‚µ‚½ƒXƒLƒ“‚ğ‚Á‚Ä‚¢‚é‚©”»’è
     /// </summary>
-    public bool HasSkin(string skinName) {
-        return playerData.items.Contains(skinName);
+    public bool HasSkin(string characterName,string skinName) {
+        return playerData.items.Exists(item => item.StartsWith(characterName + "_" + skinName));
     }
 
     /// <summary>
