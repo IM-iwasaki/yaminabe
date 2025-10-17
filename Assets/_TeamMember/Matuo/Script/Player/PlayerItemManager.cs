@@ -78,7 +78,7 @@ public class PlayerItemManager : MonoBehaviour {
     /// 指定したキャラクターを持っているか判定
     /// </summary>
     public bool HasCharacter(string characterName) {
-        return playerData.items.Contains(characterName);
+        return playerData.items.Exists(item => item.StartsWith(characterName + "_"));
     }
 
     /// <summary>
