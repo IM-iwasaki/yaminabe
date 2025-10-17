@@ -2325,6 +2325,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameLobby
       objectReference: {fileID: 0}
+    - target: {fileID: 8358714206395223592, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2817549992573173424, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
