@@ -27,12 +27,8 @@ public class GachaController : MonoBehaviour {
         if (item.isCharacter)
         {
             itemManager.UnlockCharacterFromGacha(item.itemName);
-        } else {
-            // 通常アイテムはそのまま解放
-            itemManager.UnlockItem(item.itemName);
         }
-
-        // 必要に応じて UI 表示や演出もここで呼べる
+        // 必要に応じて UI 表示や演出もここらで呼べ
     }
 
     private void OnDestroy() {
