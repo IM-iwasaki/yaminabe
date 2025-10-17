@@ -4,7 +4,7 @@ using TMPro;
 
 public class TitleManager : MonoBehaviour {
     public static TitleManager instance = null;
-    public string ipAddress = null;
+    public string ipAddress { get; private set; } = null;
     public bool isHost = false;
 
     public TMP_InputField inputField = null;
@@ -13,7 +13,7 @@ public class TitleManager : MonoBehaviour {
     private void Awake() {
         DontDestroyOnLoad(gameObject);
 
-        instance = this;     
+        instance = this;
     }
 
     public void OnStartHostButton() {
@@ -34,8 +34,11 @@ public class TitleManager : MonoBehaviour {
 
     }
 
-    public void SetIPAddress() {
-        ipAddress = inputField.text;
+    public void SetIPAddress(string _ip = null) {
+        if (_ip != null)
+            ipAddress = _ip;
+        else
+            ipAddress = inputField.text;
     }
 
     private void Update() {
