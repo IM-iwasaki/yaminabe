@@ -38,9 +38,10 @@ public class UDPBroadcaster : MonoBehaviour
 
     private void MessageInitialized() {
         message.ip = GetIpAddress();
-        message.port = 7777;
+        message.port = 9876;
         message.gameName = "TPS";
         message.hostName = System.Environment.MachineName;
+        Debug.Log(message.ip);
     }
 
     public string GetIpAddress() {
@@ -49,9 +50,12 @@ public class UDPBroadcaster : MonoBehaviour
 
         foreach (var sendIP in ips) {
             if (sendIP.AddressFamily.Equals(AddressFamily.InterNetwork)) {
+                
                 return sendIP.ToString();
+                
             }
         }
+        Debug.Log("nullやでー");
         return null;
     }
 
@@ -63,6 +67,7 @@ public class UDPBroadcaster : MonoBehaviour
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Broadcast,message.port);
         //jsonファイルに変更
         json = JsonUtility.ToJson(message);
+        Debug.Log("Send json:" + json);
         byte[] data = Encoding.UTF8.GetBytes(json);
 
         client.Send(data, data.Length, endPoint);

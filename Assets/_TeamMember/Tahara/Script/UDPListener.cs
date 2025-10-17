@@ -21,13 +21,15 @@ public class UDPListener : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        Debug.Log("çXêVÇµÇƒÇ‹Ç∑");
         while (messageQueue.TryDequeue(out UdpMessage msg)) {
-            TitleManager.instance.ipAddress = msg.ip;
+            TitleManager.instance.SetIPAddress(msg.ip);
+            Debug.Log(TitleManager.instance.ipAddress);
         }
     }
 
     public async Task ReceiveMessageFromBroadcaster() {
-        UdpClient udpClient = new UdpClient(7777);
+        UdpClient udpClient = new UdpClient(9876);
         try {
             while (true) {
                 UdpReceiveResult result = await udpClient.ReceiveAsync();

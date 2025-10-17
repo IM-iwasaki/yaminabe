@@ -1,5 +1,8 @@
 using Mirror;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CustomNetworkManager : NetworkManager {
     [SerializeField]
@@ -28,7 +31,7 @@ public class CustomNetworkManager : NetworkManager {
         else {
             Debug.LogWarning("SystemManager が見つかりません。SystemManager は最初のシーンに配置しておいてください。");
         }
-
+        TitleManager.instance.enabled = false;
         //生成後ロビーシーンに遷移
         //GameSceneManager.Instance.LoadLobbySceneForAll();
     }
@@ -69,7 +72,9 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnServerDisconnect(NetworkConnectionToClient _conn) {
         serverManager.connectPlayer.Remove(_conn.identity);
         base.OnServerDisconnect(_conn);
-
+        Debug.Log("サーバーが切断されました！");
+        Destroy(TitleManager.instance.gameObject);
+        SceneManager.LoadScene("TitleScene");
     }
     /// <summary>
     /// シーンが変わった時に発火
@@ -92,5 +97,7 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
         FadeManager.Instance.StartFadeIn(0.5f);
+        if(TitleManager.instance.enabled)
+            TitleManager.instance.enabled = false;
     }
 }
