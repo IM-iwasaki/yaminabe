@@ -13,9 +13,15 @@ MonoBehaviour:
   m_Name: AchievementData
   m_EditorClassIdentifier: 
   achievements:
-  - id: 
-    title: 
-    description: 
+  - title: "\u521D\u3081\u3066\u306E\u30AD\u30EB"
+    id: 1
+    description: "\u30D7\u30EC\u30A4\u30E4\u30FC\u30921\u56DE\u305F\u304A\u3059"
     icon: {fileID: 0}
-    targetValue: 0
+    targetValue: 1
     type: 0
+  - title: "\u521D\u3081\u3066\u306E\u52DD\u5229"
+    id: 2
+    description: "\u521D\u3081\u3066\u8A66\u5408\u306B\u52DD\u3064"
+    icon: {fileID: 0}
+    targetValue: 1
+    type: 1

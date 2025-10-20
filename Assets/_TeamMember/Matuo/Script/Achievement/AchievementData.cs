@@ -6,8 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class AchievementData {
     [Header("基本情報")]
-    public string id;               // 実績ID
     public string title;            // 実績タイトル
+    public string id;               // 実績ID
     [TextArea]
     public string description;      // 実績の説明
     public Sprite icon;             // 実績アイコン
