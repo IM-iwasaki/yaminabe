@@ -1191,7 +1191,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   subCamera: {fileID: 4249475064845568106, guid: c75d8e5dd902e5f40aeef6b32f72b335, type: 3}
-  parentsubCamera: {fileID: 6118669345403868833}
+  parentSubCamera: {fileID: 6118669345403868833}
 --- !u!1 &6118669345403868833
 GameObject:
   m_ObjectHideFlags: 0
@@ -1202,7 +1202,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3838177514411545878}
   m_Layer: 0
-  m_Name: SubCameras
+  m_Name: SubCameraParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
