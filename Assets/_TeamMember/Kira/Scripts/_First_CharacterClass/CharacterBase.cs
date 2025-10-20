@@ -35,7 +35,7 @@ abstract class CharacterBase : NetworkBehaviour {
     //持っている武器の文字列
     public string CurrentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
-    [SyncVar] public int TeamID = -1;
+    [SyncVar] public teamColor TeamID = teamColor.Invalid;
     //プレイヤーの名前
     //TODO:プレイヤーセーブデータから取得できるようにする。
     protected string PlayerName = "Player_Test";
@@ -213,7 +213,7 @@ abstract class CharacterBase : NetworkBehaviour {
         IsDead = false;
         HP = MaxHP;
         //リスポーン地点に移動させる
-        //StageManager.Instance.GetTeamSpawnPoints(TeamID);
+        StageManager.Instance.GetTeamSpawnPoints(TeamID);
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
@@ -228,11 +228,11 @@ abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
         CharacterBase player = _player.GetComponent<CharacterBase>();
-        int currentTeam = player.TeamID;
-        int newTeam = (int) _color;
+        teamColor currentTeam = player.TeamID;
+        teamColor newTeam = _color;
 
         //加入しようとしてるチームが埋まっていたら
-        if (ServerManager.instance.teams[(newTeam)].teamPlayerList.Count >= TEAMMATE_MAX) {
+        if (ServerManager.instance.teams[(int)newTeam].teamPlayerList.Count >= TEAMMATE_MAX) {
             Debug.Log("チームの人数が最大です！");
             return;
         }
@@ -243,10 +243,10 @@ abstract class CharacterBase : NetworkBehaviour {
         }
         //新たなチームに加入する時
         //今加入しているチームから抜けてIDをリセット
-        ServerManager.instance.teams[_player.GetComponent<CharacterBase>().TeamID].teamPlayerList.Remove(_player);
-        player.TeamID = -1;
+        ServerManager.instance.teams[(int)_player.GetComponent<CharacterBase>().TeamID].teamPlayerList.Remove(_player);
+        player.TeamID = teamColor.Invalid;
         //新しいチームに加入
-        ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
+        ServerManager.instance.teams[(int)newTeam].teamPlayerList.Add(_player);
         player.TeamID = newTeam;
         //ログを表示
         Debug.Log(_player.ToString() + "は" + newTeam + "番目のチームに加入しました！");
