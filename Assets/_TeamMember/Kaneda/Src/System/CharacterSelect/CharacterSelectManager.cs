@@ -40,8 +40,6 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// </summary>
     /// <param name="player">操作中のプレイヤー</param>
     public void StartCharacterSelect(GameObject player) {
-        //  ネットワーク用
-        //if (!isLocalPlayer) return;
 
         if (currentPlayer != null) return;
         currentPlayer = player;
@@ -73,8 +71,6 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// キャラクター選択モードを終了
     /// </summary>
     public void EndCharacterSelect() {
-        //  ネットワーク用
-        //if (!isLocalPlayer) return;
 
         if (currentPlayer == null) return;
 
