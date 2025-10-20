@@ -1,6 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public enum ProjectileType { Linear, Parabola }
 
 [CreateAssetMenu(menuName = "Weapons/MagicWeaponData")]
 public class MagicWeaponData : WeaponData {

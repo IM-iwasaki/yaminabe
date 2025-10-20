@@ -153,10 +153,11 @@ GameObject:
   - component: {fileID: 8180282540878192743}
   - component: {fileID: 6646716229149822477}
   - component: {fileID: 1231651752017076771}
+  - component: {fileID: 3474385646225994013}
   - component: {fileID: 2193388005794362336}
   - component: {fileID: 533465885870234768}
   m_Layer: 0
-  m_Name: _Player
+  m_Name: FuruyaPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -478,8 +479,24 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  weaponData: {fileID: 11400000, guid: 1f3a1410330c86143851fc8c334926ac, type: 2}
+  weaponData: {fileID: 11400000, guid: 9390fd3f4ae7e9148ac4f1315fd7fdfa, type: 2}
   firePoint: {fileID: 3447353945322428233}
+--- !u!114 &3474385646225994013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7114596247119448676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e200804c269b8b34ab3803478f6c1526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  currentSubWeapon: {fileID: 11400000, guid: 07aeb10d3957ed24a92f435accc7654c, type: 2}
 --- !u!114 &2193388005794362336
 MonoBehaviour:
   m_ObjectHideFlags: 0

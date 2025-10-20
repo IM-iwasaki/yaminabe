@@ -1,8 +1,6 @@
 using UnityEngine;
 
-public enum WeaponType { Melee, Gun, Magic }
 
-public enum EffectType { Default, Fire, Ice, Lightning, Explosion }
 
 [CreateAssetMenu(menuName = "Weapons/WeaponData")]
 public class WeaponData : ScriptableObject {

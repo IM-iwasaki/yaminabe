@@ -16,7 +16,7 @@ public class WeaponItem : ItemBase {
     /// </summary>
     public override void Use(GameObject player) {
         //  プレイヤー処理(プレイヤーが出来次第追加)
-        NetworkWeapon playerWeaponData = player.GetComponent<NetworkWeapon>();
+        MainWeaponController playerWeaponData = player.GetComponent<MainWeaponController>();
         if (playerWeaponData != null) {
             Debug.LogWarning("プレイヤーの中にNetworkWeaponが見つかりませんでした");
             return;

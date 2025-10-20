@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e47c9d9e1446e004c819f12f6a547e88, type: 3}
+  m_Name: FlagGrenade
+  m_EditorClassIdentifier: 
+  subWeaponName: FlagGrenade
+  type: 0
+  damage: 10
+  range: 3
+  throwForce: 10
+  maxUses: 3
+  rechargeTime: 5
+  startFull: 1
+  projectilePrefab: {fileID: 1698056052845220, guid: 5a2bf64643e1fb0439ea39c0fc9b00ff, type: 3}
+  projectileSpeed: 15
+  useEffectType: 4
+  explosionRadius: 3
+  explosionDelay: 1.5
+  hasExplosion: 1
+  canDamageAllies: 1
+  duration: 0

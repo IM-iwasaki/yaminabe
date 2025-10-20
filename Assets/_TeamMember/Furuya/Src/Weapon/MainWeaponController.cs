@@ -2,15 +2,15 @@
 using Mirror;
 using Mirror.BouncyCastle.Asn1.Pkcs;
 
-public class NetworkWeapon : NetworkBehaviour {
-    public WeaponData weaponData;
+public class MainWeaponController : NetworkBehaviour {
+    public WeaponData weaponData;           // メイン武器
     public Transform firePoint;
     float lastAttackTime;
 
     // --- 攻撃リクエスト ---
     [Command]
     public void CmdRequestAttack(Vector3 direction) {
-        if (!CanAttack()) return;
+        if (!CanAttack() || !isServer) return;
         lastAttackTime = Time.time;
 
         switch (weaponData.type) {
@@ -27,6 +27,7 @@ public class NetworkWeapon : NetworkBehaviour {
     }
 
     bool CanAttack() {
+        // サブ武器も別クールダウンを持たせる場合は拡張可能
         return weaponData != null && Time.time >= lastAttackTime + weaponData.cooldown;
     }
 

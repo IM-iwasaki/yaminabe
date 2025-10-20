@@ -95,7 +95,7 @@ abstract class CharacterBase : NetworkBehaviour {
     #region ～アクション用変数～
 
     //武器を使用するため
-    [SerializeField] protected NetworkWeapon weaponController;
+    [SerializeField] protected MainWeaponController weaponController;
 
     //ジャンプ入力をしたか
     private bool IsJumpPressed = false;
