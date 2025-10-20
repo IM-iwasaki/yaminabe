@@ -122,7 +122,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 577213434466910773}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterSelectManager, Assembly-CSharp
         m_MethodName: EndCharacterSelect
         m_Mode: 1
@@ -3996,6 +3996,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6207345336742922586, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: _assetId
+      value: 3186353369
+      objectReference: {fileID: 0}
     - target: {fileID: 7248327514413932830, guid: 746aa3385af7af440860aac3c083459b, type: 3}
       propertyPath: m_Name
       value: SelectCharacterObject
@@ -4012,17 +4016,6 @@ PrefabInstance:
       addedObject: {fileID: 4638543556261459999}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 746aa3385af7af440860aac3c083459b, type: 3}
---- !u!114 &577213434466910773 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8840117850402348234, guid: 746aa3385af7af440860aac3c083459b, type: 3}
-  m_PrefabInstance: {fileID: 8263195841551507199}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6afe725cf6e1ff84584d934f392cb924, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &4110388760641680632 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5451550288746359303, guid: 746aa3385af7af440860aac3c083459b, type: 3}
