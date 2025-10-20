@@ -2,7 +2,7 @@
 /// ÀÑ‚Ìí—Ş‚ğ•\‚·—ñ‹“‘Ì
 /// </summary>
 public enum AchievementType {
-    KillEnemies,      // “G‚ğ“|‚µ‚½‰ñ”
+    KillPlayers,      // “G‚ğ“|‚µ‚½‰ñ”
     WinMatches,       // ‡Ÿ—˜”
     EarnCoins,        // Šl“¾ƒRƒCƒ“—Ê
     PlayCount,        // ‘ƒvƒŒƒC‰ñ”
