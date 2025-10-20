@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BaseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
   DisplayName: "\u30BD\u30EB\u30B8\u30E3\u30FC"
-  Skills: []
+  Skills:
+  - {fileID: 11400000, guid: c7872a5bfb4479846b38d1989b7bf70c, type: 2}
   Passives:
   - {fileID: 11400000, guid: c6893291512ea68478b8f923bde70045, type: 2}
   ChatacterType: 0

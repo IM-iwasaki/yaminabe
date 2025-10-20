@@ -54,7 +54,7 @@ class GunnerCharacter : CharacterBase {
     }
 
     protected override void StartUseSkill() {
-        EquippedSkills[0].Activate(gameObject);
+        EquippedSkills[0].Activate(this);
     }
 
     // Start is called before the first frame update
