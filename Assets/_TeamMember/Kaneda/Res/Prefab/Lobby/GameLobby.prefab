@@ -122,7 +122,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 577213434466910773}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CharacterSelectManager, Assembly-CSharp
         m_MethodName: EndCharacterSelect
         m_Mode: 1
@@ -1438,7 +1438,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8347621978264193269, guid: 107da1219fa0cc544904068c2df58ad6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 37.94
+      value: 38.58
       objectReference: {fileID: 0}
     - target: {fileID: 8347621978264193269, guid: 107da1219fa0cc544904068c2df58ad6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1643,6 +1643,10 @@ PrefabInstance:
     - target: {fileID: 5375579139009417326, guid: 62553389156de1b4ea9bee0ad2f6a839, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5375579139009417326, guid: 62553389156de1b4ea9bee0ad2f6a839, type: 3}
+      propertyPath: m_TagString
+      value: RedTeam
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3334,6 +3338,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3298340454437890975, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
+      propertyPath: m_TagString
+      value: BlueTeam
+      objectReference: {fileID: 0}
     - target: {fileID: 3857364986207757965, guid: cf5d232446ad55745b240e95a1a5cf86, type: 3}
       propertyPath: m_LocalScale.x
       value: 6
@@ -3996,6 +4004,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6207345336742922586, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: _assetId
+      value: 3186353369
+      objectReference: {fileID: 0}
     - target: {fileID: 7248327514413932830, guid: 746aa3385af7af440860aac3c083459b, type: 3}
       propertyPath: m_Name
       value: SelectCharacterObject
@@ -4012,17 +4024,6 @@ PrefabInstance:
       addedObject: {fileID: 4638543556261459999}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 746aa3385af7af440860aac3c083459b, type: 3}
---- !u!114 &577213434466910773 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8840117850402348234, guid: 746aa3385af7af440860aac3c083459b, type: 3}
-  m_PrefabInstance: {fileID: 8263195841551507199}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6afe725cf6e1ff84584d934f392cb924, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &4110388760641680632 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5451550288746359303, guid: 746aa3385af7af440860aac3c083459b, type: 3}
@@ -4279,7 +4280,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7267252935555018787, guid: ac7dc1c93aaf0c64d8d8787c6f518f6d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 38.402637
+      value: 38.86264
       objectReference: {fileID: 0}
     - target: {fileID: 7267252935555018787, guid: ac7dc1c93aaf0c64d8d8787c6f518f6d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4517,7 +4518,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7668019817330970340, guid: 4f472a512c6deed46b60ff4bea819480, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 37.92
+      value: 38.38
       objectReference: {fileID: 0}
     - target: {fileID: 7668019817330970340, guid: 4f472a512c6deed46b60ff4bea819480, type: 3}
       propertyPath: m_LocalRotation.w
