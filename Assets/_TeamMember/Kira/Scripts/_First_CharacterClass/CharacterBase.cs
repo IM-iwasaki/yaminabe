@@ -15,8 +15,8 @@ using static TeamData;
  本ファイルを改変する人へ・・・改変個所に改変者のイニシャルを記載の上、改変したところを//で囲ってください。
                                (コード自体はコメントアウトしなくていいです)
 
-                               int test = 100;
-                           例：// K.W.
+                           例：int test = 100;
+                               // K.W.
                                test = 256;
                                //
 */
@@ -212,7 +212,7 @@ abstract class CharacterBase : NetworkBehaviour {
         IsDead = false;
         HP = MaxHP;
         //リスポーン地点に移動させる
-        
+        //StageManager.Instance.GetTeamSpawnPoints(TeamID);
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
@@ -588,6 +588,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// インタラクト関数
     /// </summary>
     protected void Interact() {
+
     }
 
     #endregion
