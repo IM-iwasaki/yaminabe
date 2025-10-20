@@ -593,7 +593,7 @@ abstract class CharacterBase : NetworkBehaviour {
             return;
         }
         if (IsCanInteruct) {
-            CharacterSelectManager select = useCollider.GetComponent<CharacterSelectManager>();
+            CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
             select.StartCharacterSelect(gameObject);
             return;
         }

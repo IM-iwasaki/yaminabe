@@ -38,7 +38,7 @@ public class CameraChangeController : MonoBehaviour {
         returnRotation = playerCamera.transform.rotation;
 
         // 移動コルーチン開始
-        StartCoroutine(MoveCameraCoroutine(targetPosition, targetRotation));
+        StartCoroutine(MoveCameraCoroutine(targetPosition, targetRotation, playerCamera));
     }
 
     /// <summary>
