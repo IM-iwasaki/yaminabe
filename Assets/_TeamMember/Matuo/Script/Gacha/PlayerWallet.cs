@@ -79,16 +79,16 @@ public class PlayerWallet : MonoBehaviour {
     /// </summary>
     private void SaveMoney() {
         // 既存データをロードして所持金だけ更新
-        var data = PlayerSaveSystem.LoadPlayer();
+        var data = PlayerSaveData.Load();
         data.currentMoney = currentMoney;
-        PlayerSaveSystem.SavePlayer(data);
+        PlayerSaveData.Save(data);
     }
 
     /// <summary>
     /// セーブされている所持金のロード
     /// </summary>
     private void LoadMoney() {
-        var data = PlayerSaveSystem.LoadPlayer();
+        var data = PlayerSaveData.Load();
         currentMoney = data.currentMoney > 0 ? data.currentMoney : startMoney;
         OnMoneyChanged?.Invoke(currentMoney);
     }

@@ -5,13 +5,13 @@ using UnityEngine;
 /// <summary>
 /// プレイヤーデータのセーブ／ロードを行う静的クラス
 /// </summary>
-public static class PlayerSaveSystem {
+public static class PlayerSaveData {
     private static string filePath => Path.Combine(Application.persistentDataPath, "playerData.json");
 
     /// <summary>
-    /// プレイヤーデータを JSON に保存する
+    /// プレイヤーデータを保存する
     /// </summary>
-    public static void SavePlayer(PlayerData data) {
+    public static void Save(PlayerData data) {
 #if UNITY_EDITOR
         // エディター上ではセーブしない
         if (!Application.isPlaying) return;
@@ -25,7 +25,7 @@ public static class PlayerSaveSystem {
     /// プレイヤーデータをロードする
     /// ファイルが無ければ初期状態のデータを返す
     /// </summary>
-    public static PlayerData LoadPlayer() {
+    public static PlayerData Load() {
 #if UNITY_EDITOR
         // エディター上ではロードしない
         if (!Application.isPlaying) {
