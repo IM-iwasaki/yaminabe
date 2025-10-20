@@ -82,9 +82,6 @@ public class CharacterSelectManager : NetworkBehaviour {
         if (cameraManager != null)
             cameraManager.ReturnCamera();
 
-        // プレイヤー操作再開
-        //  後で入れ込む
-
         currentPlayer = null;
     }
 

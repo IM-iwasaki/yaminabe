@@ -44,14 +44,7 @@ public class CameraChangeController : MonoBehaviour {
         }
 
         //  サブカメラを生成
-        if(subCamera == null) {
-            Debug.LogWarning("サブカメラがありません");
-            return;
-        }
-        subCameraObject = Instantiate(subCamera, parentSubCamera.transform);
-        //  サブカメラをプレイヤーのカメラの位置に
-        subCameraObject.transform.position = playerCamera.transform.position;
-        subCameraObject.transform.rotation = playerCamera.transform.rotation;
+        InstantiateSubCamera(subCamera, parentSubCamera);
 
         // 戻り位置を保存
         returnPosition = playerCamera.transform.position;
@@ -104,10 +97,26 @@ public class CameraChangeController : MonoBehaviour {
             //  メインカメラを起動、サブカメラを停止
             playerCamera.gameObject.SetActive(true);
             subCameraObject.gameObject.SetActive(false);
+            Destroy(subCameraObject.gameObject);
             //  取得していたカメラを空にする
             playerCamera = null;
         }
 
         isTransitioning = false;
+    }
+
+    /// <summary>
+    /// サブカメラ生成
+    /// </summary>
+    private void InstantiateSubCamera(Camera subCamera, GameObject parent) {
+        //  サブカメラを生成
+        if (subCamera == null) {
+            Debug.LogWarning("サブカメラがありません");
+            return;
+        }
+        subCameraObject = Instantiate(subCamera, parent.transform);
+        //  サブカメラをプレイヤーのカメラの位置に
+        subCameraObject.transform.position = playerCamera.transform.position;
+        subCameraObject.transform.rotation = playerCamera.transform.rotation;
     }
 }
