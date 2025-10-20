@@ -1,10 +1,11 @@
+using Mirror;
 using UnityEngine;
 
 /// <summary>
 /// キャラクター選択モード管理マネージャー
 /// ・UI表示/非表示、プレイヤー操作停止、CameraChangeController呼び出しを管理
 /// </summary>
-public class CharacterSelectManager : MonoBehaviour {
+public class CharacterSelectManager : NetworkBehaviour {
     #region 変数定義
 
     [Header("カメラ制御")]
@@ -39,6 +40,9 @@ public class CharacterSelectManager : MonoBehaviour {
     /// </summary>
     /// <param name="player">操作中のプレイヤー</param>
     public void StartCharacterSelect(GameObject player) {
+        //  ネットワーク用
+        if (!isLocalPlayer) return;
+
         if (currentPlayer != null) return;
         currentPlayer = player;
 
@@ -69,6 +73,9 @@ public class CharacterSelectManager : MonoBehaviour {
     /// キャラクター選択モードを終了
     /// </summary>
     public void EndCharacterSelect() {
+        //  ネットワーク用
+        if (!isLocalPlayer) return;
+
         if (currentPlayer == null) return;
 
         // UIを非表示（戻る操作開始時）
