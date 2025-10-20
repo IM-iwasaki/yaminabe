@@ -38,17 +38,17 @@ public class HostUI : MonoBehaviour {
         ruleIndex--;
     }
     public void IncrementStageIndex() {
-        ruleIndex++;
+        stageIndex++;
     }
     public void DecrementStageIndex() {
-        ruleIndex--;
+        stageIndex--;
     }
 
     private void ChangeRuleUI() {
-        rule.text = ruleNames[Mathf.Clamp(stageIndex, 0, ruleNames.Count)];
+        rule.text = ruleNames[Mathf.Abs(ruleNames.Count + ruleIndex) % ruleNames.Count];
     }
     private void ChangeStageUI() {
-        stage.text = stageNames[Mathf.Clamp(stageIndex, 0, stageNames.Count)];
+        stage.text = stageNames[Mathf.Abs(ruleNames.Count + ruleIndex) % ruleNames.Count];
     }
 
 
