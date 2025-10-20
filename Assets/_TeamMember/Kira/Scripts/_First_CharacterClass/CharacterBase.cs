@@ -86,6 +86,7 @@ abstract class CharacterBase : NetworkBehaviour {
 
     //コンポーネント情報
     protected new Rigidbody rigidbody;
+    protected Collider useCollider;
     [SerializeField] protected PlayerUIManager UI;
     [SerializeField] private InputActionAsset inputActions;
 
@@ -327,18 +328,14 @@ abstract class CharacterBase : NetworkBehaviour {
             case "Item":
                 // フラグを立てる
                 IsCanPickup = true;
+                useCollider = _collider;
 
-                // TODO:この処理はアイテムを使う入力関数に移動。
-                ItemBase item = _collider.GetComponent<ItemBase>();
-                item.Use(gameObject);
                 break;
             case "SelectCharacterObject":
                 // フラグを立てる
                 IsCanInteruct = true;
+                useCollider = _collider;
 
-                // TODO:この処理は該当する関数に移動。
-                CharacterSelectManager select = _collider.GetComponent<CharacterSelectManager>();
-                select.StartCharacterSelect(gameObject);
                 break;
             case "RedTeam":
                 CmdJoinTeam(netIdentity, teamColor.Red);
@@ -379,10 +376,12 @@ abstract class CharacterBase : NetworkBehaviour {
             case "Item":
                 // フラグを下ろす
                 IsCanPickup = false;
+                useCollider = null;
                 break;
             case "SelectCharacterObject":
                 // フラグを下ろす
                 IsCanInteruct = false;
+                useCollider = null;
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
@@ -588,7 +587,16 @@ abstract class CharacterBase : NetworkBehaviour {
     /// インタラクト関数
     /// </summary>
     protected void Interact() {
-
+        if (IsCanPickup) {
+            ItemBase item = useCollider.GetComponent<ItemBase>();
+            item.Use(gameObject);
+            return;
+        }
+        if (IsCanInteruct) {
+            CharacterSelectManager select = useCollider.GetComponent<CharacterSelectManager>();
+            select.StartCharacterSelect(gameObject);
+            return;
+        }
     }
 
     #endregion
