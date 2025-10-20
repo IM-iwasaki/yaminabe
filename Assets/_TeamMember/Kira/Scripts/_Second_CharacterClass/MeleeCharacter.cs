@@ -47,10 +47,12 @@ class MeleeCharacter : CharacterBase {
 
     // Update is called once per frame
     void Update() {
-        //if(!isLocalPlayer) return;
+        if(!isLocalPlayer) return;
 
         MoveControl();
         JumpControl();
+
+        EquippedPassives[0].PassiveReflection(this);
     }   
 
     
