@@ -28,6 +28,10 @@ public class UDPListener : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// IPアドレスの定期受信
+    /// </summary>
+    /// <returns></returns>
     public async Task ReceiveMessageFromBroadcaster() {
         UdpClient udpClient = new UdpClient(9876);
         try {
