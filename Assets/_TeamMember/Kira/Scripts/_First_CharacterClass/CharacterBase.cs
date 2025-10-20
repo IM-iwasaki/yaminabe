@@ -588,6 +588,7 @@ abstract class CharacterBase : NetworkBehaviour {
     /// インタラクト関数
     /// </summary>
     protected void Interact() {
+
     }
 
     #endregion
