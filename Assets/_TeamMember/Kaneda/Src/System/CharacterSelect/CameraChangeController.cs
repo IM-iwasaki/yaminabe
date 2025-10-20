@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using UnityEngine;
 
@@ -5,8 +6,6 @@ using UnityEngine;
 /// サブカメラを使ったスムーズカメラ切替のみ担当
 /// </summary>
 public class CameraChangeController : MonoBehaviour {
-    [Header("サブカメラ")]
-    [SerializeField] private Camera subCamera;          // インスペクターで設定
 
     [Header("カメラ移動設定")]
     [SerializeField] public float moveDuration = 1.5f;                     // 補間時間
@@ -17,10 +16,6 @@ public class CameraChangeController : MonoBehaviour {
     private Quaternion returnRotation;    // プレイヤー子カメラ回転
     private Camera playerCamera;          // プレイヤーのカメラ保存
     private bool isTransitioning = false; // 移動中かどうか
-
-    private void Awake() {
-        subCamera.gameObject.SetActive(false);
-    }
 
     /// <summary>
     /// カメラを指定位置へ移動
@@ -38,18 +33,9 @@ public class CameraChangeController : MonoBehaviour {
             return;
         }
 
-        // サブカメラをプレイヤーカメラ位置に瞬間移動
-        subCamera.transform.position = playerCamera.transform.position;
-        subCamera.transform.rotation = playerCamera.transform.rotation;
-
         // 戻り位置を保存
         returnPosition = playerCamera.transform.position;
         returnRotation = playerCamera.transform.rotation;
-
-        // サブカメラを有効化
-        subCamera.gameObject.SetActive(true);
-        //  プレイヤーの子カメラを無効化
-        playerCamera.gameObject.SetActive(false);
 
         // 移動コルーチン開始
         StartCoroutine(MoveCameraCoroutine(targetPosition, targetRotation));
@@ -71,35 +57,29 @@ public class CameraChangeController : MonoBehaviour {
     private IEnumerator MoveCameraCoroutine(Vector3 targetPos, Quaternion targetRot, Camera playerCamera = null) {
         isTransitioning = true;
 
-        Vector3 startPos = subCamera.transform.position;
-        Quaternion startRot = subCamera.transform.rotation;
+        Vector3 startPos = playerCamera.transform.position;
+        Quaternion startRot = playerCamera.transform.rotation;
 
         float elapsed = 0f;
         while (elapsed < moveDuration) {
             elapsed += Time.deltaTime;
             float t = moveCurve.Evaluate(elapsed / moveDuration);
 
-            subCamera.transform.position = Vector3.Lerp(startPos, targetPos, t);
-            subCamera.transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+            playerCamera.transform.position = Vector3.Lerp(startPos, targetPos, t);
+            playerCamera.transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
 
             yield return null;
         }
 
         // 最終補正
-        subCamera.transform.position = targetPos;
-        subCamera.transform.rotation = targetRot;
+        playerCamera.transform.position = targetPos;
+        playerCamera.transform.rotation = targetRot;
 
-        // 戻る場合はサブカメラを無効化
-        if (targetPos == returnPosition) {
-            //  プレイヤーの子カメラがあれば有効化
-            if (playerCamera != null) {
-                playerCamera.gameObject.SetActive(true);
-                //  取得していたカメラを空にする
-                playerCamera = null;
-            }
-            subCamera.gameObject.SetActive(false);
+        //  プレイヤーの子カメラがあれば有効化
+        if (playerCamera != null) {
+            //  取得していたカメラを空にする
+            playerCamera = null;
         }
-
 
         isTransitioning = false;
     }
