@@ -30,7 +30,7 @@ public class PlayerItemManager : MonoBehaviour {
     }
 
     private void LoadPlayerData() {
-        playerData = SaveSystem.Load();
+        playerData = PlayerSaveSystem.LoadPlayer();
 
         if (playerData.items == null)
             playerData.items = new List<string>();
@@ -48,7 +48,7 @@ public class PlayerItemManager : MonoBehaviour {
     }
 
     private void SavePlayerData() {
-        SaveSystem.Save(playerData);
+        PlayerSaveSystem.SavePlayer(playerData);
         SyncDebugList();
     }
 
