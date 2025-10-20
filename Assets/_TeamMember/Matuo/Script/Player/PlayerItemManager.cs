@@ -30,7 +30,7 @@ public class PlayerItemManager : MonoBehaviour {
     }
 
     private void LoadPlayerData() {
-        playerData = SaveSystem.Load();
+        playerData = PlayerSaveSystem.LoadPlayer();
 
         if (playerData.items == null)
             playerData.items = new List<string>();
@@ -48,7 +48,7 @@ public class PlayerItemManager : MonoBehaviour {
     }
 
     private void SavePlayerData() {
-        SaveSystem.Save(playerData);
+        PlayerSaveSystem.SavePlayer(playerData);
         SyncDebugList();
     }
 
@@ -65,18 +65,9 @@ public class PlayerItemManager : MonoBehaviour {
     public void UnlockGachaItem(GachaItem gachaItem) {
         if (gachaItem == null) return;
 
-        string itemFullName;
+        string itemFullName = $"{gachaItem.characterName}_{gachaItem.itemName}";
 
-        if (gachaItem.isCharacter) {
-            // キャラクターを入手した場合 → 最初のスキン名を取得
-            string firstSkin = GetFirstSkinName(gachaItem.characterName);
-            itemFullName = $"{gachaItem.characterName}_{firstSkin}";
-        } else {
-            // スキンだけ入手した場合 → キャラクター名と結合
-            itemFullName = $"{gachaItem.characterName}_{gachaItem.itemName}";
-        }
-
-        UnlockItem(itemFullName); // ここで正しい形式で登録
+        UnlockItem(itemFullName); // ここで登録
     }
 
     /// <summary>

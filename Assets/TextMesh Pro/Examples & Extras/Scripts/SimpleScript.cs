@@ -22,12 +22,12 @@ namespace TMPro.Examples
 
             m_textMeshPro.autoSizeTextContainer = true;
 
-            // Load the Font Asset to be used.
-            //m_FontAsset = Resources.Load("Fonts & Materials/LiberationSans SDF", typeof(TMP_FontAsset)) as TMP_FontAsset;
+            // LoadPlayer the Font Asset to be used.
+            //m_FontAsset = Resources.LoadPlayer("Fonts & Materials/LiberationSans SDF", typeof(TMP_FontAsset)) as TMP_FontAsset;
             //m_textMeshPro.font = m_FontAsset;
 
             // Assign Material to TextMesh Pro Component
-            //m_textMeshPro.fontSharedMaterial = Resources.Load("Fonts & Materials/LiberationSans SDF - Bevel", typeof(Material)) as Material;
+            //m_textMeshPro.fontSharedMaterial = Resources.LoadPlayer("Fonts & Materials/LiberationSans SDF - Bevel", typeof(Material)) as Material;
             //m_textMeshPro.fontSharedMaterial.EnableKeyword("BEVEL_ON");
             
             // Set various font settings.
