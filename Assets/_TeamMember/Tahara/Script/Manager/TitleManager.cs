@@ -6,6 +6,7 @@ public class TitleManager : MonoBehaviour {
     public static TitleManager instance = null;
     public string ipAddress { get; private set; } = null;
     public bool isHost = false;
+    public bool isClient = false;
 
     [SerializeField]
     private string lobbySceneName = null;
@@ -31,8 +32,8 @@ public class TitleManager : MonoBehaviour {
         //IPアドレス未設定を防ぐために早期リターン
         if (ipAddress == null)
             return;
-        //明示的にホスト状態をfalseにし、ロビーシーンに移行
-        isHost = false;
+        //明示的にクライアント状態をtrueにし、ロビーシーンに移行
+        isClient = false;
         SceneManager.LoadScene(lobbySceneName);
 
     }

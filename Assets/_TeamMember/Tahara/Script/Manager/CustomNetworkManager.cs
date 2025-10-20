@@ -9,17 +9,18 @@ public class CustomNetworkManager : NetworkManager {
     private ServerManager serverManager = null;
 
     public override void Awake() {
-        base.Awake();
+        
         if (TitleManager.instance.isHost)
             //ホストとして開始
             StartHost();
-        else {
+        else if(TitleManager.instance.isClient){
             //クライアントとして開始
             networkAddress = TitleManager.instance.ipAddress;
             StartClient();
-
         }
-
+        else {
+            base.Awake();
+        }
     }
 
     public override void OnStartServer() {
@@ -31,7 +32,11 @@ public class CustomNetworkManager : NetworkManager {
         else {
             Debug.LogWarning("SystemManager が見つかりません。SystemManager は最初のシーンに配置しておいてください。");
         }
-        TitleManager.instance.enabled = false;
+        //起動時タイトルマネージャーのインスタンスが存在していたら、
+        if (TitleManager.instance != null) {
+            //その後は不必要なので更新しないようにする
+            TitleManager.instance.enabled = false;
+        }
         //生成後ロビーシーンに遷移
         //GameSceneManager.Instance.LoadLobbySceneForAll();
     }
