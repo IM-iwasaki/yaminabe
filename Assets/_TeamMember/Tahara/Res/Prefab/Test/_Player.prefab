@@ -534,6 +534,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1403119992907617473}
     - target: {fileID: 5245321708682595989, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5245321708682595989, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
       propertyPath: leftOffsetAmount
       value: -1
       objectReference: {fileID: 0}
