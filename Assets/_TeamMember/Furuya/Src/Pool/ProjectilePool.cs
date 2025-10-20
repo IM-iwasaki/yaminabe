@@ -24,9 +24,8 @@ public class ProjectilePool : NetworkBehaviour {
             var queue = new Queue<GameObject>();
             for (int i = 0; i < poolData.size; i++) {
                 GameObject obj = Instantiate(poolData.prefab);
+                obj.SetActive(true);
                 NetworkServer.Spawn(obj);
-
-                // ‚Ü‚¸”ñ•\Ž¦‚É‚µ‚Ä‚©‚ç Spawn
                 obj.SetActive(false);
 
                 queue.Enqueue(obj);

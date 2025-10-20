@@ -2,6 +2,7 @@
 using Mirror;
 using System.Collections;
 
+[RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class MagicProjectile : NetworkBehaviour {
     private ProjectileType type = ProjectileType.Linear;
     private float speed = 20f;
@@ -11,7 +12,8 @@ public class MagicProjectile : NetworkBehaviour {
     private Rigidbody rb;
     private GameObject owner;
     private EffectType hitEffectType;
-    private float lifetime = 5f; // 最大生存時間
+    private bool initialized;
+    private float lifetime = 5f;
 
     /// <summary>
     /// 弾の初期化（発射時に呼ぶ）
@@ -27,6 +29,9 @@ public class MagicProjectile : NetworkBehaviour {
         if (rb == null) rb = GetComponent<Rigidbody>();
 
         if (rb != null) {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
             if (type == ProjectileType.Parabola) {
                 rb.useGravity = true;
                 rb.velocity = direction * speed + Vector3.up * initialHeightSpeed;
@@ -37,8 +42,12 @@ public class MagicProjectile : NetworkBehaviour {
             }
         }
 
-        StopAllCoroutines();
-        StartCoroutine(AutoDisable()); // 生存時間で自動非アクティブ化
+        initialized = true;
+
+        if (isServer) {
+            StopAllCoroutines();
+            StartCoroutine(AutoDisable()); // 自動で非アクティブ化
+        }
     }
 
     void FixedUpdate() {
@@ -49,42 +58,44 @@ public class MagicProjectile : NetworkBehaviour {
 
     [ServerCallback]
     void OnTriggerEnter(Collider other) {
+        if (!initialized || !isServer) return;
         if (other.gameObject == owner) return;
 
         if (other.TryGetComponent(out CharacterBase target))
             target.TakeDamage(damage);
 
+
         RpcPlayHitEffect(transform.position, hitEffectType);
-        StartCoroutine(DisableProjectile());
+
+        Deactivate();
     }
 
-    /// <summary>
-    /// 時間経過で非アクティブ化
-    /// </summary>
     IEnumerator AutoDisable() {
         yield return new WaitForSeconds(lifetime);
-        SetInactive();
-    }
-
-    /// <summary>
-    /// ヒット時に非アクティブ化
-    /// </summary>
-    IEnumerator DisableProjectile() {
-        yield return new WaitForSeconds(0.05f);
-        SetInactive();
+        Deactivate();
     }
 
     [Server]
-    void SetInactive() {
-        if (rb != null) rb.velocity = Vector3.zero;
-        gameObject.SetActive(false);
+    private void Deactivate() {
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        initialized = false;
+
+        if (ProjectilePool.Instance != null)
+            ProjectilePool.Instance.ReturnToPool(gameObject);
+        else
+            NetworkServer.Destroy(gameObject);
     }
 
-    [ClientRpc]
+    [ClientRpc(includeOwner = true)]
     void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
+        Debug.Log("RPC 呼ぶよ");
+        if (effectType == EffectType.Default) return;
+
         GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
             var fx = EffectPoolManager.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            fx.SetActive(true);
             EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
         }
     }
