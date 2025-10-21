@@ -27,20 +27,20 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// ゲーム開始
     /// </summary>
     /// <param name="rule">開始するルールタイプ</param>
-    /// <param name="stageData">生成するステージ</param>
+    /// <param name="stageIndex">生成するステージの晩小郷</param>
     [Server]
-    public void StartGame(GameRuleType rule, StageData stageData) {
+    public void StartGame(GameRuleType rule, int stageIndex) {
         if (isGameRunning) return;
-        
-        // ステージ生成
-        StageManager.Instance.SpawnStage(stageData);
+
+        // インデックス指定でステージ生成
+        StageManager.Instance.SpawnStage(stageIndex);
+
 
         // ルールごとのリスポーン設定
-        if (rule == GameRuleType.DeathMatch) {
+        if (rule == GameRuleType.DeathMatch)
             StageManager.Instance.SetRespawnMode(RespawnMode.Random);
-        } else {
+        else
             StageManager.Instance.SetRespawnMode(RespawnMode.Team);
-        }
 
         isGameRunning = true;
         ruleManager.currentRule = rule;
@@ -50,7 +50,8 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         // デスマッチは時間切れで終了
         if (rule == GameRuleType.DeathMatch) {
-            gameTimer.OnTimerFinished += () => {
+            gameTimer.OnTimerFinished += () =>
+            {
                 ruleManager.EndDeathMatch();
                 EndGame();
             };

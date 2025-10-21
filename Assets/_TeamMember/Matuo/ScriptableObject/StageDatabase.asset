@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5410420058e0e5b49a8a37c7752376f2, type: 3}
-  m_Name: StageData
+  m_Name: StageDatabase
   m_EditorClassIdentifier: 
-  stageName: 
-  stagePrefab: {fileID: 0}
+  stages:
+  - stageName: "\u30B9\u30C6\u30FC\u30B81"
+    stagePrefab: {fileID: 0}
