@@ -31,10 +31,15 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [Server]
     public void StartGame(GameRuleType rule, int stageIndex) {
         if (isGameRunning) return;
+<<<<<<< HEAD
+        
+        // ステージ生成
+        StageManager.Instance.SpawnStage(stageData);
+=======
 
         // インデックス指定でステージ生成
         StageManager.Instance.SpawnStage(stageIndex);
-
+>>>>>>> Matsuo
 
         // ルールごとのリスポーン設定
         if (rule == GameRuleType.DeathMatch)
