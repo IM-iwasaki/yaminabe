@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BaseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
   DisplayName: "\u30C6\u30B9\u30C8"
-  Skills: []
-  Passives: []
+  Skills:
+  - {fileID: 11400000, guid: c7872a5bfb4479846b38d1989b7bf70c, type: 2}
+  Passives:
+  - {fileID: 11400000, guid: 6f507692c13943047a0b4893ed1eb60d, type: 2}
   ChatacterType: 0
   MaxHPCorrection: 20
   AttackCorrection: 0

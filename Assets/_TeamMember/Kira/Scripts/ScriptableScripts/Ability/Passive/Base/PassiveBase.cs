@@ -13,10 +13,10 @@ public abstract class PassiveBase : ScriptableObject {
     //パッシブのクールタイム
     public float Cooldown;
     //パッシブが発動中か
-    public bool IsPassiveActiove;
+    public bool IsPassiveActive;
 
     /// <summary>
-    /// Abstruct : パッシブ固有の動作(引数はパッシブの発動者。発動中のみ呼び出すこと)
+    /// Abstruct : パッシブ固有の動作(引数はパッシブの発動者)
     /// </summary>
-    public abstract void PassiveReflection(GameObject user);
+    public abstract void PassiveReflection(CharacterBase user);
 }

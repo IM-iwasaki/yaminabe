@@ -20,7 +20,7 @@ using static TeamData;
                                test = 256;
                                //
 */
-abstract class CharacterBase : NetworkBehaviour {
+public abstract class CharacterBase : NetworkBehaviour {
     #region ～変数宣言～
 
     #region ～ステータス～
@@ -35,10 +35,15 @@ abstract class CharacterBase : NetworkBehaviour {
     //持っている武器の文字列
     public string CurrentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
+    [SyncVar] public teamColor CurrentTeam = teamColor.Invalid;
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
     //TODO:プレイヤーセーブデータから取得できるようにする。
     protected string PlayerName = "Player_Test";
+
+    //受けるダメージ倍率
+    public int DamageRatio = 100;
+
     //ランキング用変数の仮定義
     public int Score { get; protected set; } = 0;
 
@@ -76,8 +81,10 @@ abstract class CharacterBase : NetworkBehaviour {
     //復活してからの経過時間
     protected float RespownAfterTime { get; private set; } = 0.0f;
 
+    //移動中か
+    public bool IsMoving { get; private set; } = false;
     //攻撃中か
-    protected bool IsAttack { get; private set; } = false;
+    public bool IsAttack { get; private set; } = false;
 
     //アイテムを拾える状態か
     protected bool IsCanPickup { get; private set; } = false;
@@ -158,6 +165,8 @@ abstract class CharacterBase : NetworkBehaviour {
             Camera camera = GetComponentInChildren<Camera>();
             camera.tag = "MainCamera";
             camera.enabled = true;
+            PlayerCamera playerCamera = camera.GetComponent<PlayerCamera>();
+            playerCamera.enabled = true;
         }
 
     }
@@ -186,8 +195,10 @@ abstract class CharacterBase : NetworkBehaviour {
     /// 被弾・死亡判定関数
     /// </summary>
     [Command]public void TakeDamage(int _damage) {
-        //ダメージが0以下だったら帰る
-        if (_damage <= 0) return;
+        //ダメージ倍率を適用
+        _damage *= DamageRatio / 100;
+        //ダメージが0以下だったら1に補正する
+        if (_damage <= 0) _damage = 1;
         //HPの減算処理
         HP -= _damage;
         //HPが0以下になったらisDeadを真にする
@@ -213,7 +224,7 @@ abstract class CharacterBase : NetworkBehaviour {
         IsDead = false;
         HP = MaxHP;
         //リスポーン地点に移動させる
-        //StageManager.Instance.GetTeamSpawnPoints(TeamID);
+        StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
@@ -229,10 +240,10 @@ abstract class CharacterBase : NetworkBehaviour {
     [Command]public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
         CharacterBase player = _player.GetComponent<CharacterBase>();
         int currentTeam = player.TeamID;
-        int newTeam = (int) _color;
+        int newTeam = (int)_color;
 
         //加入しようとしてるチームが埋まっていたら
-        if (ServerManager.instance.teams[(newTeam)].teamPlayerList.Count >= TEAMMATE_MAX) {
+        if (ServerManager.instance.teams[newTeam].teamPlayerList.Count >= TEAMMATE_MAX) {
             Debug.Log("チームの人数が最大です！");
             return;
         }
@@ -445,6 +456,11 @@ abstract class CharacterBase : NetworkBehaviour {
     /// 移動関数
     /// </summary>
     protected void MoveControl() {
+        //移動入力が行われている間は移動中フラグを立てる
+        if (MoveInput != Vector2.zero)  IsMoving = true;
+        else IsMoving = false;
+
+
         //カメラの向きを取得
         Transform cameraTransform = Camera.main.transform;
         //進行方向のベクトルを取得
@@ -469,6 +485,7 @@ abstract class CharacterBase : NetworkBehaviour {
         Vector3 velocity = rigidbody.velocity;
         Vector3 targetVelocity = new(MoveDirection.x * MoveSpeed, velocity.y, MoveDirection.z * MoveSpeed);
 
+        //地面に立っていたら通常通り
         if (IsGrounded) {
             rigidbody.velocity = targetVelocity;
         } else {

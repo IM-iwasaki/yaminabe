@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 2825701905452532873}
   - component: {fileID: 8394261901866962481}
   m_Layer: 0
-  m_Name: _Player
+  m_Name: Soldier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -384,7 +384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 1978673511
+  _assetId: 3750100650
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -413,7 +413,7 @@ MonoBehaviour:
   weaponController: {fileID: 2825701905452532873}
   GroundCheck: {fileID: 4807031412442243011}
   IsGrounded: 0
-  InputStatus: {fileID: 11400000, guid: 40acd8b124764da4da5c5bf0596741c2, type: 2}
+  InputStatus: {fileID: 11400000, guid: a72f6c2a4cb646449842b13eef97b971, type: 2}
 --- !u!114 &2825701905452532873
 MonoBehaviour:
   m_ObjectHideFlags: 0
