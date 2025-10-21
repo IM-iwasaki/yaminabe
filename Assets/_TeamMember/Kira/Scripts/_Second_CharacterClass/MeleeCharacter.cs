@@ -59,7 +59,6 @@ class MeleeCharacter : CharacterBase {
         //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
         if (!IsCanSkill && SkillAfterTime >= EquippedSkills[0]?.Cooldown) {
             IsCanSkill = true;
-
             //経過時間をリセット
             SkillAfterTime = 0.0f;
             //デバッグログを出す
@@ -68,7 +67,6 @@ class MeleeCharacter : CharacterBase {
 
         MoveControl();
         JumpControl();
-
         EquippedPassives[0].PassiveReflection(this);
     }   
 
