@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 //
 //  @file   Second_CharacterClass
@@ -36,7 +37,11 @@ class MeleeCharacter : CharacterBase {
     }
 
     protected override void StartUseSkill() {
-        EquippedSkills[0].Activate(gameObject);
+        if (IsCanSkill) {
+            EquippedSkills[0].Activate(this);
+            IsCanSkill = false;
+        }
+        
     }
 
     // Start is called before the first frame update
@@ -48,6 +53,18 @@ class MeleeCharacter : CharacterBase {
     // Update is called once per frame
     void Update() {
         if(!isLocalPlayer) return;
+
+        //スキル使用不可中、かつスキルがインポートされていれば時間を計測
+        if (!IsCanSkill && EquippedSkills[0] != null) SkillAfterTime += Time.deltaTime;
+        //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
+        if (!IsCanSkill && SkillAfterTime >= EquippedSkills[0]?.Cooldown) {
+            IsCanSkill = true;
+
+            //経過時間をリセット
+            SkillAfterTime = 0.0f;
+            //デバッグログを出す
+            Debug.Log("スキルが使用可能になりました。");
+        }
 
         MoveControl();
         JumpControl();

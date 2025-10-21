@@ -91,6 +91,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     //インタラクトできる状態か
     protected bool IsCanInteruct { get; private set; } = false;
 
+    //スキルを使用できるか
+    public bool IsCanSkill { get; protected set; } = false;
+    //スキル使用後経過時間
+    public float SkillAfterTime { get; protected set; } = 0.0f;
+
     //コンポーネント情報
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
@@ -305,7 +310,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                     ? PlayerConst.AttackType.Main
                     : PlayerConst.AttackType.Sub);
                 break;
-            case "UseSkill":
+            case "Skill":
                 OnUseSkill(ctx);
                 break;
             case "Interact":
@@ -674,7 +679,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
 
-    /// <summary>
+ /// <summary>
     ///  時間まで移動速度を上げておく実行処理（コルーチン）
     /// </summary>
     private IEnumerator SpeedBuffRoutine(float value, float duration) {
@@ -694,5 +699,4 @@ public abstract class CharacterBase : NetworkBehaviour {
         healCoroutine = speedCoroutine = attackCoroutine = null;
     }
     #endregion
-
 }

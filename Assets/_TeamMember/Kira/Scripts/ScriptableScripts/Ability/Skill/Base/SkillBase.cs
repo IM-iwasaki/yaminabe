@@ -18,5 +18,5 @@ public abstract class SkillBase : ScriptableObject {
     /// <summary>
     /// Abstruct : スキル固有の動作(引数はスキルの発動者。)
     /// </summary>
-    public abstract void Activate(GameObject user);
+    public abstract void Activate(CharacterBase user);
 }

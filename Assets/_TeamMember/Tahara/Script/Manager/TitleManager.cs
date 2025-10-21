@@ -33,15 +33,12 @@ public class TitleManager : MonoBehaviour {
         if (ipAddress == null)
             return;
         //明示的にクライアント状態をtrueにし、ロビーシーンに移行
-        isClient = false;
+        isClient = true;
         SceneManager.LoadScene(lobbySceneName);
 
     }
 
-    public void SetIPAddress(string _ip = null) {
-        if (_ip != null)
-            ipAddress = _ip;
-        else
+    public void SetIPAddress() {
             ipAddress = inputField.text;
     }
 

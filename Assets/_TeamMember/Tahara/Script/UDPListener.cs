@@ -23,7 +23,7 @@ public class UDPListener : MonoBehaviour {
     void Update() {
         Debug.Log("XV‚µ‚Ä‚Ü‚·");
         while (messageQueue.TryDequeue(out UdpMessage msg)) {
-            TitleManager.instance.SetIPAddress(msg.ip);
+            TitleManager.instance.stringIPAddress.text = msg.ip;
             Debug.Log(TitleManager.instance.ipAddress);
         }
     }
