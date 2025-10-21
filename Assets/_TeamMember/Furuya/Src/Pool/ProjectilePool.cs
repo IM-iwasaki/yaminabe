@@ -87,7 +87,7 @@ public class ProjectilePool : NetworkBehaviour {
         yield return new WaitForSeconds(delay);
         if (obj == null) yield break;
 
-        obj.SetActive(false);
+        //obj.SetActive(false);
         RpcSetActive(obj.GetComponent<NetworkIdentity>().netId, false);
 
         // Rigidbodyí‚é~
