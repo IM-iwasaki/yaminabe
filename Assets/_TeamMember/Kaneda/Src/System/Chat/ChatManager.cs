@@ -112,8 +112,6 @@ public class ChatManager : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(rootRect);
         float rootHeight = rootRect.rect.height;
 
-        bool check = rootHeight > maxHeight && chatRoot.childCount > 0;
-
         // ’´‚¦‚Ä‚¢‚éê‡‚Ì‚Ýˆ—
         if (rootHeight <= maxHeight) return;
 
