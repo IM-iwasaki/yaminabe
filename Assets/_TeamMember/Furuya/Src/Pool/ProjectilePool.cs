@@ -70,7 +70,7 @@ public class ProjectilePool : NetworkBehaviour {
         obj.SetActive(true);
 
         // Mirror同期
-        RpcSetActive(obj.GetComponent<NetworkIdentity>(), true);
+        RpcSetActive(obj.GetComponent<NetworkIdentity>().netId, true);
 
         return obj;
     }
@@ -88,7 +88,7 @@ public class ProjectilePool : NetworkBehaviour {
         if (obj == null) yield break;
 
         obj.SetActive(false);
-        RpcSetActive(obj.GetComponent<NetworkIdentity>(), false);
+        RpcSetActive(obj.GetComponent<NetworkIdentity>().netId, false);
 
         // Rigidbody停止
         if (obj.TryGetComponent(out Rigidbody rb)) {
@@ -99,9 +99,10 @@ public class ProjectilePool : NetworkBehaviour {
 
     // クライアントにも非表示／表示を同期
     [ClientRpc]
-    private void RpcSetActive(NetworkIdentity id, bool state) {
-        Debug.Log($"[Client] RpcSetActive: {id?.gameObject?.name}, state: {state}");
-        if (id != null && id.gameObject != null)
+    private void RpcSetActive(uint netId, bool state) {
+        if (NetworkClient.spawned.TryGetValue(netId, out NetworkIdentity id)) {
             id.gameObject.SetActive(state);
+        }
     }
+
 }
