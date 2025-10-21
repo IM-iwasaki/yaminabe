@@ -78,7 +78,7 @@ public class CustomNetworkManager : NetworkManager {
         serverManager.connectPlayer.Remove(_conn.identity);
         base.OnServerDisconnect(_conn);
         Debug.Log("サーバーが切断されました！");
-        Destroy(TitleManager.instance.gameObject);
+        //Destroy(TitleManager.instance.gameObject);
         SceneManager.LoadScene("TitleScene");
     }
     /// <summary>
