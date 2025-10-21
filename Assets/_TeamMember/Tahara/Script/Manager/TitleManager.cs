@@ -4,7 +4,7 @@ using TMPro;
 
 public class TitleManager : MonoBehaviour {
     public static TitleManager instance = null;
-    public string ipAddress { get; private set; } = null;
+    public string ipAddress = null;
     public bool isHost = false;
     public bool isClient = false;
 
