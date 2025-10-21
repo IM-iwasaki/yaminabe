@@ -27,7 +27,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// ゲーム開始
     /// </summary>
     /// <param name="rule">開始するルールタイプ</param>
-    /// <param name="stageIndex">生成するステージの晩小郷</param>
+    /// <param name="stageData">生成するステージの晩小郷</param>
     [Server]
     public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
