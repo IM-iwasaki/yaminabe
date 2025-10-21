@@ -38,10 +38,7 @@ public class TitleManager : MonoBehaviour {
 
     }
 
-    public void SetIPAddress(string _ip = null) {
-        if (_ip != null)
-            ipAddress = _ip;
-        else
+    public void SetIPAddress() {
             ipAddress = inputField.text;
     }
 

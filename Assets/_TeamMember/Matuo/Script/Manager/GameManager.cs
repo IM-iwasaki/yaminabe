@@ -31,7 +31,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [Server]
     public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
-
+        
         // ステージ生成
         StageManager.Instance.SpawnStage(stageData);
 
