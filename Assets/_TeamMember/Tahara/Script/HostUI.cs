@@ -1,5 +1,4 @@
 using Mirror;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -23,12 +22,12 @@ public class HostUI : NetworkBehaviour {
     private Button gameStartButton = null;
 
     private void Start() {
-        //スポーンさせる
-        NetworkServer.Spawn(gameObject);
-        if (isServer) {
-            unVisibleUIFromClient.SetActive(true);
-        }
-        gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
+        ////スポーンさせる
+        //NetworkServer.Spawn(gameObject);
+        //if (isServer) {
+        //    unVisibleUIFromClient.SetActive(true);
+        //}
+        //gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
 
         //ボタンから呼ぶ関数を動的に追加
         //gameStartButton.onClick.AddListener(() => GameManager.Instance.StartGame(RuleManager.Instance.currentRule,

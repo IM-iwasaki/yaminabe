@@ -1302,6 +1302,10 @@ PrefabInstance:
       propertyPath: spawnPrefabs.Array.data[12]
       value: 
       objectReference: {fileID: 6360244347166990274, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+    - target: {fileID: 7262090746969481471, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8116109016544477545, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Name
       value: CustomNetworkManager
@@ -1607,6 +1611,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1596833295}
     m_Modifications:
+    - target: {fileID: 3030213973679419518, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3841287682837437633, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: sceneId
       value: 3683987171
@@ -5823,6 +5831,10 @@ PrefabInstance:
     - target: {fileID: 2632406090076444581, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
       propertyPath: sceneId
       value: 219255710
+      objectReference: {fileID: 0}
+    - target: {fileID: 6211715025859193141, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: sceneId
+      value: 215755777
       objectReference: {fileID: 0}
     - target: {fileID: 8358714206395223592, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
       propertyPath: m_Name

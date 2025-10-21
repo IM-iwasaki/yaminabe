@@ -33,7 +33,7 @@ public class TitleManager : MonoBehaviour {
         if (ipAddress == null)
             return;
         //明示的にクライアント状態をtrueにし、ロビーシーンに移行
-        isClient = false;
+        isClient = true;
         SceneManager.LoadScene(lobbySceneName);
 
     }
