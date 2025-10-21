@@ -29,12 +29,11 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// <param name="rule">開始するルールタイプ</param>
     /// <param name="stageIndex">生成するステージの晩小郷</param>
     [Server]
-    public void StartGame(GameRuleType rule, int stageIndex) {
+    public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
-
-        // インデックス指定でステージ生成
-        StageManager.Instance.SpawnStage(stageIndex);
-
+        
+        // ステージ生成
+        StageManager.Instance.SpawnStage(stageData);
 
         // ルールごとのリスポーン設定
         if (rule == GameRuleType.DeathMatch)
