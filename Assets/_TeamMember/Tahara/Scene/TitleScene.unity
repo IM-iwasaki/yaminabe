@@ -152,7 +152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isHost: 0
-  lobbySceneName: LobbyScene
+  isClient: 0
+  lobbySceneName: FuruyaScene
   inputField: {fileID: 723662198}
   stringIPAddress: {fileID: 708898018}
 --- !u!4 &228984084
@@ -570,7 +571,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &699022356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1353,7 +1354,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1111948503
 MonoBehaviour:
   m_ObjectHideFlags: 0

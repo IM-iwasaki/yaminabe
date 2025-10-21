@@ -82,14 +82,13 @@ public class MagicProjectile : NetworkBehaviour {
         initialized = false;
 
         if (ProjectilePool.Instance != null)
-            ProjectilePool.Instance.ReturnToPool(gameObject);
+            ProjectilePool.Instance.DespawnToPool(gameObject);
         else
             NetworkServer.Destroy(gameObject);
     }
 
     [ClientRpc(includeOwner = true)]
     void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
-        Debug.Log("RPC 呼ぶよ");
         if (effectType == EffectType.Default) return;
 
         GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);

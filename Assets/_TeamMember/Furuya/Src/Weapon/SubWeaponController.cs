@@ -60,8 +60,8 @@ public class SubWeaponController : NetworkBehaviour {
     private void SpawnGrenade() {
         if (currentSubWeapon.projectilePrefab == null) return;
 
-        GameObject grenadeObj = ProjectilePool.Instance.GetFromPool(
-            currentSubWeapon.projectilePrefab,
+        GameObject grenadeObj = ProjectilePool.Instance.SpawnFromPool(
+            currentSubWeapon.projectilePrefab.name,
             transform.position + transform.forward + Vector3.up,
             Quaternion.identity
         );

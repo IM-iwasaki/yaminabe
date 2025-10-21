@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 6672132936378537778}
   m_Layer: 0
   m_Name: FuruyaPlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -335,7 +335,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   HP: 0
+  CurrentTeam: -1
   TeamID: 0
+  DamageRatio: 100
   firePoint: {fileID: 878125566127400802}
   UI: {fileID: 8169650326617316781, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}

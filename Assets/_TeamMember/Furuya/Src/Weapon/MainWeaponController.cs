@@ -10,7 +10,7 @@ public class MainWeaponController : NetworkBehaviour {
     // --- 攻撃リクエスト ---
     [Command]
     public void CmdRequestAttack(Vector3 direction) {
-        if (!CanAttack() || !isServer) return;
+        if (!CanAttack()) return;
         lastAttackTime = Time.time;
 
         switch (weaponData.type) {
@@ -51,12 +51,14 @@ public class MainWeaponController : NetworkBehaviour {
     void ServerGunAttack(Vector3 direction) {
         if (weaponData.projectilePrefab == null) return;
 
-        // 弾生成
-        GameObject proj = ProjectilePool.Instance.GetFromPool(
-            weaponData.projectilePrefab,
+        // 弾をネットワークプールから取得
+        GameObject proj = ProjectilePool.Instance.SpawnFromPool(
+            weaponData.projectilePrefab.name, // プール名で取得
             firePoint.position,
             Quaternion.LookRotation(direction)
         );
+
+        if (proj == null) return;
 
         if (proj.TryGetComponent(out Projectile projScript)) {
             projScript.Init(
@@ -67,11 +69,10 @@ public class MainWeaponController : NetworkBehaviour {
             );
         }
 
-        // 弾速を与える
-        if (proj.TryGetComponent(out Rigidbody rb))
+        if (proj.TryGetComponent(out Rigidbody rb)) {
             rb.velocity = direction * weaponData.projectileSpeed;
+        }
 
-        // エフェクト
         RpcPlayMuzzleFlash(firePoint.position, weaponData.muzzleFlashType);
     }
 
@@ -80,11 +81,13 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not MagicWeaponData magicData || magicData.projectilePrefab == null)
             return;
 
-        GameObject proj = ProjectilePool.Instance.GetFromPool(
-            magicData.projectilePrefab,
+        GameObject proj = ProjectilePool.Instance.SpawnFromPool(
+            magicData.projectilePrefab.name,
             firePoint.position,
             Quaternion.LookRotation(direction)
         );
+
+        if (proj == null) return;
 
         if (proj.TryGetComponent(out MagicProjectile projScript)) {
             projScript.Init(

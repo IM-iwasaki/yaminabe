@@ -1,88 +1,107 @@
-using UnityEngine;
 using Mirror;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class ProjectilePool : NetworkBehaviour {
     public static ProjectilePool Instance;
 
     [System.Serializable]
-    public class PoolData {
+    public class PoolItem {
+        [Tooltip("プール識別名（空ならPrefab名が使われる）")]
+        public string name;
         public GameObject prefab;
-        public int size = 20;
+        [Range(1, 100)]
+        public int size = 10;
+        [Tooltip("分類（弾、グレネード、設置物など）")]
+        public ProjectileCategory category = ProjectileCategory.Other;
     }
 
-    public List<PoolData> poolDataList;
-    private readonly Dictionary<GameObject, Queue<GameObject>> pools = new();
+    [Header("登録されたオブジェクトのプール一覧")]
+    public List<PoolItem> pools = new();
+
+    private readonly Dictionary<string, Queue<GameObject>> poolDictionary = new();
 
     void Awake() {
-        if (Instance == null) Instance = this;
+        Instance = this;
     }
 
     public override void OnStartServer() {
-        foreach (var poolData in poolDataList) {
-            var queue = new Queue<GameObject>();
-            for (int i = 0; i < poolData.size; i++) {
-                GameObject obj = Instantiate(poolData.prefab);
-                obj.SetActive(true);
-                NetworkServer.Spawn(obj);
+        foreach (var pool in pools) {
+            string key = string.IsNullOrWhiteSpace(pool.name)
+                ? pool.prefab.name
+                : pool.name;
+
+            if (poolDictionary.ContainsKey(key)) {
+                Debug.LogWarning($"プール '{key}' は重複しています。スキップ。");
+                continue;
+            }
+
+            Queue<GameObject> objectPool = new Queue<GameObject>();
+            for (int i = 0; i < pool.size; i++) {
+                GameObject obj = Instantiate(pool.prefab);
                 obj.SetActive(false);
 
-                queue.Enqueue(obj);
+                // NetworkObjectが必須（Mirror）
+                NetworkServer.Spawn(obj);
+
+                objectPool.Enqueue(obj);
             }
-            pools.Add(poolData.prefab, queue);
+
+            poolDictionary.Add(key, objectPool);
+            Debug.Log($"[ProjectilePool] '{key}' を {pool.size} 個生成しました。");
         }
     }
 
+    /// <summary>
+    /// サーバーからオブジェクトを有効化して返す
+    /// </summary>
     [Server]
-    public GameObject GetFromPool(GameObject prefab, Vector3 pos, Quaternion rot) {
-        if (!pools.TryGetValue(prefab, out var queue)) return null;
+    public GameObject SpawnFromPool(string name, Vector3 position, Quaternion rotation) {
+        if (!poolDictionary.TryGetValue(name, out Queue<GameObject> pool)) {
+            Debug.LogWarning($"[ProjectilePool] プール '{name}' は存在しません。");
+            return null;
+        }
 
-        GameObject obj = queue.Dequeue();
-        obj.transform.SetPositionAndRotation(pos, rot);
+        GameObject obj = pool.Dequeue();
+        pool.Enqueue(obj);
+
+        obj.transform.SetPositionAndRotation(position, rotation);
         obj.SetActive(true);
-        queue.Enqueue(obj); // 再利用のため末尾に戻す
+
+        // Mirror同期
+        RpcSetActive(obj.GetComponent<NetworkIdentity>(), true);
+
         return obj;
     }
 
+    /// <summary>
+    /// サーバーからオブジェクトを非表示に戻す
+    /// </summary>
     [Server]
-    public void ReturnToPool(GameObject obj) {
-        if (obj == null) return;
-
-        // Rigidbody があれば停止
-        var rb = obj.GetComponent<Rigidbody>();
-        if (rb != null) {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-
-        ResetObject(obj);
-        obj.SetActive(false);
+    public void DespawnToPool(GameObject obj, float delay = 0f) {
+        StartCoroutine(DespawnCoroutine(obj, delay));
     }
 
-    [Server]
-    public void ReturnToPool(GameObject obj, float delay) {
-        if (obj == null) return;
-        StartCoroutine(ReturnCoroutine(obj, delay));
-    }
-
-    private IEnumerator ReturnCoroutine(GameObject obj, float delay) {
+    private IEnumerator DespawnCoroutine(GameObject obj, float delay) {
         yield return new WaitForSeconds(delay);
         if (obj == null) yield break;
 
-        ResetObject(obj);
         obj.SetActive(false);
-    }
+        RpcSetActive(obj.GetComponent<NetworkIdentity>(), false);
 
-    // -------------------------------
-    // 共通リセット処理
-    // -------------------------------
-    private void ResetObject(GameObject obj) {
-        // Rigidbody があれば停止
-        var rb = obj.GetComponent<Rigidbody>();
-        if (rb != null) {
+        // Rigidbody停止
+        if (obj.TryGetComponent(out Rigidbody rb)) {
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+    }
+
+    // クライアントにも非表示／表示を同期
+    [ClientRpc]
+    private void RpcSetActive(NetworkIdentity id, bool state) {
+        Debug.Log($"[Client] RpcSetActive: {id?.gameObject?.name}, state: {state}");
+        if (id != null && id.gameObject != null)
+            id.gameObject.SetActive(state);
     }
 }

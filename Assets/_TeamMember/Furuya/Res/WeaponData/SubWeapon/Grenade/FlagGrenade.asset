@@ -15,15 +15,15 @@ MonoBehaviour:
   subWeaponName: FlagGrenade
   type: 0
   damage: 10
-  range: 3
+  range: 5
   throwForce: 10
   maxUses: 3
   rechargeTime: 5
   startFull: 1
   projectilePrefab: {fileID: 1698056052845220, guid: 5a2bf64643e1fb0439ea39c0fc9b00ff, type: 3}
-  projectileSpeed: 15
+  projectileSpeed: 10
   useEffectType: 4
-  explosionRadius: 3
+  explosionRadius: 5
   explosionDelay: 1.5
   hasExplosion: 1
   canDamageAllies: 1

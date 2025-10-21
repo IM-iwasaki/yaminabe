@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ProjectileCategory {
+    Bullet,
+    Grenade,
+    Trap,
+    Magic,
+    Other
+}
+
 public enum ProjectileType {
     Linear,
     Parabola,

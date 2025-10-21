@@ -54,7 +54,9 @@ public class GrenadeBase : NetworkBehaviour {
         Vector3 pos = transform.position;
         float radius = data.explosionRadius;
 
-        Collider[] hits = Physics.OverlapSphere(pos, radius);
+        int bombLayer = LayerMask.GetMask("Player", "Enemy");
+
+        Collider[] hits = Physics.OverlapSphere(pos, radius, bombLayer);
         foreach (var c in hits) {
             var target = c.GetComponent<CharacterBase>();
             if (target == null) continue;
@@ -88,7 +90,7 @@ public class GrenadeBase : NetworkBehaviour {
         exploded = false;
 
         if (ProjectilePool.Instance != null)
-            ProjectilePool.Instance.ReturnToPool(gameObject, 0.05f);
+            ProjectilePool.Instance.DespawnToPool(gameObject, 0.05f);
         else
             NetworkServer.Destroy(gameObject);
     }
