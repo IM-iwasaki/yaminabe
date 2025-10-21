@@ -10,7 +10,7 @@ public class ChatManager : MonoBehaviour
     private readonly string TEXT_OBJECT_NAME = "UserName";
     private readonly string IMAGE_OBJECT_NAME = "StampImage";
 
-    private static ChatManager instance;
+    public static ChatManager instance = null;
 
     [Header("チャットログ用の親オブジェクト")]
     [SerializeField] private Transform chatRoot;
@@ -56,7 +56,7 @@ public class ChatManager : MonoBehaviour
         CheckHeightLimit();
 
         //  フェードアウト処理
-
+        StartCoroutine(FadeAndDestroy(stampObj));
     }
 
     //  ユーザー名を設定する関数
@@ -101,7 +101,7 @@ public class ChatManager : MonoBehaviour
         CheckHeightLimit();
 
         //  フェードアウト処理
-
+        StartCoroutine(FadeAndDestroy(textObj));
     }
 
     /// <summary>
@@ -109,24 +109,51 @@ public class ChatManager : MonoBehaviour
     /// </summary>
     private void CheckHeightLimit() {
         RectTransform rootRect = chatRoot as RectTransform;
-
         //  現在の高さを取得
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rootRect);
         float rootHeight = rootRect.rect.height;
 
-        //  高さ上限を超えた場合、古いものから削除
-        while(rootHeight > maxHeight && chatRoot.childCount > 0) {
-            //  一番古いの子オブジェクトを取得、削除
-            Transform oldChatObj = chatRoot.GetChild(0);
-            Destroy(oldChatObj.gameObject);
+        bool check = rootHeight > maxHeight && chatRoot.childCount > 0;
 
-            //  削除した後、高さが更新されるまで待機
-            LayoutRebuilder.ForceRebuildLayoutImmediate(rootRect);
-            rootHeight = rootRect.rect.height;
+        // 超えている場合のみ処理
+        if (rootHeight <= maxHeight) return;
+
+        // 古いものから順に削除
+        int index = 0;
+        while (index < chatRoot.childCount && rootHeight > maxHeight) {
+            RectTransform oldest = chatRoot.GetChild(index).GetComponent<RectTransform>();
+            if (oldest != null) {
+                // 削除前に高さを取得
+                float h = oldest.rect.height;
+                Destroy(oldest.gameObject);
+                // 高さを減算
+                rootHeight -= h;
+            }
+            index++;
         }
     }
 
+    /// <summary>
+    /// フェードアウト、削除
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
     private IEnumerator FadeAndDestroy(GameObject obj) {
+        CanvasGroup groupe = obj.GetComponent<CanvasGroup>();
+        if(groupe == null) groupe = obj.AddComponent<CanvasGroup>();
 
+        //  表示する時間待機
+        yield return new WaitForSeconds(viewTime);
+
+        //  フェードアウト処理
+        float timer = 0f;
+        while(timer < fadeTime) {
+            timer += Time.deltaTime;
+            groupe.alpha = Mathf.Lerp(1f, 0f, timer / fadeTime);
+            yield return null;
+        }
+        //  削除する
+        Destroy(obj);
     }
 
 }
