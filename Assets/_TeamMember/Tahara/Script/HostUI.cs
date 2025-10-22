@@ -24,16 +24,15 @@ public class HostUI : NetworkBehaviour {
     private void Start() {
         ////スポーンさせる
         //NetworkServer.Spawn(gameObject);
-        //if (isServer) {
-        //    unVisibleUIFromClient.SetActive(true);
-        //}
-        //gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
-
-        //ボタンから呼ぶ関数を動的に追加
-        //gameStartButton.onClick.AddListener(() => GameManager.Instance.StartGame(RuleManager.Instance.currentRule,
-        //    StageManager.Instance.stages[stageIndex]));
+        if (!isServer) {
+            unVisibleUIFromClient.SetActive(false);
+        }
+        if (GameSceneManager.Instance != null) {
+            gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
+        }
     }
     private void Update() {
+        if (!isServer) return;
         if (prevRuleIndex != ruleIndex)
             ChangeRuleUI();
         if (prevStageIndex != stageIndex)
@@ -72,7 +71,7 @@ public class HostUI : NetworkBehaviour {
         rule.text = ruleNames[ruleIndex];
     }
     private void ChangeStageUI() {
-        stage.text = StageManager.Instance.stages[ruleIndex].stageName;
+        stage.text = StageManager.Instance.stages[stageIndex].stageName;
     }
 
 

@@ -1252,7 +1252,7 @@ PrefabInstance:
       objectReference: {fileID: 261839327}
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: spawnPrefabs.Array.size
-      value: 14
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: spawnPrefabs.Array.data[1]
@@ -1306,6 +1306,10 @@ PrefabInstance:
       propertyPath: spawnPrefabs.Array.data[13]
       value: 
       objectReference: {fileID: 6360244347166990274, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[14]
+      value: 
+      objectReference: {fileID: 1698056052845220, guid: 5a2bf64643e1fb0439ea39c0fc9b00ff, type: 3}
     - target: {fileID: 7262090746969481471, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -1673,7 +1677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6360244347166990274, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3611,12 +3615,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7830444608210131597, guid: b8b074524e97d54409db5f9f87df70bd, type: 3}
       propertyPath: networkSystemPrefabs.Array.size
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7830444608210131597, guid: b8b074524e97d54409db5f9f87df70bd, type: 3}
       propertyPath: networkSystemPrefabs.Array.data[3]
       value: 
-      objectReference: {fileID: 2952031057002778773, guid: ab514d91d74d31f4ebcc2b3936d61ee3, type: 3}
+      objectReference: {fileID: 8037936213118745957, guid: 6c99cf87d80d25a40af53b01ab26659d, type: 3}
     - target: {fileID: 7830444608210131597, guid: b8b074524e97d54409db5f9f87df70bd, type: 3}
       propertyPath: networkSystemPrefabs.Array.data[4]
       value: 
@@ -3624,15 +3628,15 @@ PrefabInstance:
     - target: {fileID: 7830444608210131597, guid: b8b074524e97d54409db5f9f87df70bd, type: 3}
       propertyPath: networkSystemPrefabs.Array.data[5]
       value: 
-      objectReference: {fileID: 8037936213118745957, guid: 6c99cf87d80d25a40af53b01ab26659d, type: 3}
+      objectReference: {fileID: 5860533907361661556, guid: 3ee763e0c8d40084090fadcc48b994b2, type: 3}
     - target: {fileID: 7830444608210131597, guid: b8b074524e97d54409db5f9f87df70bd, type: 3}
       propertyPath: networkSystemPrefabs.Array.data[6]
       value: 
-      objectReference: {fileID: 5860533907361661556, guid: 3ee763e0c8d40084090fadcc48b994b2, type: 3}
+      objectReference: {fileID: 7692947514263415650, guid: 9b667f9fee1864c49936e8fb26326148, type: 3}
     - target: {fileID: 7830444608210131597, guid: b8b074524e97d54409db5f9f87df70bd, type: 3}
       propertyPath: networkSystemPrefabs.Array.data[7]
       value: 
-      objectReference: {fileID: 7692947514263415650, guid: 9b667f9fee1864c49936e8fb26326148, type: 3}
+      objectReference: {fileID: 2952031057002778773, guid: ab514d91d74d31f4ebcc2b3936d61ee3, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

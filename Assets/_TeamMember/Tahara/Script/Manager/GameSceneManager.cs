@@ -7,10 +7,10 @@ using UnityEngine.SceneManagement;
 
 public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     //public static GameSceneManager instance = null;
-    [SerializeField, Header("読み込むロビーシーンの名前")]
-    private string lobbySceneName = "LobbyScene";
-    [SerializeField, Header("読み込むゲームシーンの名前")]
-    private string gameSceneName = "GameScene";
+    [Header("読み込むロビーシーンの名前")]
+    public string lobbySceneName;
+    [Header("読み込むゲームシーンの名前")]
+    public string gameSceneName;
 
     private bool isChanged = false;
     public override void OnStartServer() {
@@ -26,42 +26,44 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// OnSceneChanged()を呼ぶ
     /// ホストが特定のタイミングで呼び出す
     /// </summary>
-    //[ClientRpc]
+    [Server]
     public void LoadGameSceneForAll() {
         //フェードアウト
-        if (!isChanged) {
+        if (!isChanged && isServer) {
             isChanged = true;
-            FadeManager.Instance.StartFadeOut(0.5f);
-            LoadAndActivateScene(gameSceneName);
+            
+            //自身でもRpcでも呼び出す
+            StartCoroutine(LoadSceneAndActivate(gameSceneName,lobbySceneName));
+            LoadAndActivateScene(gameSceneName, lobbySceneName);
         }
-        FadeManager.Instance.StartFadeIn(0.5f);
     }
-    
-    public void LoadAndActivateScene(string sceneName) {
-        StartCoroutine(LoadSceneAndActivate(sceneName));
+    [ClientRpc]
+    public void LoadAndActivateScene(string _sceneName,string _prevSceneName) {
+        StartCoroutine(LoadSceneAndActivate(_sceneName,_prevSceneName));
     }
 
-    private IEnumerator LoadSceneAndActivate(string sceneName) {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-
+    private IEnumerator LoadSceneAndActivate(string _sceneName,string _prevSceneName) {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
+        FadeManager.Instance.StartFadeOut(0.5f);
         // ロード完了まで待機
         while (!asyncLoad.isDone) {
             yield return null;
         }
 
         // シーンがロードされた後にアクティブに設定
-        Scene loadedScene = SceneManager.GetSceneByName(sceneName);
+        Scene loadedScene = SceneManager.GetSceneByName(_sceneName);
         if (loadedScene.IsValid() && loadedScene.isLoaded) {
             SceneManager.SetActiveScene(loadedScene);
-            Debug.Log($"Scene '{sceneName}' is now active.");
+            Debug.Log($"Scene '{_sceneName}' is now active.");
             
         }
         else {
-            Debug.LogError($"Scene '{sceneName}' could not be activated.");
+            Debug.LogError($"Scene '{_sceneName}' could not be activated.");
         }
+        //動的にロビーのシーンを解放
         SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(lobbySceneName));
+        FadeManager.Instance.StartFadeIn(1.0f);
     }
-
 
     /// <summary>
     /// 特定のシーンに全員を移行する(LobbyScene)
