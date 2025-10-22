@@ -9,7 +9,10 @@ public class CustomNetworkManager : NetworkManager {
     private ServerManager serverManager = null;
 
     public override void Awake() {
-        
+        if(TitleManager.instance == null) {
+            base.Awake();
+            return;
+        }
         if (TitleManager.instance.isHost)
             //ホストとして開始
             StartHost();
@@ -18,9 +21,7 @@ public class CustomNetworkManager : NetworkManager {
             networkAddress = TitleManager.instance.ipAddress;
             StartClient();
         }
-        else {
-            base.Awake();
-        }
+        
     }
 
     public override void OnStartServer() {
@@ -102,7 +103,10 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
         FadeManager.Instance.StartFadeIn(0.5f);
-        if(TitleManager.instance != null)
-            TitleManager.instance.enabled = false;
+        //ゲームシーンなら
+        if(newSceneName == GameSceneManager.Instance.gameSceneName) {
+            //ゲームスタート
+            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
+        }
     }
 }

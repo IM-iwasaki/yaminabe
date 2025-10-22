@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 //
 //  @file   Second_CharacterClass
 //
-class MeleeCharacter : CharacterBase {
+class GeneralCharacter : CharacterBase {
     [Tooltip("インポートするステータスのScriptableObject")]
     [SerializeField]CharacterStatus InputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
@@ -16,6 +16,13 @@ class MeleeCharacter : CharacterBase {
     private SkillBase[] EquippedSkills;
     [Tooltip("使用するパッシブ")]
     private PassiveBase[] EquippedPassives;
+
+    //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。レベルアップで最大MP(もしくは回復速度？)が上昇。
+    protected int MP { get; private set; }
+    protected int MaxMP { get; private set; }
+    //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。レベルアップで最大弾容量が増加。
+    protected int Magazine { get; private set; }
+    protected int MaxMagazine { get; private set; }
 
     protected override void StatusInport() {
         if (InputStatus == null) {
@@ -42,6 +49,10 @@ class MeleeCharacter : CharacterBase {
             IsCanSkill = false;
         }
         
+    }
+
+    public void Reload() {
+        Magazine = MaxMagazine;
     }
 
     // Start is called before the first frame update
