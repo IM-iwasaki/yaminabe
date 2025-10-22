@@ -43,6 +43,9 @@ public class SelectObjectManager : MonoBehaviour {
     private int ATK = 0;
     private int SPD = 0;
 
+    //  そのキャラクターにチェンジできるかどうか
+    private bool canChange = false;
+
     //  初期は登録してあるプレハブの一番目を生成しておく
     private void Start() {
         //  親オブジェクトを自身にする
@@ -57,7 +60,9 @@ public class SelectObjectManager : MonoBehaviour {
         ChangeObject(characterCount);
     }
 
-    //  左右切り替えボタン
+    /// <summary>
+    /// 左右切り替えボタン
+    /// </summary>
     public void OnChangeLeft() {
         ChangeObject(SUB_ONE_COUNT);
     }
@@ -65,12 +70,18 @@ public class SelectObjectManager : MonoBehaviour {
         ChangeObject(ADD_ONE_COUNT);
     }
 
-    //  スキン切り替えボタン
+    /// <summary>
+    /// スキン切り替えボタン
+    /// </summary>
+    /// <param name="skinCount"></param>
     public void OnChangeSkin(int skinCount) {
         ChangeCharacterObject(skinCount);
     }
 
-    //  データの中身があるかどうかのチェック
+    /// <summary>
+    /// データの中身があるかどうかのチェック
+    /// </summary>
+    /// <returns></returns>
     private bool CheckData() {
         if(data == null || data.characters == null || data.characters.Count == 0) {
             Debug.LogError("CharacterDatabaseが空、または設定されていません。");
@@ -80,7 +91,10 @@ public class SelectObjectManager : MonoBehaviour {
         return true;
     }
 
-    //  キャラクター選択時のメイン処理
+    /// <summary>
+    /// キャラクター選択時のメイン処理
+    /// </summary>
+    /// <param name="num"></param>
     private void ChangeObject(int num) {
         if (!CheckData()) return;
         //  数値を増減
@@ -98,7 +112,12 @@ public class SelectObjectManager : MonoBehaviour {
         UseCharacter();
     }
 
-    //  数値を増減する（数値が一周したら戻す）
+    /// <summary>
+    /// 数値を増減する（数値が一周したら戻す）
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="num"></param>
+    /// <returns></returns>
     private int CheckCount(int count, int num) {
         //  増減
         count += num;
@@ -112,10 +131,14 @@ public class SelectObjectManager : MonoBehaviour {
         return count;
     }
 
-    //  使用不可能キャラクターなら
+    /// <summary>
+    /// 使用不可能キャラクターなら
+    /// </summary>
     private void UnuseCharacter() {
         //  UIを表示
         unuseUI.SetActive(true);
+        //  キャラチェンジ不可能
+        canChange = false;
         //  先に生成されているものがあるなら消す
         if (obj != null) Destroy(obj);
         //  使用不可能専用オブジェクトに切り替える
@@ -124,17 +147,24 @@ public class SelectObjectManager : MonoBehaviour {
         ChangeStatusText();
     }
 
-    //  使用可能キャラクターなら
+    /// <summary>
+    /// 使用可能キャラクターなら
+    /// </summary>
     private void UseCharacter() {
         //  UIを非表示
         unuseUI.SetActive(false);
+        //  キャラチェンジ可能
+        canChange = true;
         //  キャラクターを切り替える
         ChangeCharacterObject(DEFAULT_SKIN_COUNT);
         //  ステータステキストを切り替える
         ChangeStatusText();
     }
 
-    //  キャラクターを切り替える
+    /// <summary>
+    /// キャラクターを切り替える
+    /// </summary>
+    /// <param name="skinCount"></param>
     private void ChangeCharacterObject(int skinCount) {
         //  nullチェック、インデクスの範囲外防止
         if (character.skins == null || character.skins.Count == 0) return;
@@ -155,7 +185,9 @@ public class SelectObjectManager : MonoBehaviour {
         obj = Instantiate(prefab, parent.transform);
     }
 
-    //  ステータステキストを切り替える
+    /// <summary>
+    /// ステータステキストを切り替える
+    /// </summary>
     private void ChangeStatusText() {
         SetStatusText();
         //  テキストに変換
@@ -164,7 +196,9 @@ public class SelectObjectManager : MonoBehaviour {
                            + "SPD : " + SPD + "\n");
     }
 
-    //  ステータステキストにデータを代入
+    /// <summary>
+    /// ステータステキストにデータを代入
+    /// </summary>
     private void SetStatusText() {
         //  ステータスデータ取得
         CharacterStatus characterStatuses = character.statusData;
@@ -181,7 +215,9 @@ public class SelectObjectManager : MonoBehaviour {
         SPD = characterStatuses.MoveSpeed;
     }
 
-    //  ボタンをキャラごとに生成
+    /// <summary>
+    /// ボタンをキャラごとに生成
+    /// </summary>
     private void GenerateButtons() {
         //  nullチェック
         if (character.skins == null || character.skins.Count == 0) return;
@@ -200,11 +236,49 @@ public class SelectObjectManager : MonoBehaviour {
         }
     }
 
-    //  指定の親オブジェクトの子オブジェクトを全部削除する
+    /// <summary>
+    /// 指定の親オブジェクトの子オブジェクトを全部削除する
+    /// </summary>
+    /// <param name="parent"></param>
     private void DestroyAllChildren(Transform parent) {
         foreach (Transform child in parent) {
             Destroy(child.gameObject);
         }
+    }
+
+    /// <summary>
+    /// 指定の親オブジェクトのタグ付き子オブジェクトを削除する
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="tag"></param>
+    private void DestroyChildrenWithTag(Transform parent, string tag) {
+        if(tag == null) return;
+
+        foreach (Transform child in parent) {
+            if (child.CompareTag(tag)) {
+                Destroy(child.gameObject);
+            }
+        }
+    }
+
+    /// <summary>
+    /// プレイヤーに現在のキャラクターを反映させる
+    /// </summary>
+    /// <param name="player"></param>
+    public void PlayerChange(GameObject player) {
+        //  チェンジ不可なら処理しない
+        if(!canChange) return;
+
+        //  タグを取り破棄する
+        DestroyChildrenWithTag(player.transform, "Skin");
+        //  親を保存
+        Transform parent = player.transform;
+        //  生成位置を取る
+        Vector3 spawnPos = parent.position + parent.TransformDirection(Vector3.down);
+        //  プレイヤーの子オブジェクトに生成
+        Instantiate(obj, spawnPos, parent.rotation, parent);
+        //  プレイヤーのステータスを置き換える
+        //  中に入れ込む
     }
 
 }
