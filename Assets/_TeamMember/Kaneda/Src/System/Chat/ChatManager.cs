@@ -38,7 +38,7 @@ public class ChatManager : NetworkBehaviour {
 
     #region スタンプ生成
     //  クライアントからサーバーへ送信
-    [Command]
+    [Command(requiresAuthority = false)]
     public void CmdSendStamp(int stampId, string userName) {
         //  サーバーが全員に通知
         RpcAddStamp(stampId, userName);
@@ -110,7 +110,7 @@ public class ChatManager : NetworkBehaviour {
 
     #region システムメッセージ
     //  クライアントからサーバーへ送信
-    [Command]
+    [Command(requiresAuthority = false)]
     public void CmdSendSystemMessage(string message) {
         RpcAddMessage(message);
     }
