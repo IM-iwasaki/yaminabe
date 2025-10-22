@@ -17,13 +17,13 @@ class MeleeCharacter : CharacterBase {
     [Tooltip("使用するパッシブ")]
     private PassiveBase[] EquippedPassives;
 
-    protected override void StatusInport() {
-        if (InputStatus == null) {
+    public override void StatusInport(CharacterStatus _inport = null) {
+        if (_inport == null) {
             DefaultStatusInport();
             return;
         }
 
-        RunTimeStatus = InputStatus;
+        RunTimeStatus = _inport;
         MaxHP = RunTimeStatus.MaxHP;
         HP = MaxHP;
         Attack = RunTimeStatus.Attack;

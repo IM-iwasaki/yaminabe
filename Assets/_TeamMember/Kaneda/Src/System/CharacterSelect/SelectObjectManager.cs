@@ -271,14 +271,14 @@ public class SelectObjectManager : MonoBehaviour {
 
         //  タグを取り破棄する
         DestroyChildrenWithTag(player.transform, "Skin");
-        //  親を保存
+        //  親の位置を保存
         Transform parent = player.transform;
         //  生成位置を取る
         Vector3 spawnPos = parent.position + parent.TransformDirection(Vector3.down);
         //  プレイヤーの子オブジェクトに生成
         Instantiate(obj, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
-        //  中に入れ込む
+        player.GetComponent<GeneralCharacter>().StatusInport(character.statusData);
     }
 
 }

@@ -24,7 +24,7 @@ class GeneralCharacter : CharacterBase {
     protected int Magazine { get; private set; }
     protected int MaxMagazine { get; private set; }
 
-    protected override void StatusInport(CharacterStatus _inport = null) {
+    public override void StatusInport(CharacterStatus _inport = null) {
         if (_inport == null) {
             DefaultStatusInport();
             return;

@@ -182,7 +182,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// ステータスのインポート
     /// </summary>
-    protected abstract void StatusInport(CharacterStatus _inport = null);
+    public abstract void StatusInport(CharacterStatus _inport = null);
 
     /// <summary>
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する

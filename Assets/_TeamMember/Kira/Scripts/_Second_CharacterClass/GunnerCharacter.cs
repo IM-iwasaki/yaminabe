@@ -20,13 +20,13 @@ class GunnerCharacter : CharacterBase {
     protected int Magazine { get; private set; }
     protected int MaxMagazine { get; private set; }
 
-    protected override void StatusInport() {
-        if (InputStatus == null) {
+    public override void StatusInport(CharacterStatus _inport = null) {
+        if (_inport == null) {
             DefaultStatusInport();
             return;
         }
 
-        RunTimeStatus = InputStatus;
+        RunTimeStatus = _inport;
         MaxHP = RunTimeStatus.MaxHP;
         HP = MaxHP;
         Attack = RunTimeStatus.Attack;

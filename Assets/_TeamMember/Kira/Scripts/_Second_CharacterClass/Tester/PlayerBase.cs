@@ -11,15 +11,15 @@ class PlayerBase : CharacterBase {
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
     CharacterStatus RunTimeStatus;
 
-    protected override void StatusInport() {
+    public override void StatusInport(CharacterStatus _inport = null) {
         //InputStatusがnullだったら警告を出してデフォルト値で初期化
-        if(InputStatus == null) {
+        if(_inport == null) {
             Debug.LogWarning("InputStatusがnullになっています。デフォルトの値で初期化を行います。");
             DefaultStatusInport();
             return;
         }
 
-        RunTimeStatus = InputStatus;
+        RunTimeStatus = _inport;
         MaxHP = RunTimeStatus.MaxHP;
         HP = MaxHP;
         Attack = RunTimeStatus.Attack;

@@ -20,13 +20,13 @@ class WizardCharacter : CharacterBase {
     protected int MP { get; private set; }
     protected int MaxMP { get; private set; }
 
-    protected override void StatusInport() {
-        if (InputStatus == null) {
+    public override void StatusInport(CharacterStatus _inport = null) {
+        if (_inport == null) {
             DefaultStatusInport();
             return;
         }
 
-        RunTimeStatus = InputStatus;
+        RunTimeStatus = _inport;
         MaxHP = RunTimeStatus.MaxHP;
         HP = MaxHP;
         Attack = RunTimeStatus.Attack;
