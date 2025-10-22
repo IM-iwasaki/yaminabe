@@ -12,10 +12,11 @@ public class HostUI : NetworkBehaviour {
 
     [SerializeField]
     private GameObject unVisibleUIFromClient = null;
-    public int ruleIndex { get; private set; } = 0;
-    public int stageIndex { get; private set; } = 0;
+    [SyncVar(hook = nameof(ChangeRuleAndUI))]
+    public int ruleIndex = 0;
+    [SyncVar(hook = nameof(ChangeStageUI))]
+    public int stageIndex = 0;
 
-    private int prevRuleIndex, prevStageIndex;
     [SerializeField]
     private List<string> ruleNames = null;
     [SerializeField]
@@ -31,46 +32,31 @@ public class HostUI : NetworkBehaviour {
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
         }
     }
-    private void Update() {
-        if (!isServer) return;
-        if (prevRuleIndex != ruleIndex)
-            ChangeRuleUI();
-        if (prevStageIndex != stageIndex)
-            ChangeStageUI();
-
-        RuleManager.Instance.currentRule = (GameRuleType)ruleIndex;
-
-        //インデックスの更新
-        prevRuleIndex = ruleIndex;
-        prevStageIndex = stageIndex;
-    }
-
     public void IncrementRuleIndex() {
         ruleIndex++;
-        if (ruleIndex >= ruleNames.Count)
-            ruleIndex = 0;
     }
     public void DecrementRuleIndex() {
         ruleIndex--;
-        if (ruleIndex < 0)
-            ruleIndex = ruleNames.Count - 1;
     }
     public void IncrementStageIndex() {
         stageIndex++;
-        if (stageIndex >= StageManager.Instance.stages.Count - 1)
-            stageIndex = 0;
-
     }
     public void DecrementStageIndex() {
         stageIndex--;
-        if (stageIndex < 0)
-            stageIndex = StageManager.Instance.stages.Count - 1;
     }
 
-    private void ChangeRuleUI() {
+    private void ChangeRuleAndUI(int _oldValue,int _newValue) {
+        if (_newValue < 0 || _newValue > ruleNames.Count)
+            ruleIndex = Mathf.Abs(_newValue % ruleNames.Count);
+        
         rule.text = ruleNames[ruleIndex];
+        RuleManager.Instance.currentRule = (GameRuleType)ruleIndex;
     }
-    private void ChangeStageUI() {
+    private void ChangeStageUI(int _oldValue, int _newValue) {
+        if (_newValue < 0 || _newValue > StageManager.Instance.stages.Count)
+            stageIndex = Mathf.Abs(_newValue % StageManager.Instance.stages.Count);
+
+
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
     }
 
