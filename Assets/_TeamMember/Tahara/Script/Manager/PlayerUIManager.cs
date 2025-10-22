@@ -60,6 +60,10 @@ public class PlayerUIManager : NetworkBehaviour
 
     }
 
+    public void Initialize(int _hp) {
+        hpText.text = _hp.ToString();
+    }
+
     #region hookŠÖ”‚ÅŒÄ‚Ô‘z’è‚ÌŠÖ”
     /// <summary>
     /// ‘Ì—Í‚ÌUIXV
