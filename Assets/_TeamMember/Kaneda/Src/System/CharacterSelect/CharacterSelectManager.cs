@@ -15,6 +15,9 @@ public class CharacterSelectManager : NetworkBehaviour {
     [Header("UI")]
     [SerializeField] private GameObject selectUI;                  // 選択画面UI
 
+    [Header("セレクトオブジェクト")]
+    [SerializeField] private SelectObjectManager selectObj;
+
     private GameObject currentPlayer; // 現在選択中のプレイヤー
 
     //  キャラクターを毎秒どれだけ回転させるか
@@ -73,6 +76,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     public void EndCharacterSelect() {
 
         if (currentPlayer == null) return;
+
+        selectObj.PlayerChange(currentPlayer);
 
         // UIを非表示（戻る操作開始時）
         if (selectUI != null)
