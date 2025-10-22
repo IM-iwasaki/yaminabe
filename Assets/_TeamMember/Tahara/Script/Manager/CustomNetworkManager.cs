@@ -9,7 +9,10 @@ public class CustomNetworkManager : NetworkManager {
     private ServerManager serverManager = null;
 
     public override void Awake() {
-        
+        if(TitleManager.instance == null) {
+            base.Awake();
+            return;
+        }
         if (TitleManager.instance.isHost)
             //ホストとして開始
             StartHost();
@@ -18,9 +21,7 @@ public class CustomNetworkManager : NetworkManager {
             networkAddress = TitleManager.instance.ipAddress;
             StartClient();
         }
-        else {
-            base.Awake();
-        }
+        
     }
 
     public override void OnStartServer() {
