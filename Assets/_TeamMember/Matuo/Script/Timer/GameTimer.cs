@@ -6,10 +6,6 @@ using System;
 /// 制限時間管理
 /// GameManagerと連携して使用
 /// </summary>
-
-// ＜猿でもわかる使い方(時間の取得とUI表示)＞
-// float remaining = GameManager.Instance.GetComponent<GameTimer>().GetRemainingTime(); //現在時間取得
-// uiText.text = $"残り時間: {remaining:F1} 秒";  // UIに表示
 public class GameTimer : NetworkBehaviour {
     [Header("制限時間(秒)")]
     [SerializeField] private float limitTime = 180f; // (仮で3分想定)
