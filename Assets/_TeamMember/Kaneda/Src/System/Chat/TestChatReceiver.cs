@@ -13,11 +13,11 @@ public class TestChatReceiver : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
             randStamp = Random.Range(0,sprites.Length);
-            ChatManager.instance.AddStamp(sprites[randStamp], "Player");
+            ChatManager.instance.CmdSendStamp(randStamp, "Player");
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            ChatManager.instance.AddSystemMessage("System Test");
+            ChatManager.instance.CmdSendSystemMessage("System Test");
         }
     }
 }
