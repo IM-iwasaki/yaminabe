@@ -68,7 +68,7 @@ public class SubWeaponController : NetworkBehaviour {
 
         if (grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
             int teamID = GetComponent<CharacterBase>()?.TeamID ?? 0;
-            grenade.Init(currentSubWeapon, gameObject, teamID, transform.forward);
+            grenade.Init(currentSubWeapon, teamID, transform.forward);
         }
     }
 

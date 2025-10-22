@@ -12,6 +12,7 @@ public class GrenadeData : SubWeaponData {
     [Header("Explosion Settings")]
     public float explosionRadius = 3f;
     public float explosionDelay = 1.5f;
+    [Tooltip("チェックついてたら大丈夫")]
     public bool hasExplosion = true;
 
     [Header("Damage Settings")]
@@ -19,5 +20,6 @@ public class GrenadeData : SubWeaponData {
     public bool canDamageAllies = false;
 
     [Header("Flag X")]
+    [Tooltip("フラグでは使用しない")]
     public float duration;
 }

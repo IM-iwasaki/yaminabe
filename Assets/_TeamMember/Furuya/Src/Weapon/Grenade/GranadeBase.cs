@@ -1,11 +1,11 @@
 using UnityEngine;
 using Mirror;
 using System.Collections;
+using UnityEditor;
 
 public class GrenadeBase : NetworkBehaviour {
     [Header("Sub Weapon Data")]
     public GrenadeData data;
-    [SyncVar] private GameObject owner;
     [SyncVar] private int ownerTeamID;
 
     private Rigidbody rb;
@@ -15,10 +15,9 @@ public class GrenadeBase : NetworkBehaviour {
     /// èâä˙âª
     /// </summary>
     [Server]
-    public void Init(SubWeaponData _data, GameObject _owner, int teamID, Vector3 direction) {
+    public void Init(SubWeaponData _data, int teamID, Vector3 direction) {
         // GrenadeDataÇ∆ÇµÇƒàµÇ¶ÇÈèÍçáÇÃÇ›ÉLÉÉÉXÉg
         data = _data as GrenadeData;
-        owner = _owner;
         ownerTeamID = teamID;
 
         rb = GetComponent<Rigidbody>();
@@ -54,7 +53,7 @@ public class GrenadeBase : NetworkBehaviour {
         Vector3 pos = transform.position;
         float radius = data.explosionRadius;
 
-        int bombLayer = LayerMask.GetMask("Player", "Enemy");
+        int bombLayer = LayerMask.GetMask("Character");
 
         Collider[] hits = Physics.OverlapSphere(pos, radius, bombLayer);
         foreach (var c in hits) {
@@ -67,6 +66,10 @@ public class GrenadeBase : NetworkBehaviour {
         }
 
         RpcPlayExplosion(pos);
+
+#if UNITY_EDITOR
+        ExplosionDebugCircle.Create(pos, radius, Color.red, 0.5f);
+#endif
     }
 
     [ClientRpc]
@@ -94,4 +97,39 @@ public class GrenadeBase : NetworkBehaviour {
         else
             NetworkServer.Destroy(gameObject);
     }
+
+    void OnDrawGizmosSelected() {
+        if (data == null) return;
+        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
+        Gizmos.DrawSphere(transform.position, data.explosionRadius);
+    }
 }
+
+#if UNITY_EDITOR
+
+public class ExplosionDebugCircle : MonoBehaviour {
+    private float radius;
+    private Color color;
+    private float duration;
+    private float timer;
+
+    public static void Create(Vector3 pos, float radius, Color color, float duration) {
+        var obj = new GameObject("ExplosionDebugCircle");
+        var circle = obj.AddComponent<ExplosionDebugCircle>();
+        circle.radius = radius;
+        circle.color = color;
+        circle.duration = duration;
+        obj.transform.position = pos;
+    }
+
+    private void Update() {
+        timer += Time.deltaTime;
+        if (timer >= duration) Destroy(gameObject);
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.color = color;
+        Gizmos.DrawWireSphere(transform.position, radius);
+    }
+}
+#endif

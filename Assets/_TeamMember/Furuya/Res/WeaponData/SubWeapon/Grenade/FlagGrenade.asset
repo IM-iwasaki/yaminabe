@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   subWeaponName: FlagGrenade
   type: 0
-  damage: 10
-  range: 5
+  damage: 100
+  range: 10
   throwForce: 10
   maxUses: 3
   rechargeTime: 5
   startFull: 1
   projectilePrefab: {fileID: 1698056052845220, guid: 5a2bf64643e1fb0439ea39c0fc9b00ff, type: 3}
-  projectileSpeed: 10
+  projectileSpeed: 5
   useEffectType: 4
-  explosionRadius: 5
+  explosionRadius: 10
   explosionDelay: 1.5
-  hasExplosion: 1
+  hasExplosion: 0
   canDamageAllies: 1
   duration: 0

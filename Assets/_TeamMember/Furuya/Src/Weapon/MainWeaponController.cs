@@ -37,14 +37,30 @@ public class MainWeaponController : NetworkBehaviour {
 
     // --- 近接攻撃 ---
     void ServerMeleeAttack() {
-        Collider[] hits = Physics.OverlapSphere(firePoint.position, weaponData.range);
+        int attackLayer = LayerMask.GetMask("Character");
+        Collider[] hits = Physics.OverlapSphere(firePoint.position, weaponData.range, attackLayer);
+        // プレイヤーの前方ベクトル（視線や武器の向き）
+        Vector3 forward = firePoint.forward;
+
         foreach (var c in hits) {
             var hp = c.GetComponent<CharacterBase>();
-            if (hp != null && IsValidTarget(hp.gameObject)) {
+            if (hp == null || !IsValidTarget(hp.gameObject)) continue;
+
+            // 対象との方向ベクトル
+            Vector3 dir = (c.transform.position - firePoint.position).normalized;
+
+            // forwardとの角度を計算
+            float angle = Vector3.Angle(forward, dir);
+
+            // 半円判定：前方180度（つまり90°以内なら当たり）
+            if (angle <= weaponData.meleeAngle) {
                 hp.TakeDamage(weaponData.damage);
                 RpcSpawnHitEffect(c.transform.position, weaponData.hitEffectType);
             }
         }
+#if UNITY_EDITOR
+                MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, weaponData.range, weaponData.meleeAngle, Color.yellow, 0.5f);
+#endif
     }
 
     // --- 銃撃処理（TPSレティクル方向） ---
@@ -128,3 +144,47 @@ public class MainWeaponController : NetworkBehaviour {
         return obj != gameObject; // 自分以外
     }
 }
+
+#if UNITY_EDITOR
+public class MeleeAttackDebugArc : MonoBehaviour {
+    private float range;
+    private float angle;
+    private Color color;
+    private float duration;
+    private float timer;
+    private Vector3 forward;
+
+    public static void Create(Vector3 pos, Vector3 forward, float range, float angle, Color color, float duration) {
+        var obj = new GameObject("MeleeAttackDebugArc");
+        var arc = obj.AddComponent<MeleeAttackDebugArc>();
+        arc.range = range;
+        arc.angle = angle;
+        arc.color = color;
+        arc.duration = duration;
+        arc.forward = forward;
+        obj.transform.position = pos;
+    }
+
+    private void Update() {
+        timer += Time.deltaTime;
+        if (timer >= duration) Destroy(gameObject);
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.color = color;
+        int segments = 20;
+        Vector3 leftDir = Quaternion.Euler(0, -angle, 0) * forward;
+        Vector3 prevPoint = transform.position + leftDir * range;
+
+        for (int i = 1; i <= segments; i++) {
+            float currentAngle = -angle + (angle * 2f / segments) * i;
+            Vector3 nextPoint = transform.position + (Quaternion.Euler(0, currentAngle, 0) * forward) * range;
+            Gizmos.DrawLine(prevPoint, nextPoint);
+            prevPoint = nextPoint;
+        }
+
+        Gizmos.DrawRay(transform.position, leftDir * range);
+        Gizmos.DrawRay(transform.position, Quaternion.Euler(0, angle, 0) * forward * range);
+    }
+}
+#endif
