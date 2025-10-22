@@ -1,0 +1,52 @@
+using System.Threading.Tasks;
+using UnityEditor;
+using UnityEngine;
+
+// GeneralCharacterStatus専用のインスペクターをカスタマイズするクラス
+[CustomEditor(typeof(GeneralCharacterStatus))]
+public class GeneralCharacterStatusAssistance : Editor {
+
+    //StatusBaseのパス
+    readonly string StatusBasePath = "Assets/_TeamMember/Kira/_ScriptableObjects/StatusBase.asset"; 
+
+    public override void OnInspectorGUI() {
+        var obj = (GeneralCharacterStatus)target;
+        serializedObject.Update();
+
+        //BaseStatusを探して自動でアタッチ
+        var BaseStatus = AssetDatabase.LoadAssetAtPath<StatusBase>(StatusBasePath);
+        if (BaseStatus != null)  EditorUtility.SetDirty(this);
+        else Debug.LogWarning($"BaseStatusが見つかりません: {StatusBasePath}");
+        serializedObject.FindProperty("BaseStatus").objectReferenceValue = BaseStatus;
+
+        //プロパティを表示
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("BaseStatus"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("ChatacterType"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("MaxHPCorrection"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("AttackCorrection"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("SpeedCorrection"));
+
+        //キャラクタータイプで分岐
+        switch (obj.ChatacterType) {
+            case CharacterTypeEnum.CharaterType.Melee:
+                EditorGUILayout.LabelField("近接職専用ステータスはまだありません！");
+                break;
+
+            case CharacterTypeEnum.CharaterType.Wizard:
+                EditorGUILayout.LabelField("魔法職専用ステータス");
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("MaxMPCorrection"));
+                break;
+
+            case CharacterTypeEnum.CharaterType.Gunner:
+                EditorGUILayout.LabelField("間接職専用ステータス");
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("MaxMagazine"));
+                break;
+        }
+
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Passives"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Skills"));
+
+        //反映
+        serializedObject.ApplyModifiedProperties();
+    }
+}

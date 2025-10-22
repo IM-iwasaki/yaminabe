@@ -165,11 +165,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public override void OnStartLocalPlayer() {
         if (isLocalPlayer) {
-            GameObject GameUIRoot = GameObject.Find("GameUI");
-            var playerUI = Instantiate(UI,GameUIRoot.transform);
-            UI = playerUI.GetComponent<PlayerUIManager>();
-            UI.Initialize(HP);
-
             Camera camera = GetComponentInChildren<Camera>();
             camera.tag = "MainCamera";
             camera.enabled = true;
@@ -177,6 +172,14 @@ public abstract class CharacterBase : NetworkBehaviour {
             playerCamera.enabled = true;
         }
 
+    }
+
+    public override void OnStartClient() {
+        base.OnStartClient();
+        GameObject GameUIRoot = GameObject.Find("GameUI");
+        var playerUI = Instantiate(UI, GameUIRoot.transform);
+        UI = playerUI.GetComponent<PlayerUIManager>();
+        UI.Initialize(HP);
     }
 
     /// <summary>

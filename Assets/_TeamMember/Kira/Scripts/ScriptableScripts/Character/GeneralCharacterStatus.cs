@@ -1,10 +1,10 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Character/MeleeCharacterStatus(近接職)")]
-public class MeleeCharacterStatus : CharacterStatus {
+[CreateAssetMenu(menuName = "Character/GeneralCharacterStatus")]
+public class GeneralCharacterStatus : CharacterStatus {
     //職業の割り当て
     [Tooltip("職業タイプを選択してください。\n・Melee(近接職)\n・Wizard(魔法職)\n・Gunner(間接職)")]
-    public CharacterTypeEnum.CharaterType ChatacterType = CharacterTypeEnum.CharaterType.Melee;
+    public CharacterTypeEnum.CharaterType ChatacterType;
 
     [Tooltip("体力補正値。\nStatusBase + [MaxHPCorrection] の値になります。")]
     [Range(-50, 100)] public int MaxHPCorrection = 0;
@@ -12,10 +12,12 @@ public class MeleeCharacterStatus : CharacterStatus {
     [Range(-5, 20)] public int AttackCorrection = 0;
     [Tooltip("移動速度補正値。\nStatusBase + [SpeedCorrection]の値になります。")]
     [Range(-3, 5)] public int SpeedCorrection = 0;
+    [Tooltip("魔力値。\n[MaxMPCorrection] の値になります。")]
+    [Range(10, 100)] public int MaxMPCorrection = 0;
+    [Tooltip("弾倉値。\n[MaxMagazine] の値になります。")]
+    [Range(1, 50)] public int MaxMagazine = 0;
 
     public override int MaxHP => BaseStatus.MaxHP + MaxHPCorrection;
     public override int Attack => BaseStatus.Attack + AttackCorrection;
     public override int MoveSpeed => BaseStatus.MoveSpeed + SpeedCorrection;
-
-    
 }
