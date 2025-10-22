@@ -1,11 +1,11 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ChatManager : MonoBehaviour
-{
+public class ChatManager : NetworkBehaviour {
     private readonly string TEXT_OBJECT_NAME = "UserName";
     private readonly string IMAGE_OBJECT_NAME = "StampImage";
 
@@ -29,8 +29,30 @@ public class ChatManager : MonoBehaviour
     [Header("表示する時間")]
     [SerializeField] private float viewTime = 3.0f;
 
+    Sprite[] stampImages = null;
+
     private void Awake() {
         instance = this;
+    }
+
+    #region スタンプ生成
+    //  クライアントからサーバーへ送信
+    [Command]
+    public void CmdSendStamp(int stampId, string userName) {
+        //  サーバーが全員に通知
+        RpcAddStamp(stampId, userName);
+    }
+    //  サーバーから全員へ同期
+    [ClientRpc]
+    private void RpcAddStamp(int stampId, string userName) {
+
+        //  番号が越していたら0に設定
+        if (stampId > stampImages.Length) stampId = 0;
+        //  番号で画像を入れ込む
+        Sprite stampImage = stampImages[stampId];
+
+        //  スタンプを生成
+        CreateStamp(stampImage, userName);
     }
 
     /// <summary>
@@ -38,7 +60,7 @@ public class ChatManager : MonoBehaviour
     /// </summary>
     /// <param name="stampImage"></param>
     /// <param name="userName"></param>
-    public void AddStamp(Sprite stampImage = null, string userName = "player") {
+    private void CreateStamp(Sprite stampImage, string userName = "player") {
         //  プレハブを生成する
         GameObject stampObj = Instantiate(stamp, chatRoot);
 
@@ -81,12 +103,26 @@ public class ChatManager : MonoBehaviour
         //  画像を差し替える
         image.sprite = stampImage;
     }
+    #endregion
+
+    #region システムメッセージ
+    //  クライアントからサーバーへ送信
+    [Command]
+    public void CmdSendSystemMessage(string message) {
+        RpcAddMessage(message);
+    }
+    //  サーバーから全員へ同期
+    [ClientRpc]
+    private void RpcAddMessage(string message) {
+        //  システムメッセージを生成
+        CreateSystemMessage(message);
+    }
 
     /// <summary>
     /// システムメッセージをチャットに生成
     /// </summary>
     /// <param name="message"></param>
-    public void AddSystemMessage(string message = "") {
+    private void CreateSystemMessage(string message = "") {
         //  プレハブを生成
         GameObject textObj = Instantiate(systemText, chatRoot);
         //  コンポーネントを取得
@@ -102,6 +138,7 @@ public class ChatManager : MonoBehaviour
         //  フェードアウト処理
         StartCoroutine(FadeAndDestroy(textObj));
     }
+    #endregion
 
     /// <summary>
     /// 高さ制限チェック、超えたら古いものから削除
@@ -137,14 +174,14 @@ public class ChatManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadeAndDestroy(GameObject obj) {
         CanvasGroup groupe = obj.GetComponent<CanvasGroup>();
-        if(groupe == null) groupe = obj.AddComponent<CanvasGroup>();
+        if (groupe == null) groupe = obj.AddComponent<CanvasGroup>();
 
         //  表示する時間待機
         yield return new WaitForSeconds(viewTime);
 
         //  フェードアウト処理
         float timer = 0f;
-        while(timer < fadeTime) {
+        while (timer < fadeTime) {
             timer += Time.deltaTime;
             groupe.alpha = Mathf.Lerp(1f, 0f, timer / fadeTime);
             yield return null;
