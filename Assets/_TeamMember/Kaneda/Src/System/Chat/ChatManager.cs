@@ -29,7 +29,8 @@ public class ChatManager : NetworkBehaviour {
     [Header("表示する時間")]
     [SerializeField] private float viewTime = 3.0f;
 
-    Sprite[] stampImages = null;
+    [Header("スタンプ一覧データ")]
+    [SerializeField] private StampData stampData;
 
     private void Awake() {
         instance = this;
@@ -47,9 +48,11 @@ public class ChatManager : NetworkBehaviour {
     private void RpcAddStamp(int stampId, string userName) {
 
         //  番号が越していたら0に設定
-        if (stampId > stampImages.Length) stampId = 0;
+        if (stampId >= stampData.stampInfos.Count) stampId = 0;
+        //  スタンプデータから○番目のデータを保存
+        StampData.StampInfo stampImages = stampData.stampInfos[stampId];
         //  番号で画像を入れ込む
-        Sprite stampImage = stampImages[stampId];
+        Sprite stampImage = stampImages.stampImage;
 
         //  スタンプを生成
         CreateStamp(stampImage, userName);
