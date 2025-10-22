@@ -7,6 +7,28 @@ using UnityEngine.UI;
 /// ・全員に表示（ClientRpc）
 /// ・再戦・ロビー戻りボタンはホストのみ
 /// </summary>
+/// 
+
+
+// 使い方
+
+// これをゲームマネージャーかなんかに書く
+
+//private ResultManager resultManager;
+
+// void Start() {
+// シーン内の ResultManager を探す
+//resultManager = FindObjectOfType<ResultManager>();
+//if (resultManager == null)
+//    Debug.LogError("ResultManager がシーンに存在しません");
+//}
+
+//リザルト呼びたいタイミングでこれ呼ぶ
+//resultManager.RpcShowResult(); // 全員にリザルト表示
+
+
+
+
 public class ResultManager : NetworkBehaviour {
     [Header("UI参照")]
     [SerializeField] private GameObject resultPanel;   // リザルト全体パネル
@@ -47,6 +69,25 @@ public class ResultManager : NetworkBehaviour {
         isResultActive = true;
     }
 
+
+    //　プレイヤーのスコアを取得(プレイヤーのスコア一覧表示)
+
+
+
+    //　どっちのチームが勝ったかorデスマッチで誰が勝ったかどうか
+
+
+    //　獲得した通貨などを表示
+
+
+
+
+
+
+
+
+
+
     private void OnClickRematch() {
         if (!isResultActive) return;
 
@@ -66,11 +107,13 @@ public class ResultManager : NetworkBehaviour {
     private void CmdRequestRematch() {
         Debug.Log("サーバー側で再戦処理を実装予定");
         // ここで全員を初期状態に戻す処理などを呼ぶ
+
     }
 
     [Command(requiresAuthority = false)]
     private void CmdReturnToLobby() {
         Debug.Log("サーバー側でロビー戻り処理を実装予定");
         // ここでロビーシーンに戻す処理を呼ぶ
+
     }
 }
