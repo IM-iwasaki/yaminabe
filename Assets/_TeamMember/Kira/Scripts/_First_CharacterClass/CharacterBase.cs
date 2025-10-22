@@ -137,6 +137,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 初期化をここで行う。
     /// </summary>
     protected void Awake() {
+        //消えないようにする
+        DontDestroyOnLoad(gameObject);
+
         //コンテキストの登録
         var map = inputActions.FindActionMap("Player");
         foreach (var action in map.actions) {
@@ -165,6 +168,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             GameObject GameUIRoot = GameObject.Find("GameUI");
             var playerUI = Instantiate(UI,GameUIRoot.transform);
             UI = playerUI.GetComponent<PlayerUIManager>();
+            UI.Initialize(HP);
 
             Camera camera = GetComponentInChildren<Camera>();
             camera.tag = "MainCamera";
