@@ -9,22 +9,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e47c9d9e1446e004c819f12f6a547e88, type: 3}
+  m_Script: {fileID: 11500000, guid: 5581d77fc6a0970439053fa28111af8b, type: 3}
   m_Name: FlagGrenade
   m_EditorClassIdentifier: 
   subWeaponName: FlagGrenade
   type: 0
-  damage: 100
-  range: 10
+  damage: 50
+  range: 0
   throwForce: 10
   maxUses: 3
   rechargeTime: 5
   startFull: 1
-  projectilePrefab: {fileID: 1698056052845220, guid: 5a2bf64643e1fb0439ea39c0fc9b00ff, type: 3}
+  ObjectPrefab: {fileID: 1698056052845220, guid: 5a2bf64643e1fb0439ea39c0fc9b00ff, type: 3}
   projectileSpeed: 5
   useEffectType: 4
-  explosionRadius: 10
+  explosionRadius: 3
   explosionDelay: 1.5
-  hasExplosion: 0
+  hasExplosion: 1
   canDamageAllies: 1
   duration: 0

@@ -7,7 +7,7 @@ public abstract class SubWeaponData : ScriptableObject {
 
     [Header("Stats")]
     public int damage;
-    public float range;
+    //public float range;
     public float throwForce = 10f;
 
     [Header("Usage Settings")]
@@ -21,11 +21,10 @@ public abstract class SubWeaponData : ScriptableObject {
     public bool startFull = true;
 
     [Header("Projectile Settings")]
-    public GameObject projectilePrefab;
+    public GameObject ObjectPrefab;
     public float projectileSpeed = 15f;
 
     [Header("Visual / Audio")]
     public EffectType useEffectType = EffectType.Default;
-
 
 }
