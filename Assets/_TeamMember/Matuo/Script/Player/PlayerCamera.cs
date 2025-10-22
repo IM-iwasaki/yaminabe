@@ -32,6 +32,13 @@ public class PlayerCamera : MonoBehaviour {
     private Vector3 currentOffset;    // 現在のカメラオフセット
     private Vector3 targetOffset;     // 目標オフセット
 
+    // 死亡中のカメラ処理用
+    private bool isDeathView = false;  // 死亡視点中か
+    private GameObject vignetteOverlay; // 画面暗転用オーバーレイ
+    private Vector3 savedOffset;        // 復帰用のオフセット
+    private float savedYaw;
+    private float savedPitch;
+
     /// <summary>
     /// 現在フェード処理中のオブジェクトを管理
     /// </summary>
@@ -50,8 +57,50 @@ public class PlayerCamera : MonoBehaviour {
         lookInput = context.ReadValue<Vector2>();
     }
 
+    /// <summary>
+    /// 死亡時カメラ視点へ移行
+    /// </summary>
+    public void EnterDeathView() {
+        if (isDeathView) return;
+        isDeathView = true;
+
+        // 現在のカメラ状態を保存
+        savedOffset = currentOffset;
+        savedYaw = yaw;
+        savedPitch = pitch;
+
+        // 外周暗転エフェクトを生成
+        CreateVignetteOverlay();
+
+        // カメラをプレイヤー真上へ移動
+        if (player) {
+            transform.position = player.position + Vector3.up * 10f;
+            transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+        }
+    }
+
+    /// <summary>
+    /// リスポーン時に通常視点へ戻す
+    /// </summary>
+    public void ExitDeathView() {
+        if (!isDeathView) return;
+        isDeathView = false;
+
+        // 暗転エフェクトを削除
+        if (vignetteOverlay) Destroy(vignetteOverlay);
+
+        // 保存しておいたカメラ角度・位置に復帰
+        currentOffset = savedOffset;
+        yaw = savedYaw;
+        pitch = savedPitch;
+    }
+
     private void LateUpdate() {
         if (!player) return;
+
+        // 死亡中は通常TPS制御を停止（固定視点のまま）
+        if (isDeathView)
+            return;
 
         // カメラ回転制御
         yaw += lookInput.x * rotationSpeed * Time.deltaTime; // 水平方向回転
@@ -126,6 +175,7 @@ public class PlayerCamera : MonoBehaviour {
                 fadingObjects.Remove(r);
         }
     }
+
     #region マテリアル設定
     /// <summary>
     /// Rendererの現在アルファ値を取得
@@ -191,6 +241,49 @@ public class PlayerCamera : MonoBehaviour {
         mat.DisableKeyword("_ALPHABLEND_ON");
         mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
         mat.renderQueue = -1;
+    }
+    #endregion
+
+    #region デスカメラ用周りを暗くするUI
+    /// <summary>
+    /// 外周を暗くするUI
+    /// </summary>
+    private void CreateVignetteOverlay() {
+        // すでに存在している場合はスキップ
+        if (vignetteOverlay) return;
+
+        // 新しいCanvasとイメージを生成
+        Canvas canvas = new GameObject("VignetteCanvas").AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 999; // とりま最前面に出す
+
+        GameObject imageObj = new GameObject("VignetteOverlay");
+        imageObj.transform.SetParent(canvas.transform, false);
+
+        UnityEngine.UI.Image img = imageObj.AddComponent<UnityEngine.UI.Image>();
+
+        // テクスチャ作成
+        Texture2D tex = new Texture2D(256, 256);
+        for (int y = 0; y < 256; y++) {
+            for (int x = 0; x < 256; x++) {
+                float dx = (x - 128f) / 128f;
+                float dy = (y - 128f) / 128f;
+                float dist = Mathf.Sqrt(dx * dx + dy * dy);
+                float alpha = Mathf.Clamp01((dist - 0.5f) * 2f); // 中央0→外1
+                tex.SetPixel(x, y, new Color(0f, 0f, 0f, alpha));
+            }
+        }
+        tex.Apply();
+
+        Sprite sprite = Sprite.Create(tex, new Rect(0, 0, 256, 256), new Vector2(0.5f, 0.5f));
+        img.sprite = sprite;
+        img.color = Color.black;
+        img.rectTransform.anchorMin = Vector2.zero;
+        img.rectTransform.anchorMax = Vector2.one;
+        img.rectTransform.offsetMin = Vector2.zero;
+        img.rectTransform.offsetMax = Vector2.zero;
+
+        vignetteOverlay = canvas.gameObject;
     }
     #endregion
 }
