@@ -1,18 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StampData : MonoBehaviour
+[CreateAssetMenu(fileName = "StampData", menuName = "Stamp/StampData")]
+public class StampData : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [Header("登録されているスタンプ一覧")]
+    public List<StampInfo> stampInfos = new();
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    [System.Serializable]
+    public class StampInfo {
+        [Header("スタンプ名")]
+        public string stampName;
+        [Header("スタンプ画像")]
+        public Sprite stampImage;
     }
 }

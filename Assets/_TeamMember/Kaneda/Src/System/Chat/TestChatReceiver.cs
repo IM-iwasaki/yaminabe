@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestChatReceiver : MonoBehaviour
 {
-    [SerializeField] Sprite[] sprites = null;
+    [SerializeField] private StampData stampData;
 
     private int randStamp = 0;
 
@@ -12,7 +12,7 @@ public class TestChatReceiver : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            randStamp = Random.Range(0,sprites.Length);
+            randStamp = Random.Range(0,stampData.stampInfos.Count);
             ChatManager.instance.CmdSendStamp(randStamp, "Player");
         }
 
