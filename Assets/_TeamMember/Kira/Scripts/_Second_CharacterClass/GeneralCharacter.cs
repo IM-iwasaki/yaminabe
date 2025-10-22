@@ -24,13 +24,13 @@ class GeneralCharacter : CharacterBase {
     protected int Magazine { get; private set; }
     protected int MaxMagazine { get; private set; }
 
-    protected override void StatusInport() {
-        if (InputStatus == null) {
+    protected override void StatusInport(CharacterStatus _inport = null) {
+        if (_inport == null) {
             DefaultStatusInport();
             return;
         }
 
-        RunTimeStatus = InputStatus;
+        RunTimeStatus = _inport;
         MaxHP = RunTimeStatus.MaxHP;
         HP = MaxHP;
         Attack = RunTimeStatus.Attack;
@@ -58,7 +58,7 @@ class GeneralCharacter : CharacterBase {
     // Start is called before the first frame update
     protected new void Awake() {
         base.Awake();
-        StatusInport();
+        StatusInport(InputStatus);
     }
 
     // Update is called once per frame
