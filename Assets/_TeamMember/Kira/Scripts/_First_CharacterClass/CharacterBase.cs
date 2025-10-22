@@ -585,20 +585,23 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected Vector3 GetShootDirection() {
         Camera cam = Camera.main;
         Vector3 screenCenter = new(Screen.width / 2f, Screen.height / 2f, 0f);
-        Ray ray = cam.ScreenPointToRay(screenCenter);
 
-        Vector3 targetPoint;
+        // カメラ中心から遠方の目標点を決める（壁は無視）
+        Ray camRay = cam.ScreenPointToRay(screenCenter);
+        Vector3 aimPoint = camRay.GetPoint(50f); // 50m先に仮のターゲット
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f)) {
-            targetPoint = hit.point;
+        // firePoint から aimPoint 方向にレイを飛ばして壁判定
+        Vector3 direction = (aimPoint - firePoint.position).normalized;
+        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 100f)) {
+            // 壁や床に当たればその位置に補正
+            return (hit.point - firePoint.position).normalized;
         }
-        else {
-            targetPoint = ray.GetPoint(50f); // 当たらなければ50m先
-        }
 
-        // firePoint → レティクル命中点 の方向に補正
-        return (targetPoint - firePoint.position).normalized;
+        // 当たらなければそのままaimPoint方向
+        return direction;
     }
+
+
 
     /// <summary>
     /// スキル呼び出し関数
