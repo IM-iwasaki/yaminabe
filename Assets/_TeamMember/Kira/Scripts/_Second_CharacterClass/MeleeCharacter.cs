@@ -57,8 +57,8 @@ class MeleeCharacter : CharacterBase {
         //スキル使用不可中、かつスキルがインポートされていれば時間を計測
         if (!IsCanSkill && EquippedSkills[0] != null) SkillAfterTime += Time.deltaTime;
         //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
-        var Skills = EquippedSkills[0];
-        if (!IsCanSkill && Skills != null && SkillAfterTime >= Skills.Cooldown) {
+        var Skill = EquippedSkills[0];
+        if (!IsCanSkill && Skill != null && SkillAfterTime >= Skill.Cooldown) {
             IsCanSkill = true;
             //経過時間をリセット
             SkillAfterTime = 0.0f;
