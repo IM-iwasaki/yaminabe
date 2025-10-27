@@ -205,7 +205,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Command]public void TakeDamage(int _damage) {
+    [Server]public void TakeDamage(int _damage) {
         //ダメージ倍率を適用
         _damage *= DamageRatio / 100;
         //ダメージが0以下だったら1に補正する
@@ -221,13 +221,20 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// UI用のHP更新関数
     /// </summary>
     public void ChangeHP(int oldValue, int newValue) {
-        if (isLocalPlayer) UI.ChangeHPUI(MaxHP, newValue);
+        if (!isLocalPlayer) return; // 自分のプレイヤーでなければUI更新しない
+        if (UI != null) {
+            UI.ChangeHPUI(MaxHP, newValue);
+        }
+        else {
+            Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
+        }
     }
+
 
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Command]public void Respown() {
+    [Command]public void Respawn() {
         //死んでいなかったら即抜け
         if (!IsDead) return;
 
@@ -545,7 +552,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             //死亡してからの時間を加算
             DeadAfterTime += Time.deltaTime;
             //死亡後経過時間がリスポーンに必要な時間を過ぎたら
-            if (DeadAfterTime >= PlayerConst.RespownTime)  Respown();
+            if (DeadAfterTime >= PlayerConst.RespownTime)  Respawn();
         }
         //復活後であるときの処理
         if (IsInvincible) {

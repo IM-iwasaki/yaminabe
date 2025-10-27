@@ -38,8 +38,11 @@ public class Projectile : NetworkBehaviour {
         if (!initialized || !isServer) return;
         if (other.gameObject == owner) return;
 
-        if (other.TryGetComponent(out CharacterBase target))
-            target.TakeDamage(damage);
+        if (other.TryGetComponent<NetworkIdentity>(out var identity)) {
+            if (identity.TryGetComponent(out CharacterBase target)) {
+                target.TakeDamage(damage);
+            }
+        }
 
         RpcPlayHitEffect(transform.position, hitEffectType);
 
