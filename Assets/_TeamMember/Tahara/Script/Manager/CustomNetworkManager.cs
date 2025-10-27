@@ -109,4 +109,10 @@ public class CustomNetworkManager : NetworkManager {
             GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
         }
     }
+
+    public override void OnStopServer() {
+        base.OnStopServer();
+        GameSceneManager.Instance.LoadTitleSceneForAll();
+        ChatManager.instance.CmdSendSystemMessage("Leave Host");
+    }
 }
