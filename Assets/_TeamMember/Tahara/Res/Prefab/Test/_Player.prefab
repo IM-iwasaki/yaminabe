@@ -83,7 +83,7 @@ GameObject:
   - component: {fileID: 6672132936378537778}
   m_Layer: 0
   m_Name: _Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -296,6 +296,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 0241dd7c-e649-4f26-94e6-9aec79a2c7bc
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3c3e33ed-00b3-418a-972e-e59a558d27a9
+    m_ActionName: Player/Skill[/Keyboard/e]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -334,7 +338,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   HP: 0
+  CurrentTeam: -1
   TeamID: 0
+  DamageRatio: 100
   firePoint: {fileID: 878125566127400802}
   UI: {fileID: 8169650326617316781, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
@@ -654,6 +660,10 @@ PrefabInstance:
     - target: {fileID: 7369448170708576210, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
       propertyPath: m_Name
       value: AlienDefault
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369448170708576210, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
+      propertyPath: m_TagString
+      value: Skin
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

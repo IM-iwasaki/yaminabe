@@ -27,7 +27,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         //フェードアウト
         if (!isChanged) {
             isChanged = true;
-            FadeManager.Instance.StartFadeOut(0.5f);
+            //FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
         }
 
