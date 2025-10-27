@@ -4929,7 +4929,7 @@ GameObject:
   - component: {fileID: 1370874438154576131}
   - component: {fileID: 1370874438154576188}
   - component: {fileID: 1370874438154576189}
-  - component: {fileID: -3097587602641155936}
+  - component: {fileID: 2975114409205599242}
   m_Layer: 0
   m_Name: bullet_hit
   m_TagString: Untagged
@@ -9879,7 +9879,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &-3097587602641155936
+--- !u!114 &2975114409205599242
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9892,7 +9892,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 2253431010
+  _assetId: 3145878081
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

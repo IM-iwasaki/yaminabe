@@ -88,7 +88,6 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
-        base.OnServerChangeScene(newSceneName);
         //ゲームシーンなら
         if (newSceneName == GameSceneManager.Instance.gameSceneName) {
             //ゲームスタート

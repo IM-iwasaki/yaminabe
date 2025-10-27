@@ -4899,7 +4899,7 @@ GameObject:
   - component: {fileID: 1972487910709877232}
   - component: {fileID: 5709827444404199806}
   - component: {fileID: 7980029976762078213}
-  - component: {fileID: -6905343939133129599}
+  - component: {fileID: 7013516924338055590}
   m_Layer: 0
   m_Name: MuzzleFlash
   m_TagString: Untagged
@@ -9723,7 +9723,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!114 &-6905343939133129599
+--- !u!114 &7013516924338055590
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9736,7 +9736,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 521105563
+  _assetId: 3345953343
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
