@@ -278,17 +278,18 @@ public class SelectObjectManager : NetworkBehaviour {
     //  クライアントからサーバーへ送信
     [Command(requiresAuthority = false)]
     public void CmdPlayerChange(GameObject player) {
+        //  サーバーが全員に通知
+        RpcPlayerChange(player);
+    }
+    //  サーバーから全員へ同期
+    [ClientRpc]
+    public void RpcPlayerChange(GameObject player) {
         //  ローカルスキン番号をネットワークスキン番号に反映
         networkSkinCount = localSkinCount;
         //  ローカルキャラクター番号をネットワークキャラクター番号に反映
         networkCharacterCount = localCharacterCount;
-        //  サーバーが全員に通知
-        RpcPlayerChange(player, networkCharacterCount, networkSkinCount);
-    }
-    //  サーバーから全員へ同期
-    [ClientRpc]
-    public void RpcPlayerChange(GameObject player, int characterCount, int skinCount) {
-        PlayerChange(player, characterCount, skinCount);
+        //  プレイヤー変更
+        PlayerChange(player, networkCharacterCount, networkSkinCount);
     }
 
     /// <summary>
