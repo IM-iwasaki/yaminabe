@@ -15,7 +15,7 @@ public class ResultDebug : NetworkBehaviour {
 
     void Update() {
         if (Input.GetKeyUp(KeyCode.Escape)) {
-            // Hostのみゲーム終了をテスト
+       
             if (isServer) {
                 Debug.Log("ESC押下 → ゲーム終了テスト（サーバー呼び出し）");
                 resultManager.RpcShowResult(); // 全員にリザルト表示
