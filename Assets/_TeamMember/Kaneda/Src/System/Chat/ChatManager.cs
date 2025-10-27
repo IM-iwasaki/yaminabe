@@ -83,7 +83,11 @@ public class ChatManager : NetworkBehaviour {
         StartCoroutine(FadeAndDestroy(stampObj));
     }
 
-    //  ユーザー名を設定する関数
+    /// <summary>
+    ///  ユーザー名を設定する関数
+    /// </summary>
+    /// <param name="nameObj"></param>
+    /// <param name="userName"></param>
     private void SetUserName(Transform nameObj, string userName) {
         //  取得できなければ空で通す 
         if (nameObj == null) return;
@@ -95,7 +99,11 @@ public class ChatManager : NetworkBehaviour {
         tmp.SetText("[" + userName + "]");
     }
 
-    //  スタンプの画像を設定
+    /// <summary>
+    ///  スタンプの画像を設定
+    /// </summary>
+    /// <param name="imageObj"></param>
+    /// <param name="stampImage"></param>
     private void SetImage(Transform imageObj, Sprite stampImage) {
         //  取得できなければスルー 
         if (imageObj == null) return;
