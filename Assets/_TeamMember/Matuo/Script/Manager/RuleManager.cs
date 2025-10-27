@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// ルール管理
-/// エリア制圧 / ホコ / デスマッチのスコア管理・勝敗判定
+/// エリア / ホコ / デスマッチのスコア管理・勝敗判定
 /// </summary>
 public class RuleManager : NetworkSystemObject<RuleManager> {
     private Dictionary<int, float> teamScores = new();
@@ -113,5 +113,12 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         if (winningTeam >= 0) {
             Debug.Log($"Team {winningTeam} の勝利！");
         }
+    }
+
+    /// <summary>
+    /// チームの現在スコアを取得
+    /// </summary>
+    public bool TryGetTeamScore(int teamId, out float score) {
+        return teamScores.TryGetValue(teamId, out score);
     }
 }
