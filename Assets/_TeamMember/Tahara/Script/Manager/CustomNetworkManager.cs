@@ -111,7 +111,6 @@ public class CustomNetworkManager : NetworkManager {
     }
 
     public override void OnStopServer() {
-        base.OnStopServer();
         GameSceneManager.Instance.LoadTitleSceneForAll();
         ChatManager.instance.CmdSendSystemMessage("Leave Host");
     }
