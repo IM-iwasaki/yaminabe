@@ -381,7 +381,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  currentSubWeapon: {fileID: 11400000, guid: 07aeb10d3957ed24a92f435accc7654c, type: 2}
+  currentSubWeapon: {fileID: 11400000, guid: 8fa2c4c5f7650b747899e553f2c38e25, type: 2}
 --- !u!114 &8394261901866962481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1093,6 +1093,10 @@ PrefabInstance:
     - target: {fileID: 7369448170708576210, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7369448170708576210, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
+      propertyPath: m_TagString
+      value: Skin
       objectReference: {fileID: 0}
     - target: {fileID: 7369448170710031444, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
       propertyPath: m_Layer

@@ -10,6 +10,8 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     public string lobbySceneName;
     [Header("読み込むゲームシーンの名前")]
     public string gameSceneName;
+    [Header("読み込むゲームシーンの名前")]
+    public string titleSceneName;
 
     private bool isChanged = false;
 
@@ -25,7 +27,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         //フェードアウト
         if (!isChanged) {
             isChanged = true;
-            FadeManager.Instance.StartFadeOut(0.5f);
+            //FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
         }
 
@@ -61,6 +63,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// <summary>
     /// 特定のシーンに全員を移行する(LobbyScene)
     /// </summary>
+    [Server]
     public void LoadLobbySceneForAll() {
         if (!isChanged) {
             isChanged = true;
@@ -68,6 +71,16 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             NetworkSceneTransitionSystem.Instance.ChangeScene(lobbySceneName);
         }
     }
+    [Server]
+    public void LoadTitleSceneForAll() {
+        if (!isChanged) {
+            isChanged = true;
+            FadeManager.Instance.StartFadeOut(0.5f);
+            NetworkSceneTransitionSystem.Instance.ChangeScene(titleSceneName);
+        }
+    }
+
+
     public void ResetIsChangedScene() {
         isChanged = false;
     }

@@ -88,8 +88,12 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
-        base.OnServerChangeScene(newSceneName);
-
+        //ゲームシーンなら
+        if (newSceneName == GameSceneManager.Instance.gameSceneName) {
+            //ゲームスタート
+            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
+        }
+        HostUI.instance.HideUI();
         FadeManager.Instance.StartFadeIn(0.5f);
         GameSceneManager.Instance.ResetIsChangedScene();
     }
@@ -102,11 +106,17 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="customHandling"></param>
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+        ////ゲームシーンなら
+        //if(newSceneName == GameSceneManager.Instance.gameSceneName) {
+        //    //ゲームスタート
+        //    GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
+        //}
         FadeManager.Instance.StartFadeIn(0.5f);
-        //ゲームシーンなら
-        if(newSceneName == GameSceneManager.Instance.gameSceneName) {
-            //ゲームスタート
-            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
-        }
+        GameSceneManager.Instance.ResetIsChangedScene();
+    }
+
+    public override void OnStopServer() {
+        GameSceneManager.Instance.LoadTitleSceneForAll();
+        ChatManager.instance.CmdSendSystemMessage("Leave Host");
     }
 }

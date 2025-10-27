@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HostUI : NetworkBehaviour {
+    public static HostUI instance = null;
     [SerializeField, Header("表記するルール名")]
     private TextMeshProUGUI rule = null;
     [SerializeField, Header("表記するステージ名")]
@@ -23,7 +24,7 @@ public class HostUI : NetworkBehaviour {
     private Button gameStartButton = null;
 
     private void Start() {
-        ////スポーンさせる
+        //スポーンさせる
         //NetworkServer.Spawn(gameObject);
         if (!isServer) {
             unVisibleUIFromClient.SetActive(false);
@@ -31,6 +32,8 @@ public class HostUI : NetworkBehaviour {
         if (GameSceneManager.Instance != null) {
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
         }
+
+        instance = this;
     }
     public void IncrementRuleIndex() {
         ruleIndex++;
@@ -60,5 +63,7 @@ public class HostUI : NetworkBehaviour {
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
     }
 
-
+    public void HideUI(){
+        unVisibleUIFromClient.SetActive(false);
+    }
 }

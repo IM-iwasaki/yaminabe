@@ -7,6 +7,7 @@ public class TitleManager : MonoBehaviour {
     public string ipAddress = null;
     public bool isHost = false;
     public bool isClient = false;
+    public bool isTitle = true;
 
     [SerializeField]
     private string lobbySceneName = null;
@@ -25,7 +26,7 @@ public class TitleManager : MonoBehaviour {
         isHost = true;
 
         SceneManager.LoadScene(lobbySceneName);
-
+        isTitle = false;
     }
 
     public void OnStartClientButton() {
@@ -35,7 +36,7 @@ public class TitleManager : MonoBehaviour {
         //明示的にクライアント状態をtrueにし、ロビーシーンに移行
         isClient = true;
         SceneManager.LoadScene(lobbySceneName);
-
+        isTitle = false;
     }
 
     public void SetIPAddress() {
@@ -43,6 +44,7 @@ public class TitleManager : MonoBehaviour {
     }
 
     private void Update() {
+        if (isTitle == false) return;
         if (ipAddress == null)
             stringIPAddress.text = "404NotFound";
         else

@@ -4,8 +4,9 @@ using System.Net.NetworkInformation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Mirror;
 
-public class SelectObjectManager : MonoBehaviour {
+public class SelectObjectManager : NetworkBehaviour {
     //  値を変更させる定数
     private readonly int SUB_ONE_COUNT = -1;
     private readonly int ADD_ONE_COUNT = 1;
@@ -32,8 +33,10 @@ public class SelectObjectManager : MonoBehaviour {
     //  キャラクターデータ格納
     private CharacterDatabase.CharacterInfo character;
 
-    //  数値を保存するカウンター
-    private int characterCount = 0;
+    //  ネットワークで同期させるキャラクター番号
+    private int networkCharacterCount;
+    //  ローカルで同期させるキャラクター番号
+    private int localCharacterCount = 0;
 
     //  プレハブ化したオブジェクトを保存
     private GameObject obj;
@@ -46,6 +49,11 @@ public class SelectObjectManager : MonoBehaviour {
     //  そのキャラクターにチェンジできるかどうか
     private bool canChange = false;
 
+    //  ネットワークで同期させるスキン番号
+    private int networkSkinCount;
+    //  ローカルで使用するスキン番号保持
+    private int localSkinCount;
+
     //  初期は登録してあるプレハブの一番目を生成しておく
     private void Start() {
         //  親オブジェクトを自身にする
@@ -53,13 +61,14 @@ public class SelectObjectManager : MonoBehaviour {
         //  UIを非表示
         unuseUI.SetActive(false);
 
-        characterCount = 0;
+        localCharacterCount = 0;
 
         //  子オブジェクトとして生成
         //  テキストを書き換える
-        ChangeObject(characterCount);
+        ChangeObject(localCharacterCount);
     }
 
+    #region ボタン操作用関数
     /// <summary>
     /// 左右切り替えボタン
     /// </summary>
@@ -75,8 +84,10 @@ public class SelectObjectManager : MonoBehaviour {
     /// </summary>
     /// <param name="skinCount"></param>
     public void OnChangeSkin(int skinCount) {
+        localSkinCount = skinCount;
         ChangeCharacterObject(skinCount);
     }
+    #endregion
 
     /// <summary>
     /// データの中身があるかどうかのチェック
@@ -89,27 +100,6 @@ public class SelectObjectManager : MonoBehaviour {
         }
 
         return true;
-    }
-
-    /// <summary>
-    /// キャラクター選択時のメイン処理
-    /// </summary>
-    /// <param name="num"></param>
-    private void ChangeObject(int num) {
-        if (!CheckData()) return;
-        //  数値を増減
-        characterCount = CheckCount(characterCount, num);
-        //  characterCount番目のキャラクターを取得して格納
-        character = data.characters[characterCount];
-        //  スキン選択ボタンの取得
-        GenerateButtons();
-        //  キャラクターがまだ取得されていない場合
-        if (!PlayerItemManager.Instance.HasCharacter(character.characterName)) {
-            UnuseCharacter();
-            return;
-        }
-        //  キャラクターを所持している場合はそのまま生成
-        UseCharacter();
     }
 
     /// <summary>
@@ -129,6 +119,27 @@ public class SelectObjectManager : MonoBehaviour {
         if (count < 0) return max;
         //  何もなければそのまま返す
         return count;
+    }
+
+    /// <summary>
+    /// キャラクター選択時のメイン処理
+    /// </summary>
+    /// <param name="num"></param>
+    private void ChangeObject(int num) {
+        if (!CheckData()) return;
+        //  数値を増減
+        localCharacterCount = CheckCount(localCharacterCount, num);
+        //  characterCount番目のキャラクターを取得して格納
+        character = data.characters[localCharacterCount];
+        //  スキン選択ボタンの取得
+        GenerateButtons();
+        //  キャラクターがまだ取得されていない場合
+        if (!PlayerItemManager.Instance.HasCharacter(character.characterName)) {
+            UnuseCharacter();
+            return;
+        }
+        //  キャラクターを所持している場合はそのまま生成
+        UseCharacter();
     }
 
     /// <summary>
@@ -236,6 +247,7 @@ public class SelectObjectManager : MonoBehaviour {
         }
     }
 
+    #region 削除関数
     /// <summary>
     /// 指定の親オブジェクトの子オブジェクトを全部削除する
     /// </summary>
@@ -260,14 +272,33 @@ public class SelectObjectManager : MonoBehaviour {
             }
         }
     }
+    #endregion
+
+    #region ネットワーク同期
+    //  クライアントからサーバーへ送信
+    [Command(requiresAuthority = false)]
+    public void CmdPlayerChange(GameObject player) {
+        //  サーバーが全員に通知
+        RpcPlayerChange(player);
+    }
+    //  サーバーから全員へ同期
+    [ClientRpc]
+    public void RpcPlayerChange(GameObject player) {
+        //  ローカルスキン番号をネットワークスキン番号に反映
+        networkSkinCount = localSkinCount;
+        //  ローカルキャラクター番号をネットワークキャラクター番号に反映
+        networkCharacterCount = localCharacterCount;
+        //  プレイヤー変更
+        PlayerChange(player, networkCharacterCount, networkSkinCount);
+    }
 
     /// <summary>
     /// プレイヤーに現在のキャラクターを反映させる
     /// </summary>
     /// <param name="player"></param>
-    public void PlayerChange(GameObject player) {
+    public void PlayerChange(GameObject player, int characterCount, int skinCount) {
         //  チェンジ不可なら処理しない
-        if(!canChange) return;
+        if (!canChange) return;
 
         //  タグを取り破棄する
         DestroyChildrenWithTag(player.transform, "Skin");
@@ -275,10 +306,13 @@ public class SelectObjectManager : MonoBehaviour {
         Transform parent = player.transform;
         //  生成位置を取る
         Vector3 spawnPos = parent.position + parent.TransformDirection(Vector3.down);
+        //  スキンの番号を同期させる
+        GameObject prefab = data.characters[characterCount].skins[skinCount].skinPrefab;
         //  プレイヤーの子オブジェクトに生成
-        Instantiate(obj, spawnPos, parent.rotation, parent);
+        Instantiate(prefab, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
-        player.GetComponent<GeneralCharacter>().StatusInport(character.statusData);
+        //player.GetComponent<GeneralCharacter>().StatusInport(character.statusData);
     }
+    #endregion
 
 }

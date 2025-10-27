@@ -182,6 +182,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HokoObj
       objectReference: {fileID: 0}
+    - target: {fileID: 9153195026797928847, guid: f5375901ce27ca24aafc67a0c5b6037d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -522,31 +526,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameLobby
       objectReference: {fileID: 0}
+    - target: {fileID: 8358714206395223592, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
---- !u!1 &1273536770 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5120175121263279501, guid: 0c8f5b4d1648bd2419b36f437c057688, type: 3}
-  m_PrefabInstance: {fileID: 6340796445825400811}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1273536777
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1273536770}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea6dd6c93e664104baa62f2eb63a937f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bounceSpeed: 8
-  bounceAmplitude: 0.1
-  rotationSpeed: 40
 --- !u!1001 &1520925917
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -558,6 +546,10 @@ PrefabInstance:
     - target: {fileID: 680480005544395499, guid: 027cb3f35be57ff44b66606dea53f0a4, type: 3}
       propertyPath: m_Name
       value: _Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 680480005544395499, guid: 027cb3f35be57ff44b66606dea53f0a4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1957118553095467799, guid: 027cb3f35be57ff44b66606dea53f0a4, type: 3}
       propertyPath: leftOffsetAmount
@@ -673,13 +665,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: AreaObj
       objectReference: {fileID: 0}
+    - target: {fileID: 5120175121263279501, guid: 0c8f5b4d1648bd2419b36f437c057688, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5120175121263279501, guid: 0c8f5b4d1648bd2419b36f437c057688, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1273536777}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c8f5b4d1648bd2419b36f437c057688, type: 3}
 --- !u!1001 &8880836981162548039
 PrefabInstance:
