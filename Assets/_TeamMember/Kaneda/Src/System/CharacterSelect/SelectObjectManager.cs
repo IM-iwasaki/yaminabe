@@ -34,7 +34,6 @@ public class SelectObjectManager : NetworkBehaviour {
     private CharacterDatabase.CharacterInfo character;
 
     //  ネットワークで同期させるキャラクター番号
-    [SyncVar]
     private int networkCharacterCount;
     //  ローカルで同期させるキャラクター番号
     private int localCharacterCount = 0;
@@ -51,7 +50,6 @@ public class SelectObjectManager : NetworkBehaviour {
     private bool canChange = false;
 
     //  ネットワークで同期させるスキン番号
-    [SyncVar]
     private int networkSkinCount;
     //  ローカルで使用するスキン番号保持
     private int localSkinCount;
