@@ -2681,6 +2681,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6892128023541400848, guid: 746aa3385af7af440860aac3c083459b, type: 3}
+      propertyPath: sceneId
+      value: 2458756437
+      objectReference: {fileID: 0}
     - target: {fileID: 7035619652033379610, guid: 746aa3385af7af440860aac3c083459b, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1
@@ -6062,11 +6066,16 @@ PrefabInstance:
       propertyPath: sceneId
       value: 215755777
       objectReference: {fileID: 0}
+    - target: {fileID: 6896519277420291455, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: sceneId
+      value: 2366217897
+      objectReference: {fileID: 0}
     - target: {fileID: 8358714206395223592, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
       propertyPath: m_Name
       value: GameLobby (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6896519277420291455, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

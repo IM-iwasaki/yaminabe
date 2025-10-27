@@ -4,8 +4,9 @@ using System.Net.NetworkInformation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Mirror;
 
-public class SelectObjectManager : MonoBehaviour {
+public class SelectObjectManager : NetworkBehaviour {
     //  値を変更させる定数
     private readonly int SUB_ONE_COUNT = -1;
     private readonly int ADD_ONE_COUNT = 1;
@@ -261,13 +262,25 @@ public class SelectObjectManager : MonoBehaviour {
         }
     }
 
+    //  クライアントからサーバーへ送信
+    [Command(requiresAuthority = false)]
+    public void CmdPlayerChange(GameObject player) {
+        //  サーバーが全員に通知
+        RpcPlayerChange(player);
+    }
+    //  サーバーから全員へ同期
+    [ClientRpc]
+    public void RpcPlayerChange(GameObject player) {
+        PlayerChange(player);
+    }
+
     /// <summary>
     /// プレイヤーに現在のキャラクターを反映させる
     /// </summary>
     /// <param name="player"></param>
     public void PlayerChange(GameObject player) {
         //  チェンジ不可なら処理しない
-        if(!canChange) return;
+        if (!canChange) return;
 
         //  タグを取り破棄する
         DestroyChildrenWithTag(player.transform, "Skin");
@@ -278,7 +291,7 @@ public class SelectObjectManager : MonoBehaviour {
         //  プレイヤーの子オブジェクトに生成
         Instantiate(obj, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
-        player.GetComponent<GeneralCharacter>().StatusInport(character.statusData);
+        //player.GetComponent<GeneralCharacter>().StatusInport(character.statusData);
     }
 
 }

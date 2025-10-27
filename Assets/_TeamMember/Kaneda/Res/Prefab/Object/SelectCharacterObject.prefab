@@ -1920,6 +1920,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23b33221cdb21f74aab7fade5637e1cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   data: {fileID: 11400000, guid: f9f7890e58221b94cbb4e2be8b09fa16, type: 2}
   unuseObject: {fileID: 3722950262931918998, guid: 47da1e77eeb0f27428ec2b0a7b883aec, type: 3}
   unuseUI: {fileID: 4318949270731415462}

@@ -77,7 +77,7 @@ public class CharacterSelectManager : NetworkBehaviour {
 
         if (currentPlayer == null) return;
 
-        selectObj.PlayerChange(currentPlayer);
+        selectObj.CmdPlayerChange(currentPlayer);
 
         // UIを非表示（戻る操作開始時）
         if (selectUI != null)
