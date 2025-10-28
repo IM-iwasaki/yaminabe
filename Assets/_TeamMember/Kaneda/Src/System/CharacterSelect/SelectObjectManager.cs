@@ -91,6 +91,7 @@ public class SelectObjectManager : NetworkBehaviour {
     }
     #endregion
 
+    #region ローカルキャラクター選択UIの処理
     /// <summary>
     /// データの中身があるかどうかのチェック
     /// </summary>
@@ -248,6 +249,7 @@ public class SelectObjectManager : NetworkBehaviour {
             button.GetComponent<Button>().onClick.AddListener(() => OnChangeSkin(index));
         }
     }
+    #endregion
 
     #region 削除関数
     /// <summary>
@@ -276,6 +278,7 @@ public class SelectObjectManager : NetworkBehaviour {
     }
     #endregion
 
+    #region ネットワーク同期
     /// <summary>
     /// 呼び出し元
     /// </summary>
@@ -284,7 +287,6 @@ public class SelectObjectManager : NetworkBehaviour {
         CmdPlayerChange(player, localCharacterCount, localSkinCount, localCanChange);
     }
 
-    #region ネットワーク同期
     //  クライアントからサーバーへ送信
     [Command(requiresAuthority = false)]
     public void CmdPlayerChange(GameObject player, int characterCount, int skinCount, bool canChange) {
