@@ -89,7 +89,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// 現在のモードに応じてスポーン地点を1つ取得
     /// （デスマッチなら共通ランダム、チーム戦ならチーム専用を使用）
     /// </summary>
-    public Transform GetSpawnPoint(TeamData.teamColor team = TeamData.teamColor.Invalid) {
+    public Transform GetSpawnPoint(TeamData.teamColor team) {
         if (currentRespawnMode == RespawnMode.Random) {
             if (normalRespawnPoints.Count == 0) return null;
             return normalRespawnPoints[Random.Range(0, normalRespawnPoints.Count)];
