@@ -858,6 +858,10 @@ PrefabInstance:
       propertyPath: m_Value
       value: 1.0000175
       objectReference: {fileID: 0}
+    - target: {fileID: 2095739972200022803, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
+      propertyPath: rootPanel
+      value: 
+      objectReference: {fileID: 1383407194335806860}
     - target: {fileID: 3115981906705432870, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
       propertyPath: m_Name
       value: 'ScoreList '
@@ -963,6 +967,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
+--- !u!1 &1383407194335806860 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 14510059752576507, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
+  m_PrefabInstance: {fileID: 1369469572157263991}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5282473678735052679 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6507218240273997808, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}

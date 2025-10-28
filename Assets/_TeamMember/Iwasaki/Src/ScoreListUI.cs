@@ -24,7 +24,7 @@ public class ScoreListUI : NetworkBehaviour {
         public int score;
     }
 
-    private void Awake() {
+    private void Start() {
         // Å‰‚É”ñ•\¦‚É‚µ‚Ä‚¨‚­
         if (rootPanel != null)
             rootPanel.SetActive(false);
