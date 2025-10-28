@@ -1713,7 +1713,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2666511153091077286, guid: d08b5352a94ee0f4fb65780475361aef, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7475443772671817374, guid: d08b5352a94ee0f4fb65780475361aef, type: 3}
       propertyPath: sceneId
@@ -1786,15 +1786,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: ruleNames.Array.data[0]
-      value: DeathMatch
-      objectReference: {fileID: 0}
-    - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
-      propertyPath: ruleNames.Array.data[1]
       value: Hoko
       objectReference: {fileID: 0}
     - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
-      propertyPath: ruleNames.Array.data[2]
+      propertyPath: ruleNames.Array.data[1]
       value: Area
+      objectReference: {fileID: 0}
+    - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: ruleNames.Array.data[2]
+      value: DeathMatch
       objectReference: {fileID: 0}
     - target: {fileID: 6360244347166990274, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: m_Name
@@ -2578,7 +2578,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 66350315652334039, guid: c065ce3e1ca92694187672f3aa9d3f74, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 598275818543314391, guid: c065ce3e1ca92694187672f3aa9d3f74, type: 3}
       propertyPath: sceneId

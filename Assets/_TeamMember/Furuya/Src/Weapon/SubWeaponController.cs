@@ -4,7 +4,7 @@ using System.Collections;
 
 public class SubWeaponController : NetworkBehaviour {
     [Header("Sub Weapon")]
-    public SubWeaponData currentSubWeapon;
+    public SubWeaponData subWeaponData;
 
     private int currentUses;
     private bool isRecharging;
@@ -14,8 +14,8 @@ public class SubWeaponController : NetworkBehaviour {
     void Start() {
         characterBase = GetComponent<CharacterBase>();
 
-        if (currentSubWeapon != null)
-            currentUses = currentSubWeapon.startFull ? currentSubWeapon.maxUses : 0;
+        if (subWeaponData != null)
+            currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
     }
 
     void Update() {
@@ -26,23 +26,23 @@ public class SubWeaponController : NetworkBehaviour {
     }
 
     public void TryUseSubWeapon() {
-        if (currentSubWeapon == null || currentUses <= 0) return;
+        if (subWeaponData == null || currentUses <= 0) return;
         CmdUseSubWeapon();
     }
 
     [Command]
     private void CmdUseSubWeapon() {
-        if (currentSubWeapon == null || currentUses <= 0 || !isServer) return;
+        if (subWeaponData == null || currentUses <= 0 || !isServer) return;
 
         currentUses--;
 
         // サブ武器の種類ごとの処理
-        switch (currentSubWeapon.type) {
+        switch (subWeaponData.type) {
             case SubWeaponType.Grenade:
                 SpawnGrenade();
                 break;
             case SubWeaponType.Trap:
-                // Trap用処理（未実装）
+                SpawnTrap();
                 break;
             case SubWeaponType.Item:
                 // アイテム処理（未実装）
@@ -58,33 +58,73 @@ public class SubWeaponController : NetworkBehaviour {
 
     [Server]
     private void SpawnGrenade() {
-        if (currentSubWeapon.ObjectPrefab == null) return;
+        if (subWeaponData.ObjectPrefab == null) return;
 
         GameObject grenadeObj = ProjectilePool.Instance.SpawnFromPool(
-            currentSubWeapon.ObjectPrefab.name,
+            subWeaponData.ObjectPrefab.name,
             transform.position + transform.forward + Vector3.up,
             Quaternion.identity
         );
 
         if (grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
-            int teamID = GetComponent<CharacterBase>()?.TeamID ?? 0;
-            grenade.Init(currentSubWeapon, teamID, transform.forward);
+            int teamID = characterBase?.TeamID ?? 0;
+            GrenadeData grenadeData = subWeaponData as GrenadeData;
+            if (grenadeData == null) return;
+
+            Vector3 throwDirection = transform.forward; // 必要に応じて調整
+
+            grenade.Init(
+                teamID,
+                transform.forward,
+                grenadeData.throwForce,
+                grenadeData.projectileSpeed,
+                grenadeData.explosionRadius,
+                grenadeData.damage,
+                grenadeData.canDamageAllies,
+                grenadeData.useEffectType,
+                grenadeData.explosionDelay
+            );
         }
     }
 
-
     [Server]
-    private IEnumerator ServerFuse(GrenadeBase grenade, float delay) {
-        yield return new WaitForSeconds(delay);
-        // GrenadeBase内の爆発を呼び出し
-        var explodeMethod = grenade.GetType().GetMethod("Explode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        explodeMethod?.Invoke(grenade, null);
+    private void SpawnTrap() {
+        if (subWeaponData.ObjectPrefab == null) return;
+
+        GameObject trapObj = ProjectilePool.Instance.SpawnFromPool(
+            subWeaponData.ObjectPrefab.name,
+            transform.position,
+            Quaternion.identity
+        );
+
+        if (trapObj.TryGetComponent(out LandMine mine)) {
+            int teamID = characterBase?.TeamID ?? 0;
+            LandMineData landMineData = subWeaponData as LandMineData;
+            if (landMineData == null) return;
+
+            TrapInitData trapInit = new TrapInitData {
+                teamID = teamID,
+                activationDelay = landMineData.activationDelay,
+                activationOnce = landMineData.activationOnce,
+                activationEffect = landMineData.activationEffect,
+                duration = landMineData.duration
+            };
+
+            mine.Init(
+                trapInit,
+                landMineData.explosionRadius,
+                landMineData.damage,
+                landMineData.canDamageAllies,
+                landMineData.useEffectType,
+                landMineData.explosionDelay
+            );
+        }
     }
 
     private IEnumerator RechargeRoutine() {
         isRecharging = true;
-        while (currentUses < currentSubWeapon.maxUses) {
-            yield return new WaitForSeconds(currentSubWeapon.rechargeTime);
+        while (currentUses < subWeaponData.maxUses) {
+            yield return new WaitForSeconds(subWeaponData.rechargeTime);
             currentUses++;
         }
         isRecharging = false;

@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static TeamData;
 
 public class CustomNetworkManager : NetworkManager {
     [SerializeField]
@@ -109,10 +110,21 @@ public class CustomNetworkManager : NetworkManager {
         //ゲームシーンに遷移したなら
         if (sceneName == GameSceneManager.Instance.gameSceneName) {
             //ゲームスタート
-            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
+            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);//プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
+            foreach (var conn in serverManager.connectPlayer) {
+                //必要な変数をキャッシュ
+                CharacterBase character = conn.GetComponent<CharacterBase>();
+                int teamID = character.TeamID;
+                NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
+                //各リスポーン地点に転送
+                var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)teamID);
+                startPos.ServerTeleport(RespawnPos[Random.Range(0,RespawnPos.Count)].position,Quaternion.identity);
+            }
+
+
         }
         //ロビーシーンに遷移したなら
-        else if(sceneName == GameSceneManager.Instance.lobbySceneName) {
+        else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
 
         }
 
