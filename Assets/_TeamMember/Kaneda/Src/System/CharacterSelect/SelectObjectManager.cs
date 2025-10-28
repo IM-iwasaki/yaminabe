@@ -276,12 +276,20 @@ public class SelectObjectManager : NetworkBehaviour {
     }
     #endregion
 
+    /// <summary>
+    /// 呼び出し元
+    /// </summary>
+    /// <param name="player"></param>
+    public void ConfirmPlayerChange(GameObject player) {
+        CmdPlayerChange(player, localCharacterCount, localSkinCount, localCanChange);
+    }
+
     #region ネットワーク同期
     //  クライアントからサーバーへ送信
     [Command(requiresAuthority = false)]
-    public void CmdPlayerChange(GameObject player) {
+    public void CmdPlayerChange(GameObject player, int characterCount, int skinCount, bool canChange) {
         //  サーバーが全員に通知
-        RpcPlayerChange(player, localCharacterCount, localSkinCount, localCanChange);
+        RpcPlayerChange(player, characterCount, skinCount, canChange);
     }
     //  サーバーから全員へ同期
     [ClientRpc]
