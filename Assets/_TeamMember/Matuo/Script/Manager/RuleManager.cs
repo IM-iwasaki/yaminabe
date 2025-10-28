@@ -63,8 +63,22 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         teamScores[teamId] += amount;
         Debug.Log($"Team {teamId} Score: {teamScores[teamId]} (Rule: {rule})");
 
+        RpcUpdateScore(teamId, teamScores[teamId]);
+
         if (rule != GameRuleType.DeathMatch)
             CheckWinConditionAllTeams();
+    }
+
+    /// <summary>
+    /// クライアント全員にスコア更新を通知
+    /// </summary>
+    [ClientRpc]
+    private void RpcUpdateScore(int teamId, float newScore) {
+        // ローカルにも保持しておく（UIなどが参照できるように）
+        teamScores[teamId] = newScore;
+
+        // UIを更新
+        GameUIManager.Instance?.UpdateTeamScore(teamId, newScore);
     }
 
     /// <summary>
