@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6403400016016269576}
   - component: {fileID: 8244871348948195665}
   - component: {fileID: 2577184613183273000}
+  - component: {fileID: 2524724192644132200}
   m_Layer: 0
   m_Name: AssaultRifle
   m_TagString: Item
@@ -71,6 +72,24 @@ MonoBehaviour:
   description: "\u305F\u3060\u306E\u30A2\u30B5\u30EB\u30C8\u30E9\u30A4\u30D5\u30EB"
   icon: {fileID: 0}
   weaponType: 1
+  weaponData: {fileID: 0}
+--- !u!114 &2524724192644132200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7444770962804427274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 2653362870
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &9086317419474342503
 GameObject:
   m_ObjectHideFlags: 0

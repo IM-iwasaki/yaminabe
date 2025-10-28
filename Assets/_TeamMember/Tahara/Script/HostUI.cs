@@ -34,6 +34,9 @@ public class HostUI : NetworkBehaviour {
         }
 
         instance = this;
+
+        rule.text = ruleNames[ruleIndex];
+        stage.text = StageManager.Instance.stages[stageIndex].stageName;
     }
     public void IncrementRuleIndex() {
         ruleIndex++;
@@ -49,14 +52,14 @@ public class HostUI : NetworkBehaviour {
     }
 
     private void ChangeRuleAndUI(int _oldValue,int _newValue) {
-        if (_newValue < 0 || _newValue > ruleNames.Count)
+        //if (_newValue < 1 || _newValue >= ruleNames.Count)
             ruleIndex = Mathf.Abs(_newValue % ruleNames.Count);
         
         rule.text = ruleNames[ruleIndex];
         RuleManager.Instance.currentRule = (GameRuleType)ruleIndex;
     }
     private void ChangeStageUI(int _oldValue, int _newValue) {
-        if (_newValue < 0 || _newValue > StageManager.Instance.stages.Count)
+        //if (_newValue < 1 || _newValue >= StageManager.Instance.stages.Count)
             stageIndex = Mathf.Abs(_newValue % StageManager.Instance.stages.Count);
 
 
