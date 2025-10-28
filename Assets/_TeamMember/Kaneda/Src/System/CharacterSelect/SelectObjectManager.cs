@@ -47,7 +47,9 @@ public class SelectObjectManager : NetworkBehaviour {
     private int SPD = 0;
 
     //  そのキャラクターにチェンジできるかどうか
-    private bool canChange = false;
+    private bool localCanChange = false;
+    //  ネットワーク用
+    private bool networkCanChange = false;
 
     //  ネットワークで同期させるスキン番号
     private int networkSkinCount;
@@ -149,7 +151,7 @@ public class SelectObjectManager : NetworkBehaviour {
         //  UIを表示
         unuseUI.SetActive(true);
         //  キャラチェンジ不可能
-        canChange = false;
+        localCanChange = false;
         //  先に生成されているものがあるなら消す
         if (obj != null) Destroy(obj);
         //  使用不可能専用オブジェクトに切り替える
@@ -165,7 +167,7 @@ public class SelectObjectManager : NetworkBehaviour {
         //  UIを非表示
         unuseUI.SetActive(false);
         //  キャラチェンジ可能
-        canChange = true;
+        localCanChange = true;
         //  キャラクターを切り替える
         ChangeCharacterObject(DEFAULT_SKIN_COUNT);
         //  ステータステキストを切り替える
@@ -279,24 +281,26 @@ public class SelectObjectManager : NetworkBehaviour {
     [Command(requiresAuthority = false)]
     public void CmdPlayerChange(GameObject player) {
         //  サーバーが全員に通知
-        RpcPlayerChange(player);
+        RpcPlayerChange(player, localCharacterCount, localSkinCount, localCanChange);
     }
     //  サーバーから全員へ同期
     [ClientRpc]
-    public void RpcPlayerChange(GameObject player) {
+    public void RpcPlayerChange(GameObject player, int characterCount, int skinCount, bool canChange) {
         //  ローカルスキン番号をネットワークスキン番号に反映
-        networkSkinCount = localSkinCount;
+        networkSkinCount = skinCount;
         //  ローカルキャラクター番号をネットワークキャラクター番号に反映
-        networkCharacterCount = localCharacterCount;
+        networkCharacterCount = characterCount;
+        //  ローカルチェンジ判定をネットワークチェンジ判定に反映
+        networkCanChange = canChange;
         //  プレイヤー変更
-        PlayerChange(player, networkCharacterCount, networkSkinCount);
+        PlayerChange(player, networkCharacterCount, networkSkinCount, networkCanChange);
     }
 
     /// <summary>
     /// プレイヤーに現在のキャラクターを反映させる
     /// </summary>
     /// <param name="player"></param>
-    public void PlayerChange(GameObject player, int characterCount, int skinCount) {
+    public void PlayerChange(GameObject player, int characterCount, int skinCount, bool canChange) {
         //  チェンジ不可なら処理しない
         if (!canChange) return;
 
@@ -309,7 +313,7 @@ public class SelectObjectManager : NetworkBehaviour {
         //  スキンの番号を同期させる
         GameObject prefab = data.characters[characterCount].skins[skinCount].skinPrefab;
         //  プレイヤーの子オブジェクトに生成
-        Instantiate(prefab, spawnPos, parent.rotation, parent);
+        GameObject newSkin = Instantiate(prefab, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
         //player.GetComponent<GeneralCharacter>().StatusInport(character.statusData);
     }
