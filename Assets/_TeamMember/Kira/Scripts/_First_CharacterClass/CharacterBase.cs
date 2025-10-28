@@ -171,7 +171,8 @@ public abstract class CharacterBase : NetworkBehaviour {
             PlayerCamera playerCamera = camera.GetComponent<PlayerCamera>();
             playerCamera.enabled = true;
             //リスポーン地点に移動させる
-            StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
+            var RespownPos = StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
+            transform.position = RespownPos[(int)CurrentTeam].transform.position;
         }
     }
 
@@ -245,7 +246,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsDead = false;
         HP = MaxHP;
         //リスポーン地点に移動させる
-        StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
+        var RespownPos = StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
+        transform.position = RespownPos[(int)CurrentTeam].transform.position;
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
