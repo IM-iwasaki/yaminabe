@@ -570,6 +570,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
 
+    virtual protected void AbilityControl() {}
+
     /// <summary>
     /// 攻撃入力のハンドル分岐
     /// </summary>
@@ -618,8 +620,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 当たらなければそのままaimPoint方向
         return direction;
     }
-
-
 
     /// <summary>
     /// スキル呼び出し関数

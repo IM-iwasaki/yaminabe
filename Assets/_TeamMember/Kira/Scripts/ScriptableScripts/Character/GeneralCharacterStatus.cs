@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Character/GeneralCharacterStatus(全職業対応)")]
+[CreateAssetMenu(menuName = "Character/新規キャラクターデータ(全職業対応)")]
 public class GeneralCharacterStatus : CharacterStatus {
     //職業の割り当て
     [Tooltip("職業タイプを選択してください。\n・Melee(近接職)\n・Wizard(魔法職)\n・Gunner(間接職)")]

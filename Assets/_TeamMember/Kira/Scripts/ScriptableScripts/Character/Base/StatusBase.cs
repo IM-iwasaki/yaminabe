@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Character/StatusBase(基本的に作らないで)")]
+[CreateAssetMenu(menuName = "Character/その他/StatusBase(基本的に作らないで)")]
 public class StatusBase : ScriptableObject {
     [Header("全てのキャラクターステータスの基礎ステータス")]
     //基礎最大体力
