@@ -16,7 +16,7 @@ public abstract class PassiveBase : ScriptableObject {
     public bool IsPassiveActive;
 
     /// <summary>
-    /// Abstruct : パッシブ固有の動作(引数はパッシブの発動者)
+    /// Abstruct : パッシブ固有の動作(引数はパッシブの発動者) 毎フレーム呼ばれます。
     /// </summary>
     public abstract void PassiveReflection(CharacterBase user);
 }

@@ -16,7 +16,7 @@ public abstract class SkillBase : ScriptableObject {
     public bool IsSkillUse;
 
     /// <summary>
-    /// Abstruct : スキル固有の動作(引数はスキルの発動者。)
+    /// Abstruct : スキル固有の動作(引数はスキルの発動者。) 発火時1回のみ通過します。
     /// </summary>
     public abstract void Activate(CharacterBase user);
 }

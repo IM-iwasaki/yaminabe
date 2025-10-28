@@ -213,8 +213,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         //HP‚ÌŒ¸Zˆ—
         HP -= _damage;
         //HP‚ª0ˆÈ‰º‚É‚È‚Á‚½‚çisDead‚ğ^‚É‚·‚é
-        if (HP <= 0) RemoveBuff();
-        IsDead = true;
+        if (HP <= 0) {
+            RemoveBuff();
+            IsDead = true;
+        }
     }
 
     /// <summary>
