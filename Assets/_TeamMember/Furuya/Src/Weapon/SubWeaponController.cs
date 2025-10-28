@@ -4,7 +4,7 @@ using System.Collections;
 
 public class SubWeaponController : NetworkBehaviour {
     [Header("Sub Weapon")]
-    public SubWeaponData currentSubWeapon;
+    public SubWeaponData subWeaponData;
 
     private int currentUses;
     private bool isRecharging;
@@ -14,8 +14,8 @@ public class SubWeaponController : NetworkBehaviour {
     void Start() {
         characterBase = GetComponent<CharacterBase>();
 
-        if (currentSubWeapon != null)
-            currentUses = currentSubWeapon.startFull ? currentSubWeapon.maxUses : 0;
+        if (subWeaponData != null)
+            currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
     }
 
     void Update() {
@@ -26,18 +26,18 @@ public class SubWeaponController : NetworkBehaviour {
     }
 
     public void TryUseSubWeapon() {
-        if (currentSubWeapon == null || currentUses <= 0) return;
+        if (subWeaponData == null || currentUses <= 0) return;
         CmdUseSubWeapon();
     }
 
     [Command]
     private void CmdUseSubWeapon() {
-        if (currentSubWeapon == null || currentUses <= 0 || !isServer) return;
+        if (subWeaponData == null || currentUses <= 0 || !isServer) return;
 
         currentUses--;
 
         // ƒTƒu•Ší‚ÌŽí—Þ‚²‚Æ‚Ìˆ—
-        switch (currentSubWeapon.type) {
+        switch (subWeaponData.type) {
             case SubWeaponType.Grenade:
                 SpawnGrenade();
                 break;
@@ -58,17 +58,17 @@ public class SubWeaponController : NetworkBehaviour {
 
     [Server]
     private void SpawnGrenade() {
-        if (currentSubWeapon.ObjectPrefab == null) return;
+        if (subWeaponData.ObjectPrefab == null) return;
 
         GameObject grenadeObj = ProjectilePool.Instance.SpawnFromPool(
-            currentSubWeapon.ObjectPrefab.name,
+            subWeaponData.ObjectPrefab.name,
             transform.position + transform.forward + Vector3.up,
             Quaternion.identity
         );
 
         if (grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
             int teamID = GetComponent<CharacterBase>()?.TeamID ?? 0;
-            grenade.Init(currentSubWeapon, teamID, transform.forward);
+            grenade.Init(subWeaponData, subWeaponData.useEffectType, teamID, transform.forward);
         }
     }
 
@@ -83,8 +83,8 @@ public class SubWeaponController : NetworkBehaviour {
 
     private IEnumerator RechargeRoutine() {
         isRecharging = true;
-        while (currentUses < currentSubWeapon.maxUses) {
-            yield return new WaitForSeconds(currentSubWeapon.rechargeTime);
+        while (currentUses < subWeaponData.maxUses) {
+            yield return new WaitForSeconds(subWeaponData.rechargeTime);
             currentUses++;
         }
         isRecharging = false;

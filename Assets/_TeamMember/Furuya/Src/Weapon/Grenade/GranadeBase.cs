@@ -10,12 +10,13 @@ public class GrenadeBase : NetworkBehaviour {
 
     private Rigidbody rb;
     private bool exploded;
+    private EffectType effectType;
 
     /// <summary>
     /// 初期化
     /// </summary>
     [Server]
-    public void Init(SubWeaponData _data, int teamID, Vector3 direction) {
+    public void Init(SubWeaponData _data, EffectType hitEffect, int teamID, Vector3 direction) {
         // GrenadeDataとして扱える場合のみキャスト
         data = _data as GrenadeData;
         ownerTeamID = teamID;
@@ -29,10 +30,14 @@ public class GrenadeBase : NetworkBehaviour {
         rb.AddForce(direction.normalized * _data.throwForce + Vector3.up * arcHeight, ForceMode.VelocityChange);
 
         // 起爆タイマー（GrenadeDataの場合のみ）
-        if (data != null)
+        if (data != null) {
+            effectType = data.useEffectType;
             StartCoroutine(FuseRoutine(data.explosionDelay));
-        else
-            StartCoroutine(FuseRoutine(1.5f)); // fallback
+        }
+        else {
+            effectType = hitEffect;
+            StartCoroutine(FuseRoutine(1.5f));
+        }
     }
 
     /// <summary>
@@ -65,20 +70,19 @@ public class GrenadeBase : NetworkBehaviour {
             target.TakeDamage(data.damage);
         }
 
-        RpcPlayExplosion(pos);
+        RpcPlayExplosion(pos, effectType);
 
 #if UNITY_EDITOR
         ExplosionDebugCircle.Create(pos, radius, Color.red, 0.5f);
 #endif
     }
 
-    [ClientRpc]
-    private void RpcPlayExplosion(Vector3 pos) {
-        if (data == null || data.useEffectType == EffectType.Default) return;
-
-        GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(data.useEffectType);
+    [ClientRpc(includeOwner = true)]
+    private void RpcPlayExplosion(Vector3 pos, EffectType effectType) {
+        GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
             var fx = EffectPoolManager.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            fx.SetActive(true);
             EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
         }
     }
