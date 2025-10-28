@@ -68,6 +68,7 @@ public class CustomNetworkManager : NetworkManager {
         NetworkServer.AddPlayerForConnection(_conn, player);
 
         serverManager.connectPlayer.Add(_conn.identity);
+        ChatManager.instance.CmdSendSystemMessage("Connect Player");
     }
 
     /// <summary>
@@ -80,6 +81,10 @@ public class CustomNetworkManager : NetworkManager {
         base.OnServerDisconnect(_conn);
         Debug.Log("サーバーが切断されました！");
         //Destroy(TitleManager.instance.gameObject);
+        if (!NetworkServer.localConnection.Equals(_conn)) {
+            ChatManager.instance.CmdSendSystemMessage("Leave Player");
+            return;
+        }
         SceneManager.LoadScene("TitleScene");
     }
     /// <summary>
@@ -127,6 +132,9 @@ public class CustomNetworkManager : NetworkManager {
 
     public override void OnStopServer() {
         GameSceneManager.Instance.LoadTitleSceneForAll();
-        ChatManager.instance.CmdSendSystemMessage("Leave Host");
+    }
+
+    public override void OnStopClient() {
+        SceneManager.LoadScene("TitleScene");
     }
 }

@@ -154,6 +154,7 @@ MonoBehaviour:
   ipAddress: localhost
   isHost: 0
   isClient: 0
+  isTitle: 1
   lobbySceneName: LobbyScene
   inputField: {fileID: 723662198}
   stringIPAddress: {fileID: 708898018}
@@ -567,6 +568,10 @@ PrefabInstance:
     - target: {fileID: 66350315652334039, guid: c065ce3e1ca92694187672f3aa9d3f74, type: 3}
       propertyPath: m_Name
       value: ChatManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 66350315652334039, guid: c065ce3e1ca92694187672f3aa9d3f74, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 598275818543314391, guid: c065ce3e1ca92694187672f3aa9d3f74, type: 3}
       propertyPath: sceneId
@@ -1282,6 +1287,10 @@ PrefabInstance:
     - target: {fileID: 2666511153091077286, guid: d08b5352a94ee0f4fb65780475361aef, type: 3}
       propertyPath: m_Name
       value: TestReceiver
+      objectReference: {fileID: 0}
+    - target: {fileID: 2666511153091077286, guid: d08b5352a94ee0f4fb65780475361aef, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7475443772671817374, guid: d08b5352a94ee0f4fb65780475361aef, type: 3}
       propertyPath: sceneId
