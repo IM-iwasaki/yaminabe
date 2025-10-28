@@ -9,19 +9,19 @@ public class CustomNetworkManager : NetworkManager {
     private ServerManager serverManager = null;
 
     public override void Awake() {
-        if(TitleManager.instance == null) {
+        if (TitleManager.instance == null) {
             base.Awake();
             return;
         }
         if (TitleManager.instance.isHost)
             //ホストとして開始
             StartHost();
-        else if(TitleManager.instance.isClient){
+        else if (TitleManager.instance.isClient) {
             //クライアントとして開始
             networkAddress = TitleManager.instance.ipAddress;
             StartClient();
         }
-        
+
     }
 
     public override void OnStartServer() {
@@ -88,14 +88,29 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
-        //ゲームシーンなら
         if (newSceneName == GameSceneManager.Instance.gameSceneName) {
+            HostUI.instance.HideUI();
+            FadeManager.Instance.StartFadeIn(0.5f);
+            GameSceneManager.Instance.ResetIsChangedScene();
+        }
+
+    }
+
+    /// <summary>
+    /// シーンが完全に切り替わってから呼ばれる関数、主にゲームスタートを担う
+    /// </summary>
+    /// <param name="sceneName"></param>
+    public override void OnServerSceneChanged(string sceneName) {
+        //ゲームシーンに遷移したなら
+        if (sceneName == GameSceneManager.Instance.gameSceneName) {
             //ゲームスタート
             GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
         }
-        HostUI.instance.HideUI();
-        FadeManager.Instance.StartFadeIn(0.5f);
-        GameSceneManager.Instance.ResetIsChangedScene();
+        //ロビーシーンに遷移したなら
+        else if(sceneName == GameSceneManager.Instance.lobbySceneName) {
+
+        }
+
     }
 
     /// <summary>
@@ -106,11 +121,6 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="customHandling"></param>
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
-        ////ゲームシーンなら
-        //if(newSceneName == GameSceneManager.Instance.gameSceneName) {
-        //    //ゲームスタート
-        //    GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
-        //}
         FadeManager.Instance.StartFadeIn(0.5f);
         GameSceneManager.Instance.ResetIsChangedScene();
     }
