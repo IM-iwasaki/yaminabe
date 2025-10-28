@@ -47,7 +47,7 @@ public class PlayerUIManager : NetworkBehaviour
     private GameObject teammateUI = null;
 
     #endregion
-
+    [Server]
     private void Awake() {
         if (instance == null)
             instance = this;

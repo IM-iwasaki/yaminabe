@@ -175,11 +175,15 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     public override void OnStartClient() {
-        base.OnStartClient();
+        if (isLocalPlayer) {
+            base.OnStartClient();
         GameObject GameUIRoot = GameObject.Find("GameUI");
         var playerUI = Instantiate(UI, GameUIRoot.transform);
         UI = playerUI.GetComponent<PlayerUIManager>();
         UI.Initialize(HP);
+
+        }
+        
     }
 
     /// <summary>
