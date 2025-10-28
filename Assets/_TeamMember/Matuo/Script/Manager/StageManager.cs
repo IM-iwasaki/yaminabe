@@ -33,6 +33,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
         // ステージ生成
         currentStageInstance = Instantiate(stageData.stagePrefab);
         NetworkServer.Spawn(currentStageInstance);
+        ItemSpawnManager.Instance.SetupSpawnPoint();
 
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
