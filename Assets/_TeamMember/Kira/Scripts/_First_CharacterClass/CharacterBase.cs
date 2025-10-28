@@ -170,8 +170,9 @@ public abstract class CharacterBase : NetworkBehaviour {
             camera.enabled = true;
             PlayerCamera playerCamera = camera.GetComponent<PlayerCamera>();
             playerCamera.enabled = true;
+            //リスポーン地点に移動させる
+            StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
         }
-
     }
 
     public override void OnStartClient() {
@@ -228,12 +229,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void ChangeHP(int oldValue, int newValue) {
         if (!isLocalPlayer) return; // 自分のプレイヤーでなければUI更新しない
-        if (UI != null) {
-            UI.ChangeHPUI(MaxHP, newValue);
-        }
-        else {
-            Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
-        }
+        if (UI != null) UI.ChangeHPUI(MaxHP, newValue);
+        else Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
     }
 
 
