@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7856599488279071036
 RectTransform:
   m_ObjectHideFlags: 0
@@ -544,7 +544,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6711531482056975375
 RectTransform:
   m_ObjectHideFlags: 0
@@ -676,7 +676,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7340042263476375654
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1022,7 +1022,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7221864302422962205
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1322,9 +1322,11 @@ MonoBehaviour:
   rule: {fileID: 5732275492612238054}
   stage: {fileID: 3887334754040133668}
   unVisibleUIFromClient: {fileID: 3030213973679419518}
+  ruleIndex: 0
+  stageIndex: 0
   ruleNames:
-  - Area
   - Hoko
+  - Area
   - DeathMatch
   gameStartButton: {fileID: 1948640566221344321}
 --- !u!114 &3841287682837437633
