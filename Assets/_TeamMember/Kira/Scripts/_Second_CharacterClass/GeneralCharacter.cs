@@ -41,6 +41,9 @@ class GeneralCharacter : CharacterBase {
         Debug.Log("MeleeCharacter.cs : スキルのインポートを行いました。\nインポートしたスキル: " + string.Join(", ", EquippedSkills.Where(i => i != null).Select(i => i.SkillName)));
         EquippedPassives = RunTimeStatus.Passives;
         Debug.Log("MeleeCharacter.cs : パッシブのインポートを行いました。\nインポートしたパッシブ: " + string.Join(", ", EquippedPassives.Where(i => i != null).Select(i => i.PassiveName)));
+        // パッシブの初期セットアップ
+        //TODO: リスポーン時にパッシブの初期化を呼べるようにする。
+        EquippedPassives[0].PassiveSetting(this);
     }
 
     protected override void StartUseSkill() {

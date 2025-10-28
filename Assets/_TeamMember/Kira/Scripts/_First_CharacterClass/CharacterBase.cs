@@ -173,7 +173,6 @@ public abstract class CharacterBase : NetworkBehaviour {
             //リスポーン地点に移動させる
             StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
         }
-
     }
 
     public override void OnStartClient() {
