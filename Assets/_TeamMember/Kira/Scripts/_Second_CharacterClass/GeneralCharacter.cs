@@ -79,6 +79,7 @@ class GeneralCharacter : CharacterBase {
 
         MoveControl();
         JumpControl();
+        RespownControl();
         EquippedPassives[0].PassiveReflection(this);
     }   
 
