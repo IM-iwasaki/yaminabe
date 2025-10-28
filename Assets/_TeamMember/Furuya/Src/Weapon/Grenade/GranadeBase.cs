@@ -4,45 +4,37 @@ using System.Collections;
 using UnityEditor;
 
 public class GrenadeBase : NetworkBehaviour {
-    [Header("Sub Weapon Data")]
-    public GrenadeData data;
     [SyncVar] private int ownerTeamID;
 
     private Rigidbody rb;
     private bool exploded;
-    private EffectType effectType;
 
-    /// <summary>
-    /// 初期化
-    /// </summary>
+    // GrenadeDataから分離したパラメータ
+    private float explosionRadius;
+    private int damage;
+    private bool canDamageAllies;
+    private EffectType effectType;
+    private float explosionDelay = 1.5f;
+
     [Server]
-    public void Init(SubWeaponData _data, EffectType hitEffect, int teamID, Vector3 direction) {
-        // GrenadeDataとして扱える場合のみキャスト
-        data = _data as GrenadeData;
+    public void Init(int teamID, Vector3 direction, float throwForce, float _explosionRadius, int _damage, bool _canDamageAllies, EffectType hitEffect, float delay = 1.5f) {
         ownerTeamID = teamID;
+        explosionRadius = _explosionRadius;
+        damage = _damage;
+        canDamageAllies = _canDamageAllies;
+        effectType = hitEffect;
+        explosionDelay = delay;
 
         rb = GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        // 投擲
-        float arcHeight = _data.throwForce * 0.5f;
-        rb.AddForce(direction.normalized * _data.throwForce + Vector3.up * arcHeight, ForceMode.VelocityChange);
+        float arcHeight = throwForce * 0.5f;
+        rb.AddForce(direction.normalized * throwForce + Vector3.up * arcHeight, ForceMode.VelocityChange);
 
-        // 起爆タイマー（GrenadeDataの場合のみ）
-        if (data != null) {
-            effectType = data.useEffectType;
-            StartCoroutine(FuseRoutine(data.explosionDelay));
-        }
-        else {
-            effectType = hitEffect;
-            StartCoroutine(FuseRoutine(1.5f));
-        }
+        StartCoroutine(FuseRoutine(explosionDelay));
     }
 
-    /// <summary>
-    /// 起爆処理
-    /// </summary>
     [Server]
     private IEnumerator FuseRoutine(float delay) {
         yield return new WaitForSeconds(delay);
@@ -52,28 +44,25 @@ public class GrenadeBase : NetworkBehaviour {
 
     [Server]
     private void Explode() {
-        if (exploded || data == null) return;
+        if (exploded) return;
         exploded = true;
 
         Vector3 pos = transform.position;
-        float radius = data.explosionRadius;
-
         int bombLayer = LayerMask.GetMask("Character");
 
-        Collider[] hits = Physics.OverlapSphere(pos, radius, bombLayer);
+        Collider[] hits = Physics.OverlapSphere(pos, explosionRadius, bombLayer);
         foreach (var c in hits) {
             var target = c.GetComponent<CharacterBase>();
             if (target == null) continue;
+            if (!canDamageAllies && target.TeamID == ownerTeamID) continue;
 
-            if (!data.canDamageAllies && target.TeamID == ownerTeamID) continue;
-
-            target.TakeDamage(data.damage);
+            target.TakeDamage(damage);
         }
 
         RpcPlayExplosion(pos, effectType);
 
 #if UNITY_EDITOR
-        ExplosionDebugCircle.Create(pos, radius, Color.red, 0.5f);
+        ExplosionDebugCircle.Create(pos, explosionRadius, Color.red, 0.5f);
 #endif
     }
 
@@ -103,12 +92,10 @@ public class GrenadeBase : NetworkBehaviour {
     }
 
     void OnDrawGizmosSelected() {
-        if (data == null) return;
         Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
-        Gizmos.DrawSphere(transform.position, data.explosionRadius);
+        Gizmos.DrawSphere(transform.position, explosionRadius);
     }
 }
-
 #if UNITY_EDITOR
 
 public class ExplosionDebugCircle : MonoBehaviour {

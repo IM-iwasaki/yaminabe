@@ -67,8 +67,22 @@ public class SubWeaponController : NetworkBehaviour {
         );
 
         if (grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
-            int teamID = GetComponent<CharacterBase>()?.TeamID ?? 0;
-            grenade.Init(subWeaponData, subWeaponData.useEffectType, teamID, transform.forward);
+            int teamID = characterBase?.TeamID ?? 0;
+            GrenadeData grenadeData = subWeaponData as GrenadeData;
+            if (grenadeData == null) return;
+
+            Vector3 throwDirection = transform.forward; // ïKóvÇ…âûÇ∂Çƒí≤êÆ
+
+            grenade.Init(
+                teamID,
+                throwDirection,
+                grenadeData.throwForce,
+                grenadeData.explosionRadius,
+                grenadeData.damage,
+                grenadeData.canDamageAllies,
+                grenadeData.useEffectType,
+                grenadeData.explosionDelay
+            );
         }
     }
 
