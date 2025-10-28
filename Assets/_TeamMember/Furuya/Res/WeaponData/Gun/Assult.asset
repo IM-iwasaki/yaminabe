@@ -15,9 +15,10 @@ MonoBehaviour:
   weaponName: Assult
   type: 1
   damage: 10
-  range: 0
   cooldown: 0.2
   projectilePrefab: {fileID: 8584663488555818686, guid: 85a0d588d9638a04aaa3c1596a30a193, type: 3}
-  projectileSpeed: 5
+  projectileSpeed: 12
+  range: 0
+  meleeAngle: 0
   muzzleFlashType: 0
   hitEffectType: 0

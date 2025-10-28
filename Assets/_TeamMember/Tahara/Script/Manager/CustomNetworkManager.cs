@@ -80,6 +80,10 @@ public class CustomNetworkManager : NetworkManager {
         base.OnServerDisconnect(_conn);
         Debug.Log("サーバーが切断されました！");
         //Destroy(TitleManager.instance.gameObject);
+        if (!NetworkServer.localConnection.Equals(_conn)) {
+            ChatManager.instance.CmdSendSystemMessage("LeavePlayer");
+            return;
+        }
         SceneManager.LoadScene("TitleScene");
     }
     /// <summary>
@@ -130,7 +134,6 @@ public class CustomNetworkManager : NetworkManager {
     }
 
     public override void OnStopClient() {
-        GameSceneManager.Instance.LoadTitleSceneForAll();
-        ChatManager.instance.CmdSendSystemMessage("Leave Player");
+        SceneManager.LoadScene("TitleScene");
     }
 }
