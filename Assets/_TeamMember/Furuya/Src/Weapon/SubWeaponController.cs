@@ -75,8 +75,9 @@ public class SubWeaponController : NetworkBehaviour {
 
             grenade.Init(
                 teamID,
-                throwDirection,
+                transform.forward,
                 grenadeData.throwForce,
+                grenadeData.projectileSpeed,
                 grenadeData.explosionRadius,
                 grenadeData.damage,
                 grenadeData.canDamageAllies,

@@ -17,20 +17,20 @@ public class GrenadeBase : NetworkBehaviour {
     private float explosionDelay = 1.5f;
 
     [Server]
-    public void Init(int teamID, Vector3 direction, float throwForce, float _explosionRadius, int _damage, bool _canDamageAllies, EffectType hitEffect, float delay = 1.5f) {
+    public void Init(int teamID, Vector3 direction, float throwForce, float projectileSpeed, float explosionRadius, int damage, bool canDamageAllies, EffectType hitEffect, float delay = 1.5f) {
         ownerTeamID = teamID;
-        explosionRadius = _explosionRadius;
-        damage = _damage;
-        canDamageAllies = _canDamageAllies;
-        effectType = hitEffect;
-        explosionDelay = delay;
+        this.explosionRadius = explosionRadius;
+        this.damage = damage;
+        this.canDamageAllies = canDamageAllies;
+        this.effectType = hitEffect;
+        this.explosionDelay = delay;
 
         rb = GetComponent<Rigidbody>();
-        rb.velocity = Vector3.zero;
+        rb.velocity = direction.normalized * projectileSpeed; // èâë¨Çê›íË
         rb.angularVelocity = Vector3.zero;
 
-        float arcHeight = throwForce * 0.5f;
-        rb.AddForce(direction.normalized * throwForce + Vector3.up * arcHeight, ForceMode.VelocityChange);
+        Vector3 arcForce = direction.normalized * throwForce + Vector3.up * (throwForce * 0.5f);
+        rb.AddForce(arcForce, ForceMode.VelocityChange); // ï˙ï®ê¸Çï`Ç≠óÕÇí«â¡
 
         StartCoroutine(FuseRoutine(explosionDelay));
     }
