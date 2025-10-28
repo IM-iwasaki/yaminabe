@@ -1252,7 +1252,7 @@ PrefabInstance:
       objectReference: {fileID: 261839327}
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: spawnPrefabs.Array.size
-      value: 21
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: spawnPrefabs.Array.data[0]
@@ -1338,6 +1338,26 @@ PrefabInstance:
       propertyPath: spawnPrefabs.Array.data[20]
       value: 
       objectReference: {fileID: 4699577864840076047, guid: a2aaad977c2f02b42a83378d37c56dbd, type: 3}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[21]
+      value: 
+      objectReference: {fileID: 5141172646852832494, guid: 8a2d4c1e194b38e418983356e6874884, type: 3}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[22]
+      value: 
+      objectReference: {fileID: 5141172646852832494, guid: 70db3d2a271e49e41ae4f05d1d2f55f4, type: 3}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[23]
+      value: 
+      objectReference: {fileID: 5141172646852832494, guid: 00ed781235c86f04c9f46d3242f9f8b1, type: 3}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[24]
+      value: 
+      objectReference: {fileID: 6287281268592559782, guid: c7b92192aa1e78b479168acd4ed896d8, type: 3}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[25]
+      value: 
+      objectReference: {fileID: 7444770962804427274, guid: 3eb659f932228ff4290b4f91447a2abe, type: 3}
     - target: {fileID: 7262090746969481471, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -1763,6 +1783,18 @@ PrefabInstance:
     - target: {fileID: 4070412806797545787, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: ruleNames.Array.data[0]
+      value: DeathMatch
+      objectReference: {fileID: 0}
+    - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: ruleNames.Array.data[1]
+      value: Hoko
+      objectReference: {fileID: 0}
+    - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: ruleNames.Array.data[2]
+      value: Area
       objectReference: {fileID: 0}
     - target: {fileID: 6360244347166990274, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: m_Name
