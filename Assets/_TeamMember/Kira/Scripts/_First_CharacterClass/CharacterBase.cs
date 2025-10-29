@@ -82,7 +82,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     //移動中か
     public bool IsMoving { get; private set; } = false;
     //攻撃中か
-    public bool IsAttack { get; private set; } = false;
+    public bool IsAttackPressed { get; private set; } = false;
+    //攻撃開始時間
+    public float AttackStartTime { get; private set; } = 0;
+    //オート攻撃タイプ (デフォルトはフルオート)
+    public PlayerConst.AutoFireType AutoFireType { get; protected set; } = PlayerConst.AutoFireType.FullAutomatic;
+    // 連射間隔
+    public float FireInterval { get; private set; } = 0.2f;
 
     //アイテムを拾える状態か
     protected bool IsCanPickup { get; private set; } = false;
@@ -244,7 +250,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         RemoveBuff();       
 
         //不具合防止のためフラグをいろいろ下ろす。
-        IsAttack = false;
+        IsAttackPressed = false;
         IsCanInteruct = false;
         IsCanPickup = false;
         IsCanSkill = false;
@@ -377,7 +383,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //早期return
         if (!isLocalPlayer) return;
 
-        //switchで分岐。ここに順次追加していく。なんかうまく動いてなかったらここを下のifCompareTagに戻してみる
+        //switchで分岐。ここに順次追加していく。
         switch (_collider.tag) {
             case "Item":
                 // フラグを立てる
@@ -400,22 +406,6 @@ public abstract class CharacterBase : NetworkBehaviour {
             default:
                 break;
         }
-
-#if false
-        // ヒット対象がItemだった場合
-        if (_collider.CompareTag("Item")) {
-        }
-        // ヒット対象がSelectCharacterObjectだった場合
-        if (_collider.CompareTag("SelectCharacterObject")) {            
-        }
-        // チームチェンジ
-        if (_collider.CompareTag("RedTeam")) {
-            
-        }
-        if (_collider.CompareTag("BlueTeam")) {
-            
-        }
-#endif
     }
 
     /// <summary>
@@ -571,7 +561,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン管理関数
     /// </summary>
-    virtual protected void RespownControl() {
+    virtual protected void RespawnControl() {
         //死亡中であるときの処理
         if (IsDead) {
             //死亡してからの時間を加算
@@ -597,17 +587,46 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     private void HandleAttack(InputAction.CallbackContext context, PlayerConst.AttackType _type) {
         switch (context.phase) {
+            //押した瞬間
             case InputActionPhase.Started:
-                IsAttack = true;
+                IsAttackPressed = true;
+                //入力開始時間を記録
+                AttackStartTime = Time.time;           
+
+                //フルオート状態の場合コルーチンで射撃間隔を調整する
+                if (AutoFireType == PlayerConst.AutoFireType.FullAutomatic){
+                    Debug.Log("フルオート攻撃を開始しました。");
+
+                    StartCoroutine(AutoFire(_type)); 
+                }
                 break;
-            case InputActionPhase.Performed:
-                StartAttack(_type);
-                break;
+            //離した瞬間
             case InputActionPhase.Canceled:
-                IsAttack = false;
+                IsAttackPressed = false;
+                //入力終了時間を記録
+                float heldTime = Time.time - AttackStartTime;
+            
+
+                //セミオート状態の場合入力時間が短ければ一回攻撃
+                if (AutoFireType == PlayerConst.AutoFireType.SemiAutomatic && heldTime < 0.3f){
+                    Debug.Log("セミオート攻撃です。");
+
+                    StartAttack(_type);
+                }
                 break;
         }
     }
+
+    /// <summary>
+    /// オート攻撃のコルーチン
+    /// </summary>
+    private IEnumerator AutoFire(PlayerConst.AttackType type) {
+        while (IsAttackPressed) {
+            StartAttack(type);
+            yield return new WaitForSeconds(FireInterval);
+        }
+    }
+
     /// <summary>
     /// 攻撃関数
     /// </summary>
