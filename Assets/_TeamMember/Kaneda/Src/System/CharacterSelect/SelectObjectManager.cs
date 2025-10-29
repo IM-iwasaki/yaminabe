@@ -46,10 +46,10 @@ public class SelectObjectManager : NetworkBehaviour {
     private int ATK = 0;
     private int SPD = 0;
 
-    //  そのキャラクターにチェンジできるかどうか
-    private bool localCanChange = false;
     //  ネットワーク用
     private bool networkCanChange = false;
+    //  そのキャラクターにチェンジできるかどうか
+    private bool localCanChange = false;
 
     //  ネットワークで同期させるスキン番号
     private int networkSkinCount;

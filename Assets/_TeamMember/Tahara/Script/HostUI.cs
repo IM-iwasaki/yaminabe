@@ -66,8 +66,12 @@ public class HostUI : NetworkBehaviour {
 
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
     }
-
+    //ホストUIを非表示にさせる
     public void HideUI(){
         unVisibleUIFromClient.SetActive(false);
+    }
+    //ホストUIを表示させる
+    public void ShowUI() {
+        unVisibleUIFromClient.SetActive(true);
     }
 }
