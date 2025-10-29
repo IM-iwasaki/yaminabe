@@ -653,7 +653,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 総回復量を MaxHP の割合で計算（例：_value=0.2 → 20％回復）
         float totalHeal = MaxHP * _value;
         //  回復実行（コルーチンで回す）
-        healCoroutine = StartCoroutine(HealOverTime(_value, _usingTime));
+        healCoroutine = StartCoroutine(HealOverTime(totalHeal, _usingTime));
     }
 
     /// <summary>
@@ -662,10 +662,18 @@ public abstract class CharacterBase : NetworkBehaviour {
     private IEnumerator HealOverTime(float totalHeal, float duration) {
         float elapsed = 0f;
         float healPerSec = totalHeal / duration;
+        float healBuffer = 0f; //   小数の回復を蓄積
 
         while (elapsed < duration) {
             if (IsDead) yield break; // 死亡時は即終了
-            HP = Mathf.Min(HP + Mathf.RoundToInt(healPerSec * Time.deltaTime), MaxHP);
+
+            healBuffer += healPerSec * Time.deltaTime; // 累積
+            if (healBuffer >= 1f) {
+                int healInt = Mathf.FloorToInt(healBuffer); // 整数分だけ反映
+                HP = Mathf.Min(HP + healInt, MaxHP);
+                healBuffer -= healInt; // 余りを保持
+            }
+
             elapsed += Time.deltaTime;
             yield return null;
         }
