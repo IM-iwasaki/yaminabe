@@ -15,7 +15,7 @@ MonoBehaviour:
   subWeaponName: FlagGrenade
   type: 0
   damage: 50
-  throwForce: 15
+  throwForce: 7
   maxUses: 3
   rechargeTime: 5
   startFull: 1
@@ -23,6 +23,6 @@ MonoBehaviour:
   projectileSpeed: 10
   useEffectType: 4
   explosionRadius: 3
-  explosionDelay: 2
+  explosionDelay: 1.5
   hasExplosion: 1
   canDamageAllies: 1
