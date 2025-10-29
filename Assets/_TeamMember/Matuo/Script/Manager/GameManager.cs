@@ -8,7 +8,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [SyncVar] private bool isGameRunning = false;
     private GameTimer gameTimer;
     private RuleManager ruleManager;
-
+    
     /// <summary>
     /// ‰Šú‰»
     /// </summary>
@@ -18,7 +18,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
         gameTimer = GetComponent<GameTimer>();
         if (gameTimer == null)
             gameTimer = gameObject.AddComponent<GameTimer>();
-
         ruleManager = RuleManager.Instance;
     }
 
