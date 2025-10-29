@@ -1,3 +1,6 @@
+using UnityEngine;
+
+[CreateAssetMenu(menuName = "Character/Skill/Assault_v‘¬Ø")]
 public class Skill_Assault : SkillBase {
 
     //

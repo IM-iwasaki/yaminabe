@@ -2,6 +2,7 @@ using Mirror;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using static TeamData;
 [RequireComponent(typeof(NetworkIdentity))]
 [RequireComponent(typeof(NetworkTransformHybrid))]
@@ -146,7 +147,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             action.started += ctx => OnInputStarted(action.name, ctx);
             action.performed += ctx => OnInputPerformed(action.name, ctx);
             action.canceled += ctx => OnInputCanceled(action.name, ctx);
-        } 
+        }
         map.Enable();
 
         rigidbody = GetComponent<Rigidbody>();
@@ -170,22 +171,20 @@ public abstract class CharacterBase : NetworkBehaviour {
             camera.enabled = true;
             PlayerCamera playerCamera = camera.GetComponent<PlayerCamera>();
             playerCamera.enabled = true;
-            //リスポーン地点に移動させる
-            var RespownPos = StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
-            transform.position = RespownPos[(int)CurrentTeam].transform.position;
+
         }
     }
 
     public override void OnStartClient() {
         if (isLocalPlayer) {
             base.OnStartClient();
-        GameObject GameUIRoot = GameObject.Find("GameUI");
-        var playerUI = Instantiate(UI, GameUIRoot.transform);
-        UI = playerUI.GetComponent<PlayerUIManager>();
-        UI.Initialize(HP);
+            GameObject GameUIRoot = GameObject.Find("GameUI");
+            var playerUI = Instantiate(UI, GameUIRoot.transform);
+            UI = playerUI.GetComponent<PlayerUIManager>();
+            UI.Initialize(HP);
 
         }
-        
+
     }
 
     /// <summary>
@@ -267,12 +266,12 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //加入しようとしてるチームが埋まっていたら
         if (ServerManager.instance.teams[newTeam].teamPlayerList.Count >= TEAMMATE_MAX) {
-            Debug.Log("チームの人数が最大です！");
+            ChatManager.instance.CmdSendSystemMessage("team member is over");
             return;
         }
         //既に同じチームに入っていたら
         if (newTeam == currentTeam) {
-            Debug.Log("今そのチームにいます!");
+            ChatManager.instance.CmdSendSystemMessage("you join same team now");
             return;
         }
         //新たなチームに加入する時
@@ -283,7 +282,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.TeamID = newTeam;
         //ログを表示
-        Debug.Log(_player.ToString() + "は" + newTeam + "番目のチームに加入しました！");
+        ChatManager.instance.CmdSendSystemMessage(_player.ToString() + "is joined" + newTeam + "team");
     }
 
     #endregion
@@ -313,7 +312,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
         switch (actionName) {
             case "Move":
-                OnMove(ctx);  
+                OnMove(ctx);
                 break;
             case "Jump":
                 OnJump(ctx);
@@ -459,7 +458,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// サブ攻撃(現在未使用)
     /// </summary
     public void OnAttack_Sub(InputAction.CallbackContext context) {
-       　HandleAttack(context, PlayerConst.AttackType.Sub);
+        HandleAttack(context, PlayerConst.AttackType.Sub);
     }
     /// <summary>
     /// スキル
@@ -536,7 +535,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (rigidbody.velocity.y > 0) {
             //追加の重力補正を掛ける
             rigidbody.velocity += (PlayerConst.JUMP_UPFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
-        } 
+        }
         // ベクトルが下方向に働いている時
         else if (rigidbody.velocity.y < 0) {
             //追加の重力補正を掛ける
@@ -569,6 +568,8 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
         }
     }
+
+    virtual protected void AbilityControl() {}
 
     /// <summary>
     /// 攻撃入力のハンドル分岐
@@ -618,8 +619,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 当たらなければそのままaimPoint方向
         return direction;
     }
-
-
 
     /// <summary>
     /// スキル呼び出し関数
@@ -700,7 +699,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
 
- /// <summary>
+    /// <summary>
     ///  時間まで移動速度を上げておく実行処理（コルーチン）
     /// </summary>
     private IEnumerator SpeedBuffRoutine(float value, float duration) {

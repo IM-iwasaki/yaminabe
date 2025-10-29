@@ -5,13 +5,19 @@ using UnityEngine;
 /// </summary>
 public abstract class PassiveBase : ScriptableObject {
     //パッシブ名(ゲーム内で表示する名前)
+    [Tooltip("パッシブ名を入力してください。\n日本語でも構いません。")]
     public string PassiveName;
     //パッシブ説明(同じくゲーム内で表示)
-    public string PassiveDescription;
+    [Tooltip("パッシブの説明文を入力してください。\n日本語でも構いません。")]
+    [TextArea(3, 6)]public string PassiveDescription;
     //パッシブのアイコン用
+    [Tooltip("パッシブのアイコンを割り当ててください。")]
     public Sprite PassiveIcon;
-    //パッシブのクールタイム
+    //パッシブが再発動可能になるまでの時間
+    [Tooltip("[任意]クールダウンを設定できます。\n(必要に応じて入力してください。)")]
     public float Cooldown;
+    //パッシブクールタダウン計測用
+    [System.NonSerialized]public float CoolTime;
     //パッシブが発動中か
     public bool IsPassiveActive;
 

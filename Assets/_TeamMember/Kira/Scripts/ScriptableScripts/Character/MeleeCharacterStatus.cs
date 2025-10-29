@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Character/old/MeleeCharacterStatus(‹ßÚE)")]
+[CreateAssetMenu(menuName = "Character/‚»‚Ì‘¼/MeleeCharacterStatus(‹ßÚE)")]
 public class MeleeCharacterStatus : CharacterStatus {
     //E‹Æ‚ÌŠ„‚è“–‚Ä
     [Tooltip("E‹Æƒ^ƒCƒv‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B\nEMelee(‹ßÚE)\nEWizard(–‚–@E)\nEGunner(ŠÔÚE)")]
