@@ -29,9 +29,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     //最大の体力
     public int MaxHP { get; protected set; }
     //基礎攻撃力
-    public int Attack { get; protected set; }
+    [SyncVar] public int Attack;
     //移動速度
-    public int MoveSpeed { get; protected set; } = 5;
+    [SyncVar]public int MoveSpeed = 5;
     //持っている武器の文字列
     public string CurrentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
@@ -647,7 +647,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// HP回復（時間経過で徐々に回復）発動
     /// </summary>
-    [Server]public void Heal(float _value, float _usingTime) {
+    [Command]public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
         // 総回復量を MaxHP の割合で計算（例：_value=0.2 → 20％回復）
@@ -684,7 +684,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃力上昇バフ発動
     /// </summary>
-    [Server]
+    [Command]
     public void AttackBuff(float _value, float _usingTime) {
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
@@ -703,7 +703,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 移動速度上昇バフ発動
     /// </summary>
-    [Server]
+    [Command]
     public void MoveSpeedBuff(float _value, float _usingTime) {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
@@ -722,7 +722,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// すべてのバフを即解除
     /// </summary>
-    [Server]public void RemoveBuff() {
+    [Command]public void RemoveBuff() {
         StopAllCoroutines();
         MoveSpeed = defaultMoveSpeed;
         Attack = defaultAttack;
