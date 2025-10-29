@@ -28,6 +28,7 @@ public class HostUI : NetworkBehaviour {
         //NetworkServer.Spawn(gameObject);
         if (!isServer) {
             unVisibleUIFromClient.SetActive(false);
+            return;
         }
         if (GameSceneManager.Instance != null) {
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);

@@ -42,7 +42,7 @@ public class SubWeaponController : NetworkBehaviour {
                 SpawnGrenade();
                 break;
             case SubWeaponType.Trap:
-                // Trap用処理（未実装）
+                SpawnTrap();
                 break;
             case SubWeaponType.Item:
                 // アイテム処理（未実装）
@@ -75,8 +75,9 @@ public class SubWeaponController : NetworkBehaviour {
 
             grenade.Init(
                 teamID,
-                throwDirection,
+                transform.forward,
                 grenadeData.throwForce,
+                grenadeData.projectileSpeed,
                 grenadeData.explosionRadius,
                 grenadeData.damage,
                 grenadeData.canDamageAllies,
@@ -86,13 +87,38 @@ public class SubWeaponController : NetworkBehaviour {
         }
     }
 
-
     [Server]
-    private IEnumerator ServerFuse(GrenadeBase grenade, float delay) {
-        yield return new WaitForSeconds(delay);
-        // GrenadeBase内の爆発を呼び出し
-        var explodeMethod = grenade.GetType().GetMethod("Explode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        explodeMethod?.Invoke(grenade, null);
+    private void SpawnTrap() {
+        if (subWeaponData.ObjectPrefab == null) return;
+
+        GameObject trapObj = ProjectilePool.Instance.SpawnFromPool(
+            subWeaponData.ObjectPrefab.name,
+            transform.position,
+            Quaternion.identity
+        );
+
+        if (trapObj.TryGetComponent(out LandMine mine)) {
+            int teamID = characterBase?.TeamID ?? 0;
+            LandMineData landMineData = subWeaponData as LandMineData;
+            if (landMineData == null) return;
+
+            TrapInitData trapInit = new TrapInitData {
+                teamID = teamID,
+                activationDelay = landMineData.activationDelay,
+                activationOnce = landMineData.activationOnce,
+                activationEffect = landMineData.activationEffect,
+                duration = landMineData.duration
+            };
+
+            mine.Init(
+                trapInit,
+                landMineData.explosionRadius,
+                landMineData.damage,
+                landMineData.canDamageAllies,
+                landMineData.useEffectType,
+                landMineData.explosionDelay
+            );
+        }
     }
 
     private IEnumerator RechargeRoutine() {
