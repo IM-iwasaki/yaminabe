@@ -36,7 +36,7 @@ public class ResultManager : NetworkBehaviour {
     [SerializeField] private Button returnLobbyButton; // ロビー戻りボタン（ホスト専用）
     [SerializeField] private GameObject backgroundBlocker; // 背景半透明で操作ブロック
 
-    private bool isResultActive = false;
+    private bool isResultActive = true;
 
     void Start() {
         if (resultPanel != null)
