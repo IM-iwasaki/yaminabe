@@ -12,7 +12,7 @@ public class ObjectManager : NetworkSystemObject<ObjectManager> {
 
     public override void Initialize() {
         base.Initialize();
-        ruleManager = FindAnyObjectByType<RuleManager>();
+        ruleManager = RuleManager.Instance;
     }
 
     /// <summary>

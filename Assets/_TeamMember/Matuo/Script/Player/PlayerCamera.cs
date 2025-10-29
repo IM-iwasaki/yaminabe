@@ -50,6 +50,12 @@ public class PlayerCamera : MonoBehaviour {
         targetOffset = normalOffset;
     }
 
+    private void OnEnable() {
+        // シーン遷移後も透明化対象レイヤーを再設定
+        if (transparentMask == 0)
+            transparentMask = LayerMask.GetMask("Default", "Ground");
+    }
+
     /// <summary>
     /// 入力アクションシステム
     /// </summary>
@@ -130,50 +136,65 @@ public class PlayerCamera : MonoBehaviour {
     }
 
     /// <summary>
-    /// プレイヤーとカメラの間にある障害物を半透明化
+    /// プレイヤーとカメラの間、またはカメラ内部にある障害物を半透明化
     /// </summary>
     private void HandleTransparency(Vector3 playerPos, Vector3 cameraPos) {
-        // カメラ方向のベクトル
+        if (player == null) return;
+
         Vector3 dir = playerPos - cameraPos;
-        float dist = Vector3.Distance(playerPos, cameraPos);
+        float dist = dir.magnitude;
 
-        // レイキャストで間にある全障害物を取得
-        RaycastHit[] hits = Physics.RaycastAll(cameraPos, dir.normalized, dist, transparentMask);
-
-        // 今フレームでヒットしたRendererを記録
+        // カメラとプレイヤー間、及びカメラ内部の障害物を検出
         HashSet<Renderer> hitRenderers = new();
-        foreach (var hit in hits) {
-            Renderer r = hit.collider.GetComponent<Renderer>();
-            if (!r) continue;
-            hitRenderers.Add(r);
 
-            // 初回ヒットなら登録
-            if (!fadingObjects.ContainsKey(r)) {
-                float baseAlpha = GetRendererAlpha(r);
-                fadingObjects[r] = (baseAlpha, baseAlpha);
-            }
+        // RaycastAll（カメラ→プレイヤー方向）
+        RaycastHit[] hits = Physics.RaycastAll(cameraPos, dir.normalized, dist, transparentMask);
+        foreach (var hit in hits) {
+            Renderer r = hit.collider != null ? hit.collider.GetComponent<Renderer>() : null;
+            if (r) hitRenderers.Add(r);
         }
 
-        // 登録済み全オブジェクトのアルファ値を更新
-        List<Renderer> keys = new(fadingObjects.Keys); // 列挙中の変更を避けるためコピー
+        // OverlapSphere（カメラ内部）
+        Collider[] overlaps = Physics.OverlapSphere(cameraPos, 0.3f, transparentMask);
+        foreach (var col in overlaps) {
+            Renderer r = col != null ? col.GetComponent<Renderer>() : null;
+            if (r) hitRenderers.Add(r);
+        }
+
+        // 登録済みRendererのフェード更新
+        List<Renderer> keys = new(fadingObjects.Keys);
+        List<Renderer> toRemove = new();
+
         foreach (Renderer r in keys) {
-            if (!r) { fadingObjects.Remove(r); continue; }
+            if (r == null) {
+                toRemove.Add(r);
+                continue;
+            }
 
             // 現在と元のアルファ値を取得
             (float current, float original) data = fadingObjects[r];
+            bool isHit = hitRenderers.Contains(r);
+            float targetAlpha = isHit ? fadeAlpha : data.original;
 
-            // 現在ヒット中ならfadeAlphaへ、ヒットしていなければ元に戻す
-            float targetAlpha = hitRenderers.Contains(r) ? fadeAlpha : data.original;
-
-            // スムーズに目標アルファへ移行
-            data.current = Mathf.MoveTowards(data.current, targetAlpha, Time.deltaTime * fadeSpeed);
-            SetRendererAlpha(r, data.current); // 実際に透明度を反映
+            data.current = Mathf.MoveTowards(data.current, targetAlpha, fadeSpeed * Time.deltaTime);
+            SetRendererAlpha(r, data.current);
             fadingObjects[r] = data;
 
-            // 元のアルファに戻ったら削除
-            if (!hitRenderers.Contains(r) && Mathf.Approximately(data.current, data.original))
-                fadingObjects.Remove(r);
+            if (!isHit && Mathf.Approximately(data.current, data.original))
+                toRemove.Add(r);
         }
+
+        // 新しくヒットしたRendererを登録
+        foreach (Renderer r in hitRenderers) {
+            if (!r || fadingObjects.ContainsKey(r)) continue;
+
+            float baseAlpha = GetRendererAlpha(r);
+            fadingObjects[r] = (baseAlpha, baseAlpha);
+        }
+
+        // 不要なRendererを削除
+        foreach (Renderer r in toRemove)
+            fadingObjects.Remove(r);
     }
 
     #region マテリアル設定

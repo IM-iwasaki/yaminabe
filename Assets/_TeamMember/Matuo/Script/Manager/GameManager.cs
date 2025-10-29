@@ -1,4 +1,3 @@
-using UnityEngine;
 using Mirror;
 
 /// <summary>
@@ -9,7 +8,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [SyncVar] private bool isGameRunning = false;
     private GameTimer gameTimer;
     private RuleManager ruleManager;
-
+    
     /// <summary>
     /// èâä˙âª
     /// </summary>
@@ -19,8 +18,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
         gameTimer = GetComponent<GameTimer>();
         if (gameTimer == null)
             gameTimer = gameObject.AddComponent<GameTimer>();
-
-        ruleManager = FindAnyObjectByType<RuleManager>();
+        ruleManager = RuleManager.Instance;
     }
 
     /// <summary>

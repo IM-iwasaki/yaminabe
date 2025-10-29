@@ -7,11 +7,23 @@ using System;
 /// GameManagerと連携して使用
 /// </summary>
 public class GameTimer : NetworkBehaviour {
+    public static GameTimer Instance { get; private set; }
+
     [Header("制限時間(秒)")]
     [SerializeField] private float limitTime = 180f; // (仮で3分想定)
 
     [SyncVar] private float elapsedTime = 0f; // サーバーとクライアントで同期
     private bool isRunning = false;
+
+    // シングルトン
+    private void Awake() {
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
 
     /// <summary>
     /// タイマー終了時に発火するイベント
