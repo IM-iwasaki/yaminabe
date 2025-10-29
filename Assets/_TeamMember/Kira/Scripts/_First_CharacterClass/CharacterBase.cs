@@ -34,7 +34,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     //持っている武器の文字列
     public string CurrentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
-    [SyncVar] public teamColor CurrentTeam = teamColor.Invalid;
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
     //TODO:プレイヤーセーブデータから取得できるようにする。
@@ -267,8 +266,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         GetComponent<CapsuleCollider>().enabled = true;
 
         //リスポーン地点に移動させる
-        var RespownPos = StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
-        transform.position = RespownPos[(int)CurrentTeam].transform.position;
+        var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
+        transform.position = RespownPos[TeamID].transform.position;
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
