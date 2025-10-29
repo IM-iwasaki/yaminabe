@@ -7,6 +7,5 @@ public class LandMineData : TrapData
 {
     [Header("Explosion Settings")]
     public float explosionRadius = 3f;
-    public float explosionDelay = 1.5f;
     public bool canDamageAllies = false;
 }

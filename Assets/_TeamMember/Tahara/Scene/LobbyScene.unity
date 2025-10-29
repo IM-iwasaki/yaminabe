@@ -1361,7 +1361,7 @@ PrefabInstance:
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: spawnPrefabs.Array.data[26]
       value: 
-      objectReference: {fileID: 1747213394398104124, guid: f76428efcb737104d8182caebe2778f4, type: 3}
+      objectReference: {fileID: 8826065376023065134, guid: c34c1e93a4dd83041a561226f48b238a, type: 3}
     - target: {fileID: 7262090746969481471, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -5330,6 +5330,14 @@ PrefabInstance:
     - target: {fileID: 4896768375743103973, guid: be4a5d2a2b7e1bc449865b311337a773, type: 3}
       propertyPath: m_Name
       value: ProjectilePool
+      objectReference: {fileID: 0}
+    - target: {fileID: 5325039117414183919, guid: be4a5d2a2b7e1bc449865b311337a773, type: 3}
+      propertyPath: pools.Array.data[3].name
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5325039117414183919, guid: be4a5d2a2b7e1bc449865b311337a773, type: 3}
+      propertyPath: pools.Array.data[3].size
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5345848388513484871, guid: be4a5d2a2b7e1bc449865b311337a773, type: 3}
       propertyPath: m_LocalPosition.x

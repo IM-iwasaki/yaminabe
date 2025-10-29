@@ -19,14 +19,13 @@ MonoBehaviour:
   maxUses: 3
   rechargeTime: 0.1
   startFull: 1
-  ObjectPrefab: {fileID: 1747213394398104124, guid: f76428efcb737104d8182caebe2778f4, type: 3}
+  ObjectPrefab: {fileID: 8826065376023065134, guid: c34c1e93a4dd83041a561226f48b238a, type: 3}
   projectileSpeed: 15
   useEffectType: 4
   trapType: 2
-  duration: 10
-  activationDelay: 10
+  duration: 5
+  activationDelay: 1
   activationOnce: 1
   activationEffect: 4
   explosionRadius: 3
-  explosionDelay: 1.5
   canDamageAllies: 1

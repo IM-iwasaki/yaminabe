@@ -91,33 +91,37 @@ public class SubWeaponController : NetworkBehaviour {
     private void SpawnTrap() {
         if (subWeaponData.ObjectPrefab == null) return;
 
-        GameObject trapObj = ProjectilePool.Instance.SpawnFromPool(
-            subWeaponData.ObjectPrefab.name,
-            transform.position,
-            Quaternion.identity
-        );
+        Vector3 origin = transform.position + Vector3.up * 0.5f; // è≠Çµè„Ç©ÇÁRayÇîÚÇŒÇ∑
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 2f, LayerMask.GetMask("Ground"))) {
+            Vector3 spawnPos = hit.point;
 
-        if (trapObj.TryGetComponent(out LandMine mine)) {
-            int teamID = characterBase?.TeamID ?? 0;
-            LandMineData landMineData = subWeaponData as LandMineData;
-            if (landMineData == null) return;
-
-            TrapInitData trapInit = new TrapInitData {
-                teamID = teamID,
-                activationDelay = landMineData.activationDelay,
-                activationOnce = landMineData.activationOnce,
-                activationEffect = landMineData.activationEffect,
-                duration = landMineData.duration
-            };
-
-            mine.Init(
-                trapInit,
-                landMineData.explosionRadius,
-                landMineData.damage,
-                landMineData.canDamageAllies,
-                landMineData.useEffectType,
-                landMineData.explosionDelay
+            GameObject trapObj = ProjectilePool.Instance.SpawnFromPool(
+                subWeaponData.ObjectPrefab.name,
+                spawnPos,
+                Quaternion.identity
             );
+
+            if (trapObj.TryGetComponent(out LandMine mine)) {
+                int teamID = characterBase?.TeamID ?? 0;
+                LandMineData landMineData = subWeaponData as LandMineData;
+                if (landMineData == null) return;
+
+                TrapInitData trapInit = new TrapInitData {
+                    teamID = teamID,
+                    activationDelay = landMineData.activationDelay,
+                    activationOnce = landMineData.activationOnce,
+                    activationEffect = landMineData.activationEffect,
+                    duration = landMineData.duration
+                };
+
+                mine.Init(
+                    trapInit,
+                    landMineData.explosionRadius,
+                    landMineData.damage,
+                    landMineData.canDamageAllies,
+                    landMineData.useEffectType
+                );
+            }
         }
     }
 

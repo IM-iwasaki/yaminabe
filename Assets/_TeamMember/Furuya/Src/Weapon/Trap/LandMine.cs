@@ -8,25 +8,25 @@ public class LandMine : TrapBase {
     private int damage;
     private bool canDamageAllies;
     private EffectType explosionEffect;
-    private float explosionDelay;
 
     [Server]
     public void Init(
-        TrapInitData trapData,
-        float explosionRadius,
-        int damage,
-        bool canDamageAllies,
-        EffectType explosionEffect,
-        float explosionDelay
-    ) {
+    TrapInitData trapData,
+    float explosionRadius,
+    int damage,
+    bool canDamageAllies,
+    EffectType explosionEffect
+) {
         base.Init(trapData);
         this.explosionRadius = explosionRadius;
         this.damage = damage;
         this.canDamageAllies = canDamageAllies;
         this.explosionEffect = explosionEffect;
-        this.explosionDelay = explosionDelay;
 
-        StartCoroutine(TimerExplosionRoutine(explosionDelay));
+        hasTriggered = false;
+        isActivated = false;
+
+        StartCoroutine(TimerExplosionRoutine(trapData.duration));
     }
 
     [ServerCallback]
