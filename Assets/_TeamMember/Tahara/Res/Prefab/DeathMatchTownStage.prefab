@@ -1087,6 +1087,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3932675878470764809}
     m_Modifications:
+    - target: {fileID: 2843848151229519065, guid: 86600c3444298794d8c3ef6312f4c8d5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016033115498769091, guid: 86600c3444298794d8c3ef6312f4c8d5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7838013046057087127, guid: 86600c3444298794d8c3ef6312f4c8d5, type: 3}
       propertyPath: m_Name
       value: RespawnPoints

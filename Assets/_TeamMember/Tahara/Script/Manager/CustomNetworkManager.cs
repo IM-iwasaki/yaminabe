@@ -117,6 +117,8 @@ public class CustomNetworkManager : NetworkManager {
                 int teamID = character.TeamID;
                 NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
                 //各リスポーン地点に転送
+                if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch)
+                    teamID = -1;
                 var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)teamID);
                 startPos.ServerTeleport(RespawnPos[Random.Range(0,RespawnPos.Count)].position,Quaternion.identity);
             }
