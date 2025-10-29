@@ -32,7 +32,7 @@ public class GameUIManager : NetworkBehaviour {
     }
 
     private void Start() {
-        gameTimer = FindObjectOfType<GameTimer>();
+        gameTimer = GameTimer.Instance;
         ruleManager = RuleManager.Instance;
 
         if (gameTimer == null)
