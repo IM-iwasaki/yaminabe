@@ -2,7 +2,6 @@ using Mirror;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using static TeamData;
 [RequireComponent(typeof(NetworkIdentity))]
 [RequireComponent(typeof(NetworkTransformHybrid))]
@@ -217,7 +216,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (_damage <= 0) _damage = 1;
         //HPの減算処理
         HP -= _damage;
-        //HPが0以下になったらisDeadを真にする
+        //HPが0以下になったら死亡処理を行う
         if (HP <= 0) {
             RemoveBuff();
             IsDead = true;
@@ -233,6 +232,26 @@ public abstract class CharacterBase : NetworkBehaviour {
         else Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
     }
 
+    /// <summary>
+    /// 死亡時処理
+    /// </summary>
+    public void Dead() {
+        //死亡フラグをたててHPを0にしておく
+        IsDead = false;
+        HP = 0;
+        //当たり判定を無効
+        GetComponent<CapsuleCollider>().enabled = false;
+        //バフ全解除
+        RemoveBuff();       
+
+        //不具合防止のためフラグをいろいろ下ろす。
+        IsAttack = false;
+        IsCanInteruct = false;
+        IsCanPickup = false;
+        IsCanSkill = false;
+        IsJumpPressed = false;
+        IsMoving = false;
+    }
 
     /// <summary>
     /// リスポーン関数
@@ -241,9 +260,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         //死んでいなかったら即抜け
         if (!IsDead) return;
 
-        //復活させる
+        //復活させてHPを全回復
         IsDead = false;
         HP = MaxHP;
+        //当たり判定を有効化
+        GetComponent<CapsuleCollider>().enabled = true;
+
         //リスポーン地点に移動させる
         var RespownPos = StageManager.Instance.GetTeamSpawnPoints(CurrentTeam);
         transform.position = RespownPos[(int)CurrentTeam].transform.position;
@@ -645,7 +667,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region ～バフ・ステータス操作系～
     /// <summary>
-    /// HP回復（時間経過で徐々に回復）発動
+    /// HP回復(時間経過で徐々に回復)発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
     [Command]public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
@@ -657,7 +679,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    ///  時間まで徐々に回復させていく実行処理（コルーチン）
+    ///  時間まで徐々に回復させていく実行処理(コルーチン)
     /// </summary>
     private IEnumerator HealOverTime(float totalHeal, float duration) {
         float elapsed = 0f;
@@ -682,7 +704,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 攻撃力上昇バフ発動
+    /// 攻撃力上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
     [Command]
     public void AttackBuff(float _value, float _usingTime) {
@@ -691,7 +713,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    ///  時間まで攻撃力を上げておく実行処理（コルーチン）
+    ///  時間まで攻撃力を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator AttackBuffRoutine(float value, float duration) {
         Attack = Mathf.RoundToInt(defaultAttack * value);
@@ -701,7 +723,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 移動速度上昇バフ発動
+    /// 移動速度上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
     [Command]
     public void MoveSpeedBuff(float _value, float _usingTime) {
@@ -710,7 +732,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    ///  時間まで移動速度を上げておく実行処理（コルーチン）
+    ///  時間まで移動速度を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator SpeedBuffRoutine(float value, float duration) {
         MoveSpeed = Mathf.RoundToInt(defaultMoveSpeed * value);
