@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5763727530079539352}
   - component: {fileID: 4497223156217487550}
   - component: {fileID: 5093434275483911014}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TestHealingItem
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -102,6 +102,10 @@ PrefabInstance:
     - target: {fileID: 1000010714891294, guid: 5a0537415d4017c4fad7a4986f502dc1, type: 3}
       propertyPath: m_Name
       value: Heart
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010714891294, guid: 5a0537415d4017c4fad7a4986f502dc1, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4000013886378248, guid: 5a0537415d4017c4fad7a4986f502dc1, type: 3}
       propertyPath: m_LocalScale.x
