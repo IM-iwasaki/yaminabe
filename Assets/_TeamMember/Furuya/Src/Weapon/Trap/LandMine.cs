@@ -57,6 +57,6 @@ public class LandMine : TrapBase {
         }
 
         RpcPlayEffect(transform.position, explosionEffect);
-        NetworkServer.Destroy(gameObject);
+        ProjectilePool.Instance.DespawnToPool(gameObject);
     }
 }
