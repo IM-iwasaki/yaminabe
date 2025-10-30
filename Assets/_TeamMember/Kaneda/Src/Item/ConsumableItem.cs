@@ -47,8 +47,6 @@ public class ConsumableItem : ItemBase {
 
         // 使用後にアイテムを削除
         Destroy(gameObject);
-        //  ネットワーク処理後にコメントを外してこっちを使用する
-        //SpawnManager.Instance.DestroyNetworkObject(gameObject);
 
     }
 }

@@ -93,9 +93,9 @@ public class MagicProjectile : NetworkBehaviour {
 
         GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
-            var fx = EffectPoolManager.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
-            EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
+            WeaponEffectPool.Instance.ReturnToPool(fx, 1.5f);
         }
     }
 }

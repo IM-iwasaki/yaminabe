@@ -31,9 +31,9 @@ public abstract class TrapBase : NetworkBehaviour {
     protected void RpcPlayEffect(Vector3 pos, EffectType effectType) {
         var fx = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
         if (fx != null) {
-            var instance = EffectPoolManager.Instance.GetFromPool(fx, pos, Quaternion.identity);
+            var instance = WeaponEffectPool.Instance.GetFromPool(fx, pos, Quaternion.identity);
             instance.SetActive(true);
-            EffectPoolManager.Instance.ReturnToPool(instance, 1.5f);
+            WeaponEffectPool.Instance.ReturnToPool(instance, 1.5f);
         }
     }
 }

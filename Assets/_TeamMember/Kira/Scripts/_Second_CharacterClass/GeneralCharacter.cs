@@ -79,12 +79,12 @@ class GeneralCharacter : CharacterBase {
 
         MoveControl();
         JumpControl();
-        RespownControl();
+        RespawnControl();
         AbilityControl();
     }
 
-    protected override void RespownControl() {
-        base.RespownControl();
+    protected override void RespawnControl() {
+        base.RespawnControl();
         EquippedPassives[0].PassiveSetting(this);
     }
 
