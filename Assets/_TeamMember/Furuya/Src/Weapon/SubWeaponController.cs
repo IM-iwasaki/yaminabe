@@ -66,16 +66,18 @@ public class SubWeaponController : NetworkBehaviour {
             Quaternion.identity
         );
 
-        if (grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
-            int teamID = characterBase?.TeamID ?? 0;
-            GrenadeData grenadeData = subWeaponData as GrenadeData;
-            if (grenadeData == null) return;
+        int teamID = characterBase?.TeamID ?? 0;
+        Vector3 throwDirection = transform.forward;
 
-            Vector3 throwDirection = transform.forward; // •K—v‚É‰‚¶‚Ä’²®
-
+        // SmokeGrenade ‚Ìê‡
+        if (subWeaponData is SmokeData smokeData && grenadeObj.TryGetComponent(out SmokeGrenade smokeGrenade)) {
+            smokeGrenade.Init(smokeData, teamID, throwDirection);
+        }
+        // ’Êí‚Ì Grenade ‚Ìê‡
+        else if (subWeaponData is GrenadeData grenadeData && grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
             grenade.Init(
                 teamID,
-                transform.forward,
+                throwDirection,
                 grenadeData.throwForce,
                 grenadeData.projectileSpeed,
                 grenadeData.explosionRadius,
