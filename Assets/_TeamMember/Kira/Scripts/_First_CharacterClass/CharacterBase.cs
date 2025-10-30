@@ -68,8 +68,6 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region ～状態管理・コンポーネント変数～
 
-    //プレイヤーの状態
-
     //死亡しているか
     protected bool IsDead { get; private set; } = false;
     //死亡してからの経過時間
@@ -221,11 +219,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (_damage <= 0) _damage = 1;
         //HPの減算処理
         HP -= _damage;
-        //HPが0以下になったら死亡処理を行う
-        if (HP <= 0) {
-            RemoveBuff();
-            IsDead = true;
-        }
+        //HPが0以下になったとき死亡していなかったら死亡処理を行う
+        if (HP <= 0 && !IsDead) Dead();
     }
 
     /// <summary>
@@ -620,9 +615,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// オート攻撃のコルーチン
     /// </summary>
-    private IEnumerator AutoFire(PlayerConst.AttackType type) {
+    private IEnumerator AutoFire(PlayerConst.AttackType _type) {
         while (IsAttackPressed) {
-            StartAttack(type);
+            Debug.Log("オート攻撃中...");
+            StartAttack(_type);
             yield return new WaitForSeconds(FireInterval);
         }
     }
