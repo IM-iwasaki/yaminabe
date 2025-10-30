@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectPoolManager : NetworkBehaviour {
-    public static EffectPoolManager Instance;
+public class WeaponEffectPool : NetworkBehaviour {
+    public static WeaponEffectPool Instance;
 
     [System.Serializable]
     public class PoolItem {
-        public string name;
+        //public string name;
         public GameObject prefab;
         public int size;
     }
@@ -27,7 +27,7 @@ public class EffectPoolManager : NetworkBehaviour {
                 obj.SetActive(false);
                 objectPool.Enqueue(obj);
             }
-            poolDictionary.Add(pool.name, objectPool);
+            poolDictionary.Add(pool.prefab.name, objectPool);
         }
     }
 

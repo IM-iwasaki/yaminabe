@@ -125,8 +125,8 @@ public class MainWeaponController : NetworkBehaviour {
     void RpcSpawnHitEffect(Vector3 pos, EffectType type) {
         GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(type);
         if (prefab != null) {
-            var fx = EffectPoolManager.Instance.GetFromPool(prefab, pos, Quaternion.identity);
-            EffectPoolManager.Instance.ReturnToPool(fx, 1.5f);
+            var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            WeaponEffectPool.Instance.ReturnToPool(fx, 1.5f);
         }
     }
 
@@ -135,8 +135,8 @@ public class MainWeaponController : NetworkBehaviour {
     void RpcPlayMuzzleFlash(Vector3 pos, EffectType type) {
         GameObject prefab = WeaponPoolRegistry.Instance.GetMuzzleFlash(type);
         if (prefab != null) {
-            var fx = EffectPoolManager.Instance.GetFromPool(prefab, pos, Quaternion.identity);
-            EffectPoolManager.Instance.ReturnToPool(fx, 0.8f);
+            var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            WeaponEffectPool.Instance.ReturnToPool(fx, 0.8f);
         }
     }
 
