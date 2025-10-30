@@ -2,6 +2,7 @@ using Mirror;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using static TeamData;
 [RequireComponent(typeof(NetworkIdentity))]
 [RequireComponent(typeof(NetworkTransformHybrid))]
@@ -483,7 +484,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     public void OnShowHostUI(InputAction.CallbackContext context) {
-        if (!isServer || !isLocalPlayer) return;
+        if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
         if (context.started) HostUI.instance.isVisibleUI = !HostUI.instance.isVisibleUI;
     }
 
