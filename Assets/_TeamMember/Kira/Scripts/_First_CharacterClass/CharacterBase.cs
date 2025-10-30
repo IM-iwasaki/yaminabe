@@ -494,7 +494,10 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     public void OnShowHostUI(InputAction.CallbackContext context) {
         if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
-        if (context.started) HostUI.instance.isVisibleUI = !HostUI.instance.isVisibleUI;
+        if (context.started) {
+            HostUI.isVisibleUI = !HostUI.isVisibleUI;
+            HostUI.ShowOrHideUI(HostUI.isVisibleUI);
+        }
     }
 
     /// <summary>

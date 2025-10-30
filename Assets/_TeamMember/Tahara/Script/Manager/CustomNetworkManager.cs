@@ -95,7 +95,6 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
         if (newSceneName == GameSceneManager.Instance.gameSceneName) {
-            HostUI.instance.isVisibleUI = false;
             FadeManager.Instance.StartFadeIn(0.5f);
             GameSceneManager.Instance.ResetIsChangedScene();
         }
