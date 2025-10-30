@@ -28,7 +28,7 @@ public abstract class CaptureObjectBase : NetworkBehaviour {
 
         float progress = CalculateProgress();
         if (progress > 0f && ownerTeamId >= 0) {
-            objectManager?.NotifyCaptureProgress(ownerTeamId, progress);
+            objectManager?.NotifyCaptureProgress(ownerTeamId, progress * Time.deltaTime);
         }
     }
 
