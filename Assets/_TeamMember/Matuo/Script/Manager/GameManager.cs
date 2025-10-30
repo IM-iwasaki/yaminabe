@@ -29,11 +29,9 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [Server]
     public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
-        
-        // ステージ生成
+
         StageManager.Instance.SpawnStage(stageData);
 
-        // ルールごとのリスポーン設定
         if (rule == GameRuleType.DeathMatch)
             StageManager.Instance.SetRespawnMode(RespawnMode.Random);
         else
@@ -42,17 +40,18 @@ public class GameManager : NetworkSystemObject<GameManager> {
         isGameRunning = true;
         ruleManager.currentRule = rule;
 
+        gameTimer.OnTimerFinished += () =>
+        {
+            if (rule == GameRuleType.DeathMatch)
+                ruleManager.EndDeathMatch();
+            else
+                ruleManager.CheckWinConditionAllTeams();
+
+            EndGame();
+        };
+
         // タイマー開始
         gameTimer.StartTimer();
-
-        // デスマッチは時間切れで終了
-        if (rule == GameRuleType.DeathMatch) {
-            gameTimer.OnTimerFinished += () =>
-            {
-                ruleManager.EndDeathMatch();
-                EndGame();
-            };
-        }
     }
 
     /// <summary>
