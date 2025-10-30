@@ -86,7 +86,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// 勝利条件チェック（エリアとホコ）
     /// </summary>
     [Server]
-    private void CheckWinConditionAllTeams() {
+    public void CheckWinConditionAllTeams() {
         float maxScore = -1f;
         List<int> winners = new();
 
@@ -105,28 +105,40 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
                 Debug.Log($"Team {winners[0]} 勝利！(Rule: {currentRule})");
             else
                 // 現在は引き分けになる。終了時にカウントが多い方の勝ちにする予定
+                Debug.LogWarning("引き分け");
 
             GameManager.Instance.EndGame();
         }
     }
 
     /// <summary>
-    /// デスマッチ終了時に勝利チーム判定
+    /// デスマッチ終了時に勝利チーム判定（同点なら引き分け）
     /// </summary>
     [Server]
     public void EndDeathMatch() {
         float maxScore = -1f;
-        int winningTeam = -1;
+        List<int> topTeams = new();
 
+        // 最高スコアを持つチームを抽出
         foreach (var kvp in teamScores) {
             if (kvp.Value > maxScore) {
                 maxScore = kvp.Value;
-                winningTeam = kvp.Key;
+                topTeams.Clear();
+                topTeams.Add(kvp.Key);
+            } else if (Mathf.Approximately(kvp.Value, maxScore)) {
+                // 同点の場合もリストに追加
+                topTeams.Add(kvp.Key);
             }
         }
 
-        if (winningTeam >= 0) {
-            Debug.Log($"Team {winningTeam} の勝利！");
+        // 判定
+        if (topTeams.Count == 1) {
+            Debug.LogWarning($"Team {topTeams[0]} の勝利！（スコア：{maxScore}）");
+        } else if (topTeams.Count > 1) {
+            string teams = string.Join(", ", topTeams);
+            Debug.LogWarning($"引き分け！（チーム: {teams} | スコア：{maxScore}）");
+        } else {
+            Debug.LogWarning("誰一人死なずに終わりました");
         }
     }
 
