@@ -393,7 +393,6 @@ public abstract class CharacterBase : NetworkBehaviour {
                 // ƒtƒ‰ƒO‚ð—§‚Ä‚é
                 IsCanInteruct = true;
                 useCollider = _collider;
-
                 break;
             case "RedTeam":
                 CmdJoinTeam(netIdentity, teamColor.Red);
