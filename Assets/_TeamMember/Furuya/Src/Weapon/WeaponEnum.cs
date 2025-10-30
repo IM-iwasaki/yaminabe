@@ -21,6 +21,7 @@ public enum EffectType {
     Ice,
     Lightning,
     Explosion,
+    Smoke,
 }
 
 public enum WeaponType { 

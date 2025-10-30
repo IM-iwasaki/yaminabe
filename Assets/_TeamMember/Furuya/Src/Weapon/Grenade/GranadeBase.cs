@@ -7,13 +7,13 @@ public class GrenadeBase : NetworkBehaviour {
     [SyncVar] private int ownerTeamID;
 
     private Rigidbody rb;
-    private bool exploded;
+    protected bool exploded;
 
     // GrenadeDataÇ©ÇÁï™ó£ÇµÇΩÉpÉâÉÅÅ[É^
     private float explosionRadius;
     private int damage;
     private bool canDamageAllies;
-    private EffectType effectType;
+    protected EffectType effectType;
     private float explosionDelay = 1.5f;
 
     [Server]
@@ -43,7 +43,7 @@ public class GrenadeBase : NetworkBehaviour {
     }
 
     [Server]
-    private void Explode() {
+    protected virtual void Explode() {
         if (exploded) return;
         exploded = true;
 
@@ -59,7 +59,7 @@ public class GrenadeBase : NetworkBehaviour {
             target.TakeDamage(damage);
         }
 
-        RpcPlayExplosion(pos, effectType);
+        RpcPlayExplosion(pos, effectType, 1.5f);
 
 #if UNITY_EDITOR
         ExplosionDebugCircle.Create(pos, explosionRadius, Color.red, 0.5f);
@@ -67,12 +67,12 @@ public class GrenadeBase : NetworkBehaviour {
     }
 
     [ClientRpc(includeOwner = true)]
-    private void RpcPlayExplosion(Vector3 pos, EffectType effectType) {
+    protected void RpcPlayExplosion(Vector3 pos, EffectType effectType, float duration) {
         GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
             var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
-            WeaponEffectPool.Instance.ReturnToPool(fx, 1.5f);
+            WeaponEffectPool.Instance.ReturnToPool(fx, duration);
         }
     }
 

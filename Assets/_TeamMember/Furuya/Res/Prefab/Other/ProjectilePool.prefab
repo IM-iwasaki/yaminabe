@@ -49,22 +49,21 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   pools:
-  - name: FireProjectile
-    prefab: {fileID: 107947191535415832, guid: 5bedee4d4d724544688148cd86c7451f, type: 3}
+  - prefab: {fileID: 107947191535415832, guid: 5bedee4d4d724544688148cd86c7451f, type: 3}
     size: 20
     category: 3
-  - name: 
-    prefab: {fileID: 8584663488555818686, guid: 85a0d588d9638a04aaa3c1596a30a193, type: 3}
+  - prefab: {fileID: 8584663488555818686, guid: 85a0d588d9638a04aaa3c1596a30a193, type: 3}
     size: 100
     category: 0
-  - name: 
-    prefab: {fileID: 1698056052845220, guid: 5a2bf64643e1fb0439ea39c0fc9b00ff, type: 3}
+  - prefab: {fileID: 1698056052845220, guid: 5a2bf64643e1fb0439ea39c0fc9b00ff, type: 3}
     size: 20
     category: 1
-  - name: Mine
-    prefab: {fileID: 8826065376023065134, guid: c34c1e93a4dd83041a561226f48b238a, type: 3}
+  - prefab: {fileID: 8826065376023065134, guid: c34c1e93a4dd83041a561226f48b238a, type: 3}
     size: 20
     category: 2
+  - prefab: {fileID: 1062895056798360, guid: 8b4cba336c093ff41ae9321f9f8433d6, type: 3}
+    size: 20
+    category: 1
 --- !u!114 &8707198863549545102
 MonoBehaviour:
   m_ObjectHideFlags: 0
