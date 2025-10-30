@@ -29,6 +29,8 @@ public class HostUI : NetworkBehaviour {
         //スポーンさせる
         //NetworkServer.Spawn(gameObject);
         uiRootObject.SetActive(false);
+        //ホストでなければ処理しない
+        if (!isServer) return;
         if (GameSceneManager.Instance != null) {
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
         }
