@@ -2164,14 +2164,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 313991989
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4775146468820701319, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2323571953927401638, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1019567438}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
 --- !u!1001 &790541058
 PrefabInstance:
@@ -2800,39 +2796,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 152095147e5492c41a9718b9b09863a4, type: 3}
---- !u!1 &1019567434 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2323571953927401638, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
-  m_PrefabInstance: {fileID: 680984503}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1019567438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1019567434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0f6428c924c836408f0b189b05b5d7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  pools:
-  - prefab: {fileID: 6980259576133684760, guid: 1f58a1dea6bbd9347843e4935585e6a2, type: 3}
-    size: 10
-  - prefab: {fileID: 1370874438154576190, guid: c02083b1627cc40449e4e7c3ed1f2a65, type: 3}
-    size: 10
-  - prefab: {fileID: 8378503196372639160, guid: 56a31e3fb12a7da4cb69ab4dfcc420ac, type: 3}
-    size: 10
-  - prefab: {fileID: 8172394614802003838, guid: 7d3425a96b729534e9e11b2591f8fd20, type: 3}
-    size: 10
-  - prefab: {fileID: 4186470608034871016, guid: 8bc41e1472c45464980c8feeed5f1649, type: 3}
-    size: 10
-  - prefab: {fileID: 2283229683088611668, guid: 51966cf5287d989478276b02a463b117, type: 3}
-    size: 10
 --- !u!1001 &1070090397
 PrefabInstance:
   m_ObjectHideFlags: 0
