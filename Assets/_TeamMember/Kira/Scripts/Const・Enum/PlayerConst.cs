@@ -34,5 +34,14 @@ public class PlayerConst {
         Main = 0,
         Sub = 1,
     };
+
+    /// <summary>
+    /// セミオートかフルオートか判別する列挙体
+    /// </summary>
+    public enum AutoFireType {
+        Invalid = -1,
+        SemiAutomatic,
+        FullAutomatic
+    }
 }
 
