@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,8 @@ public class ProjectilePool : NetworkBehaviour {
 
     [System.Serializable]
     public class PoolItem {
-        [Tooltip("プール識別名（空ならPrefab名が使われる）")]
-        public string name;
+        [Tooltip("プール識別名")]
+        [NonSerialized]public string name;
         public GameObject prefab;
         [Range(1, 100)]
         public int size = 10;
