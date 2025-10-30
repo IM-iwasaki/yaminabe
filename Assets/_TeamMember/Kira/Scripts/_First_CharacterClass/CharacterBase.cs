@@ -101,7 +101,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //コンポーネント情報
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
-    [SerializeField] protected PlayerUIManager UI;
+    [SerializeField] protected PlayerUIController UI;
     [SerializeField] private InputActionAsset inputActions;
 
     #endregion
@@ -182,7 +182,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             base.OnStartClient();
             GameObject GameUIRoot = GameObject.Find("GameUI");
             var playerUI = Instantiate(UI, GameUIRoot.transform);
-            UI = playerUI.GetComponent<PlayerUIManager>();
+            UI = playerUI.GetComponent<PlayerUIController>();
             UI.Initialize(HP);
 
         }
@@ -328,6 +328,9 @@ public abstract class CharacterBase : NetworkBehaviour {
                 HandleAttack(ctx, actionName == "Attack_Sub"
                     ? PlayerConst.AttackType.Main
                     : PlayerConst.AttackType.Sub);
+                break;
+            case "ShowHostUI":
+                OnShowHostUI(ctx);
                 break;
         }
     }
@@ -478,6 +481,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void OnInteract(InputAction.CallbackContext context) {
         if (context.performed) Interact();
+    }
+
+    public void OnShowHostUI(InputAction.CallbackContext context) {
+        if (!isServer || !isLocalPlayer) return;
+        if (context.started) HostUI.instance.isVisibleUI = !HostUI.instance.isVisibleUI;
     }
 
     /// <summary>

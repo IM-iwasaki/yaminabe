@@ -37,7 +37,7 @@ public class ServerManager : NetworkBehaviour {
                     resetTeam.teamPlayerList[i].GetComponent<DemoPlayer>().TeamID = -1;
                 }
                 resetTeam.teamPlayerList.Clear();
-                PlayerUIManager.instance.ResetTeammateUI();
+                PlayerUIController.instance.ResetTeammateUI();
             }
 
         }

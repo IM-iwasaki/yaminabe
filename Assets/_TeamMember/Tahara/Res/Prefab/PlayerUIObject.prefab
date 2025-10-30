@@ -521,8 +521,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4833824137272919312}
-  - component: {fileID: 8169650326617316781}
   - component: {fileID: 54796683769488040}
+  - component: {fileID: 4163481750336168349}
   m_Layer: 0
   m_Name: PlayerUIObject
   m_TagString: Untagged
@@ -547,7 +547,7 @@ Transform:
   - {fileID: 4065583876472405409}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8169650326617316781
+--- !u!114 &54796683769488040
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -556,7 +556,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 6228832952818871831}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1903f66ce46752841b63e2fe94718024, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 2256487041
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!114 &4163481750336168349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6228832952818871831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6826fc3ffcc546d47b4e14ffe911e46e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
@@ -576,23 +593,6 @@ MonoBehaviour:
   mpBarImage: {fileID: 5713778179854828495}
   teamMateUIRoot: {fileID: 8196723314649906049}
   teammateUI: {fileID: 3412736545215080294, guid: 5ded7ed9b514a824eabb9b731e740fbf, type: 3}
---- !u!114 &54796683769488040
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6228832952818871831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneId: 0
-  _assetId: 2256487041
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
 --- !u!1 &6258779548234168014
 GameObject:
   m_ObjectHideFlags: 0
