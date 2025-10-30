@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 386ead1bc247dc4438c2c646667d995d, type: 2}
+  - {fileID: 2100000, guid: 7f7015ac702276d469fac322bf23e52f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  captureTime: 3
+  captureTime: 1
   areaCollider: {fileID: 6018096572161832264}
   playersInArea: []
 --- !u!114 &4066033201068279831

@@ -352,6 +352,7 @@ MonoBehaviour:
   weaponController: {fileID: 2825701905452532873}
   GroundCheck: {fileID: 4807031412442243011}
   IsGrounded: 0
+  buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
   InputStatus: {fileID: 11400000, guid: 40acd8b124764da4da5c5bf0596741c2, type: 2}
 --- !u!114 &2825701905452532873
 MonoBehaviour:

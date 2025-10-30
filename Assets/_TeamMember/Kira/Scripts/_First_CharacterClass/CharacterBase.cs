@@ -131,6 +131,16 @@ public abstract class CharacterBase : NetworkBehaviour {
     private Coroutine attackCoroutine;
     private int defaultMoveSpeed;
     private int defaultAttack;
+    [Header("バフに使用するエフェクトデータ")]
+    [SerializeField] private EffectData buffEffect;
+    #region バフデータの定数
+    private readonly string EFFECT_TAG = "Effect";
+    private readonly int ATTACK_BUFF_EFFECT = 0;
+    private readonly int SPEED_BUFF_EFFECT = 1;
+    private readonly int HEAL_BUFF_EFFECT = 2;
+    private readonly int DEBUFF_EFFECT = 3;
+    #endregion
+
     #endregion
 
     #endregion
@@ -484,7 +494,10 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     public void OnShowHostUI(InputAction.CallbackContext context) {
         if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
-        if (context.started) HostUI.instance.isVisibleUI = !HostUI.instance.isVisibleUI;
+        if (context.started) {
+            HostUI.isVisibleUI = !HostUI.isVisibleUI;
+            HostUI.ShowOrHideUI(HostUI.isVisibleUI);
+        }
     }
 
     /// <summary>
@@ -693,6 +706,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
+        //  エフェクト再生
+        PlayEffect(HEAL_BUFF_EFFECT);
+
         // 総回復量を MaxHP の割合で計算（例：_value=0.2 → 20％回復）
         float totalHeal = MaxHP * _value;
         //  回復実行（コルーチンで回す）
@@ -721,6 +737,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             yield return null;
         }
 
+        DestroyChildrenWithTag(transform, EFFECT_TAG);
         healCoroutine = null;
     }
 
@@ -730,6 +747,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     public void AttackBuff(float _value, float _usingTime) {
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+        //  エフェクト再生
+        PlayEffect(ATTACK_BUFF_EFFECT);
+
         attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
     }
 
@@ -740,6 +760,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         Attack = Mathf.RoundToInt(defaultAttack * value);
         yield return new WaitForSeconds(duration);
         Attack = defaultAttack;
+        DestroyChildrenWithTag(transform, EFFECT_TAG);
         attackCoroutine = null;
     }
 
@@ -749,6 +770,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     public void MoveSpeedBuff(float _value, float _usingTime) {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
+        //  エフェクト再生
+        PlayEffect(SPEED_BUFF_EFFECT);
+
         speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
 
@@ -759,6 +783,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         MoveSpeed = Mathf.RoundToInt(defaultMoveSpeed * value);
         yield return new WaitForSeconds(duration);
         MoveSpeed = defaultMoveSpeed;
+        DestroyChildrenWithTag(transform, EFFECT_TAG);
         speedCoroutine = null;
     }
 
@@ -767,9 +792,39 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]public void RemoveBuff() {
         StopAllCoroutines();
+        DestroyChildrenWithTag(transform, EFFECT_TAG);
         MoveSpeed = defaultMoveSpeed;
         Attack = defaultAttack;
         healCoroutine = speedCoroutine = attackCoroutine = null;
     }
+
+    /// <summary>
+    /// エフェクト再生用関数
+    /// </summary>
+    /// <param name="buffEffectNum"></param>
+    private void PlayEffect(int effectNum) {
+        //  一度子オブジェクトを参照して破棄
+        DestroyChildrenWithTag(transform, EFFECT_TAG);
+
+        //  ここで生成
+        Instantiate(buffEffect.effectInfos[effectNum].effect, transform);
+
+    }
+
+    /// <summary>
+    /// 指定の親オブジェクトのタグ付き子オブジェクトを削除する
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="tag"></param>
+    private void DestroyChildrenWithTag(Transform parent, string tag) {
+        if (tag == null) return;
+
+        foreach (Transform child in parent) {
+            if (child.CompareTag(tag)) {
+                Destroy(child.gameObject);
+            }
+        }
+    }
+
     #endregion
 }
