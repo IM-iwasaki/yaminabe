@@ -6,7 +6,7 @@ using Mirror;
 /// ゲーム中のUI表示を管理
 /// 残り時間とスコア(チーム別のカウント)を表示
 /// </summary>
-public class GameUIManager : NetworkBehaviour {
+public class GameUIManager : MonoBehaviour {
     public static GameUIManager Instance { get; private set; } // Singleton参照用
 
     [Header("UI")]
@@ -22,13 +22,20 @@ public class GameUIManager : NetworkBehaviour {
     private float timer;
 
     private void Awake() {
-        // Singleton設定
+        // シングルトン
         if (Instance == null) {
             Instance = this;
         } else if (Instance != this) {
             Destroy(gameObject);
             return;
         }
+    }
+
+    /// <summary>
+    /// MirrorのisClientみたいな
+    /// </summary>
+    private bool IsClientActive() {
+        return NetworkClient.active && NetworkClient.isConnected;
     }
 
     private void Start() {
@@ -43,7 +50,7 @@ public class GameUIManager : NetworkBehaviour {
 
     private void Update() {
         // Mirror: クライアントのみUI更新
-        if (!isClient || gameTimer == null || ruleManager == null)
+        if (!IsClientActive() || gameTimer == null || ruleManager == null)
             return;
 
         timer += Time.deltaTime;
@@ -79,7 +86,7 @@ public class GameUIManager : NetworkBehaviour {
     /// RuleManagerなどから直接スコアを更新するためのメソッド
     /// </summary>
     public void UpdateTeamScore(int teamId, float score) {
-        if (!isClient) return;
+        if (!IsClientActive()) return;
 
         switch (teamId) {
             case 1:
