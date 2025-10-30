@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4971776823056104}
   - component: {fileID: 33543361070429788}
   - component: {fileID: 23965030567748808}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: -6639124942485175394}
   - component: {fileID: -6944754517963462905}
   - component: {fileID: -4785062442786350198}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FlagGrenade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,7 +187,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  data: {fileID: 0}
 --- !u!114 &-8926406940937632942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,7 +296,7 @@ GameObject:
   - component: {fileID: 4803080829805316}
   - component: {fileID: 33656059089505750}
   - component: {fileID: 23009326331692420}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
