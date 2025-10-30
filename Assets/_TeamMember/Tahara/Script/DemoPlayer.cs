@@ -22,7 +22,7 @@ public class DemoPlayer : NetworkBehaviour {
     [SerializeField]
     private const int MaxHP = 100;
     [SerializeField]
-    public PlayerUIManager playerUI = null;
+    public PlayerUIController playerUI = null;
     private void Awake() {
         var net = GetComponent<NetworkTransformHybrid>();
         net.syncDirection = SyncDirection.ServerToClient;
@@ -46,8 +46,8 @@ public class DemoPlayer : NetworkBehaviour {
             playerCamera.tag = "MainCamera";
             //UIÇê∂ê¨(é¿ç€Ç…ÇÕå©Ç¶ÇƒÇ»Ç¢)
             GameObject canvas = GameObject.Find("GameUI");
-            PlayerUIManager uiM = Instantiate(playerUI, canvas.transform);
-            playerUI = uiM.GetComponent<PlayerUIManager>();
+            PlayerUIController uiM = Instantiate(playerUI, canvas.transform);
+            playerUI = uiM.GetComponent<PlayerUIController>();
         }
     }
 

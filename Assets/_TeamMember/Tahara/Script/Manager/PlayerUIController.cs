@@ -8,9 +8,9 @@ using UnityEngine.UI;
 /// プレイヤーUIにコンポーネント済みで、各Playerのメンバとして持たせてほしい
 /// 各ローカルプレイヤーに複製してもらうので別に子オブジェクトとかにしなくていい
 /// </summary>
-public class PlayerUIManager : NetworkBehaviour
+public class PlayerUIController : NetworkBehaviour
 {
-    public static PlayerUIManager instance = null;
+    public static PlayerUIController instance = null;
     [SerializeField]
     private List<Transform> UIRoots = null;
     

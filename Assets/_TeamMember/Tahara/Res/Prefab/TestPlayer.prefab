@@ -81,7 +81,6 @@ GameObject:
   - component: {fileID: 2825701905452532873}
   - component: {fileID: -140839760005440579}
   - component: {fileID: 8394261901866962481}
-  - component: {fileID: 6672132936378537778}
   m_Layer: 6
   m_Name: TestPlayer
   m_TagString: Player
@@ -301,6 +300,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 3c3e33ed-00b3-418a-972e-e59a558d27a9
     m_ActionName: Player/Skill[/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 18143a2a-441f-4002-a137-2189f18e8e15
+    m_ActionName: Player/ShowHostUI[/Keyboard/tab]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -339,11 +342,12 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   HP: 0
-  CurrentTeam: -1
+  Attack: 0
+  MoveSpeed: 5
   TeamID: 0
   DamageRatio: 100
   firePoint: {fileID: 878125566127400802}
-  UI: {fileID: 8169650326617316781, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
+  UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
   weaponController: {fileID: 2825701905452532873}
   GroundCheck: {fileID: 4807031412442243011}
@@ -381,7 +385,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  subWeaponData: {fileID: 11400000, guid: 30d63511c59b572469dd35b3e0fe07c5, type: 2}
+  subWeaponData: {fileID: 11400000, guid: 8fa2c4c5f7650b747899e553f2c38e25, type: 2}
 --- !u!114 &8394261901866962481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -415,21 +419,6 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
---- !u!114 &6672132936378537778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5478059386412428429}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6855b52293727c40aa2ac72b287bb5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
 --- !u!1 &8141346529666802218
 GameObject:
   m_ObjectHideFlags: 0

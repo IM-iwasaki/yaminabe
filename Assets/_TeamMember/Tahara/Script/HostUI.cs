@@ -12,11 +12,13 @@ public class HostUI : NetworkBehaviour {
     private TextMeshProUGUI stage = null;
 
     [SerializeField]
-    private GameObject unVisibleUIFromClient = null;
+    private GameObject uiRootObject = null;
     [SyncVar(hook = nameof(ChangeRuleAndUI))]
     public int ruleIndex = 0;
     [SyncVar(hook = nameof(ChangeStageUI))]
     public int stageIndex = 0;
+    [SyncVar(hook = nameof(ShowOrHideUI))]
+    public bool isVisibleUI = false;
 
     [SerializeField]
     private List<string> ruleNames = null;
@@ -26,10 +28,7 @@ public class HostUI : NetworkBehaviour {
     private void Start() {
         //スポーンさせる
         //NetworkServer.Spawn(gameObject);
-        if (!isServer) {
-            unVisibleUIFromClient.SetActive(false);
-            return;
-        }
+        uiRootObject.SetActive(false);
         if (GameSceneManager.Instance != null) {
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
         }
@@ -67,11 +66,12 @@ public class HostUI : NetworkBehaviour {
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
     }
     //ホストUIを非表示にさせる
-    public void HideUI(){
-        unVisibleUIFromClient.SetActive(false);
+    public void ShowOrHideUI(bool _old, bool _isVisibleFlag) {
+        if (_isVisibleFlag)
+            uiRootObject.SetActive(true);
+        else
+            uiRootObject.SetActive(false);
     }
-    //ホストUIを表示させる
-    public void ShowUI() {
-        unVisibleUIFromClient.SetActive(true);
-    }
+
+    
 }
