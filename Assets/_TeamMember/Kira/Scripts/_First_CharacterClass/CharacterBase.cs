@@ -2,6 +2,7 @@ using Mirror;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using static TeamData;
 [RequireComponent(typeof(NetworkIdentity))]
 [RequireComponent(typeof(NetworkTransformHybrid))]
@@ -213,6 +214,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 被弾・死亡判定関数
     /// </summary>
     [Server]public void TakeDamage(int _damage) {
+        //既に死亡状態なら帰る
+        if (IsDead) return;
+
         //ダメージ倍率を適用
         _damage *= DamageRatio / 100;
         //ダメージが0以下だったら1に補正する
@@ -224,9 +228,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// UI用のHP更新関数
+    /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
     /// </summary>
-    public void ChangeHP(int oldValue, int newValue) {
+    public void ChangeHP(int _, int newValue) {
         if (!isLocalPlayer) return; // 自分のプレイヤーでなければUI更新しない
         if (UI != null) UI.ChangeHPUI(MaxHP, newValue);
         else Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
@@ -237,10 +241,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void Dead() {
         //死亡フラグをたててHPを0にしておく
-        IsDead = false;
+        IsDead = true;
         HP = 0;
-        //当たり判定を無効
-        GetComponent<CapsuleCollider>().enabled = false;
         //バフ全解除
         RemoveBuff();       
 
@@ -263,8 +265,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         //復活させてHPを全回復
         IsDead = false;
         HP = MaxHP;
-        //当たり判定を有効化
-        GetComponent<CapsuleCollider>().enabled = true;
 
         //リスポーン地点に移動させる
         var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
@@ -393,7 +393,6 @@ public abstract class CharacterBase : NetworkBehaviour {
                 // フラグを立てる
                 IsCanInteruct = true;
                 useCollider = _collider;
-
                 break;
             case "RedTeam":
                 CmdJoinTeam(netIdentity, teamColor.Red);
@@ -484,7 +483,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     public void OnShowHostUI(InputAction.CallbackContext context) {
-        if (!isServer || !isLocalPlayer) return;
+        if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
         if (context.started) HostUI.instance.isVisibleUI = !HostUI.instance.isVisibleUI;
     }
 

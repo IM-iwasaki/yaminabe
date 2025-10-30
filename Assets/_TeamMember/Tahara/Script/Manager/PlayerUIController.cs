@@ -8,16 +8,15 @@ using UnityEngine.UI;
 /// プレイヤーUIにコンポーネント済みで、各Playerのメンバとして持たせてほしい
 /// 各ローカルプレイヤーに複製してもらうので別に子オブジェクトとかにしなくていい
 /// </summary>
-public class PlayerUIController : NetworkBehaviour
-{
+public class PlayerUIController : NetworkBehaviour {
     public static PlayerUIController instance = null;
     [SerializeField]
     private List<Transform> UIRoots = null;
-    
+
     #region 戦闘用UI
     #region プレイヤー体力管理用UI
     private const int FIXED_RATIO = 100;
-    [SerializeField,Header("体力のテキスト※デフォルトで設定済み")]
+    [SerializeField, Header("体力のテキスト※デフォルトで設定済み")]
     private TextMeshProUGUI hpText = null;
     [SerializeField, Header("体力のバー※デフォルトで設定済み")]
     private Slider hpBar = null;
@@ -41,9 +40,9 @@ public class PlayerUIController : NetworkBehaviour
 
     #region 非戦闘UI
 
-    [SerializeField,Header("チームメイト確認用UI※人数が変わってもいいように親オブジェクトを取得")]
+    [SerializeField, Header("チームメイト確認用UI※人数が変わってもいいように親オブジェクトを取得")]
     Transform teamMateUIRoot = null;
-    [SerializeField,Header("生成されるチームメイトUI")]
+    [SerializeField, Header("生成されるチームメイトUI")]
     private GameObject teammateUI = null;
 
     #endregion
@@ -73,21 +72,22 @@ public class PlayerUIController : NetworkBehaviour
     public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar.value = (float)_hp / _maxHP * FIXED_RATIO;
-        if(hpBar.value <= _maxHP / 5 && hpBar.value > _maxHP / 2) {
+        if (_hp < 1)
+            hpBarImage.gameObject.SetActive(false);
+        else if (hpBar.value <= _maxHP / 5 && _hp >= 1) {
             hpBarImage.color = Color.red;
         }
 
-        else if(hpBar.value <= _maxHP / 2 && hpBar.value > 1) {
+        else if (hpBar.value <= _maxHP / 2) {
             hpBarImage.color = Color.yellow;
         }
 
-        else if (_hp <= 1)
-            hpBarImage.gameObject.SetActive(false);
+
         else {
             hpBarImage.gameObject.SetActive(true);
             hpBarImage.color = Color.green;
         }
-            
+
     }
     /// <summary>
     /// 残弾数のUI更新
@@ -149,7 +149,7 @@ public class PlayerUIController : NetworkBehaviour
     }
 
 
-    
+
     /// <summary>
     /// チームメイトが誰なのかを表示するUIを作り出す
     /// </summary>
@@ -166,7 +166,7 @@ public class PlayerUIController : NetworkBehaviour
     /// チームメイトUIを削除
     /// </summary>
     public void ResetTeammateUI() {
-        for(int i = 0,max = teamMateUIRoot.childCount; i < max; i++) {
+        for (int i = 0, max = teamMateUIRoot.childCount; i < max; i++) {
             Destroy(teamMateUIRoot.GetChild(i).gameObject);
         }
     }
