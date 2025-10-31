@@ -751,6 +751,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //  エフェクト再生
         PlayEffect(ATTACK_BUFF_EFFECT);
 
+        defaultAttack = Attack;
+
         attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
     }
 
@@ -773,6 +775,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         //  エフェクト再生
         PlayEffect(SPEED_BUFF_EFFECT);
+
+        defaultMoveSpeed = MoveSpeed;
 
         speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
