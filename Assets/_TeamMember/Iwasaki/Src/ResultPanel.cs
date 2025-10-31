@@ -1,77 +1,88 @@
 using UnityEngine;
-using Mirror;
 using UnityEngine.UI;
+using Mirror;
 
 /// <summary>
-/// リザルト画面のUI制御クラス（Commandを使わないシンプル版）
-/// ・ホストはボタン操作でサーバー処理を直接実行
-/// ・クライアントはボタンが非表示なので触れない
+/// リザルト画面の勝敗表示およびボタン操作を制御するクラス。
+/// 
+/// ・ホストのみ「再戦」「ロビーに戻る」ボタンを押せる
+/// ・チーム戦なら「Red Team Win!」、個人戦なら「Winner : 名前」
 /// </summary>
 public class ResultPanel : NetworkBehaviour {
     [Header("UI参照")]
-    [SerializeField] private Button rematchButton;     // 再戦ボタン（ホスト専用）
-    [SerializeField] private Button returnLobbyButton; // ロビー戻りボタン（ホスト専用）
+    [SerializeField] private Text winnerText;           // 勝者テキスト
+    [SerializeField] private Button rematchButton;      // 再戦ボタン（ホスト専用）
+    [SerializeField] private Button returnLobbyButton;  // ロビー戻りボタン（ホスト専用）
 
-    private bool isResultActive = true;
+    private bool isResultActive = true;                 // 二重押し防止
     private ResultManager resultManager;
 
-    void Start() {
-        // ResultManager の参照取得
+    private void Start() {
         resultManager = FindObjectOfType<ResultManager>();
 
         // ボタンイベント登録
         if (rematchButton != null)
             rematchButton.onClick.AddListener(OnClickRematch);
-
         if (returnLobbyButton != null)
             returnLobbyButton.onClick.AddListener(OnClickReturnLobby);
     }
 
     /// <summary>
-    /// 全員の画面にリザルトを表示（ResultManagerから呼ばれる）
+    /// 全クライアントでリザルトUIを表示するRPC。
     /// </summary>
     [ClientRpc]
     public void RpcShowResult() {
-        Debug.Log("[ResultPanel] リザルト画面表示");
-
-        // ホストのみボタン表示
         bool isHost = NetworkServer.active;
+
         if (rematchButton != null)
             rematchButton.gameObject.SetActive(isHost);
         if (returnLobbyButton != null)
             returnLobbyButton.gameObject.SetActive(isHost);
 
+        if (winnerText != null)
+            winnerText.text = "";
+
         isResultActive = true;
     }
 
-    // ==================================================
-    // ボタン処理（Commandを使わずに直接サーバー処理へ）
-    // ==================================================
+    /// <summary>
+    /// 勝者 or チーム名をUIに反映。
+    /// </summary>
+    public void ShowWinner(string name, bool isTeamBattle) {
+        if (winnerText == null) return;
+
+        if (isTeamBattle) {
+            winnerText.text = $"{name} Team Win!";
+            // チームカラーに合わせて色分け（例：Red / Blue）
+            winnerText.color = (name == "Red") ? Color.red : Color.blue;
+        }
+        else {
+            winnerText.text = $"Winner : {name}";
+            winnerText.color = Color.white;
+        }
+
+        Debug.Log($"[ResultPanel] 勝敗表示: {winnerText.text}");
+    }
+
+    //================================================================
+    // ボタンイベント（ホストのみ有効）
+    //================================================================
 
     private void OnClickRematch() {
         if (!isResultActive) return;
         isResultActive = false;
 
-        Debug.Log("[ResultPanel] ホストが『再戦』を選択");
-
-        // サーバー上でのみ実行
-        if (NetworkServer.active && resultManager != null) {
-            resultManager.HideResult();
-            // TODO: 再戦ロジックをここに追加（シーンリロードなど）
-        }
+        Debug.Log("[ResultPanel] 再戦ボタン押下");
+        if (NetworkServer.active && resultManager != null)
+            resultManager.HideResult(); // 仮: UI削除のみ（再戦処理は後で追加）
     }
 
     private void OnClickReturnLobby() {
         if (!isResultActive) return;
         isResultActive = false;
 
-        Debug.Log("[ResultPanel] ホストが『ロビーに戻る』を選択");
-
-        // サーバー上でのみ実行
-        if (NetworkServer.active && resultManager != null) {
-            resultManager.HideResult();
-            // TODO: ロビーシーンに戻る処理をここに追加
-            // NetworkManager.singleton.ServerChangeScene("LobbyScene");
-        }
+        Debug.Log("[ResultPanel] ロビー戻りボタン押下");
+        if (NetworkServer.active && resultManager != null)
+            resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
     }
 }
