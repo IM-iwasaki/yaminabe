@@ -85,8 +85,9 @@ class GeneralCharacter : CharacterBase {
         AbilityControl();
     }
 
-    protected override void RespawnControl() {
-        base.RespawnControl();
+    public override void Respawn() {
+        base.Respawn();
+        //パッシブのセットアップ
         EquippedPassives[0].PassiveSetting(this);
     }
 
