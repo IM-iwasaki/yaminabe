@@ -24,6 +24,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     #region ～変数宣言～
 
     #region ～ステータス～
+    [Header("基本ステータス")]
     //現在の体力
     [SyncVar(hook = nameof(ChangeHP))] public int HP;
     //最大の体力
@@ -31,7 +32,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //基礎攻撃力
     [SyncVar] public int Attack;
     //移動速度
-    [SyncVar]public int MoveSpeed = 5;
+    [SyncVar] public int MoveSpeed = 5;
     //持っている武器の文字列
     public string CurrentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
@@ -68,7 +69,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     #endregion
 
     #region ～状態管理・コンポーネント変数～
-
     //死亡しているか
     protected bool IsDead { get; private set; } = false;
     //死亡してからの経過時間
@@ -100,6 +100,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public float SkillAfterTime { get; protected set; } = 0.0f;
 
     //コンポーネント情報
+    [Header("コンポーネント情報")]
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
     [SerializeField] protected PlayerUIController UI;
@@ -110,8 +111,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     #region ～アクション用変数～
 
     //武器を使用するため
+    [Header("アクション用変数")]
     [SerializeField] protected MainWeaponController weaponController;
-
     //ジャンプ入力をしたか
     private bool IsJumpPressed = false;
     //GroundLayer
@@ -223,7 +224,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Server]public void TakeDamage(int _damage) {
+    [Server]
+    public void TakeDamage(int _damage) {
         //既に死亡状態なら帰る
         if (IsDead) return;
 
@@ -233,8 +235,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (_damage <= 0) _damage = 1;
         //HPの減算処理
         HP -= _damage;
-        //HPが0以下になったとき死亡していなかったら死亡処理を行う
-        if (HP <= 0 && !IsDead) Dead();
     }
 
     /// <summary>
@@ -250,11 +250,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死亡時処理
     /// </summary>
     public void Dead() {
+        Debug.Log("Dead関数が呼び出されました。");
+
         //死亡フラグをたててHPを0にしておく
         IsDead = true;
         HP = 0;
         //バフ全解除
-        RemoveBuff();       
+        RemoveBuff();
 
         //不具合防止のためフラグをいろいろ下ろす。
         IsAttackPressed = false;
@@ -268,7 +270,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Command]public void Respawn() {
+    [Command]
+    public void Respawn() {
+        if (!isLocalPlayer) return;
         //死んでいなかったら即抜け
         if (!IsDead) return;
 
@@ -278,7 +282,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //リスポーン地点に移動させる
         var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
-        transform.position = RespownPos[TeamID].transform.position;
+        transform.position = RespownPos[Random.Range(0,RespownPos.Count)].transform.position;
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
@@ -291,7 +295,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
-    [Command]public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+    [Command]
+    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
         CharacterBase player = _player.GetComponent<CharacterBase>();
         int currentTeam = player.TeamID;
         int newTeam = (int)_color;
@@ -505,7 +510,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void MoveControl() {
         //移動入力が行われている間は移動中フラグを立てる
-        if (MoveInput != Vector2.zero)  IsMoving = true;
+        if (MoveInput != Vector2.zero) IsMoving = true;
         else IsMoving = false;
 
 
@@ -536,7 +541,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //地面に立っていたら通常通り
         if (IsGrounded) {
             rigidbody.velocity = targetVelocity;
-        } else {
+        }
+        else {
             // 空中では地上速度に向けてゆるやかに補間（慣性を残す）
             rigidbody.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
         }
@@ -582,7 +588,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             //死亡してからの時間を加算
             DeadAfterTime += Time.deltaTime;
             //死亡後経過時間がリスポーンに必要な時間を過ぎたら
-            if (DeadAfterTime >= PlayerConst.RespownTime)  Respawn();
+            if (DeadAfterTime >= PlayerConst.RespownTime) Respawn();
         }
         //復活後であるときの処理
         if (IsInvincible) {
@@ -595,7 +601,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
 
-    virtual protected void AbilityControl() {}
+    virtual protected void AbilityControl() { }
 
     /// <summary>
     /// 攻撃入力のハンドル分岐
@@ -606,13 +612,13 @@ public abstract class CharacterBase : NetworkBehaviour {
             case InputActionPhase.Started:
                 IsAttackPressed = true;
                 //入力開始時間を記録
-                AttackStartTime = Time.time;           
+                AttackStartTime = Time.time;
 
                 //フルオート状態の場合コルーチンで射撃間隔を調整する
-                if (AutoFireType == PlayerConst.AutoFireType.FullAutomatic){
+                if (AutoFireType == PlayerConst.AutoFireType.FullAutomatic) {
                     Debug.Log("フルオート攻撃を開始しました。");
 
-                    StartCoroutine(AutoFire(_type)); 
+                    StartCoroutine(AutoFire(_type));
                 }
                 break;
             //離した瞬間
@@ -620,10 +626,10 @@ public abstract class CharacterBase : NetworkBehaviour {
                 IsAttackPressed = false;
                 //入力終了時間を記録
                 float heldTime = Time.time - AttackStartTime;
-            
+
 
                 //セミオート状態の場合入力時間が短ければ一回攻撃
-                if (AutoFireType == PlayerConst.AutoFireType.SemiAutomatic && heldTime < 0.3f){
+                if (AutoFireType == PlayerConst.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
                     Debug.Log("セミオート攻撃です。");
 
                     StartAttack(_type);
@@ -646,7 +652,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃関数
     /// </summary>
-    virtual protected void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main){
+    virtual protected void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {
         if (weaponController == null) return;
 
         // 武器が攻撃可能かチェックしてサーバー命令を送る
@@ -703,7 +709,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// HP回復(時間経過で徐々に回復)発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]public void Heal(float _value, float _usingTime) {
+    [Command]
+    public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
         //  エフェクト再生
@@ -790,7 +797,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// すべてのバフを即解除
     /// </summary>
-    [Command]public void RemoveBuff() {
+    [Command]
+    public void RemoveBuff() {
         StopAllCoroutines();
         DestroyChildrenWithTag(transform, EFFECT_TAG);
         MoveSpeed = defaultMoveSpeed;
@@ -816,32 +824,54 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="parent"></param>
     /// <param name="tag"></param>
     private void DestroyChildrenWithTag(Transform parent, string tag) {
+        if (isServer)
+            RpcDestroyChildrenWithTag(tag); // サーバーなら全員に通知
+        else
+            CmdDestroyChildrenWithTag(tag); // クライアントならサーバーへ命令
+    }
+
+    #region Command,ClientRpcの関数
+    /// <summary>
+    /// エフェクト生成
+    /// </summary>
+    /// <param name="effectNum"></param>
+    [Command]
+    private void CmdPlayEffect(int effectNum) {
+        RpcPlayEffect(effectNum);
+    }
+    [ClientRpc]
+    private void RpcPlayEffect(int effectNum) {
+        //  ローカルで一度子オブジェクトを参照して破棄
+        DestroyChildrenWithTagLocal(EFFECT_TAG);
+
+        //  ここで生成
+        Instantiate(buffEffect.effectInfos[effectNum].effect, transform);
+    }
+
+    /// <summary>
+    /// エフェクト破棄
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="tag"></param>
+    [Command]
+    private void CmdDestroyChildrenWithTag(string tag) {
+        RpcDestroyChildrenWithTag(tag);
+    }
+    [ClientRpc]
+    private void RpcDestroyChildrenWithTag(string tag) {
+        DestroyChildrenWithTagLocal(tag);
+    }
+    private void DestroyChildrenWithTagLocal(string tag) {
         if (tag == null) return;
 
-        foreach (Transform child in parent) {
+        foreach (Transform child in transform) {
             if (child.CompareTag(tag)) {
                 Destroy(child.gameObject);
             }
         }
     }
 
-    [Command]
-    private void CmdPlayEffect(int effectNum) {
-        //  一度子オブジェクトを参照して破棄
-        DestroyChildrenWithTag(transform, EFFECT_TAG);
-
-        //  ここで生成
-        Instantiate(buffEffect.effectInfos[effectNum].effect, transform);
-    }
-
-    [ClientRpc]
-    private void RpcPlayEffect(int effectNum) {
-        //  一度子オブジェクトを参照して破棄
-        DestroyChildrenWithTag(transform, EFFECT_TAG);
-
-        //  ここで生成
-        Instantiate(buffEffect.effectInfos[effectNum].effect, transform);
-    }
+    #endregion
 
     #endregion
 }

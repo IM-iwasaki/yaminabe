@@ -10,7 +10,7 @@ using System.Collections;
 /// ・HideResult() でプレハブ全体を安全に削除
 /// ・Canvasを含むUIプレハブ全体を保持しておく構成
 /// </summary>
-public class ResultManager : NetworkBehaviour {
+public class ResultManager : NetworkSystemObject<ResultManager> {
     [Header("リザルトUIプレハブ（Canvas含む）")]
     [SerializeField] private GameObject resultUIPrefab;
 
@@ -24,15 +24,10 @@ public class ResultManager : NetworkBehaviour {
 
     private static ResultManager instance;
 
-    void Awake() {
-        // 重複生成を防ぎつつ常駐させる
-        if (instance != null && instance != this) {
-            Destroy(gameObject);
-            return;
-        }
+    protected override void Awake() {
+        base.Awake();
 
-        instance = this;
-        DontDestroyOnLoad(gameObject);
+
     }
 
 

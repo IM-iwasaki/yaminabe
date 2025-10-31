@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Unity.VisualScripting;
 
 //
 //  @file   Second_CharacterClass
@@ -76,6 +73,9 @@ class GeneralCharacter : CharacterBase {
         
         //TODO: MP管理系の処理がない。
         //TODO: リロード処理を呼ぶところがないかも。
+
+        //HPが0以下になったとき死亡していなかったら死亡処理を行う
+        if (HP <= 0 && !IsDead) Dead();
 
         MoveControl();
         JumpControl();
