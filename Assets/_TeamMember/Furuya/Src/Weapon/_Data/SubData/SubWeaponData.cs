@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class SubWeaponData : ScriptableObject {
+public abstract class SubWeaponData : ScriptableObject, IWeaponInfo {
     [Header("Basic Info")]
     public string subWeaponName;
     public SubWeaponType type;

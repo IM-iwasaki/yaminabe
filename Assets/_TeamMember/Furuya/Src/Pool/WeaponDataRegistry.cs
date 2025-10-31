@@ -39,8 +39,11 @@ public class WeaponDataRegistry : MonoBehaviour {
 
     // --- WeaponDataを直接取得するメソッド ---
     public static WeaponData GetWeapon(string weaponName) {
-        if (weaponDict.TryGetValue(weaponName, out var info) && info is WeaponData weapon)
+        if (weaponDict.TryGetValue(weaponName, out var info) && info is WeaponData weapon) {
+            Debug.LogWarning($"{weapon} を取得した");
+
             return weapon;
+        }
 
         Debug.LogWarning($"WeaponDataRegistry: '{weaponName}' に対応する WeaponData が見つかりません。");
         return null;

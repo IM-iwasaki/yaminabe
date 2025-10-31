@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(menuName = "Weapons/WeaponData")]
-public class WeaponData : ScriptableObject {
+public class WeaponData : ScriptableObject, IWeaponInfo {
     public string weaponName;
     public WeaponType type;
     public int damage;
