@@ -146,9 +146,9 @@ public class CustomNetworkManager : NetworkManager {
         GameSceneManager.Instance.ResetIsChangedScene();
     }
 
-    public override void OnStopServer() {
-        GameSceneManager.Instance.LoadTitleSceneForAll();
-    }
+    //public override void OnStopServer() {
+    //    GameSceneManager.Instance.LoadTitleSceneForAll();
+    //}
 
     public override void OnStopClient() {
         SceneManager.LoadScene("TitleScene");
