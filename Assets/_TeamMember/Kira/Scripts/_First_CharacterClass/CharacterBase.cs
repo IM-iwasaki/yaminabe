@@ -219,8 +219,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Server]
-    public void TakeDamage(int _damage) {
+    [Server] public void TakeDamage(int _damage) {
         //既に死亡状態なら帰る
         if (IsDead) return;
 
@@ -265,8 +264,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Command]
-    public void Respawn() {
+    [Command]virtual public void Respawn() {
         //死んでいなかったら即抜け
         if (!IsDead) return;
 
@@ -290,8 +288,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
-    [Command]
-    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+    [Command] public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
         GeneralCharacter player = _player.GetComponent<GeneralCharacter>();
         int currentTeam = player.TeamID;
         int newTeam = (int)_color;
@@ -601,6 +598,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// Abstruct : スキルとパッシブの制御用関数
+    /// </summary>
     abstract protected void AbilityControl();
 
     /// <summary>
