@@ -23,7 +23,7 @@ public class WeaponItem : ItemBase {
         }
 
         //  持っている武器データをプレイヤーに受け渡す
-        playerWeaponData.SetWeaponData(weaponData);
+        //playerWeaponData.SetWeaponData(weaponData.weaponName);
 
         // 使用後にアイテムを削除
         Destroy(gameObject);
