@@ -272,6 +272,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     public void Respawn() {
+        if (!isLocalPlayer) return;
         //Ž€‚ñ‚Å‚¢‚È‚©‚Á‚½‚ç‘¦”²‚¯
         if (!IsDead) return;
 
