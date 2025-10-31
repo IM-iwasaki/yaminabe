@@ -71,7 +71,9 @@ class GeneralCharacter : CharacterBase {
     }
 
     void Update() {
-        if(!isLocalPlayer) return;   
+        if(!isLocalPlayer) return;  
+        //攻撃トリガーが立っていたら下す
+        IsAttackTrigger = false;
         
         //TODO: MP管理系の処理がない。
         //TODO: リロード処理を呼ぶところがないかも。
@@ -94,6 +96,8 @@ class GeneralCharacter : CharacterBase {
     protected override void AbilityControl() {
         //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)
         EquippedPassives[0].PassiveReflection(this);
+        //スキル更新関数を呼ぶ(中身を未定義の場合は何もしない)
+        EquippedSkills[0].SkillEffectUpdate(this);
 
         //スキル使用不可中、かつスキルがインポートされていれば時間を計測
         if (!IsCanSkill && EquippedSkills[0] != null)

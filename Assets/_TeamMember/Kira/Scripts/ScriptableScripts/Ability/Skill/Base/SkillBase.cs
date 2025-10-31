@@ -23,4 +23,10 @@ public abstract class SkillBase : ScriptableObject {
     /// Abstruct : スキル固有の動作(引数はスキルの発動者。) 発火時1回のみ通過します。
     /// </summary>
     public abstract void Activate(CharacterBase user);
+
+    /// <summary>
+    /// Virtual : スキル固有の更新処理　毎フレーム呼ばれます。必要に応じて使用してください。
+    /// </summary>
+    /// <param name="user"></param>
+    public virtual void SkillEffectUpdate(CharacterBase user) { }
 }
