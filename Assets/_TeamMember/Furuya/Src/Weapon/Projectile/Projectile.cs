@@ -69,7 +69,7 @@ public class Projectile : NetworkBehaviour {
     [ClientRpc(includeOwner = true)]
     void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
 
-        GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
+        GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
             var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);

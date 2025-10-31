@@ -123,7 +123,7 @@ public class MainWeaponController : NetworkBehaviour {
     // --- クライアントでヒットエフェクト再生 ---
     [ClientRpc]
     void RpcSpawnHitEffect(Vector3 pos, EffectType type) {
-        GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(type);
+        GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(type);
         if (prefab != null) {
             var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             WeaponEffectPool.Instance.ReturnToPool(fx, 1.5f);
@@ -133,7 +133,7 @@ public class MainWeaponController : NetworkBehaviour {
     // --- クライアントでマズルフラッシュ再生 ---
     [ClientRpc]
     void RpcPlayMuzzleFlash(Vector3 pos, EffectType type) {
-        GameObject prefab = WeaponPoolRegistry.Instance.GetMuzzleFlash(type);
+        GameObject prefab = EffectPoolRegistry.Instance.GetMuzzleFlash(type);
         if (prefab != null) {
             var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             WeaponEffectPool.Instance.ReturnToPool(fx, 0.8f);
