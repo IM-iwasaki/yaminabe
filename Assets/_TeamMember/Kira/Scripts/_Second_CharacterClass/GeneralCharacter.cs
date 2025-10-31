@@ -49,6 +49,8 @@ class GeneralCharacter : CharacterBase {
         Debug.Log("MeleeCharacter.cs : パッシブのインポートを行いました。\nインポートしたパッシブ: " + string.Join(", ", EquippedPassives.Where(i => i != null).Select(i => i.PassiveName)));
         // パッシブの初期セットアップ
         EquippedPassives[0].PassiveSetting(this);
+        //  デフォルトステータスを代入
+        InDefaultStatus();
     }
 
     protected override void StartUseSkill() {
