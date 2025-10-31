@@ -161,10 +161,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         // "Ground" という名前のレイヤーを取得してマスク化
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
         GroundLayer = 1 << groundLayerIndex;
-
-        // デフォルト値保存
-        defaultMoveSpeed = MoveSpeed;
-        defaultAttack = Attack;
     }
 
     /// <summary>
@@ -207,6 +203,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         HP = MaxHP;
         Attack = PlayerConst.DEFAULT_ATTACK;
         MoveSpeed = PlayerConst.DEFAULT_MOVESPEED;
+
+
+        // デフォルト値保存
+        defaultMoveSpeed = MoveSpeed;
+        defaultAttack = Attack;
     }
 
     #endregion
