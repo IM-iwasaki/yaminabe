@@ -24,6 +24,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     #region ～変数宣言～
 
     #region ～ステータス～
+    [Header("基本ステータス")]
     //現在の体力
     [SyncVar(hook = nameof(ChangeHP))] public int HP;
     //最大の体力
@@ -68,7 +69,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     #endregion
 
     #region ～状態管理・コンポーネント変数～
-
     //死亡しているか
     protected bool IsDead { get; private set; } = false;
     //死亡してからの経過時間
@@ -100,6 +100,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public float SkillAfterTime { get; protected set; } = 0.0f;
 
     //コンポーネント情報
+    [Header("コンポーネント情報")]
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
     [SerializeField] protected PlayerUIController UI;
@@ -110,8 +111,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     #region ～アクション用変数～
 
     //武器を使用するため
+    [Header("アクション用変数")]
     [SerializeField] protected MainWeaponController weaponController;
-
     //ジャンプ入力をしたか
     private bool IsJumpPressed = false;
     //GroundLayer
@@ -234,8 +235,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (_damage <= 0) _damage = 1;
         //HPの減算処理
         HP -= _damage;
-        //HPが0以下になったとき死亡していなかったら死亡処理を行う
-        if (HP <= 0 && !IsDead) Dead();
     }
 
     /// <summary>
@@ -251,6 +250,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死亡時処理
     /// </summary>
     public void Dead() {
+        Debug.Log("Dead関数が呼び出されました。");
+
         //死亡フラグをたててHPを0にしておく
         IsDead = true;
         HP = 0;
