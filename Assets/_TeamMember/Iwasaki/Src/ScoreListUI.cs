@@ -12,20 +12,14 @@ public class ScoreListUI : MonoBehaviour {
     [Header("UI参照")]
     public Transform content;             // ScrollView の Content
     public GameObject scoreEntryPrefab;   // スコア1行分のプレハブ
-   /* public GameObject rootPanel;  */        // ScrollView全体のルート
+  
 
-    private void Start() {
-        // 起動時は非表示
-        //if (rootPanel != null)
-        //    rootPanel.SetActive(false);
-    }
+  
 
     /// <summary>
     /// 渡されたスコアデータを一覧表示する。
     /// </summary>
     public void DisplayScores(List<ResultScoreData> scores) {
-        //if (rootPanel != null)
-        //    rootPanel.SetActive(true);
 
         // 古い要素を削除
         foreach (Transform child in content)
