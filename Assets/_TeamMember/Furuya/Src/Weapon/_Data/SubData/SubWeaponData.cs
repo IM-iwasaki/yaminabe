@@ -27,4 +27,6 @@ public abstract class SubWeaponData : ScriptableObject {
     [Header("Visual / Audio")]
     public EffectType useEffectType = EffectType.Default;
 
+    public string WeaponName => subWeaponName;
+
 }

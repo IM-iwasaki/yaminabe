@@ -22,4 +22,6 @@ public class WeaponData : ScriptableObject {
     [Header("Visual Effects")]
     public EffectType muzzleFlashType = EffectType.Default;
     public EffectType hitEffectType = EffectType.Default;
+
+    public string WeaponName => weaponName;
 }
