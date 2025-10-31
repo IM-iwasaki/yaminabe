@@ -74,6 +74,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     public bool IsMoving { get; private set; } = false;
     //攻撃中か
     public bool IsAttackPressed { get; private set; } = false;
+    //攻撃を押した瞬間か
+    public bool IsAttackTrigger { get; protected set; } = false;
     //攻撃開始時間
     public float AttackStartTime { get; private set; } = 0;
     //オート攻撃タイプ (デフォルトはフルオート)
@@ -89,7 +91,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //スキルを使用できるか
     public bool IsCanSkill { get; protected set; } = false;
     //スキル使用後経過時間
-    public float SkillAfterTime { get; protected set; } = 0.0f;
+    public float SkillAfterTime = 0.0f;
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -608,7 +610,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     private void HandleAttack(InputAction.CallbackContext context, CharacterEnum.AttackType _type) {
         switch (context.phase) {
-            //押した瞬間
+            //押した瞬間から
             case InputActionPhase.Started:
                 IsAttackPressed = true;
                 //入力開始時間を記録
@@ -621,7 +623,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                     StartCoroutine(AutoFire(_type));
                 }
                 break;
-            //離した瞬間
+            //離した瞬間まで
             case InputActionPhase.Canceled:
                 IsAttackPressed = false;
                 //入力終了時間を記録
@@ -633,6 +635,10 @@ public abstract class CharacterBase : NetworkBehaviour {
 
                     StartAttack(_type);
                 }
+                break;
+           //押した瞬間
+           case InputActionPhase.Performed:
+                IsAttackTrigger = true;
                 break;
         }
     }
@@ -651,7 +657,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃関数
     /// </summary>
-    virtual protected void StartAttack(CharacterEnum.AttackType _type = CharacterEnum.AttackType.Main) {
+    virtual public void StartAttack(CharacterEnum.AttackType _type = CharacterEnum.AttackType.Main) {
         if (weaponController == null) return;
 
         // 武器が攻撃可能かチェックしてサーバー命令を送る
