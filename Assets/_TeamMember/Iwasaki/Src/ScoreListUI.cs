@@ -1,87 +1,60 @@
 using UnityEngine;
 using UnityEngine.UI;
-using Mirror;
 using System.Collections.Generic;
 
-
 /// <summary>
-/// スコア一覧UIを管理するクラス（Mirror対応）
-/// 
-/// 【使い方】
-/// ▼概要
-/// ・サーバー側がゲーム終了時などにスコアを集計し、
-///   ResultManager から全クライアントに送信してリザルトに表示する。
-/// ・スコアの表示（中身）はこのクラスが担当。
-/// ・UIの生成／削除は ResultManager、
-///   ボタン制御は ResultPanel が担当。
-/// 
-/// ▼設定手順
-/// ① Canvas 内に ScrollView を用意する。
-/// ② ScrollView の Content をこのスクリプトの「content」に割り当てる。
-/// ③ 各スコア行用のプレハブ（例：PlayerNameText と ScoreText を持つ）を作り、
-///    「scoreEntryPrefab」に割り当てる。
-/// ④ ResultPanel プレハブの中にこの ScoreListUI を配置しておく。
-/// 
-/// ▼スコア送信例（サーバー側で呼ぶ）
-/// var scores = new ScoreListUI.PlayerScoreData[] {
-///     new ScoreListUI.PlayerScoreData { playerName = "Alice", score = 100 },
-///     new ScoreListUI.PlayerScoreData { playerName = "Bob", score = 80 }
-/// };
-/// scoreListUI.RpcDisplayScores(scores);
-/// 
-/// ▼動作の流れ
-/// ① サーバーが RpcDisplayScores() を呼ぶ
-/// ② 全クライアントで DisplayScores() が実行され、
-///    スコアリストが自動生成されて表示される。
+/// スコア一覧UI（Mirror非依存）
+/// ResultManager から ClientRpc 経由でデータを受け取り、
+/// ローカル上でリストを生成して表示する。
 /// </summary>
-public class ScoreListUI : NetworkBehaviour {
+public class ScoreListUI : MonoBehaviour {
     [Header("UI参照")]
-    public Transform content;           // ScrollView の Content（ここに ScoreEntry を生成）
-    public GameObject scoreEntryPrefab; // スコア表示用のプレハブ
+    public Transform content;           // ScrollViewのContent
+    public GameObject scoreEntryPrefab; // スコア1行分のプレハブ
+    public GameObject rootPanel;        // ScrollView全体の親（非表示制御用）
 
-    /// <summary>
-    /// プレイヤー名とスコアのデータ構造（Mirrorで送信可能）
-    /// </summary>
     [System.Serializable]
     public struct PlayerScoreData {
         public string playerName;
         public int score;
     }
 
-    /// <summary>
-    /// サーバーから全クライアントにスコア表示を送信
-    /// </summary>
-    [ClientRpc]
-    public void RpcDisplayScores(PlayerScoreData[] scores) {
-        DisplayScores(new List<PlayerScoreData>(scores));
+    private void Start() {
+        if (rootPanel != null)
+            rootPanel.SetActive(false);
     }
 
     /// <summary>
-    /// 渡されたスコアリストを UI に表示
+    /// サーバーから渡されたスコアリストをUIに反映
     /// </summary>
     public void DisplayScores(List<PlayerScoreData> scores) {
-        // 既存エントリをクリア
+        if (rootPanel != null)
+            rootPanel.SetActive(true);
+
         foreach (Transform child in content)
             Destroy(child.gameObject);
 
-        // 降順ソート
+        // スコア降順ソート
         scores.Sort((a, b) => b.score.CompareTo(a.score));
 
-        // スコアを追加
         foreach (var data in scores)
             AddScoreEntry(data.playerName, data.score);
     }
 
-    /// <summary>
-    /// 個別スコア行を生成
-    /// </summary>
     private void AddScoreEntry(string playerName, int score) {
+        if (scoreEntryPrefab == null) {
+            Debug.LogError("[ScoreListUI] scoreEntryPrefab が未設定！");
+            return;
+        }
+
         GameObject entry = Instantiate(scoreEntryPrefab, content);
 
-        var texts = entry.GetComponentsInChildren<Text>();
-        foreach (var t in texts) {
-            if (t.name == "PlayerNameText") t.text = playerName;
-            else if (t.name == "ScoreText") t.text = score.ToString();
+        // TextまたはTMP_Text両対応
+        foreach (var t in entry.GetComponentsInChildren<Text>()) {
+            if (t.name.Contains("Name")) t.text = playerName;
+            else if (t.name.Contains("Score")) t.text = score.ToString();
         }
+
+        Debug.Log($"[ScoreListUI] AddScoreEntry: {playerName} ({score})");
     }
 }
