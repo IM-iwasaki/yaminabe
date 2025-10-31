@@ -25,12 +25,12 @@ public class ResultPanel : NetworkBehaviour {
 
         if (returnLobbyButton != null)
             returnLobbyButton.onClick.AddListener(OnClickReturnLobby);
+        
     }
 
     /// <summary>
     /// 全員の画面にリザルトを表示（ResultManagerから呼ばれる）
     /// </summary>
-    [ClientRpc]
     public void RpcShowResult() {
         Debug.Log("[ResultPanel] リザルト画面表示");
 
@@ -58,6 +58,7 @@ public class ResultPanel : NetworkBehaviour {
         if (NetworkServer.active && resultManager != null) {
             resultManager.HideResult();
             // TODO: 再戦ロジックをここに追加（シーンリロードなど）
+            GameSceneManager.Instance.LoadGameSceneForAll();
         }
     }
 
@@ -71,7 +72,7 @@ public class ResultPanel : NetworkBehaviour {
         if (NetworkServer.active && resultManager != null) {
             resultManager.HideResult();
             // TODO: ロビーシーンに戻る処理をここに追加
-            // NetworkManager.singleton.ServerChangeScene("LobbyScene");
+            GameSceneManager.Instance.LoadTitleSceneForAll();
         }
     }
 }

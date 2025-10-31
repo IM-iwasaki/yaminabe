@@ -26,8 +26,6 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
 
     protected override void Awake() {
         base.Awake();
-
-
     }
 
 
@@ -35,8 +33,9 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     /// <summary>
     /// サーバーが呼ぶ：リザルト画面を全クライアントに表示してスコアを送信
     /// </summary>
-    [Server]
+    [ClientRpc]
     public void ShowResultWithScores(ScoreListUI.PlayerScoreData[] scores) {
+        resultUIPrefab.SetActive(true);
         StartCoroutine(ShowResultCoroutine(scores));
     }
 
