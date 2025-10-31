@@ -1,110 +1,121 @@
 using UnityEngine;
 using Mirror;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
-/// リザルト画面の生成・スコア表示・削除を統括管理するクラス（Mirror対応）
+/// Mirror対応：リザルト画面の生成・スコア送信・削除を統括管理する
 /// 
-/// ・サーバーが必要なタイミングでリザルトUIを生成（全クライアントに同期）
-/// ・ScoreListUI にスコアを送信して一覧表示
-/// ・HideResult() でプレハブ全体を安全に削除
-/// ・Canvasを含むUIプレハブ全体を保持しておく構成
+/// ・サーバーから全員にUIを生成（ClientRpc）
+/// ・スコアもサーバーから全員に送信
+/// ・UI側（ScoreListUI）はネットワーク登録不要
+/// 
+/// 【使い方】
+/// resultManager.ShowResultWithScores(scores);
 /// </summary>
-public class ResultManager : NetworkSystemObject<ResultManager> {
-    [Header("リザルトUIプレハブ（Canvas含む）")]
+public class ResultManager : NetworkBehaviour {
+    [Header("リザルトUIプレハブ（Canvas付き）")]
     [SerializeField] private GameObject resultUIPrefab;
 
-    // 生成されたUIのルート（Canvas付き）
     private GameObject currentUIRoot;
-    // プレハブ内のResultPanel
     private ResultPanel currentResultPanel;
-    // プレハブ内のScoreListUI
-    private ScoreListUI currentScoreList;
 
-
-    private static ResultManager instance;
-
-    protected override void Awake() {
-        base.Awake();
-
-
+    // Mirrorで送信可能なデータ型
+    [System.Serializable]
+    public struct PlayerScoreData {
+        public string playerName;
+        public int score;
     }
 
-
+    // ===============================================================
+    // メイン処理
+    // ===============================================================
 
     /// <summary>
-    /// サーバーが呼ぶ：リザルト画面を全クライアントに表示してスコアを送信
+    /// サーバーで呼ぶ：リザルトUIを全員に生成してスコアを送信
     /// </summary>
     [Server]
-    public void ShowResultWithScores(ScoreListUI.PlayerScoreData[] scores) {
+    public void ShowResultWithScores(PlayerScoreData[] scores) {
         StartCoroutine(ShowResultCoroutine(scores));
     }
 
     /// <summary>
-    /// UI生成とスコア送信を安全に行う
+    /// UI生成とスコア送信を安全に行うコルーチン
     /// </summary>
-    private IEnumerator ShowResultCoroutine(ScoreListUI.PlayerScoreData[] scores) {
-        // 全クライアントでUI生成
+    private IEnumerator ShowResultCoroutine(PlayerScoreData[] scores) {
+        // UIを全クライアントに生成
         RpcSpawnResultPanel();
 
-        // 1フレーム待機（生成完了を待つ）
-        yield return null;
+        // 生成完了を待つ
+        yield return new WaitForEndOfFrame();
 
-        // スコア送信（生成されたUIから参照）
-        if (currentScoreList == null)
-            currentScoreList = FindObjectOfType<ScoreListUI>();
-
-        if (currentScoreList != null) {
-            currentScoreList.RpcDisplayScores(scores);
-            Debug.Log("[ResultManager] スコア送信完了");
-        }
-        else {
-            Debug.LogWarning("[ResultManager] ScoreListUI が見つかりません。プレハブに含まれているか確認してください。");
-        }
+        // スコアを全クライアントに送信
+        RpcDisplayScores(scores);
     }
+
+    // ===============================================================
+    // クライアントRPC
+    // ===============================================================
 
     /// <summary>
     /// 各クライアントでリザルトUIを生成
     /// </summary>
     [ClientRpc]
     private void RpcSpawnResultPanel() {
-        // すでにUIが存在する場合は何もしない
         if (currentUIRoot != null) {
-            Debug.Log("[ResultManager] すでにリザルト画面が存在します。");
+            Debug.Log("[ResultManager] 既にリザルトUIが存在します。");
             return;
         }
 
-        // プレハブ生成
         GameObject ui = Instantiate(resultUIPrefab);
-        currentUIRoot = ui; // リザルトプレハブを保持
+        currentUIRoot = ui;
 
-        // 内部のパネルとスコアリストを参照
         currentResultPanel = ui.GetComponentInChildren<ResultPanel>();
-        currentScoreList = ui.GetComponentInChildren<ScoreListUI>();
+        if (currentResultPanel == null) {
+            Debug.LogError("[ResultManager] ResultPanel がプレハブに存在しません！");
+            return;
+        }
 
-        if (currentResultPanel == null)
-            Debug.LogError("[ResultManager] ResultPanel コンポーネントが見つかりません！");
-        else
-            currentResultPanel.RpcShowResult();
+        currentResultPanel.RpcShowResult();
 
-        Debug.Log("[ResultManager] リザルトUIを生成しました。");
+        Debug.Log("[ResultManager] リザルトUI生成完了。");
     }
 
     /// <summary>
-    /// 現在のリザルトUIを削除（ResultPanel＋ScoreListUI含めて全体破棄）
+    /// 全クライアントにスコア一覧を送信し、ローカルUIに反映
     /// </summary>
+    [ClientRpc]
+    private void RpcDisplayScores(PlayerScoreData[] scores) {
+        Debug.Log($"[ResultManager] RpcDisplayScores 呼び出し。count={scores.Length}");
+
+        ScoreListUI scoreList = FindObjectOfType<ScoreListUI>();
+        if (scoreList == null) {
+            Debug.LogWarning("[ResultManager] ScoreListUI が見つかりません。UI生成順を確認してください。");
+            return;
+        }
+
+        // 配列をListに変換して渡す
+        var list = new List<ScoreListUI.PlayerScoreData>();
+        foreach (var s in scores) {
+            list.Add(new ScoreListUI.PlayerScoreData {
+                playerName = s.playerName,
+                score = s.score
+            });
+        }
+
+        scoreList.DisplayScores(list);
+    }
+
+    // ===============================================================
+    // UI削除処理
+    // ===============================================================
+
     public void HideResult() {
         if (currentUIRoot != null) {
             Destroy(currentUIRoot);
-            Debug.Log("[ResultManager] リザルト画面を削除しました。");
-
-            // 参照クリア
             currentUIRoot = null;
             currentResultPanel = null;
-            currentScoreList = null;
-        }
-        else {
-            Debug.LogWarning("[ResultManager] 削除しようとしたリザルトUIが存在しません。");
+            Debug.Log("[ResultManager] リザルト画面を削除しました。");
         }
     }
 }

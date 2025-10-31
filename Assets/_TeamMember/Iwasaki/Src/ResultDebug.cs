@@ -2,31 +2,28 @@ using UnityEngine;
 using Mirror;
 
 /// <summary>
-/// ESCキーでテスト的にリザルト画面を出すデバッグスクリプト
+/// テスト用：ESCキーでダミースコアを表示
 /// </summary>
 public class ResultDebug : NetworkBehaviour {
     private ResultManager resultManager;
 
     void Start() {
         resultManager = FindObjectOfType<ResultManager>();
-        if (resultManager == null)
-            Debug.LogError("ResultManager がシーンに存在しません");
     }
 
     void Update() {
         if (Input.GetKeyUp(KeyCode.Escape) && isServer) {
-            Debug.Log("ESC押下 → テストでリザルト表示");
+            Debug.Log("[ResultDebug] ESC押下 → リザルトテスト開始");
 
-            // 仮スコアデータ
-            ScoreListUI.PlayerScoreData[] dummyScores = new ScoreListUI.PlayerScoreData[]
+            ResultManager.PlayerScoreData[] dummy = new ResultManager.PlayerScoreData[]
             {
-                new ScoreListUI.PlayerScoreData { playerName = "Alice", score = 1200 },
-                new ScoreListUI.PlayerScoreData { playerName = "Bob", score = 800 },
-                new ScoreListUI.PlayerScoreData { playerName = "Charlie", score = 1500 },
-                new ScoreListUI.PlayerScoreData { playerName = "Delta", score = 600 }
+                new ResultManager.PlayerScoreData { playerName = "Alice", score = 1200 },
+                new ResultManager.PlayerScoreData { playerName = "Bob", score = 800 },
+                new ResultManager.PlayerScoreData { playerName = "Charlie", score = 1500 },
+                new ResultManager.PlayerScoreData { playerName = "Delta", score = 600 }
             };
 
-            resultManager.ShowResultWithScores(dummyScores);
+            resultManager.ShowResultWithScores(dummy);
         }
     }
 }
