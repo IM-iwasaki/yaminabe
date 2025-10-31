@@ -216,7 +216,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Server]public void TakeDamage(int _damage) {
+    [Server]
+    public void TakeDamage(int _damage) {
         //既に死亡状態なら帰る
         if (IsDead) return;
 
@@ -261,7 +262,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Command]public void Respawn() {
+    [Command]
+    public void Respawn() {
         //死んでいなかったら即抜け
         if (!IsDead) return;
 
@@ -272,7 +274,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //リスポーン地点に移動させる
         NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
         var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
-        NTH.CmdTeleport(RespownPos[Random.Range(0,RespownPos.Count)].transform.position);
+        NTH.CmdTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position);
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
@@ -285,8 +287,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
-    [Command]public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
-        CharacterBase player = _player.GetComponent<CharacterBase>();
+    [Command]
+    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+        GeneralCharacter player = _player.GetComponent<GeneralCharacter>();
         int currentTeam = player.TeamID;
         int newTeam = (int)_color;
 
@@ -302,8 +305,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
         //新たなチームに加入する時
         //今加入しているチームから抜けてIDをリセット
-        ServerManager.instance.teams[_player.GetComponent<CharacterBase>().TeamID].teamPlayerList.Remove(_player);
-        player.TeamID = -1;
+        if (player.TeamID != -1) {
+            ServerManager.instance.teams[player.TeamID].teamPlayerList.Remove(_player);
+            player.TeamID = -1;
+        }
+
         //新しいチームに加入
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.TeamID = newTeam;
@@ -430,9 +436,11 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
+                CmdJoinTeam(GetComponent<NetworkIdentity>(), teamColor.Red);
                 break;
             case "BlueTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
+                CmdJoinTeam(GetComponent<NetworkIdentity>(), teamColor.Blue);
                 break;
             default:
                 break;
@@ -697,7 +705,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// HP回復(時間経過で徐々に回復)発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]public void Heal(float _value, float _usingTime) {
+    [Command]
+    public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
         //  エフェクト再生
@@ -738,7 +747,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃力上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]public void AttackBuff(float _value, float _usingTime) {
+    [Command]
+    public void AttackBuff(float _value, float _usingTime) {
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         //  エフェクト再生
         PlayEffect(ATTACK_BUFF_EFFECT);
@@ -760,7 +770,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 移動速度上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]public void MoveSpeedBuff(float _value, float _usingTime) {
+    [Command]
+    public void MoveSpeedBuff(float _value, float _usingTime) {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         //  エフェクト再生
         PlayEffect(SPEED_BUFF_EFFECT);
@@ -782,7 +793,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// すべてのバフを即解除
     /// </summary>
-    [Command]public void RemoveBuff() {
+    [Command]
+    public void RemoveBuff() {
         StopAllCoroutines();
         DestroyChildrenWithTag(EFFECT_TAG);
         MoveSpeed = defaultMoveSpeed;
@@ -811,10 +823,12 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// エフェクト生成
     /// </summary>
-    [Command] private void CmdPlayEffect(int effectNum) {
+    [Command]
+    private void CmdPlayEffect(int effectNum) {
         RpcPlayEffect(effectNum);
     }
-    [ClientRpc] private void RpcPlayEffect(int effectNum) {
+    [ClientRpc]
+    private void RpcPlayEffect(int effectNum) {
         //  ローカルで一度子オブジェクトを参照して破棄
         DestroyChildrenWithTagLocal(EFFECT_TAG);
 
@@ -827,10 +841,12 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="tag"></param>
-    [Command] private void CmdDestroyChildrenWithTag(string tag) {
+    [Command]
+    private void CmdDestroyChildrenWithTag(string tag) {
         RpcDestroyChildrenWithTag(tag);
     }
-    [ClientRpc] private void RpcDestroyChildrenWithTag(string tag) {
+    [ClientRpc]
+    private void RpcDestroyChildrenWithTag(string tag) {
         DestroyChildrenWithTagLocal(tag);
     }
     private void DestroyChildrenWithTagLocal(string tag) {
