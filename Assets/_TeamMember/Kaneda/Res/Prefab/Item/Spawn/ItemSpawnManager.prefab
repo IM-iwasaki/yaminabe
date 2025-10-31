@@ -53,9 +53,11 @@ MonoBehaviour:
   weaponCategory:
     items:
     - prefab: {fileID: 7444770962804427274, guid: 3eb659f932228ff4290b4f91447a2abe, type: 3}
-      spawnChancePercent: 60
-    - prefab: {fileID: 6287281268592559782, guid: c7b92192aa1e78b479168acd4ed896d8, type: 3}
       spawnChancePercent: 40
+    - prefab: {fileID: 6287281268592559782, guid: c7b92192aa1e78b479168acd4ed896d8, type: 3}
+      spawnChancePercent: 30
+    - prefab: {fileID: 1247223829425721374, guid: 2ca53a5a5912f24438eabe43ced5d719, type: 3}
+      spawnChancePercent: 30
     spawnProbabilityPercent: 80
   consumableCategory:
     items:

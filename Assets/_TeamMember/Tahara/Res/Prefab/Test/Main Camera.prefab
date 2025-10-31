@@ -98,6 +98,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   normalOffset: {x: 0, y: 1, z: -4}
-  collisionMask:
+  rotationSpeed: 120
+  minPitch: -60
+  maxPitch: 40
+  moveSpeed: 10
+  upOffsetAmount: 0
+  leftOffsetAmount: -2
+  transparentMask:
     serializedVersion: 2
     m_Bits: 0
+  fadeAlpha: 0.3
+  fadeSpeed: 5
