@@ -281,7 +281,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //リスポーン地点に移動させる
         var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
-        transform.position = RespownPos[TeamID].transform.position;
+        transform.position = RespownPos[Random.Range(0,RespownPos.Count)].transform.position;
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
