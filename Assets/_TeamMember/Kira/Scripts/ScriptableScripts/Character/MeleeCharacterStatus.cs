@@ -4,7 +4,7 @@ using UnityEngine;
 public class MeleeCharacterStatus : CharacterStatus {
     //職業の割り当て
     [Tooltip("職業タイプを選択してください。\n・Melee(近接職)\n・Wizard(魔法職)\n・Gunner(間接職)")]
-    public CharacterTypeEnum.CharaterType ChatacterType = CharacterTypeEnum.CharaterType.Melee;
+    public CharacterEnum.CharaterType ChatacterType = CharacterEnum.CharaterType.Melee;
 
     [Tooltip("体力補正値。\nStatusBase + [MaxHPCorrection] の値になります。")]
     [Range(-50, 100)] public int MaxHPCorrection = 0;

@@ -77,7 +77,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //攻撃開始時間
     public float AttackStartTime { get; private set; } = 0;
     //オート攻撃タイプ (デフォルトはフルオート)
-    public PlayerConst.AutoFireType AutoFireType { get; protected set; } = PlayerConst.AutoFireType.FullAutomatic;
+    public CharacterEnum.AutoFireType AutoFireType { get; protected set; } = CharacterEnum.AutoFireType.FullAutomatic;
     // 連射間隔
     public float FireInterval { get; private set; } = 0.2f;
 
@@ -188,9 +188,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             var playerUI = Instantiate(UI, GameUIRoot.transform);
             UI = playerUI.GetComponent<PlayerUIController>();
             UI.Initialize(HP);
-
         }
-
     }
 
     /// <summary>
@@ -206,7 +204,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         MaxHP = PlayerConst.DEFAULT_MAXHP;
         HP = MaxHP;
         Attack = PlayerConst.DEFAULT_ATTACK;
-        MoveSpeed = PlayerConst.DEFAULT_MOVESPEED;
+        MoveSpeed = PlayerConst.DEFAULT_MOVESPEED;        
     }
 
     #endregion
@@ -331,13 +329,13 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "Fire_Main":
                 HandleAttack(ctx, actionName == "Attack_Main"
-                    ? PlayerConst.AttackType.Main
-                    : PlayerConst.AttackType.Sub);
+                    ? CharacterEnum.AttackType.Main
+                    : CharacterEnum.AttackType.Sub);
                 break;
             case "Fire_Sub":
                 HandleAttack(ctx, actionName == "Attack_Sub"
-                    ? PlayerConst.AttackType.Main
-                    : PlayerConst.AttackType.Sub);
+                    ? CharacterEnum.AttackType.Main
+                    : CharacterEnum.AttackType.Sub);
                 break;
             case "ShowHostUI":
                 OnShowHostUI(ctx);
@@ -354,13 +352,13 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "Fire_Main":
                 HandleAttack(ctx, actionName == "Attack_Main"
-                    ? PlayerConst.AttackType.Main
-                    : PlayerConst.AttackType.Sub);
+                    ? CharacterEnum.AttackType.Main
+                    : CharacterEnum.AttackType.Sub);
                 break;
             case "Fire_Sub":
                 HandleAttack(ctx, actionName == "Attack_Sub"
-                    ? PlayerConst.AttackType.Main
-                    : PlayerConst.AttackType.Sub);
+                    ? CharacterEnum.AttackType.Main
+                    : CharacterEnum.AttackType.Sub);
                 break;
             case "Skill":
                 OnUseSkill(ctx);
@@ -378,8 +376,8 @@ public abstract class CharacterBase : NetworkBehaviour {
             case "Fire_Main":
             case "Fire_Sub":
                 HandleAttack(ctx, actionName == "Attack_Main"
-                    ? PlayerConst.AttackType.Main
-                    : PlayerConst.AttackType.Sub);
+                    ? CharacterEnum.AttackType.Main
+                    : CharacterEnum.AttackType.Sub);
                 break;
         }
     }
@@ -472,13 +470,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// メイン攻撃(現在未使用)
     /// </summary
     public void OnAttack_Main(InputAction.CallbackContext context) {
-        HandleAttack(context, PlayerConst.AttackType.Main);
+        HandleAttack(context, CharacterEnum.AttackType.Main);
     }
     /// <summary>
     /// サブ攻撃(現在未使用)
     /// </summary
     public void OnAttack_Sub(InputAction.CallbackContext context) {
-        HandleAttack(context, PlayerConst.AttackType.Sub);
+        HandleAttack(context, CharacterEnum.AttackType.Sub);
     }
     /// <summary>
     /// スキル
@@ -603,7 +601,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃入力のハンドル分岐
     /// </summary>
-    private void HandleAttack(InputAction.CallbackContext context, PlayerConst.AttackType _type) {
+    private void HandleAttack(InputAction.CallbackContext context, CharacterEnum.AttackType _type) {
         switch (context.phase) {
             //押した瞬間
             case InputActionPhase.Started:
@@ -612,7 +610,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 AttackStartTime = Time.time;
 
                 //フルオート状態の場合コルーチンで射撃間隔を調整する
-                if (AutoFireType == PlayerConst.AutoFireType.FullAutomatic) {
+                if (AutoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
                     Debug.Log("フルオート攻撃を開始しました。");
 
                     StartCoroutine(AutoFire(_type));
@@ -625,7 +623,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 float heldTime = Time.time - AttackStartTime;
 
                 //セミオート状態の場合入力時間が短ければ一回攻撃
-                if (AutoFireType == PlayerConst.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
+                if (AutoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
                     Debug.Log("セミオート攻撃です。");
 
                     StartAttack(_type);
@@ -637,7 +635,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// オート攻撃のコルーチン
     /// </summary>
-    private IEnumerator AutoFire(PlayerConst.AttackType _type) {
+    private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
         while (IsAttackPressed) {
             Debug.Log("オート攻撃中...");
             StartAttack(_type);
@@ -648,7 +646,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃関数
     /// </summary>
-    virtual protected void StartAttack(PlayerConst.AttackType _type = PlayerConst.AttackType.Main) {
+    virtual protected void StartAttack(CharacterEnum.AttackType _type = CharacterEnum.AttackType.Main) {
         if (weaponController == null) return;
 
         // 武器が攻撃可能かチェックしてサーバー命令を送る
@@ -753,6 +751,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //  エフェクト再生
         PlayEffect(ATTACK_BUFF_EFFECT);
 
+        defaultAttack = Attack;
+
         attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
     }
 
@@ -775,6 +775,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         //  エフェクト再生
         PlayEffect(SPEED_BUFF_EFFECT);
+
+        defaultMoveSpeed = MoveSpeed;
 
         speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }

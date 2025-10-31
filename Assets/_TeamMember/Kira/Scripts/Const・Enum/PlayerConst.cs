@@ -26,22 +26,5 @@ public class PlayerConst {
     public const float RespownTime = 3.0f;
     //リスポーン後の無敵時間
     public const float RespownInvincibleTime = 1.5f;
-
-    /// <summary>
-    /// メイン攻撃かサブ攻撃かを判別する列挙体
-    /// </summary>
-    public enum AttackType {
-        Main = 0,
-        Sub = 1,
-    };
-
-    /// <summary>
-    /// セミオートかフルオートか判別する列挙体
-    /// </summary>
-    public enum AutoFireType {
-        Invalid = -1,
-        SemiAutomatic,
-        FullAutomatic
-    }
 }
 
