@@ -21,6 +21,22 @@ public class ResultManager : NetworkBehaviour {
     // プレハブ内のScoreListUI
     private ScoreListUI currentScoreList;
 
+
+    private static ResultManager instance;
+
+    void Awake() {
+        // 重複生成を防ぎつつ常駐させる
+        if (instance != null && instance != this) {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+
+
     /// <summary>
     /// サーバーが呼ぶ：リザルト画面を全クライアントに表示してスコアを送信
     /// </summary>
