@@ -10,16 +10,8 @@ using static TeamData;
 [RequireComponent(typeof(Rigidbody))]
 
 /*
- @flie    First_CharacterClass
-
- 本ファイルを改変する人へ・・・改変個所に改変者のイニシャルを記載の上、改変したところを//で囲ってください。
-                               (コード自体はコメントアウトしなくていいです)
-
-                           例：int test = 100;
-                               // K.W.
-                               test = 256;
-                               //
-*/
+ *  @flie    First_CharacterClass
+ */
 public abstract class CharacterBase : NetworkBehaviour {
     #region ～変数宣言～
 
@@ -224,8 +216,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Server]
-    public void TakeDamage(int _damage) {
+    [Server]public void TakeDamage(int _damage) {
         //既に死亡状態なら帰る
         if (IsDead) return;
 
@@ -270,9 +261,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Command]
-    public void Respawn() {
-        if (!isLocalPlayer) return;
+    [Command]public void Respawn() {
         //死んでいなかったら即抜け
         if (!IsDead) return;
 
@@ -295,8 +284,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
-    [Command]
-    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+    [Command]public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
         CharacterBase player = _player.GetComponent<CharacterBase>();
         int currentTeam = player.TeamID;
         int newTeam = (int)_color;
@@ -601,7 +589,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
 
-    virtual protected void AbilityControl() { }
+    abstract protected void AbilityControl();
 
     /// <summary>
     /// 攻撃入力のハンドル分岐
@@ -626,7 +614,6 @@ public abstract class CharacterBase : NetworkBehaviour {
                 IsAttackPressed = false;
                 //入力終了時間を記録
                 float heldTime = Time.time - AttackStartTime;
-
 
                 //セミオート状態の場合入力時間が短ければ一回攻撃
                 if (AutoFireType == PlayerConst.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
@@ -709,8 +696,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// HP回復(時間経過で徐々に回復)発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]
-    public void Heal(float _value, float _usingTime) {
+    [Command]public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
         //  エフェクト再生
@@ -744,15 +730,14 @@ public abstract class CharacterBase : NetworkBehaviour {
             yield return null;
         }
 
-        DestroyChildrenWithTag(transform, EFFECT_TAG);
+        DestroyChildrenWithTag(EFFECT_TAG);
         healCoroutine = null;
     }
 
     /// <summary>
     /// 攻撃力上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]
-    public void AttackBuff(float _value, float _usingTime) {
+    [Command]public void AttackBuff(float _value, float _usingTime) {
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         //  エフェクト再生
         PlayEffect(ATTACK_BUFF_EFFECT);
@@ -767,15 +752,14 @@ public abstract class CharacterBase : NetworkBehaviour {
         Attack = Mathf.RoundToInt(defaultAttack * value);
         yield return new WaitForSeconds(duration);
         Attack = defaultAttack;
-        DestroyChildrenWithTag(transform, EFFECT_TAG);
+        DestroyChildrenWithTag(EFFECT_TAG);
         attackCoroutine = null;
     }
 
     /// <summary>
     /// 移動速度上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]
-    public void MoveSpeedBuff(float _value, float _usingTime) {
+    [Command]public void MoveSpeedBuff(float _value, float _usingTime) {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         //  エフェクト再生
         PlayEffect(SPEED_BUFF_EFFECT);
@@ -790,17 +774,16 @@ public abstract class CharacterBase : NetworkBehaviour {
         MoveSpeed = Mathf.RoundToInt(defaultMoveSpeed * value);
         yield return new WaitForSeconds(duration);
         MoveSpeed = defaultMoveSpeed;
-        DestroyChildrenWithTag(transform, EFFECT_TAG);
+        DestroyChildrenWithTag(EFFECT_TAG);
         speedCoroutine = null;
     }
 
     /// <summary>
     /// すべてのバフを即解除
     /// </summary>
-    [Command]
-    public void RemoveBuff() {
+    [Command]public void RemoveBuff() {
         StopAllCoroutines();
-        DestroyChildrenWithTag(transform, EFFECT_TAG);
+        DestroyChildrenWithTag(EFFECT_TAG);
         MoveSpeed = defaultMoveSpeed;
         Attack = defaultAttack;
         healCoroutine = speedCoroutine = attackCoroutine = null;
@@ -811,36 +794,26 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     /// <param name="buffEffectNum"></param>
     private void PlayEffect(int effectNum) {
-        if (isServer)
-            RpcPlayEffect(effectNum); // サーバー側なら直接全員に通知
-        else
-            CmdPlayEffect(effectNum); // クライアントならサーバーへ命令
-
+        if (isServer) RpcPlayEffect(effectNum); // サーバー側なら直接全員に通知
+        else CmdPlayEffect(effectNum); // クライアントならサーバーへ命令
     }
 
     /// <summary>
     /// 指定の親オブジェクトのタグ付き子オブジェクトを削除する
     /// </summary>
-    /// <param name="parent"></param>
-    /// <param name="tag"></param>
-    private void DestroyChildrenWithTag(Transform parent, string tag) {
-        if (isServer)
-            RpcDestroyChildrenWithTag(tag); // サーバーなら全員に通知
-        else
-            CmdDestroyChildrenWithTag(tag); // クライアントならサーバーへ命令
+    private void DestroyChildrenWithTag(string tag) {
+        if (isServer) RpcDestroyChildrenWithTag(tag); // サーバーなら全員に通知
+        else CmdDestroyChildrenWithTag(tag); // クライアントならサーバーへ命令
     }
 
     #region Command,ClientRpcの関数
     /// <summary>
     /// エフェクト生成
     /// </summary>
-    /// <param name="effectNum"></param>
-    [Command]
-    private void CmdPlayEffect(int effectNum) {
+    [Command] private void CmdPlayEffect(int effectNum) {
         RpcPlayEffect(effectNum);
     }
-    [ClientRpc]
-    private void RpcPlayEffect(int effectNum) {
+    [ClientRpc] private void RpcPlayEffect(int effectNum) {
         //  ローカルで一度子オブジェクトを参照して破棄
         DestroyChildrenWithTagLocal(EFFECT_TAG);
 
@@ -853,12 +826,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="tag"></param>
-    [Command]
-    private void CmdDestroyChildrenWithTag(string tag) {
+    [Command] private void CmdDestroyChildrenWithTag(string tag) {
         RpcDestroyChildrenWithTag(tag);
     }
-    [ClientRpc]
-    private void RpcDestroyChildrenWithTag(string tag) {
+    [ClientRpc] private void RpcDestroyChildrenWithTag(string tag) {
         DestroyChildrenWithTagLocal(tag);
     }
     private void DestroyChildrenWithTagLocal(string tag) {
