@@ -25,12 +25,12 @@ public class ResultPanel : NetworkBehaviour {
             rematchButton.onClick.AddListener(OnClickRematch);
         if (returnLobbyButton != null)
             returnLobbyButton.onClick.AddListener(OnClickReturnLobby);
-        
     }
 
     /// <summary>
     /// 全クライアントでリザルトUIを表示するRPC。
     /// </summary>
+    [ClientRpc]
     public void RpcShowResult() {
         bool isHost = NetworkServer.active;
 
@@ -72,39 +72,17 @@ public class ResultPanel : NetworkBehaviour {
         if (!isResultActive) return;
         isResultActive = false;
 
-<<<<<<< HEAD
         Debug.Log("[ResultPanel] 再戦ボタン押下");
         if (NetworkServer.active && resultManager != null)
             resultManager.HideResult(); // 仮: UI削除のみ（再戦処理は後で追加）
-=======
-        Debug.Log("[ResultPanel] ホストが『再戦』を選択");
-
-        // サーバー上でのみ実行
-        if (NetworkServer.active && resultManager != null) {
-            resultManager.HideResult();
-            // TODO: 再戦ロジックをここに追加（シーンリロードなど）
-            GameSceneManager.Instance.LoadGameSceneForAll();
-        }
->>>>>>> Tahara
     }
 
     private void OnClickReturnLobby() {
         if (!isResultActive) return;
         isResultActive = false;
 
-<<<<<<< HEAD
         Debug.Log("[ResultPanel] ロビー戻りボタン押下");
         if (NetworkServer.active && resultManager != null)
             resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
-=======
-        Debug.Log("[ResultPanel] ホストが『ロビーに戻る』を選択");
-
-        // サーバー上でのみ実行
-        if (NetworkServer.active && resultManager != null) {
-            resultManager.HideResult();
-            // TODO: ロビーシーンに戻る処理をここに追加
-            GameSceneManager.Instance.LoadTitleSceneForAll();
-        }
->>>>>>> Tahara
     }
 }

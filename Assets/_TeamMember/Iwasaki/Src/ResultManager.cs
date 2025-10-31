@@ -10,30 +10,9 @@ using System.Collections.Generic;
 /// ・クライアント側でリザルトUIを生成して表示
 /// ・ResultPanel（勝敗）＋ScoreListUI（スコアリスト）を同時に扱う
 /// </summary>
-<<<<<<< HEAD
 public class ResultManager : NetworkBehaviour {
     [Header("リザルトUIプレハブ（Canvas付き）")]
     [SerializeField] private GameObject resultUIPrefab; // リザルト画面全体プレハブ
-=======
-public class ResultManager : NetworkSystemObject<ResultManager> {
-    [Header("リザルトUIプレハブ（Canvas含む）")]
-    [SerializeField] private GameObject resultUIPrefab;
-
-    // 生成されたUIのルート（Canvas付き）
-    private GameObject currentUIRoot;
-    // プレハブ内のResultPanel
-    private ResultPanel currentResultPanel;
-    // プレハブ内のScoreListUI
-    private ScoreListUI currentScoreList;
-
-
-    private static ResultManager instance;
-
-    protected override void Awake() {
-        base.Awake();
-    }
-
->>>>>>> Tahara
 
     private GameObject currentUIRoot;    // 現在のUIルート（生成後のCanvas）
     private ResultPanel currentResultPanel; // 勝敗パネル参照
@@ -56,16 +35,9 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     /// サーバーがゲーム終了時に呼び出す。
     /// 全クライアントへ勝敗・スコアデータを送信してリザルトUIを表示。
     /// </summary>
-<<<<<<< HEAD
     [Server]
     public void ShowResult(ResultData data) {
         StartCoroutine(ShowResultCoroutine(data));
-=======
-    [ClientRpc]
-    public void ShowResultWithScores(ScoreListUI.PlayerScoreData[] scores) {
-        resultUIPrefab.SetActive(true);
-        StartCoroutine(ShowResultCoroutine(scores));
->>>>>>> Tahara
     }
 
     /// <summary>

@@ -63,10 +63,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         isGameRunning = false;
         gameTimer.StopTimer();
-        ScoreListUI.PlayerScoreData[] playerScoreDatas = { new ScoreListUI.PlayerScoreData { playerName = "Alice", score = 1200 } };
-        //ゲーム終了時リザルト表示
-        if(isServer)
-        ResultManager.Instance.ShowResultWithScores(playerScoreDatas);
     }
 
     /// <summary>
