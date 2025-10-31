@@ -31,7 +31,8 @@ public class MainWeaponController : NetworkBehaviour {
         return weaponData != null && Time.time >= lastAttackTime + weaponData.cooldown;
     }
 
-    public void SetWeaponData(WeaponData data) {
+    public void SetWeaponData(string name) {
+        var data = WeaponDataRegistry.GetWeapon(name);
         weaponData = data;
     }
 
