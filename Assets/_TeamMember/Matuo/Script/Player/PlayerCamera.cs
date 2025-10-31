@@ -13,8 +13,8 @@ public class PlayerCamera : MonoBehaviour {
     [Header("カメラ設定")]
     public Vector3 normalOffset = new Vector3(0f, 0f, -4f); // 通常時のカメラオフセット
     public float rotationSpeed = 120f;                      // カメラ回転速度
-    public float minPitch = -20f;                           // カメラの下方向回転制限
-    public float maxPitch = 60f;                            // カメラの上方向回転制限
+    public float minPitch = -60f;                           // カメラの下方向回転制限
+    public float maxPitch = 40f;                            // カメラの上方向回転制限
     public float moveSpeed = 10f;                           // カメラ位置補間速度
 
     [Header("画面位置調整")]
