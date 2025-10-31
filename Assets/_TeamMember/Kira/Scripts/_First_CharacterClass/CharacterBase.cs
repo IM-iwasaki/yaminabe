@@ -161,6 +161,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         // "Ground" という名前のレイヤーを取得してマスク化
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
         GroundLayer = 1 << groundLayerIndex;
+
+        // デフォルト値保存
+        defaultMoveSpeed = MoveSpeed;
+        defaultAttack = Attack;
     }
 
     /// <summary>
@@ -184,9 +188,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             var playerUI = Instantiate(UI, GameUIRoot.transform);
             UI = playerUI.GetComponent<PlayerUIController>();
             UI.Initialize(HP);
-
         }
-
     }
 
     /// <summary>
@@ -202,12 +204,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         MaxHP = PlayerConst.DEFAULT_MAXHP;
         HP = MaxHP;
         Attack = PlayerConst.DEFAULT_ATTACK;
-        MoveSpeed = PlayerConst.DEFAULT_MOVESPEED;
-
-
-        // デフォルト値保存
-        defaultMoveSpeed = MoveSpeed;
-        defaultAttack = Attack;
+        MoveSpeed = PlayerConst.DEFAULT_MOVESPEED;        
     }
 
     #endregion
