@@ -72,7 +72,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //死亡しているか
     protected bool IsDead { get; private set; } = false;
     //死亡してからの経過時間
-    protected float DeadAfterTime { get; private set; } = 0.0f;
+    [SyncVar] float DeadAfterTime = 0.0f;
     //復活後の無敵時間中であるか
     protected bool IsInvincible { get; private set; } = false;
     //復活してからの経過時間
@@ -281,8 +281,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         HP = MaxHP;
 
         //リスポーン地点に移動させる
+        NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
         var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
-        transform.position = RespownPos[Random.Range(0,RespownPos.Count)].transform.position;
+        NTH.CmdTeleport(RespownPos[Random.Range(0,RespownPos.Count)].transform.position);
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
