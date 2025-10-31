@@ -803,11 +803,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     /// <param name="buffEffectNum"></param>
     private void PlayEffect(int effectNum) {
-        //  一度子オブジェクトを参照して破棄
-        DestroyChildrenWithTag(transform, EFFECT_TAG);
-
-        //  ここで生成
-        Instantiate(buffEffect.effectInfos[effectNum].effect, transform);
+        if (isServer)
+            RpcPlayEffect(effectNum); // サーバー側なら直接全員に通知
+        else
+            CmdPlayEffect(effectNum); // クライアントならサーバーへ命令
 
     }
 
@@ -824,6 +823,24 @@ public abstract class CharacterBase : NetworkBehaviour {
                 Destroy(child.gameObject);
             }
         }
+    }
+
+    [Command]
+    private void CmdPlayEffect(int effectNum) {
+        //  一度子オブジェクトを参照して破棄
+        DestroyChildrenWithTag(transform, EFFECT_TAG);
+
+        //  ここで生成
+        Instantiate(buffEffect.effectInfos[effectNum].effect, transform);
+    }
+
+    [ClientRpc]
+    private void RpcPlayEffect(int effectNum) {
+        //  一度子オブジェクトを参照して破棄
+        DestroyChildrenWithTag(transform, EFFECT_TAG);
+
+        //  ここで生成
+        Instantiate(buffEffect.effectInfos[effectNum].effect, transform);
     }
 
     #endregion
