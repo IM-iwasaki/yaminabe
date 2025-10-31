@@ -45,16 +45,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffects:
-  - type: 1
-    prefab: {fileID: 8172394614802003838, guid: 7d3425a96b729534e9e11b2591f8fd20, type: 3}
   - type: 0
     prefab: {fileID: 1370874438154576190, guid: c02083b1627cc40449e4e7c3ed1f2a65, type: 3}
-  - type: 4
-    prefab: {fileID: 2283229683088611668, guid: 51966cf5287d989478276b02a463b117, type: 3}
-  - type: 5
-    prefab: {fileID: 100008, guid: bab0c45ba6500944987250c0541b4276, type: 3}
-  muzzleFlashes:
   - type: 1
-    prefab: {fileID: 4186470608034871016, guid: 8bc41e1472c45464980c8feeed5f1649, type: 3}
+    prefab: {fileID: 8172394614802003838, guid: 7d3425a96b729534e9e11b2591f8fd20, type: 3}
+  - type: 4
+    prefab: {fileID: 2283229683088611668, guid: b3f556617bcedd34eb733be4d0bac5c8, type: 3}
+  - type: 5
+    prefab: {fileID: 100008, guid: bde5cd3b3eb5cdf43a81808c00a6b71c, type: 3}
+  muzzleFlashes:
   - type: 0
     prefab: {fileID: 6980259576133684760, guid: 1f58a1dea6bbd9347843e4935585e6a2, type: 3}
+  - type: 1
+    prefab: {fileID: 4186470608034871016, guid: 8bc41e1472c45464980c8feeed5f1649, type: 3}
