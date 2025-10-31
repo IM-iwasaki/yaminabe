@@ -68,7 +68,7 @@ public class GrenadeBase : NetworkBehaviour {
 
     [ClientRpc(includeOwner = true)]
     protected void RpcPlayExplosion(Vector3 pos, EffectType effectType, float duration) {
-        GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
+        GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
             var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);

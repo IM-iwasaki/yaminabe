@@ -91,7 +91,7 @@ public class MagicProjectile : NetworkBehaviour {
     void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
         if (effectType == EffectType.Default) return;
 
-        GameObject prefab = WeaponPoolRegistry.Instance.GetHitEffect(effectType);
+        GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
             var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
