@@ -30,7 +30,6 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             //FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
         }
-
     }
     [ClientRpc]
     public void LoadAndActivateScene(string _sceneName, string _prevSceneName) {

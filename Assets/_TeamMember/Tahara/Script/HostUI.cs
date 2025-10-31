@@ -60,7 +60,10 @@ public class HostUI : NetworkBehaviour {
 
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
     }
-    //ホストUIを非表示にさせる
+    /// <summary>
+    /// ホストのUIの表示非表示を担当true->見える、false->見えない
+    /// </summary>
+    /// <param name="_isVisibleFlag"></param>
     public static void ShowOrHideUI(bool _isVisibleFlag) {
         if (_isVisibleFlag)
             uiRootObject.SetActive(true);
