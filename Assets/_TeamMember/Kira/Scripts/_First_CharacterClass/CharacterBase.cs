@@ -271,8 +271,8 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //リスポーン地点に移動させる
         NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-        var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
-        NTH.CmdTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position);
+        var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
+        NTH.ServerTeleport(RespawnPos[Random.Range(0, RespawnPos.Count)].position, Quaternion.identity);
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
