@@ -30,13 +30,20 @@ public class PlayerCombat : NetworkBehaviour {
         int victimTeam = victim ? victim.teamId : -1;
 
         // チームキル判定
-        if (victim != null && victimTeam == teamId) return;
+        if (victim != null && victimTeam == teamId) {
+            Debug.LogWarning($"[TeamKill] Team {teamId} のプレイヤーが味方を倒しました！相手チームにポイントを加算します。");
 
+            // 相手チーム（ここでは「自分以外のチーム」として推定）
+            int enemyTeamId = (teamId == 0) ? 1 : 0;
 
-        // 敵キルの場合のみスコア加算
+            // 相手チームにスコア加算
+            ruleManager.OnTeamKill(enemyTeamId, 1);
+            return;
+        }
+
+        // 敵チームを倒した場合
         ruleManager.OnTeamKill(teamId, 1);
 
-        // デバッグ
         Debug.Log($"[Kill] Team {teamId} が Team {victimTeam} のプレイヤーを撃破");
     }
 }
