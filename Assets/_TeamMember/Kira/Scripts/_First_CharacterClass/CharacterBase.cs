@@ -164,6 +164,13 @@ public abstract class CharacterBase : NetworkBehaviour {
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
         GroundLayer = 1 << groundLayerIndex;
 
+        //GroundCheck変数をアタッチする。
+        GroundCheck = transform.Find("FootRoot");
+        //FirePoint変数をアタッチする。
+
+        ///古谷が消した
+        //firePoint = transform.Find("ShotRoot");
+
         // デフォルト値保存
         defaultMoveSpeed = MoveSpeed;
         defaultAttack = Attack;
