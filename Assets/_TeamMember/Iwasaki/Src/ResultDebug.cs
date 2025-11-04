@@ -35,10 +35,12 @@ public class ResultDebug : NetworkBehaviour {
         // --- 仮データ ---
         List<ResultScoreData> scores = new List<ResultScoreData>()
         {
-            new ResultScoreData { playerName = "Alice", score = 1200 },
-            new ResultScoreData { playerName = "Bob", score = 800 },
+            new ResultScoreData { playerName = "Alic---",   score = 1200 },
+            new ResultScoreData { playerName = "Bob-n",     score = 800 },
             new ResultScoreData { playerName = "Charlie", score = 1500 },
-            new ResultScoreData { playerName = "Delta", score = 600 }
+            new ResultScoreData { playerName = "Delta",   score = 600 },
+            new ResultScoreData { playerName = "Boss",    score=30},
+            new ResultScoreData { playerName = "God" ,    score=2},
         };
         /// <summary>
         /// 全プレイヤーのスコア情報を取得する
