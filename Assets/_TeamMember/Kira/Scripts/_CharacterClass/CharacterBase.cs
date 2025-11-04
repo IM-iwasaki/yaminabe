@@ -80,8 +80,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     public float AttackStartTime { get; private set; } = 0;
     //オート攻撃タイプ (デフォルトはフルオート)
     public CharacterEnum.AutoFireType AutoFireType { get; protected set; } = CharacterEnum.AutoFireType.FullAutomatic;
-    // 連射間隔
-    public float FireInterval { get; private set; } = 0.2f;
 
     //アイテムを拾える状態か
     protected bool IsCanPickup { get; private set; } = false;
@@ -224,6 +222,28 @@ public abstract class CharacterBase : NetworkBehaviour {
     #endregion
 
     #region ～プレイヤー状態更新関数～
+
+    /// <summary>
+    /// プレイヤー状態を初期化する関数
+    /// (職業限定ステータスの初期化はoverrideを使用してください。)
+    /// </summary>
+    public virtual void Initalize() {
+        HP = MaxHP;
+
+        IsDead = false;
+        IsInvincible = false;
+        IsMoving = false;
+        IsAttackPressed = false;
+        IsAttackTrigger = false;
+        IsCanPickup = false;
+        IsCanInteruct = false;
+        IsCanSkill = false;
+
+        DeadAfterTime = 0;
+        RespownAfterTime = 0;
+        AttackStartTime = 0;
+        SkillAfterTime = 0;
+    }
 
     /// <summary>
     /// 被弾・死亡判定関数
@@ -512,7 +532,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 移動関数
+    /// 移動関数(死亡中は呼ばないでください。)
     /// </summary>
     protected void MoveControl() {
         //移動入力が行われている間は移動中フラグを立てる
@@ -555,7 +575,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ジャンプ管理関数
+    /// ジャンプ管理関数(死亡中は呼ばないでください。)
     /// </summary>
     protected void JumpControl() {
         // ジャンプ判定
@@ -586,7 +606,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// リスポーン管理関数
+    /// リスポーン管理関数(死亡中も呼んでください。)
     /// </summary>
     virtual protected void RespawnControl() {
         //死亡中であるときの処理
@@ -608,7 +628,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// Abstruct : スキルとパッシブの制御用関数
+    /// Abstruct : スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
     /// </summary>
     abstract protected void AbilityControl();
 
@@ -657,7 +677,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         while (IsAttackPressed) {
             Debug.Log("オート攻撃中...");
             StartAttack(_type);
-            yield return new WaitForSeconds(FireInterval);
+            yield return new WaitForSeconds(weaponController.weaponData.cooldown);
         }
     }
 
