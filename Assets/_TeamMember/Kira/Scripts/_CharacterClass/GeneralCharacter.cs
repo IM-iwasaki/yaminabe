@@ -8,7 +8,7 @@ class GeneralCharacter : CharacterBase {
 
     #region ～キャラクターデータ管理変数～
 
-    [Tooltip("インポートするステータスのScriptableObject")]
+    [Header("インポートするステータス")]
     [SerializeField]CharacterStatus InputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
     private CharacterStatus RunTimeStatus;
@@ -57,8 +57,7 @@ class GeneralCharacter : CharacterBase {
         if (IsCanSkill) {
             EquippedSkills[0].Activate(this);
             IsCanSkill = false;
-        }
-        
+        }       
     }
 
     public void Reload() {

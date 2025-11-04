@@ -30,7 +30,7 @@ public class ResultPanel : NetworkBehaviour {
     /// <summary>
     /// 全クライアントでリザルトUIを表示するRPC。
     /// </summary>
-    [ClientRpc]
+    
     public void RpcShowResult() {
         bool isHost = NetworkServer.active;
 
@@ -74,6 +74,8 @@ public class ResultPanel : NetworkBehaviour {
 
         Debug.Log("[ResultPanel] 再戦ボタン押下");
         if (NetworkServer.active && resultManager != null)
+
+            GameSceneManager.Instance.LoadGameSceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（再戦処理は後で追加）
     }
 
@@ -83,6 +85,7 @@ public class ResultPanel : NetworkBehaviour {
 
         Debug.Log("[ResultPanel] ロビー戻りボタン押下");
         if (NetworkServer.active && resultManager != null)
-            resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
+                GameSceneManager.Instance.LoadLobbySceneForAll();
+        resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
     }
 }

@@ -2,6 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
+
+public class ExplosionDebugCircle : MonoBehaviour {
+    private float radius;
+    private Color color;
+    private float duration;
+    private float timer;
+
+    public static void Create(Vector3 pos, float radius, Color color, float duration) {
+        var obj = new GameObject("ExplosionDebugCircle");
+        var circle = obj.AddComponent<ExplosionDebugCircle>();
+        circle.radius = radius;
+        circle.color = color;
+        circle.duration = duration;
+        obj.transform.position = pos;
+    }
+
+    private void Update() {
+        timer += Time.deltaTime;
+        if (timer >= duration) Destroy(gameObject);
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.color = color;
+        Gizmos.DrawWireSphere(transform.position, radius);
+    }
+}
+#endif
+
 public enum ProjectileCategory {
     Bullet,
     Grenade,

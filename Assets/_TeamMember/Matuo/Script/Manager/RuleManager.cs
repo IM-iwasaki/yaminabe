@@ -138,7 +138,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             string teams = string.Join(", ", topTeams);
             Debug.LogWarning($"引き分け！（チーム: {teams} | スコア：{maxScore}）");
         } else {
-            Debug.LogWarning("誰一人死なずに終わりました");
+            Debug.LogWarning("誰もスコアを取らずに終わりました");
         }
     }
 

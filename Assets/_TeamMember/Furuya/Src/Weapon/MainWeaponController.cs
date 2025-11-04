@@ -26,6 +26,23 @@ public class MainWeaponController : NetworkBehaviour {
         }
     }
 
+    [Command]
+    public void CmdRequestExtraAttack(Vector3 direction) {
+        lastAttackTime = Time.time;
+
+        switch (weaponData.type) {
+            case WeaponType.Melee:
+                ServerMeleeAttack();
+                break;
+            case WeaponType.Gun:
+                ServerGunAttack(direction);
+                break;
+            case WeaponType.Magic:
+                ServerMagicAttack(direction);
+                break;
+        }
+    }
+
     bool CanAttack() {
         // サブ武器も別クールダウンを持たせる場合は拡張可能
         return weaponData != null && Time.time >= lastAttackTime + weaponData.cooldown;
@@ -86,6 +103,15 @@ public class MainWeaponController : NetworkBehaviour {
                 weaponData.hitEffectType,
                 weaponData.projectileSpeed,
                 weaponData.damage
+            );
+        }
+        else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
+            ExpProjScript.Init(
+                gameObject,
+                weaponData.hitEffectType,
+                weaponData.projectileSpeed,
+                weaponData.damage,
+                weaponData.range
             );
         }
 

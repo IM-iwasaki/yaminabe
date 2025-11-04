@@ -1,4 +1,5 @@
 using Mirror;
+using UnityEngine;
 
 /// <summary>
 /// ゲーム全体の進行管理
@@ -63,6 +64,26 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         isGameRunning = false;
         gameTimer.StopTimer();
+        //リザルト表示処理追加:タハラ-----------------------------------------------------------------
+        //ResultManager resultManager = FindObjectOfType<ResultManager>();
+        //if (resultManager == null) {
+        //    ChatManager.instance.CmdSendSystemMessage("resultManager is not Found");
+        //    return;
+        //}
+           
+        var ResultData = new ResultManager.ResultData {
+            isTeamBattle = false,
+            winnerName = "Alice",
+            scores = new ResultScoreData[]
+            {
+                new ResultScoreData { playerName = "Alice", score = 1200 },
+                new ResultScoreData { playerName = "Bob", score = 800 },
+                new ResultScoreData { playerName = "Charlie", score = 1500 },
+                new ResultScoreData { playerName = "Delta", score = 600 }
+            }
+        };
+        ResultManager.Instance.ShowResult(ResultData);
+        //--------------------------------------------------------------------------------------------
     }
 
     /// <summary>

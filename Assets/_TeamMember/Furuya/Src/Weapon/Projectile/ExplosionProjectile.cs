@@ -3,62 +3,104 @@ using Mirror;
 using System.Collections;
 
 public class ExplosionProjectile : NetworkBehaviour {
-    [SerializeField] float radius = 3f;
-    [SerializeField] float delay = 1.5f;
-    [SerializeField] EffectType hitEffectType = EffectType.Default;
-
     private int damage;
-    private bool initialized = false;
+    private float speed;
+    private float radius;
 
-    public void Init(int dmg, EffectType effectType) {
-        damage = dmg;
-        hitEffectType = effectType;
+    private Rigidbody rb;
+    private GameObject owner;
+    private EffectType hitEffectType;
+    private bool initialized;
+    private float lifetime = 5f;
+
+    protected bool exploded;
+
+    public void Init(GameObject shooter, EffectType hitEffect, float _speed, int _damage, float _radius) {
+        owner = shooter;
+        hitEffectType = hitEffect;
+        speed = _speed;
+        damage = _damage;
+        radius = _radius;
+
+        exploded = false;
         initialized = true;
 
-        if (isServer) {
-            StopAllCoroutines();
-            StartCoroutine(DelayedExplode());
-        }
+        rb = GetComponent<Rigidbody>();
+        rb.velocity = transform.forward * speed;
+
+
+        StartCoroutine(FuseRoutine(lifetime));
     }
 
-    IEnumerator DelayedExplode() {
-        yield return new WaitForSeconds(delay);
+    void FixedUpdate() {
+        if (!isServer) return;
+        if (!initialized) return;
+        transform.position += transform.forward * speed * Time.fixedDeltaTime;
+    }
+
+    [ServerCallback]
+    void OnTriggerEnter(Collider other) {
+        if (!initialized || exploded || !isServer) return;
+
+        // é©ï™é©êgÇÃî≠éÀå≥Ç…ÇÕìñÇΩÇÁÇ»Ç¢
+        if (other.gameObject == owner) return;
+
         Explode();
     }
 
     [Server]
-    void Explode() {
-        Collider[] hits = Physics.OverlapSphere(transform.position, radius);
+    private IEnumerator FuseRoutine(float delay) {
+        yield return new WaitForSeconds(delay);
+        Explode();
+    }
+
+    [ClientRpc(includeOwner = true)]
+    protected void RpcPlayExplosion(Vector3 pos, EffectType effectType, float duration) {
+        GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
+        if (prefab != null) {
+            var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            fx.SetActive(true);
+            WeaponEffectPool.Instance.ReturnToPool(fx, duration);
+        }
+    }
+
+    [Server]
+    protected virtual void Explode() {
+        if (exploded) return;
+        exploded = true;
+
+        Vector3 pos = transform.position;
+        int bombLayer = LayerMask.GetMask("Character");
+
+        Collider[] hits = Physics.OverlapSphere(pos, radius, bombLayer);
         foreach (var c in hits) {
-            if (c.TryGetComponent(out CharacterBase target)) {
-                target.TakeDamage(damage);
-            }
+            var target = c.GetComponent<CharacterBase>();
+            if (target == null) continue;
+
+            target.TakeDamage(damage);
         }
 
-        RpcPlayHitEffect(transform.position, hitEffectType);
+        RpcPlayExplosion(pos, hitEffectType, 1.5f);
+
+#if UNITY_EDITOR
+        ExplosionDebugCircle.Create(pos, radius, Color.red, 0.5f);
+#endif
 
         Deactivate();
     }
 
     [Server]
-    void Deactivate() {
+    private void Deactivate() {
+        if (rb != null) {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
         initialized = false;
 
-        if (ProjectilePool.Instance != null) {
-            ProjectilePool.Instance.DespawnToPool(gameObject);
-        }
-        else {
+        if (ProjectilePool.Instance != null)
+            ProjectilePool.Instance.DespawnToPool(gameObject, 0.05f);
+        else
             NetworkServer.Destroy(gameObject);
-        }
-    }
-
-    [ClientRpc(includeOwner = true)]
-    void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
-        GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
-        if (prefab != null) {
-            var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
-            fx.SetActive(true);
-            WeaponEffectPool.Instance.ReturnToPool(fx, 1.5f);
-        }
     }
 }

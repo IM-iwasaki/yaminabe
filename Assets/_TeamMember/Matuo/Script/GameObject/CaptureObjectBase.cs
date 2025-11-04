@@ -10,7 +10,7 @@ public abstract class CaptureObjectBase : NetworkBehaviour {
     protected ObjectManager objectManager;
 
     protected virtual void Start() {
-        objectManager = FindAnyObjectByType<ObjectManager>();
+        objectManager = ObjectManager.Instance;
         if (isServer)
             objectManager?.RegisterObject(this);
     }

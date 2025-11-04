@@ -16,6 +16,9 @@ public abstract class ItemBase : MonoBehaviour {
     [Header("アイテムのアイコン")]
     public Sprite icon; // UI用アイコン（必要なら）
 
+    [Header("取得時破棄するかどうか（デフォ破棄）")]
+    public bool canDestroy = true;
+
     //  アイテムを毎秒どれだけ回転させるか
     private Vector3 weaponRotation = new Vector3(0, 50f, 0);
     private void Update() {
