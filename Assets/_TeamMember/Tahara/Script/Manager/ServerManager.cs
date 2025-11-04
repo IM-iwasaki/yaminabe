@@ -14,6 +14,8 @@ public class ServerManager : NetworkBehaviour {
     public List<TeamData> teams = null;
     private void Awake() {
         instance = this;
+
+        DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>

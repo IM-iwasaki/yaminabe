@@ -10,13 +10,12 @@ using System.Collections.Generic;
 /// ・クライアント側でリザルトUIを生成して表示
 /// ・ResultPanel（勝敗）＋ScoreListUI（スコアリスト）を同時に扱う
 /// </summary>
-public class ResultManager : NetworkBehaviour {
+public class ResultManager : NetworkSystemObject<ResultManager> {
     [Header("リザルトUIプレハブ（Canvas付き）")]
     [SerializeField] private GameObject resultUIPrefab; // リザルト画面全体プレハブ
 
     private GameObject currentUIRoot;    // 現在のUIルート（生成後のCanvas）
     private ResultPanel currentResultPanel; // 勝敗パネル参照
-
     /// <summary>
     /// 勝敗＋スコアをまとめて送信する構造体
     /// </summary>
