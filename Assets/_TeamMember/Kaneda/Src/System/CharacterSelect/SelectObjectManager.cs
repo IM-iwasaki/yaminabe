@@ -325,7 +325,7 @@ public class SelectObjectManager : NetworkBehaviour {
         //  プレイヤーの子オブジェクトに生成
         GameObject newSkin = Instantiate(prefab, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
-        //player.GetComponent<GeneralCharacter>().StatusInport(character.statusData);
+        player.GetComponent<GeneralCharacter>().StatusInport(data.characters[characterCount].statusData);
     }
     #endregion
 
