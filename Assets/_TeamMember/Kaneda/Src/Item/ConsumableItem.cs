@@ -46,7 +46,7 @@ public class ConsumableItem : ItemBase {
         }
 
         // 使用後にアイテムを削除
-        Destroy(gameObject);
+        if(canDestroy) Destroy(gameObject);
 
     }
 }
