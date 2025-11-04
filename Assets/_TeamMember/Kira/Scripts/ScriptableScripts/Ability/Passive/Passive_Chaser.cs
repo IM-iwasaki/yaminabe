@@ -12,15 +12,19 @@ public class Passive_Chaser : PassiveBase {
 
     //パッシブの蓄積数
     private int Chains = 0;
+    //攻撃のインターバルを計測
+    private float IntervalTime = 0;
 
     public override void PassiveSetting(CharacterBase user) {
         Chains = 0;
     }
 
     public override void PassiveReflection(CharacterBase user) {
-        //攻撃した瞬間に
-        if(user.IsAttackTrigger) {
-            //チェインは最大10個まで
+        IntervalTime += Time.deltaTime;
+
+        //攻撃した瞬間にインターバルが経過していたら
+        if(user.IsAttackTrigger && IntervalTime >= user.weaponController.weaponData.cooldown) {
+            //チェインは最大10個まで、最大でなければチェインを蓄積
             if(Chains != 10)Chains++;
 
             //チェインの多さに応じてスキルCTを短縮

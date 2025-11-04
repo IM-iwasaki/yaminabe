@@ -30,7 +30,7 @@ public class ResultPanel : NetworkBehaviour {
     /// <summary>
     /// 全クライアントでリザルトUIを表示するRPC。
     /// </summary>
-    [ClientRpc]
+    
     public void RpcShowResult() {
         bool isHost = NetworkServer.active;
 

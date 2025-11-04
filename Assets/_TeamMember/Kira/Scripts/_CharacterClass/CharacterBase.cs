@@ -31,10 +31,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
     //TODO:プレイヤーセーブデータから取得できるようにする。
-    protected string PlayerName = "Player_Test";
+    public string PlayerName { get; protected set; }  = "Player_Test";
 
     //受けるダメージ倍率
-    public int DamageRatio = 100;
+    [System.NonSerialized]public int DamageRatio = 100;
 
     //ランキング用変数の仮定義
     public int Score { get; protected set; } = 0;
@@ -56,7 +56,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public Vector3 RespownPosition { get; protected set; }
 
     //射撃位置
-    public Transform firePoint;
+    [System.NonSerialized]public Transform firePoint;
 
     #endregion
 
@@ -91,7 +91,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //スキルを使用できるか
     public bool IsCanSkill { get; protected set; } = false;
     //スキル使用後経過時間
-    public float SkillAfterTime = 0.0f;
+    [System.NonSerialized]public float SkillAfterTime = 0.0f;
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -106,15 +106,15 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     //武器を使用するため
     [Header("アクション用変数")]
-    [SerializeField] protected MainWeaponController weaponController;
+    public MainWeaponController weaponController;
     //ジャンプ入力をしたか
     private bool IsJumpPressed = false;
     //GroundLayer
     private LayerMask GroundLayer;
     //足元の確認用Transform
-    [SerializeField] private Transform GroundCheck;
+    private Transform GroundCheck;
     //接地しているか
-    [SerializeField] private bool IsGrounded;
+    private bool IsGrounded;
 
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
@@ -163,6 +163,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         // "Ground" という名前のレイヤーを取得してマスク化
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
         GroundLayer = 1 << groundLayerIndex;
+
+        //GroundCheck変数をアタッチする。
+        GroundCheck = transform.Find("FootRoot");
+        //FirePoint変数をアタッチする。
+        firePoint = transform.Find("FireRoot");
 
         // デフォルト値保存
         defaultMoveSpeed = MoveSpeed;
