@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 /// <summary>
@@ -46,7 +47,16 @@ public class ConsumableItem : ItemBase {
         }
 
         // 使用後にアイテムを削除
-        if(canDestroy) Destroy(gameObject);
+        if (canDestroy) CmdRequestDestroy();
 
     }
+
+    /// <summary>
+    /// 破棄処理
+    /// </summary>
+    [Command(requiresAuthority = false)]
+    public override void CmdRequestDestroy() {
+        NetworkServer.Destroy(gameObject);
+    }
+
 }
