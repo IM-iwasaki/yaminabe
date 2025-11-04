@@ -62,9 +62,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region ～状態管理・コンポーネント変数～
     //死亡しているか
-    protected bool IsDead { get; private set; } = false;
-    //死亡してからの経過時間
-    [SyncVar] float DeadAfterTime = 0.0f;
+    [SyncVar]protected bool IsDead  = false;
     //復活後の無敵時間中であるか
     protected bool IsInvincible { get; private set; } = false;
     //復活してからの経過時間
@@ -239,7 +237,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsCanInteruct = false;
         IsCanSkill = false;
 
-        DeadAfterTime = 0;
         RespownAfterTime = 0;
         AttackStartTime = 0;
         SkillAfterTime = 0;
@@ -293,7 +290,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Command]virtual public void Respawn() {
+    [Server]
+    virtual public void Respawn() {
         //死んでいなかったら即抜け
         if (!IsDead) return;
 
@@ -304,13 +302,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         //リスポーン地点に移動させる
         NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
         var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
-        NTH.CmdTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position);
+        NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position,Quaternion.identity);
 
         //リスポーン後の無敵時間にする
         IsInvincible = true;
 
         //経過時間をリセット
-        DeadAfterTime = 0;
         RespownAfterTime = 0;
     }
 
@@ -608,13 +605,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン管理関数(死亡中も呼んでください。)
     /// </summary>
-    [Command]virtual protected void RespawnControl() {
+    [Command]
+    virtual protected void RespawnControl() {
         //死亡中であるときの処理
         if (IsDead) {
-            //死亡してからの時間を加算
-            DeadAfterTime += Time.deltaTime;
-            //死亡後経過時間がリスポーンに必要な時間を過ぎたら
-            if (DeadAfterTime >= PlayerConst.RespownTime) Respawn();
+            Invoke(nameof(Respawn),PlayerConst.RespownTime) ;
         }
         //復活後であるときの処理
         if (IsInvincible) {
