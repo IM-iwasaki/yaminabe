@@ -27,4 +27,3 @@ public class PlayerConst {
     //ƒŠƒXƒ|[ƒ“Œã‚Ì–³“GŠÔ
     public const float RespownInvincibleTime = 1.5f;
 }
-

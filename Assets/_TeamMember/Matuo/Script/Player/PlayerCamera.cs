@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using Mirror;
 
 /// <summary>
 /// TPSカメラ制御スクリプト
@@ -12,7 +13,7 @@ public class PlayerCamera : MonoBehaviour {
 
     [Header("カメラ設定")]
     public Vector3 normalOffset = new Vector3(0f, 0f, -4f); // 通常時のカメラオフセット
-    public float rotationSpeed = 120f;                      // カメラ回転速度
+    public float rotationSpeed = 90f;                      // カメラ回転速度
     public float minPitch = -60f;                           // カメラの下方向回転制限
     public float maxPitch = 40f;                            // カメラの上方向回転制限
     public float moveSpeed = 10f;                           // カメラ位置補間速度
@@ -98,6 +99,11 @@ public class PlayerCamera : MonoBehaviour {
     private void LateUpdate() {
         if (!player) return;
 
+        // ローカルプレイヤーでなければ処理しない（他人の透過を防ぐ）
+        var netIdentity = player.GetComponent<NetworkIdentity>();
+        if (netIdentity && !netIdentity.isLocalPlayer)
+            return;
+
         // 死亡中は通常TPS制御を停止（固定視点のまま）
         if (isDeathView)
             return;
@@ -125,7 +131,7 @@ public class PlayerCamera : MonoBehaviour {
         Vector3 lookTarget = playerPos + (player.right * leftOffsetAmount) + (Vector3.up * upOffsetAmount);
         transform.LookAt(lookTarget);
 
-        // カメラとプレイヤーの間の障害物を透明化
+        // カメラとプレイヤーの間の障害物を透明化（ローカルプレイヤーのみ）
         HandleTransparency(playerPos, desiredPos);
     }
 
@@ -170,9 +176,11 @@ public class PlayerCamera : MonoBehaviour {
             SetRendererAlpha(r, data.current); // 実際に透明度を反映
             fadingObjects[r] = data;
 
-            // 元のアルファに戻ったら削除
-            if (!hitRenderers.Contains(r) && Mathf.Approximately(data.current, data.original))
+            // 元のアルファに戻ったら削除＋マテリアル破棄
+            if (!hitRenderers.Contains(r) && Mathf.Approximately(data.current, data.original)) {
                 fadingObjects.Remove(r);
+                Destroy(r.material); // 不要になったインスタンスを破棄
+            }
         }
     }
 
@@ -181,9 +189,10 @@ public class PlayerCamera : MonoBehaviour {
     /// Rendererの現在アルファ値を取得
     /// </summary>
     private float GetRendererAlpha(Renderer rend) {
-        if (!rend || rend.sharedMaterial == null) return 1f;
+        if (!rend) return 1f;
 
-        Material mat = rend.sharedMaterial; // 共有マテリアル参照
+        // 共有マテリアルではなく個別マテリアルを参照（他プレイヤーへの影響防止）
+        Material mat = rend.material;
         if (mat.HasProperty("_BaseColor"))
             return mat.GetColor("_BaseColor").a;
         if (mat.HasProperty("_Color"))

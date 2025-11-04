@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 /// <summary>
@@ -26,8 +27,14 @@ public class WeaponItem : ItemBase {
         playerWeaponData.SetWeaponData(weaponData.WeaponName);
 
         // 使用後にアイテムを削除
-        if(canDestroy) Destroy(gameObject);
-        //  ネットワーク処理後にコメントを外してこっちを使用する
-        //SpawnManager.Instance.DestroyNetworkObject(gameObject);
+        if(canDestroy) CmdRequestDestroy();
+    }
+
+    /// <summary>
+    /// 破棄処理
+    /// </summary>
+    [Command(requiresAuthority = false)]
+    public override void CmdRequestDestroy() {
+        NetworkServer.Destroy(gameObject);
     }
 }

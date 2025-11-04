@@ -115,11 +115,12 @@ public class CustomNetworkManager : NetworkManager {
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
         foreach (var conn in serverManager.connectPlayer) {
             //必要な変数をキャッシュ
-            CharacterBase character = conn.GetComponent<CharacterBase>();
+            GeneralCharacter character = conn.GetComponent<GeneralCharacter>();
             int teamID = character.TeamID;
             NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
             if (sceneName == GameSceneManager.Instance.gameSceneName) {
+                
                 //各リスポーン地点に転送
                 if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch)
                     teamID = -1;
@@ -128,11 +129,11 @@ public class CustomNetworkManager : NetworkManager {
             }
             //ロビーシーンなら開始地点(0,0,0)に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
-                Transform position = conn.transform;
-                position.position = new Vector3(0, 0, 0);
-                startPos.ServerTeleport(position.position, Quaternion.identity);
+                Vector3 respawnPos = new Vector3(0, 0, 0);
+                startPos.ServerTeleport(respawnPos, Quaternion.identity);
             }
-
+            //初期化
+            character.Initalize();
 
         }
         FadeManager.Instance.StartFadeIn(0.5f);

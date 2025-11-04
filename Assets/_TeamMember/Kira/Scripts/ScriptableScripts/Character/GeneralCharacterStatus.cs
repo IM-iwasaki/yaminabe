@@ -9,7 +9,7 @@ public class GeneralCharacterStatus : CharacterStatus {
     [Tooltip("体力補正値。\nStatusBase + [MaxHPCorrection] の値になります。")]
     [Range(-50, 100)] public int MaxHPCorrection = 0;
     [Tooltip("攻撃力補正値。\nStatusBase + [AttackCorrection]の値になります。")]
-    [Range(-5, 20)] public int AttackCorrection = 0;
+    [Range(-7, 20)] public int AttackCorrection = 0;
     [Tooltip("移動速度補正値。\nStatusBase + [SpeedCorrection]の値になります。")]
     [Range(-3, 5)] public int SpeedCorrection = 0;
     [Tooltip("魔力値。\n[MaxMPCorrection] の値になります。")]

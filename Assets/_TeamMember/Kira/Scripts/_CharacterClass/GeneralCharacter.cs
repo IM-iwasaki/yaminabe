@@ -67,6 +67,7 @@ class GeneralCharacter : CharacterBase {
     protected new void Awake() {
         base.Awake();
         StatusInport(InputStatus);
+        Initalize();
     }
 
     void Update() {
@@ -75,14 +76,17 @@ class GeneralCharacter : CharacterBase {
         IsAttackTrigger = false;
         
         //TODO: MP管理系の処理がない。
-        //TODO: リロード処理を呼ぶところがないかも。
+        //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
+        //TODO: 死亡中でもアクションが起こせてしまう。
 
+        RespawnControl();
         //HPが0以下になったとき死亡していなかったら死亡処理を行う
-        if (HP <= 0 && !IsDead) Dead();
+        if (HP <= 0 && !IsDead) Dead();               
+        //死んでいたら以降の処理は行わない。
+        if (IsDead) return;
 
         MoveControl();
-        JumpControl();
-        RespawnControl();
+        JumpControl();       
         AbilityControl();
     }
 
@@ -110,5 +114,19 @@ class GeneralCharacter : CharacterBase {
             //デバッグログを出す
             Debug.Log("スキルが使用可能になりました。");
         }        
+    }
+
+    public override void Initalize() {
+        //HPやフラグ関連などの基礎的な初期化
+        base.Initalize();
+        //MaxMPが0でなければ最大値で初期化
+        if (MaxMP != 0) MP = MaxMP; 
+        //MaxMagazineが0でなければ最大値で初期化
+        if (MaxMagazine != 0) Magazine = MaxMagazine;
+        //Passive関連の初期化
+        EquippedPassives[0].CoolTime = 0;
+        EquippedPassives[0].IsPassiveActive = false;
+        //Skill関連の初期化
+        EquippedSkills[0].IsSkillUse = false;
     }
 }
