@@ -1,10 +1,11 @@
+using Mirror;
 using UnityEngine;
 
 /// <summary>
 /// アイテムの基底クラス
 /// - 武器・消費アイテム共通の処理をまとめる
 /// </summary>
-public abstract class ItemBase : MonoBehaviour {
+public abstract class ItemBase : NetworkBehaviour {
 
     [Header("アイテム名")]
     public string itemName; // アイテムの名前
@@ -32,4 +33,9 @@ public abstract class ItemBase : MonoBehaviour {
     /// </summary>
     /// <param name="player">使用対象のプレイヤー</param>
     public abstract void Use(GameObject player);
+
+    /// <summary>
+    /// アイテムを破棄する処理
+    /// </summary>
+    public abstract void CmdRequestDestroy();
 }
