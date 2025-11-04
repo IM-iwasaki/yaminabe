@@ -608,7 +608,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// ƒŠƒXƒ|[ƒ“ŠÇ—ŠÖ”(€–S’†‚àŒÄ‚ñ‚Å‚­‚¾‚³‚¢B)
     /// </summary>
-    virtual protected void RespawnControl() {
+    [Command]virtual protected void RespawnControl() {
         //€–S’†‚Å‚ ‚é‚Æ‚«‚Ìˆ—
         if (IsDead) {
             //€–S‚µ‚Ä‚©‚ç‚ÌŠÔ‚ğ‰ÁZ
