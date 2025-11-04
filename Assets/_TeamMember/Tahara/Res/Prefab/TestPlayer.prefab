@@ -1274,7 +1274,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 823385857782214872, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2287681627568181916, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
       propertyPath: m_Name
@@ -1282,7 +1282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2287681627568181916, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5187006418399954991, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1326,7 +1326,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5607619408178729212, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7813488620246310627, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
       propertyPath: optionCanvas
@@ -1341,7 +1341,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2985230962899137764}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6876150325461764941, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
