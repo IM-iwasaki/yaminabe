@@ -272,7 +272,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 死亡時処理
     /// </summary>
-    public void Dead() {
+    [Command]public void Dead() {
         Debug.Log("Dead関数が呼び出されました。");
 
         //死亡フラグをたててHPを0にしておく
