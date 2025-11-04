@@ -56,7 +56,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public Vector3 RespownPosition { get; protected set; }
 
     //射撃位置
-    [System.NonSerialized]public Transform firePoint;
+    public Transform firePoint;
 
     #endregion
 
@@ -167,7 +167,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         //GroundCheck変数をアタッチする。
         GroundCheck = transform.Find("FootRoot");
         //FirePoint変数をアタッチする。
-        firePoint = transform.Find("FireRoot");
+
+
+        ///古谷が消した
+        //firePoint = transform.Find("ShotRoot");
 
         // デフォルト値保存
         defaultMoveSpeed = MoveSpeed;
