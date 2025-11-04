@@ -74,7 +74,7 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         if (!isServer) return; // Mirrorの仕様上、生成はサーバー側でのみ行う
 
         //  開始時にスポーンポイントを取得・アイテム生成
-        SetupSpawnPoint();
+        //SetupSpawnPoint();
 
     }
 

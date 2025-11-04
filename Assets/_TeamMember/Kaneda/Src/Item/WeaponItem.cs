@@ -26,7 +26,7 @@ public class WeaponItem : ItemBase {
         playerWeaponData.SetWeaponData(weaponData.WeaponName);
 
         // 使用後にアイテムを削除
-        Destroy(gameObject);
+        if(canDestroy) Destroy(gameObject);
         //  ネットワーク処理後にコメントを外してこっちを使用する
         //SpawnManager.Instance.DestroyNetworkObject(gameObject);
     }
