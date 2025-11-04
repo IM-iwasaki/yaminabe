@@ -177,10 +177,10 @@ public class PlayerCamera : MonoBehaviour {
             fadingObjects[r] = data;
 
             // 元のアルファに戻ったら削除＋マテリアル破棄
-            if (!hitRenderers.Contains(r) && Mathf.Approximately(data.current, data.original)) {
-                fadingObjects.Remove(r);
-                Destroy(r.material); // 不要になったインスタンスを破棄
-            }
+            //if (!hitRenderers.Contains(r) && Mathf.Approximately(data.current, data.original)) {
+            //    fadingObjects.Remove(r);
+            //    Destroy(r.material); // 不要になったインスタンスを破棄
+            //}
         }
     }
 
