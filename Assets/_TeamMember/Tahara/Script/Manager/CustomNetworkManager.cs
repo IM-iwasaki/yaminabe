@@ -98,7 +98,7 @@ public class CustomNetworkManager : NetworkManager {
             HostUI.isVisibleUI = false;
             HostUI.ShowOrHideUI(false);
 
-            FadeManager.Instance.StartFadeIn(0.5f);
+
             GameSceneManager.Instance.ResetIsChangedScene();
         }
 
@@ -109,29 +109,33 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="sceneName"></param>
     public override void OnServerSceneChanged(string sceneName) {
-        //ゲームシーンに遷移したなら
-        if (sceneName == GameSceneManager.Instance.gameSceneName) {
-            //ゲームスタート
-            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);//プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
-            foreach (var conn in serverManager.connectPlayer) {
-                //必要な変数をキャッシュ
-                CharacterBase character = conn.GetComponent<CharacterBase>();
-                int teamID = character.TeamID;
-                NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
+        //ゲームシーンに遷移したならゲームスタート
+        if (sceneName == GameSceneManager.Instance.gameSceneName)
+            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
+        //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
+        foreach (var conn in serverManager.connectPlayer) {
+            //必要な変数をキャッシュ
+            CharacterBase character = conn.GetComponent<CharacterBase>();
+            int teamID = character.TeamID;
+            NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
+            //ゲームシーンなら指定のリスポーン箇所を取得し、転送
+            if (sceneName == GameSceneManager.Instance.gameSceneName) {
                 //各リスポーン地点に転送
                 if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch)
                     teamID = -1;
                 var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)teamID);
-                startPos.ServerTeleport(RespawnPos[Random.Range(0,RespawnPos.Count)].position,Quaternion.identity);
+                startPos.ServerTeleport(RespawnPos[Random.Range(0, RespawnPos.Count)].position, Quaternion.identity);
+            }
+            //ロビーシーンなら開始地点(0,0,0)に転送
+            else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
+                Transform position = conn.transform;
+                position.position = new Vector3(0, 0, 0);
+                startPos.ServerTeleport(position.position, Quaternion.identity);
             }
 
 
         }
-        //ロビーシーンに遷移したなら
-        else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
-
-        }
-
+        FadeManager.Instance.StartFadeIn(0.5f);
     }
 
     /// <summary>
