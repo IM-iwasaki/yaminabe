@@ -27,7 +27,7 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     [Command]
-    public void CmdRequestSkillAttack(Vector3 direction) {
+    public void CmdRequestExtraAttack(Vector3 direction) {
         lastAttackTime = Time.time;
 
         switch (weaponData.type) {
