@@ -90,37 +90,4 @@ public class GrenadeBase : NetworkBehaviour {
         else
             NetworkServer.Destroy(gameObject);
     }
-
-    void OnDrawGizmosSelected() {
-        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
-        Gizmos.DrawSphere(transform.position, explosionRadius);
-    }
 }
-#if UNITY_EDITOR
-
-public class ExplosionDebugCircle : MonoBehaviour {
-    private float radius;
-    private Color color;
-    private float duration;
-    private float timer;
-
-    public static void Create(Vector3 pos, float radius, Color color, float duration) {
-        var obj = new GameObject("ExplosionDebugCircle");
-        var circle = obj.AddComponent<ExplosionDebugCircle>();
-        circle.radius = radius;
-        circle.color = color;
-        circle.duration = duration;
-        obj.transform.position = pos;
-    }
-
-    private void Update() {
-        timer += Time.deltaTime;
-        if (timer >= duration) Destroy(gameObject);
-    }
-
-    private void OnDrawGizmos() {
-        Gizmos.color = color;
-        Gizmos.DrawWireSphere(transform.position, radius);
-    }
-}
-#endif

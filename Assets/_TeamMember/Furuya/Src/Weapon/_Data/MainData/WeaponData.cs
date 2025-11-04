@@ -23,9 +23,5 @@ public class WeaponData : ScriptableObject, IWeaponInfo {
     public EffectType muzzleFlashType = EffectType.Default;
     public EffectType hitEffectType = EffectType.Default;
 
-    [Header("Damage Settings")]
-    [Tooltip("–¡•û‚É‚àƒ_ƒ[ƒW‚ð—^‚¦‚é‚©")]
-    public bool canDamageAllies = false;
-
     public string WeaponName => weaponName;
 }

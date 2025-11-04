@@ -1,7 +1,6 @@
 using UnityEngine;
 using Mirror;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class ExplosionProjectile : NetworkBehaviour {
     private int damage;
@@ -14,86 +13,94 @@ public class ExplosionProjectile : NetworkBehaviour {
     private bool initialized;
     private float lifetime = 5f;
 
-    protected bool isActivated;
+    protected bool exploded;
 
-    public void Init(GameObject shooter, EffectType hitEffect, float _speed, int _damage) {
+    public void Init(GameObject shooter, EffectType hitEffect, float _speed, int _damage, float _radius) {
         owner = shooter;
         hitEffectType = hitEffect;
         speed = _speed;
         damage = _damage;
+        radius = _radius;
 
-        isActivated = false;
-
-        if (rb == null) rb = GetComponent<Rigidbody>();
-
+        exploded = false;
         initialized = true;
 
-        if (isServer) {
-            StopAllCoroutines();
-            StartCoroutine(AutoDisable()); // 自動で非アクティブ化
-        }
+        rb = GetComponent<Rigidbody>();
+        rb.velocity = transform.forward * speed;
+
+
+        StartCoroutine(FuseRoutine(lifetime));
     }
 
     void FixedUpdate() {
         if (!isServer) return;
+        if (!initialized) return;
         transform.position += transform.forward * speed * Time.fixedDeltaTime;
     }
 
     [ServerCallback]
     void OnTriggerEnter(Collider other) {
-        if (!initialized || !isServer) return;
+        if (!initialized || exploded || !isServer) return;
+
+        // 自分自身の発射元には当たらない
         if (other.gameObject == owner) return;
 
-        Explode();
-
-        RpcPlayHitEffect(transform.position, hitEffectType);
-
-        Deactivate();
-    }
-
-    IEnumerator AutoDisable() {
-
-        yield return new WaitForSeconds(lifetime);
         Explode();
     }
 
     [Server]
-    private void Deactivate() {
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        initialized = false;
-
-        if (ProjectilePool.Instance != null)
-            ProjectilePool.Instance.DespawnToPool(gameObject);
-        else
-            NetworkServer.Destroy(gameObject);
+    private IEnumerator FuseRoutine(float delay) {
+        yield return new WaitForSeconds(delay);
+        Explode();
     }
 
     [ClientRpc(includeOwner = true)]
-    void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
-
+    protected void RpcPlayExplosion(Vector3 pos, EffectType effectType, float duration) {
         GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
             var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
-            WeaponEffectPool.Instance.ReturnToPool(fx, 1.5f);
+            WeaponEffectPool.Instance.ReturnToPool(fx, duration);
         }
     }
 
     [Server]
-    private void Explode() {
-        if (isActivated) return;
-        isActivated = true;
+    protected virtual void Explode() {
+        if (exploded) return;
+        exploded = true;
 
-        var hits = Physics.OverlapSphere(transform.position, radius, LayerMask.GetMask("Character"));
+        Vector3 pos = transform.position;
+        int bombLayer = LayerMask.GetMask("Character");
+
+        Collider[] hits = Physics.OverlapSphere(pos, radius, bombLayer);
         foreach (var c in hits) {
             var target = c.GetComponent<CharacterBase>();
             if (target == null) continue;
+
             target.TakeDamage(damage);
         }
 
-        RpcPlayHitEffect(transform.position, hitEffectType);
+        RpcPlayExplosion(pos, hitEffectType, 1.5f);
+
+#if UNITY_EDITOR
+        ExplosionDebugCircle.Create(pos, radius, Color.red, 0.5f);
+#endif
 
         Deactivate();
+    }
+
+    [Server]
+    private void Deactivate() {
+        if (rb != null) {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        initialized = false;
+
+        if (ProjectilePool.Instance != null)
+            ProjectilePool.Instance.DespawnToPool(gameObject, 0.05f);
+        else
+            NetworkServer.Destroy(gameObject);
     }
 }

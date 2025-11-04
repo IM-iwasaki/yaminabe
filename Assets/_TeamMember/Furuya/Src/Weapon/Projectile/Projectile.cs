@@ -18,7 +18,7 @@ public class Projectile : NetworkBehaviour {
         speed = _speed;
         damage = _damage;
 
-        if (rb == null) rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
 
         initialized = true;
 

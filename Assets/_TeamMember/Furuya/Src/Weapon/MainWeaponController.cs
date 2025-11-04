@@ -105,6 +105,15 @@ public class MainWeaponController : NetworkBehaviour {
                 weaponData.damage
             );
         }
+        else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
+            ExpProjScript.Init(
+                gameObject,
+                weaponData.hitEffectType,
+                weaponData.projectileSpeed,
+                weaponData.damage,
+                weaponData.range
+            );
+        }
 
         if (proj.TryGetComponent(out Rigidbody rb)) {
             rb.velocity = direction * weaponData.projectileSpeed;
