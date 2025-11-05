@@ -323,7 +323,7 @@ public class SelectObjectManager : NetworkBehaviour {
         //  スキンの番号を同期させる
         GameObject prefab = data.characters[characterCount].skins[skinCount].skinPrefab;
         //  プレイヤーの子オブジェクトに生成
-        GameObject newSkin = Instantiate(prefab, spawnPos, parent.rotation, parent);
+        Instantiate(prefab, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
         player.GetComponent<GeneralCharacter>().StatusInport(data.characters[characterCount].statusData);
     }
