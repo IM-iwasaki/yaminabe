@@ -1703,6 +1703,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1596833295}
     m_Modifications:
+    - target: {fileID: 142990989575988338, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1646937966117402466, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2313470827761606627, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3030213973679419518, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1753,11 +1765,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: ruleIndex
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: stageIndex
-      value: 2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: ruleNames.Array.data[0]
+      value: Hoko
+      objectReference: {fileID: 0}
+    - target: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: ruleNames.Array.data[1]
+      value: Area
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652412374405399970, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6360244347166990274, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
       propertyPath: m_Name
