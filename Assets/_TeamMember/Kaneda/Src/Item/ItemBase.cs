@@ -29,7 +29,7 @@ public abstract class ItemBase : NetworkBehaviour {
 
     /// <summary>
     /// アイテムを使用する処理
-    /// プレイヤー処理に依存 → コメントで枠だけ用意
+    /// プレイヤー処理に依存
     /// </summary>
     /// <param name="player">使用対象のプレイヤー</param>
     public abstract void Use(GameObject player);
