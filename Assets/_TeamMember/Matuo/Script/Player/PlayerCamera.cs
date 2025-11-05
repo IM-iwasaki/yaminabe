@@ -62,6 +62,11 @@ public class PlayerCamera : MonoBehaviour {
     /// 死亡時カメラ視点へ移行
     /// </summary>
     public void EnterDeathView() {
+        // ローカルプレイヤーでなければ処理しない
+        var netIdentity = player.GetComponent<NetworkIdentity>();
+        if (netIdentity && !netIdentity.isLocalPlayer)
+            return;
+
         if (isDeathView) return;
         isDeathView = true;
 
@@ -84,6 +89,11 @@ public class PlayerCamera : MonoBehaviour {
     /// リスポーン時に通常視点へ戻す
     /// </summary>
     public void ExitDeathView() {
+        // ローカルプレイヤーでなければ処理しない
+        var netIdentity = player.GetComponent<NetworkIdentity>();
+        if (netIdentity && !netIdentity.isLocalPlayer)
+            return;
+
         if (!isDeathView) return;
         isDeathView = false;
 
@@ -97,12 +107,12 @@ public class PlayerCamera : MonoBehaviour {
     }
 
     private void LateUpdate() {
-        if (!player) return;
-
-        // ローカルプレイヤーでなければ処理しない（他人の透過を防ぐ）
+        // ローカルプレイヤーでなければ処理しない
         var netIdentity = player.GetComponent<NetworkIdentity>();
         if (netIdentity && !netIdentity.isLocalPlayer)
             return;
+
+        if (!player) return;      
 
         // 死亡中は通常TPS制御を停止（固定視点のまま）
         if (isDeathView)
@@ -175,12 +185,6 @@ public class PlayerCamera : MonoBehaviour {
             data.current = Mathf.MoveTowards(data.current, targetAlpha, Time.deltaTime * fadeSpeed);
             SetRendererAlpha(r, data.current); // 実際に透明度を反映
             fadingObjects[r] = data;
-
-            // 元のアルファに戻ったら削除＋マテリアル破棄
-            //if (!hitRenderers.Contains(r) && Mathf.Approximately(data.current, data.original)) {
-            //    fadingObjects.Remove(r);
-            //    Destroy(r.material); // 不要になったインスタンスを破棄
-            //}
         }
     }
 
