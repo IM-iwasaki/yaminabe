@@ -12,10 +12,6 @@ public static class PlayerSaveData {
     /// プレイヤーデータを保存する
     /// </summary>
     public static void Save(PlayerData data) {
-#if UNITY_EDITOR
-        // エディター上ではセーブしない
-        if (!Application.isPlaying) return;
-#endif
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(filePath, json);
         Debug.Log("ここにセーブしたよ: " + filePath);
@@ -26,15 +22,6 @@ public static class PlayerSaveData {
     /// ファイルが無ければ初期状態のデータを返す
     /// </summary>
     public static PlayerData Load() {
-#if UNITY_EDITOR
-        // エディター上ではロードしない
-        if (!Application.isPlaying) {
-            return new PlayerData {
-                currentMoney = 0,
-                items = new List<string>()
-            };
-        }
-#endif
 
         if (!File.Exists(filePath)) {
             return new PlayerData {
