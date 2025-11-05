@@ -44,6 +44,6 @@ public class PlayerCombat : NetworkBehaviour {
         // 敵チームを倒した場合
         ruleManager.OnTeamKill(teamId, 1);
 
-        Debug.Log($"[Kill] Team {teamId} が Team {victimTeam} のプレイヤーを撃破");
+        Debug.LogWarning($"[Kill] Team {teamId} が Team {victimTeam} のプレイヤーを撃破");
     }
 }

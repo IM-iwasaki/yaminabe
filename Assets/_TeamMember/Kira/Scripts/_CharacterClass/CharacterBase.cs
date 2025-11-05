@@ -245,7 +245,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// ”í’eE€–S”»’èŠÖ”
     /// </summary>
-    [Server] public void TakeDamage(int _damage) {
+    [Server] public void TakeDamage(int _damage,string _name) {
         //Šù‚É€–Só‘Ô‚È‚ç‹A‚é
         if (IsDead) return;
 
