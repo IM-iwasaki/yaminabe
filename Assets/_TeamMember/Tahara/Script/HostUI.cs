@@ -48,17 +48,13 @@ public class HostUI : NetworkBehaviour {
         stageIndex--;
     }
 
-    private void ChangeRuleAndUI(int _oldValue,int _newValue) {
-            ruleIndex = Mathf.Abs(_newValue % ruleNames.Count);
-        
-        rule.text = ruleNames[ruleIndex];
-        RuleManager.Instance.currentRule = (GameRuleType)ruleIndex;
+    private void ChangeRuleAndUI(int _oldValue, int _newValue) {
+        int ruleCount = _newValue % ruleNames.Count;
+        rule.text = ruleNames[Mathf.Abs(ruleCount)];
+        RuleManager.Instance.currentRule = (GameRuleType)Mathf.Abs(ruleCount);
     }
     private void ChangeStageUI(int _oldValue, int _newValue) {
-            stageIndex = Mathf.Abs(_newValue % StageManager.Instance.stages.Count);
-
-
-        stage.text = StageManager.Instance.stages[stageIndex].stageName;
+        stage.text = StageManager.Instance.stages[Mathf.Abs(_newValue % StageManager.Instance.stages.Count)].stageName;
     }
     /// <summary>
     /// ホストのUIの表示非表示を担当true->見える、false->見えない
@@ -71,5 +67,5 @@ public class HostUI : NetworkBehaviour {
             uiRootObject.SetActive(false);
     }
 
-    
+
 }
