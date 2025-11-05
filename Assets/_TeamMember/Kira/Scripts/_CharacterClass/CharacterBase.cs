@@ -31,7 +31,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
     //TODO:プレイヤーセーブデータから取得できるようにする。
-    public string PlayerName = "Default";
+    [SyncVar] public string PlayerName = "Default";
 
     //受けるダメージ倍率
     [System.NonSerialized]public int DamageRatio = 100;
@@ -183,6 +183,10 @@ public abstract class CharacterBase : NetworkBehaviour {
             PlayerCamera playerCamera = camera.GetComponent<PlayerCamera>();
             playerCamera.enabled = true;
 
+            PlayerData data = PlayerSaveData.Load();
+            if (!string.IsNullOrEmpty(data.playerName)) {
+                CmdSetPlayerName(data.playerName);
+            }
         }
     }
 
@@ -217,6 +221,15 @@ public abstract class CharacterBase : NetworkBehaviour {
         defaultMoveSpeed = MoveSpeed;
     }
 
+    /// <summary>
+    /// プレイヤー名用セッター
+    /// </summary>
+    /// <param name="name">名前</param>
+    [Command]
+    public void CmdSetPlayerName(string name) {
+        PlayerName = name;
+    }
+
     #endregion
 
     #region ～プレイヤー状態更新関数～
@@ -245,7 +258,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Server] public void TakeDamage(int _damage,string _name) {
+    [Server] public void TakeDamage(int _damage) {
         //既に死亡状態なら帰る
         if (IsDead) return;
 
