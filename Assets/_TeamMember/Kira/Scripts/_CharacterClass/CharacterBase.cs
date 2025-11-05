@@ -31,7 +31,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
     //TODO:プレイヤーセーブデータから取得できるようにする。
-    public string PlayerName { get; protected set; }  = "Player_Test";
+    public string PlayerName = "Default";
 
     //受けるダメージ倍率
     [System.NonSerialized]public int DamageRatio = 100;
