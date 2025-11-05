@@ -525,6 +525,11 @@ Transform:
   - {fileID: 1012943420}
   m_Father: {fileID: 1889097893}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &876265737 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 657556023789910901, guid: 8aab6421a01fdc840a989c2def5927ab, type: 3}
+  m_PrefabInstance: {fileID: 370685142}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &992794082
 GameObject:
   m_ObjectHideFlags: 0
@@ -859,7 +864,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1217343015
 Transform:
   m_ObjectHideFlags: 0
@@ -931,6 +936,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3852216611882574746, guid: 977db843e5b6f484d91e54385f366f0b, type: 3}
+      propertyPath: gachaUI
+      value: 
+      objectReference: {fileID: 876265737}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
