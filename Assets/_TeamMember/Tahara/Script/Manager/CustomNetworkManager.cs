@@ -14,9 +14,10 @@ public class CustomNetworkManager : NetworkManager {
             base.Awake();
             return;
         }
-        if (TitleManager.instance.isHost)
+        if (TitleManager.instance.isHost) {
             //ホストとして開始
             StartHost();
+        }
         else if (TitleManager.instance.isClient) {
             //クライアントとして開始
             networkAddress = TitleManager.instance.ipAddress;
@@ -120,7 +121,7 @@ public class CustomNetworkManager : NetworkManager {
             NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
             if (sceneName == GameSceneManager.Instance.gameSceneName) {
-                
+
                 //各リスポーン地点に転送
                 if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch)
                     teamID = -1;
@@ -148,12 +149,9 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
         FadeManager.Instance.StartFadeIn(0.5f);
-        GameSceneManager.Instance.ResetIsChangedScene();
+        if (GameSceneManager.Instance)
+            GameSceneManager.Instance.ResetIsChangedScene();
     }
-
-    //public override void OnStopServer() {
-    //    GameSceneManager.Instance.LoadTitleSceneForAll();
-    //}
 
     public override void OnStopClient() {
         SceneManager.LoadScene("TitleScene");
