@@ -9,14 +9,16 @@ public class ExplosionProjectile : NetworkBehaviour {
 
     private Rigidbody rb;
     private GameObject owner;
+    private string ownerName;
     private EffectType hitEffectType;
     private bool initialized;
     private float lifetime = 5f;
 
     protected bool exploded;
 
-    public void Init(GameObject shooter, EffectType hitEffect, float _speed, int _damage, float _radius) {
+    public void Init(GameObject shooter, string _name, EffectType hitEffect, float _speed, int _damage, float _radius) {
         owner = shooter;
+        ownerName = _name;
         hitEffectType = hitEffect;
         speed = _speed;
         damage = _damage;
@@ -77,7 +79,7 @@ public class ExplosionProjectile : NetworkBehaviour {
             var target = c.GetComponent<CharacterBase>();
             if (target == null) continue;
 
-            target.TakeDamage(damage);
+            target.TakeDamage(damage, ownerName);
         }
 
         RpcPlayExplosion(pos, hitEffectType, 1.5f);

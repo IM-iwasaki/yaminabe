@@ -4,6 +4,7 @@ using UnityEngine;
 
 public struct TrapInitData {
     public int teamID;
+    public string ownerName;
     public float activationDelay;
     public bool activationOnce;
     public EffectType activationEffect;
@@ -12,12 +13,14 @@ public struct TrapInitData {
 
 public abstract class TrapBase : NetworkBehaviour {
     protected int ownerTeamID;
+    protected string ownerName;
     protected bool isActivated;
     protected bool hasTriggered;
 
     [Server]
     public virtual void Init(TrapInitData data) {
         ownerTeamID = data.teamID;
+        ownerName = data.ownerName;
         StartCoroutine(ActivationDelayRoutine(data.activationDelay));
     }
 

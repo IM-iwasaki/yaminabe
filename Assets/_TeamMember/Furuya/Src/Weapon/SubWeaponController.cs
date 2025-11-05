@@ -71,12 +71,13 @@ public class SubWeaponController : NetworkBehaviour {
 
         // SmokeGrenade ÇÃèÍçá
         if (subWeaponData is SmokeData smokeData && grenadeObj.TryGetComponent(out SmokeGrenade smokeGrenade)) {
-            smokeGrenade.Init(smokeData, teamID, throwDirection);
+            smokeGrenade.Init(smokeData, teamID, characterBase.PlayerName, throwDirection);
         }
         // í èÌÇÃ Grenade ÇÃèÍçá
         else if (subWeaponData is GrenadeData grenadeData && grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
             grenade.Init(
                 teamID,
+                characterBase.PlayerName,
                 throwDirection,
                 grenadeData.throwForce,
                 grenadeData.projectileSpeed,

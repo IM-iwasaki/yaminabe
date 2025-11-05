@@ -7,6 +7,12 @@ public class MainWeaponController : NetworkBehaviour {
     public Transform firePoint;
     float lastAttackTime;
 
+    private CharacterBase characterBase; // 名前を取得するため
+
+    void Start() {
+        characterBase = GetComponent<CharacterBase>();
+    }
+
     // --- 攻撃リクエスト ---
     [Command]
     public void CmdRequestAttack(Vector3 direction) {
@@ -75,7 +81,7 @@ public class MainWeaponController : NetworkBehaviour {
 
             // 半円判定：前方180度（つまり90°以内なら当たり）
             if (angle <= weaponData.meleeAngle) {
-                hp.TakeDamage(weaponData.damage);
+                hp.TakeDamage(weaponData.damage, characterBase.PlayerName);
                 RpcSpawnHitEffect(c.transform.position, weaponData.hitEffectType);
             }
         }
@@ -100,6 +106,7 @@ public class MainWeaponController : NetworkBehaviour {
         if (proj.TryGetComponent(out Projectile projScript)) {
             projScript.Init(
                 gameObject,
+                characterBase.PlayerName,
                 weaponData.hitEffectType,
                 weaponData.projectileSpeed,
                 weaponData.damage
@@ -108,6 +115,7 @@ public class MainWeaponController : NetworkBehaviour {
         else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
             ExpProjScript.Init(
                 gameObject,
+                characterBase.PlayerName,
                 weaponData.hitEffectType,
                 weaponData.projectileSpeed,
                 weaponData.damage,
@@ -138,6 +146,7 @@ public class MainWeaponController : NetworkBehaviour {
         if (proj.TryGetComponent(out MagicProjectile projScript)) {
             projScript.Init(
                 gameObject,
+                characterBase.PlayerName,
                 magicData.magicType,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,

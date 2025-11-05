@@ -8,12 +8,14 @@ public class Projectile : NetworkBehaviour {
 
     private Rigidbody rb;
     private GameObject owner;
+    private string ownerName;
     private EffectType hitEffectType;
     private bool initialized;
     private float lifetime = 5f;
 
-    public void Init(GameObject shooter, EffectType hitEffect, float _speed, int _damage) {
+    public void Init(GameObject shooter, string _name, EffectType hitEffect, float _speed, int _damage) {
         owner = shooter;
+        ownerName = _name;
         hitEffectType = hitEffect;
         speed = _speed;
         damage = _damage;
@@ -40,7 +42,7 @@ public class Projectile : NetworkBehaviour {
 
         if (other.TryGetComponent<NetworkIdentity>(out var identity)) {
             if (identity.TryGetComponent(out CharacterBase target)) {
-                target.TakeDamage(damage);
+                target.TakeDamage(damage, ownerName);
             }
         }
 

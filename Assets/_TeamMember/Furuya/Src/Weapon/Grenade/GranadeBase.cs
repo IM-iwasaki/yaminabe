@@ -5,6 +5,7 @@ using UnityEditor;
 
 public class GrenadeBase : NetworkBehaviour {
     [SyncVar] private int ownerTeamID;
+    private string ownerName;
 
     private Rigidbody rb;
     protected bool exploded;
@@ -17,8 +18,9 @@ public class GrenadeBase : NetworkBehaviour {
     private float explosionDelay = 1.5f;
 
     [Server]
-    public void Init(int teamID, Vector3 direction, float throwForce, float projectileSpeed, float explosionRadius, int damage, bool canDamageAllies, EffectType hitEffect, float delay = 1.5f) {
+    public void Init(int teamID, string _name, Vector3 direction, float throwForce, float projectileSpeed, float explosionRadius, int damage, bool canDamageAllies, EffectType hitEffect, float delay = 1.5f) {
         ownerTeamID = teamID;
+        ownerName = _name;
         this.explosionRadius = explosionRadius;
         this.damage = damage;
         this.canDamageAllies = canDamageAllies;
@@ -56,7 +58,7 @@ public class GrenadeBase : NetworkBehaviour {
             if (target == null) continue;
             if (!canDamageAllies && target.TeamID == ownerTeamID) continue;
 
-            target.TakeDamage(damage);
+            target.TakeDamage(damage, ownerName);
         }
 
         RpcPlayExplosion(pos, effectType, 1.5f);
