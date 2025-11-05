@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characters:
   - characterName: "\u30C7\u30D5\u30A9\u30EB\u30C8\u30AD\u30E3\u30E9"
-    statusData: {fileID: 0}
+    statusData: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
     skins:
     - skinName: DefaultCharacter
       skinPrefab: {fileID: 7369448170708576210, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
@@ -22,7 +22,7 @@ MonoBehaviour:
       skinPrefab: {fileID: 3108797039877070855, guid: ea8ee7ded32385c48a0ec769b5ee454f, type: 3}
     description: 
   - characterName: "\u30CB\u30EF\u30C8\u30EA"
-    statusData: {fileID: 11400000, guid: 40acd8b124764da4da5c5bf0596741c2, type: 2}
+    statusData: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
     skins:
     - skinName: DefaultChicken
       skinPrefab: {fileID: 3548868566056176881, guid: 98d6a2fbec6271046aea2df749876bb7, type: 3}
