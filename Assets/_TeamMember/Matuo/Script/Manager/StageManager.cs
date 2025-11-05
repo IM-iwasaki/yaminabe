@@ -19,6 +19,11 @@ public class StageManager : NetworkSystemObject<StageManager> {
     // 現在のリスポーンモード
     private RespawnMode currentRespawnMode = RespawnMode.Team;
 
+    protected override void Awake() {
+        base.Awake();
+        
+    }
+
     /// <summary>
     /// ステージを生成（サーバー専用）
     /// </summary>

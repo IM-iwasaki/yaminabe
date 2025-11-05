@@ -285,6 +285,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsCanSkill = false;
         IsJumpPressed = false;
         IsMoving = false;
+
+        //カメラを暗くする
+        gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
     }
 
     /// <summary>
@@ -300,15 +303,22 @@ public abstract class CharacterBase : NetworkBehaviour {
         HP = MaxHP;
 
         //リスポーン地点に移動させる
-        NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-        var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
-        NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position,Quaternion.identity);
+        if (GameManager.Instance.IsGameRunning()) {
+            NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
+            var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
+            NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position,Quaternion.identity);
+        }
 
+
+        
         //リスポーン後の無敵時間にする
         IsInvincible = true;
 
         //経過時間をリセット
         RespownAfterTime = 0;
+
+        //カメラを暗くする
+        gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
     }
 
     /// <summary>
@@ -631,6 +641,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 攻撃入力のハンドル分岐
     /// </summary>
     private void HandleAttack(InputAction.CallbackContext context, CharacterEnum.AttackType _type) {
+        //死亡していたら攻撃できない
+        if (IsDead) return;
+
         switch (context.phase) {
             //押した瞬間から
             case InputActionPhase.Started:
