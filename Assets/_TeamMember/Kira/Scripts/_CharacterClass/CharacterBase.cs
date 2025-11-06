@@ -1,4 +1,4 @@
-using Mirror;
+ï»¿using Mirror;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,119 +13,122 @@ using static TeamData;
  *  @flie    First_CharacterClass
  */
 public abstract class CharacterBase : NetworkBehaviour {
-    #region `•Ï”éŒ¾`
+    #region ï½å¤‰æ•°å®£è¨€ï½
 
-    #region `ƒXƒe[ƒ^ƒX`
-    [Header("Šî–{ƒXƒe[ƒ^ƒX")]
-    //Œ»İ‚Ì‘Ì—Í
+    #region ï½ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ï½
+    [Header("åŸºæœ¬ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹")]
+    //ç¾åœ¨ã®ä½“åŠ›
     [SyncVar(hook = nameof(ChangeHP))] public int HP;
-    //Å‘å‚Ì‘Ì—Í
+    //æœ€å¤§ã®ä½“åŠ›
     public int maxHP { get; protected set; }
-    //Šî‘bUŒ‚—Í
+    //åŸºç¤æ”»æ’ƒåŠ›
     [SyncVar] public int attack;
-    //ˆÚ“®‘¬“x
+    //ç§»å‹•é€Ÿåº¦
     [SyncVar] public int moveSpeed = 5;
-    //‚Á‚Ä‚¢‚é•Ší‚Ì•¶š—ñ
+    //æŒã£ã¦ã„ã‚‹æ­¦å™¨ã®æ–‡å­—åˆ—
     public string currentWeapon { get; protected set; }
-    //Š‘®ƒ`[ƒ€‚Ì”Ô†(-1‚Í–¢Š‘®B0A1‚Íƒ`[ƒ€Š‘®B)
+    //æ‰€å±ãƒãƒ¼ãƒ ã®ç•ªå·(-1ã¯æœªæ‰€å±ã€‚0ã€1ã¯ãƒãƒ¼ãƒ æ‰€å±ã€‚)
     [SyncVar] public int TeamID = -1;
-    //ƒvƒŒƒCƒ„[‚Ì–¼‘O
+    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åå‰
     [SyncVar] public string PlayerName = "Default";
-    //ó‚¯‚éƒ_ƒ[ƒW”{—¦
+    //å—ã‘ã‚‹ãƒ€ãƒ¡ãƒ¼ã‚¸å€ç‡
     [System.NonSerialized] public int DamageRatio = 100;
 
-    //ƒ‰ƒ“ƒLƒ“ƒO—p•Ï”‚Ì‰¼’è‹`
+    //ãƒ©ãƒ³ã‚­ãƒ³ã‚°ç”¨å¤‰æ•°ã®ä»®å®šç¾©
     public int score { get; protected set; } = 0;
 
     #endregion
 
-    #region `VectorŒn“•Ï”`
+    #region ï½Vectorç³»çµ±å¤‰æ•°ï½
 
-    //ˆÚ“®‚ğ—v‹‚·‚é•ûŒü
+    //ç§»å‹•ã‚’è¦æ±‚ã™ã‚‹æ–¹å‘
     protected Vector2 MoveInput;
-    //ÀÛ‚ÉˆÚ“®‚·‚é•ûŒü
+    //å®Ÿéš›ã«ç§»å‹•ã™ã‚‹æ–¹å‘
     public Vector3 moveDirection { get; private set; }
-    //‹“_‚ğ—v‹‚·‚é•ûŒü
+    //è¦–ç‚¹ã‚’è¦æ±‚ã™ã‚‹æ–¹å‘
     protected Vector2 lookInput { get; private set; }
-    //Œü‚¢‚Ä‚¢‚é•ûŒü
+    //å‘ã„ã¦ã„ã‚‹æ–¹å‘
     public Vector3 lookDirection { get; private set; }
 
-    //ƒŠƒXƒ|[ƒ“’n“_
+    //ãƒªã‚¹ãƒãƒ¼ãƒ³åœ°ç‚¹
     public Vector3 respownPosition { get; protected set; }
 
-    //ËŒ‚ˆÊ’u
+    //å°„æ’ƒä½ç½®
     public Transform firePoint;
 
     #endregion
 
-    #region `ó‘ÔŠÇ—EƒRƒ“ƒ|[ƒlƒ“ƒg•Ï”`
-    //€–S‚µ‚Ä‚¢‚é‚©
+    #region ï½çŠ¶æ…‹ç®¡ç†ãƒ»ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå¤‰æ•°ï½
+    //æ­»äº¡ã—ã¦ã„ã‚‹ã‹
     [SyncVar] protected bool isDead = false;
-    //€–S‚µ‚½uŠÔ‚©
+    //æ­»äº¡ã—ãŸç¬é–“ã‹
     public bool isDeadTrigger { get; protected set; } = false;
-    //•œŠˆŒã‚Ì–³“GŠÔ’†‚Å‚ ‚é‚©
+    //å¾©æ´»å¾Œã®ç„¡æ•µæ™‚é–“ä¸­ã§ã‚ã‚‹ã‹
     protected bool isInvincible { get; private set; } = false;
-    //•œŠˆ‚µ‚Ä‚©‚ç‚ÌŒo‰ßŠÔ
+    //å¾©æ´»ã—ã¦ã‹ã‚‰ã®çµŒéæ™‚é–“
     protected float respownAfterTime { get; private set; } = 0.0f;
 
-    //ˆÚ“®’†‚©
+    //ç§»å‹•ä¸­ã‹
     public bool isMoving { get; private set; } = false;
-    //UŒ‚’†‚©
+    //æ”»æ’ƒä¸­ã‹
     public bool isAttackPressed { get; private set; } = false;
-    //UŒ‚‚ğ‰Ÿ‚µ‚½uŠÔ‚©
+    //æ”»æ’ƒã‚’æŠ¼ã—ãŸç¬é–“ã‹
     public bool isAttackTrigger { get; protected set; } = false;
-    //UŒ‚ŠJnŠÔ
+    //æ”»æ’ƒé–‹å§‹æ™‚é–“
     public float attackStartTime { get; private set; } = 0;
-    //ƒI[ƒgUŒ‚ƒ^ƒCƒv (ƒfƒtƒHƒ‹ƒg‚Íƒtƒ‹ƒI[ƒg)
+    //ã‚ªãƒ¼ãƒˆæ”»æ’ƒã‚¿ã‚¤ãƒ— (ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯ãƒ•ãƒ«ã‚ªãƒ¼ãƒˆ)
     public CharacterEnum.AutoFireType autoFireType { get; protected set; }
         = CharacterEnum.AutoFireType.FullAutomatic;
 
-    //ƒAƒCƒeƒ€‚ğE‚¦‚éó‘Ô‚©
+    //ã‚¢ã‚¤ãƒ†ãƒ ã‚’æ‹¾ãˆã‚‹çŠ¶æ…‹ã‹
     protected bool isCanPickup { get; private set; } = false;
-    //ƒCƒ“ƒ^ƒ‰ƒNƒg‚Å‚«‚éó‘Ô‚©
+    //ã‚¤ãƒ³ã‚¿ãƒ©ã‚¯ãƒˆã§ãã‚‹çŠ¶æ…‹ã‹
     protected bool isCanInteruct { get; private set; } = false;
 
-    //ƒXƒLƒ‹‚ğg—p‚Å‚«‚é‚©
+    //ã‚¹ã‚­ãƒ«ã‚’ä½¿ç”¨ã§ãã‚‹ã‹
     public bool isCanSkill { get; protected set; } = false;
-    //ƒXƒLƒ‹g—pŒãŒo‰ßŠÔ
+    //ã‚¹ã‚­ãƒ«ä½¿ç”¨å¾ŒçµŒéæ™‚é–“
     [System.NonSerialized] public float SkillAfterTime = 0.0f;
 
-    //ƒRƒ“ƒ|[ƒlƒ“ƒgî•ñ
-    [Header("ƒRƒ“ƒ|[ƒlƒ“ƒgî•ñ")]
+    //ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆæƒ…å ±
+    [Header("ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆæƒ…å ±")]
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
     [SerializeField] protected PlayerUIController UI;
     [SerializeField] private InputActionAsset inputActions;
 
+
+    [SyncVar] public int playerId = -1;  //  ã‚µãƒ¼ãƒãƒ¼ãŒå‰²ã‚Šå½“ã¦ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç•ªå·ï¼ˆPlayer1ã€œ6ï¼‰
+
     #endregion
 
-    #region `ƒAƒNƒVƒ‡ƒ“—p•Ï”`
+    #region ï½ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ç”¨å¤‰æ•°ï½
 
-    //•Ší‚ğg—p‚·‚é‚½‚ß
-    [Header("ƒAƒNƒVƒ‡ƒ“—p•Ï”")]
+    //æ­¦å™¨ã‚’ä½¿ç”¨ã™ã‚‹ãŸã‚
+    [Header("ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ç”¨å¤‰æ•°")]
     public MainWeaponController weaponController;
-    //ƒWƒƒƒ“ƒv“ü—Í‚ğ‚µ‚½‚©
+    //ã‚¸ãƒ£ãƒ³ãƒ—å…¥åŠ›ã‚’ã—ãŸã‹
     private bool IsJumpPressed = false;
     //GroundLayer
     private LayerMask GroundLayer;
-    //‘«Œ³‚ÌŠm”F—pTransform
+    //è¶³å…ƒã®ç¢ºèªç”¨Transform
     private Transform GroundCheck;
-    //Ú’n‚µ‚Ä‚¢‚é‚©
+    //æ¥åœ°ã—ã¦ã„ã‚‹ã‹
     [SerializeField]private bool IsGrounded;
 
-    //ƒXƒ^ƒ“A‹¯‚İ(d’¼‚·‚é,ƒJƒƒ‰ˆÈŠO‘€ì–³Œø‰»)
+    //ã‚¹ã‚¿ãƒ³ã€æ€¯ã¿(ç¡¬ç›´ã™ã‚‹,ã‚«ãƒ¡ãƒ©ä»¥å¤–æ“ä½œç„¡åŠ¹åŒ–)
 
     #endregion
 
-    #region `ƒoƒtŠÇ——p•Ï”`
+    #region ï½ãƒãƒ•ç®¡ç†ç”¨å¤‰æ•°ï½
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
     private Coroutine attackCoroutine;
     private int defaultMoveSpeed;
     private int defaultAttack;
-    [Header("ƒoƒt‚Ég—p‚·‚éƒGƒtƒFƒNƒgƒf[ƒ^")]
+    [Header("ãƒãƒ•ã«ä½¿ç”¨ã™ã‚‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿")]
     [SerializeField] private EffectData buffEffect;
-    #region ƒoƒtƒf[ƒ^‚Ì’è”
+    #region ãƒãƒ•ãƒ‡ãƒ¼ã‚¿ã®å®šæ•°
     private readonly string EFFECT_TAG = "Effect";
     private readonly int ATTACK_BUFF_EFFECT = 0;
     private readonly int SPEED_BUFF_EFFECT = 1;
@@ -137,16 +140,16 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
-    #region `‰Šú‰»ŠÖŒWŠÖ”`
+    #region ï½åˆæœŸåŒ–é–¢ä¿‚é–¢æ•°ï½
 
     /// <summary>
-    /// ‰Šú‰»‚ğ‚±‚±‚Ås‚¤B
+    /// åˆæœŸåŒ–ã‚’ã“ã“ã§è¡Œã†ã€‚
     /// </summary>
     protected void Awake() {
-        //ƒV[ƒ“•Ï‚í‚Á‚½‚è‚µ‚Ä‚àÁ‚¦‚È‚¢‚æ‚¤‚É‚·‚é
+        //ã‚·ãƒ¼ãƒ³å¤‰ã‚ã£ãŸã‚Šã—ã¦ã‚‚æ¶ˆãˆãªã„ã‚ˆã†ã«ã™ã‚‹
         DontDestroyOnLoad(gameObject);
 
-        //ƒRƒ“ƒeƒLƒXƒg‚Ì“o˜^
+        //ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã®ç™»éŒ²
         var map = inputActions.FindActionMap("Player");
         foreach (var action in map.actions) {
             action.started += ctx => OnInputStarted(action.name, ctx);
@@ -157,24 +160,24 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         rigidbody = GetComponent<Rigidbody>();
 
-        // "Ground" ‚Æ‚¢‚¤–¼‘O‚ÌƒŒƒCƒ„[‚ğæ“¾‚µ‚Äƒ}ƒXƒN‰»
+        // "Ground" ã¨ã„ã†åå‰ã®ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’å–å¾—ã—ã¦ãƒã‚¹ã‚¯åŒ–
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
         GroundLayer = 1 << groundLayerIndex;
 
-        //GroundCheck•Ï”‚ğƒAƒ^ƒbƒ`‚·‚éB
+        //GroundCheckå¤‰æ•°ã‚’ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ã€‚
         GroundCheck = transform.Find("FootRoot");
-        //FirePoint•Ï”‚ğƒAƒ^ƒbƒ`‚·‚éB
+        //FirePointå¤‰æ•°ã‚’ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ã€‚
 
-        ///ŒÃ’J‚ªÁ‚µ‚½
+        ///å¤è°·ãŒæ¶ˆã—ãŸ
         //firePoint = transform.Find("ShotRoot");
 
-        // ƒfƒtƒHƒ‹ƒg’l•Û‘¶
+        // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ä¿å­˜
         defaultMoveSpeed = moveSpeed;
         defaultAttack = attack;
     }
 
     /// <summary>
-    /// ƒlƒbƒgƒ[ƒNã‚Å‚Ì‰Šú‰»B
+    /// ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ä¸Šã§ã®åˆæœŸåŒ–ã€‚
     /// </summary>
     public override void OnStartLocalPlayer() {
         if (isLocalPlayer) {
@@ -201,15 +204,15 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ƒXƒe[ƒ^ƒX‚ÌƒCƒ“ƒ|[ƒg
+    /// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
     /// </summary>
     public abstract void StatusInport(CharacterStatus _inport = null);
 
     /// <summary>
-    /// StatusInport‚Ånull‚ª”­¶‚µ‚½‚ÉƒfƒtƒHƒ‹ƒg‚Ì’l‚Å‰Šú‰»‚·‚é
+    /// StatusInportã§nullãŒç™ºç”Ÿã—ãŸæ™‚ã«ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®å€¤ã§åˆæœŸåŒ–ã™ã‚‹
     /// </summary>
     protected void DefaultStatusInport() {
-        Debug.LogWarning("InputStatus‚É’l‚ª“ü‚Á‚Ä‚¢‚È‚©‚Á‚½‚½‚ßAƒfƒtƒHƒ‹ƒg’l‚Å‰Šú‰»‚ğs‚¢‚Ü‚µ‚½B");
+        Debug.LogWarning("InputStatusã«å€¤ãŒå…¥ã£ã¦ã„ãªã‹ã£ãŸãŸã‚ã€ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ã§åˆæœŸåŒ–ã‚’è¡Œã„ã¾ã—ãŸã€‚");
         maxHP = PlayerConst.DEFAULT_MAXHP;
         HP = maxHP;
         attack = PlayerConst.DEFAULT_ATTACK;
@@ -217,7 +220,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ‰Šú’l‚ğ•Û‘¶‚·‚é
+    /// åˆæœŸå€¤ã‚’ä¿å­˜ã™ã‚‹
     /// </summary>
     protected void InDefaultStatus() {
         defaultAttack = attack;
@@ -225,42 +228,42 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[–¼—pƒZƒbƒ^[
-    /// –¼‘O‚ğƒT[ƒo[‘¤‚Å”½‰f‚µAPlayerListManager ‚É“o˜^‚·‚é
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åç”¨ã‚»ãƒƒã‚¿ãƒ¼
+    /// åå‰ã‚’ã‚µãƒ¼ãƒãƒ¼å´ã§åæ˜ ã—ã€PlayerListManager ã«ç™»éŒ²ã™ã‚‹
     /// </summary>
-    /// <param name="name">V‚µ‚¢ƒvƒŒƒCƒ„[–¼</param>
+    /// <param name="name">æ–°ã—ã„ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å</param>
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
-        // ƒT[ƒo[ã‚ÅƒvƒŒƒCƒ„[“o˜^
+        // ã‚µãƒ¼ãƒãƒ¼ä¸Šã§ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç™»éŒ²
         if (PlayerListManager.Instance != null) {
             PlayerListManager.Instance.RegisterPlayer(this);
            
         }
         else {
-            Debug.LogWarning("[CharacterBase] PlayerListManager.Instance ‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+            Debug.LogWarning("[CharacterBase] PlayerListManager.Instance ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
         }
     }
 
-    /// <summary>
-    /// ƒT[ƒo[ã‚ÅƒvƒŒƒCƒ„[‚ªØ’f‚³‚ê‚½‚ÉŒÄ‚Î‚ê‚é
-    /// ¨ PlayerListManager ‚©‚çíœ
-    /// </summary>
+
+    public override void OnStartServer() {
+        base.OnStartServer();
+        PlayerListManager.Instance?.RegisterPlayer(this);
+    }
+
     public override void OnStopServer() {
         base.OnStopServer();
-
-        if (PlayerListManager.Instance != null) {
-            PlayerListManager.Instance.UnregisterPlayer(this);
-        }
+        PlayerListManager.Instance?.UnregisterPlayer(this);
     }
+   
 
     #endregion
 
-    #region `ƒvƒŒƒCƒ„[ó‘ÔXVŠÖ”`
+    #region ï½ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼çŠ¶æ…‹æ›´æ–°é–¢æ•°ï½
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[ó‘Ô‚ğ‰Šú‰»‚·‚éŠÖ”
-    /// (E‹ÆŒÀ’èƒXƒe[ƒ^ƒX‚Ì‰Šú‰»‚Íoverride‚ğg—p‚µ‚Ä‚­‚¾‚³‚¢B)
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼çŠ¶æ…‹ã‚’åˆæœŸåŒ–ã™ã‚‹é–¢æ•°
+    /// (è·æ¥­é™å®šã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®åˆæœŸåŒ–ã¯overrideã‚’ä½¿ç”¨ã—ã¦ãã ã•ã„ã€‚)
     /// </summary>
     public virtual void Initalize() {
         HP = maxHP;
@@ -278,53 +281,53 @@ public abstract class CharacterBase : NetworkBehaviour {
         attackStartTime = 0;
         SkillAfterTime = 0;
 
-        //ƒfƒXƒJƒƒ‰‚ÌƒŠƒZƒbƒg(•ÛŒ¯B—v‚ç‚È‚¢‚©‚à)
+        //ãƒ‡ã‚¹ã‚«ãƒ¡ãƒ©ã®ãƒªã‚»ãƒƒãƒˆ(ä¿é™ºã€‚è¦ã‚‰ãªã„ã‹ã‚‚)
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
     }
 
     /// <summary>
-    /// ”í’eE€–S”»’èŠÖ”
+    /// è¢«å¼¾ãƒ»æ­»äº¡åˆ¤å®šé–¢æ•°
     /// </summary>
     [Server]
     public void TakeDamage(int _damage, string _name) {
-        //Šù‚É€–Só‘Ô‚©ƒƒr[“à‚È‚ç‹A‚é
+        //æ—¢ã«æ­»äº¡çŠ¶æ…‹ã‹ãƒ­ãƒ“ãƒ¼å†…ãªã‚‰å¸°ã‚‹
         if (isDead || !GameManager.Instance.IsGameRunning()) return;
 
-        //ƒ_ƒ[ƒW”{—¦‚ğ“K—p
+        //ãƒ€ãƒ¡ãƒ¼ã‚¸å€ç‡ã‚’é©ç”¨
         float damage = _damage * ((float)DamageRatio / 100);
-        //ƒ_ƒ[ƒW‚ª0ˆÈ‰º‚¾‚Á‚½‚ç1‚É•â³‚·‚é
+        //ãƒ€ãƒ¡ãƒ¼ã‚¸ãŒ0ä»¥ä¸‹ã ã£ãŸã‚‰1ã«è£œæ­£ã™ã‚‹
         if (damage <= 0) damage = 1;
-        //HP‚ÌŒ¸Zˆ—
+        //HPã®æ¸›ç®—å‡¦ç†
         HP -= (int)damage;
 
-        //HP‚ª0ˆÈ‰º‚É‚È‚Á‚½‚Æ‚«€–S‚µ‚Ä‚¢‚È‚©‚Á‚½‚ç€–Sˆ—‚ğs‚¤
+        //HPãŒ0ä»¥ä¸‹ã«ãªã£ãŸã¨ãæ­»äº¡ã—ã¦ã„ãªã‹ã£ãŸã‚‰æ­»äº¡å‡¦ç†ã‚’è¡Œã†
         if (HP <= 0) Dead(_name);
     }
 
     /// <summary>
-    /// UI—p‚ÌHPXVŠÖ”(‘æˆêˆø”‚ÍÁ‚¹‚È‚¢‚½‚ß–³–¼•Ï”‚ğg—pB)
+    /// UIç”¨ã®HPæ›´æ–°é–¢æ•°(ç¬¬ä¸€å¼•æ•°ã¯æ¶ˆã›ãªã„ãŸã‚ç„¡åå¤‰æ•°ã‚’ä½¿ç”¨ã€‚)
     /// </summary>
     public void ChangeHP(int _, int newValue) {
-        if (!isLocalPlayer) return; // ©•ª‚ÌƒvƒŒƒCƒ„[‚Å‚È‚¯‚ê‚ÎUIXV‚µ‚È‚¢
+        if (!isLocalPlayer) return; // è‡ªåˆ†ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã§ãªã‘ã‚Œã°UIæ›´æ–°ã—ãªã„
         if (UI != null) UI.ChangeHPUI(maxHP, newValue);
-        else Debug.LogWarning("UI‚ª‘¶İ‚µ‚È‚¢‚½‚ßAHPXVˆ—‚ğƒXƒLƒbƒv‚µ‚Ü‚µ‚½B");
+        else Debug.LogWarning("UIãŒå­˜åœ¨ã—ãªã„ãŸã‚ã€HPæ›´æ–°å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã—ãŸã€‚");
     }
 
     /// <summary>
-    /// €–Sˆ—
+    /// æ­»äº¡æ™‚å‡¦ç†
     /// </summary>
     [Command]
     public void Dead(string _name) {
 
-        //€–Sƒtƒ‰ƒO‚ğ‚½‚Ä‚ÄHP‚ğ0‚É‚µ‚Ä‚¨‚­
+        //æ­»äº¡ãƒ•ãƒ©ã‚°ã‚’ãŸã¦ã¦HPã‚’0ã«ã—ã¦ãŠã
         isDead = true;
         HP = 0;
-        //€–SƒgƒŠƒK[‚ğ”­‰Î
+        //æ­»äº¡ãƒˆãƒªã‚¬ãƒ¼ã‚’ç™ºç«
         isDeadTrigger = true;
-        //ƒoƒt‘S‰ğœ
+        //ãƒãƒ•å…¨è§£é™¤
         RemoveBuff();
 
-        //•s‹ï‡–h~‚Ì‚½‚ßƒtƒ‰ƒO‚ğ‚¢‚ë‚¢‚ë‰º‚ë‚·B
+        //ä¸å…·åˆé˜²æ­¢ã®ãŸã‚ãƒ•ãƒ©ã‚°ã‚’ã„ã‚ã„ã‚ä¸‹ã‚ã™ã€‚
         isAttackPressed = false;
         isCanInteruct = false;
         isCanPickup = false;
@@ -332,47 +335,47 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsJumpPressed = false;
         isMoving = false;
 
-        //ƒJƒƒ‰‚ğˆÃ‚­‚·‚é
+        //ã‚«ãƒ¡ãƒ©ã‚’æš—ãã™ã‚‹
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
-        //ƒtƒF[ƒhƒAƒEƒg‚³‚¹‚é
+        //ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆã•ã›ã‚‹
         FadeManager.Instance.StartFadeOut(2.5f);
 
-        //  ƒLƒ‹ƒƒO‚ğ—¬‚·(Å‰‚Ìˆø”‚Íˆê’U‰¼‚ÅŠC˜V‚Ì”Ô†A–{—ˆ‚Íƒoƒi[‰æ‘œ‚Ìo‚µ‚½‚¢”Ô†‚ğ“ü‚ê‚é)
+        //  ã‚­ãƒ«ãƒ­ã‚°ã‚’æµã™(æœ€åˆã®å¼•æ•°ã¯ä¸€æ—¦ä»®ã§æµ·è€ã®ç•ªå·ã€æœ¬æ¥ã¯ãƒãƒŠãƒ¼ç”»åƒã®å‡ºã—ãŸã„ç•ªå·ã‚’å…¥ã‚Œã‚‹)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
     }
 
     /// <summary>
-    /// ƒŠƒXƒ|[ƒ“ŠÖ”
+    /// ãƒªã‚¹ãƒãƒ¼ãƒ³é–¢æ•°
     /// </summary>
     [Server]
     virtual public void Respawn() {
-        //€‚ñ‚Å‚¢‚È‚©‚Á‚½‚ç‘¦”²‚¯
+        //æ­»ã‚“ã§ã„ãªã‹ã£ãŸã‚‰å³æŠœã‘
         if (!isDead) return;
 
-        //•œŠˆ‚³‚¹‚ÄHP‚ğ‘S‰ñ•œ
+        //å¾©æ´»ã•ã›ã¦HPã‚’å…¨å›å¾©
         isDead = false;
         HP = maxHP;
 
-        //ƒŠƒXƒ|[ƒ“’n“_‚ÉˆÚ“®‚³‚¹‚é
+        //ãƒªã‚¹ãƒãƒ¼ãƒ³åœ°ç‚¹ã«ç§»å‹•ã•ã›ã‚‹
         if (GameManager.Instance.IsGameRunning()) {
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
             var RespownPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)TeamID);
             NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position, Quaternion.identity);
         }
 
-        //ƒŠƒXƒ|[ƒ“Œã‚Ì–³“GŠÔ‚É‚·‚é
+        //ãƒªã‚¹ãƒãƒ¼ãƒ³å¾Œã®ç„¡æ•µæ™‚é–“ã«ã™ã‚‹
         isInvincible = true;
-        //Œo‰ßŠÔ‚ğƒŠƒZƒbƒg
+        //çµŒéæ™‚é–“ã‚’ãƒªã‚»ãƒƒãƒˆ
         respownAfterTime = 0;
 
-        //ƒJƒƒ‰‚ğ–¾‚é‚­‚·‚é
+        //ã‚«ãƒ¡ãƒ©ã‚’æ˜ã‚‹ãã™ã‚‹
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
-        //ƒtƒF[ƒhƒCƒ“‚³‚¹‚é
+        //ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³ã•ã›ã‚‹
         FadeManager.Instance.StartFadeIn(1.0f);
     }
 
     /// <summary>
-    /// ƒgƒŠƒK[•Ï”‚ÌƒŠƒZƒbƒg
+    /// ãƒˆãƒªã‚¬ãƒ¼å¤‰æ•°ã®ãƒªã‚»ãƒƒãƒˆ
     /// </summary>
     protected void ResetTrigger() {
         isAttackTrigger = false;
@@ -380,7 +383,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ƒ`[ƒ€Q‰Áˆ—(TeamID‚ğXV)
+    /// ãƒãƒ¼ãƒ å‚åŠ å‡¦ç†(TeamIDã‚’æ›´æ–°)
     /// </summary>
     [Command]
     public void CmdJoinTeam(NetworkIdentity _player, TeamColor _color) {
@@ -388,36 +391,36 @@ public abstract class CharacterBase : NetworkBehaviour {
         int currentTeam = player.TeamID;
         int newTeam = (int)_color;
 
-        //‰Á“ü‚µ‚æ‚¤‚Æ‚µ‚Ä‚éƒ`[ƒ€‚ª–„‚Ü‚Á‚Ä‚¢‚½‚ç
+        //åŠ å…¥ã—ã‚ˆã†ã¨ã—ã¦ã‚‹ãƒãƒ¼ãƒ ãŒåŸ‹ã¾ã£ã¦ã„ãŸã‚‰
         if (ServerManager.instance.teams[newTeam].teamPlayerList.Count >= TEAMMATE_MAX) {
             ChatManager.instance.CmdSendSystemMessage("team member is over");
             return;
         }
-        //Šù‚É“¯‚¶ƒ`[ƒ€‚É“ü‚Á‚Ä‚¢‚½‚ç
+        //æ—¢ã«åŒã˜ãƒãƒ¼ãƒ ã«å…¥ã£ã¦ã„ãŸã‚‰
         if (newTeam == currentTeam) {
             ChatManager.instance.CmdSendSystemMessage("you join same team now");
             return;
         }
-        //V‚½‚Èƒ`[ƒ€‚É‰Á“ü‚·‚é
-        //¡‰Á“ü‚µ‚Ä‚¢‚éƒ`[ƒ€‚©‚ç”²‚¯‚ÄID‚ğƒŠƒZƒbƒg
+        //æ–°ãŸãªãƒãƒ¼ãƒ ã«åŠ å…¥ã™ã‚‹æ™‚
+        //ä»ŠåŠ å…¥ã—ã¦ã„ã‚‹ãƒãƒ¼ãƒ ã‹ã‚‰æŠœã‘ã¦IDã‚’ãƒªã‚»ãƒƒãƒˆ
         if (player.TeamID != -1) {
             ServerManager.instance.teams[player.TeamID].teamPlayerList.Remove(_player);
             player.TeamID = -1;
         }
 
-        //V‚µ‚¢ƒ`[ƒ€‚É‰Á“ü
+        //æ–°ã—ã„ãƒãƒ¼ãƒ ã«åŠ å…¥
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.TeamID = newTeam;
-        //ƒƒO‚ğ•\¦
+        //ãƒ­ã‚°ã‚’è¡¨ç¤º
         ChatManager.instance.CmdSendSystemMessage(_player.ToString() + "is joined" + newTeam + "team");
     }
 
     #endregion
 
-    #region “ü—Íó•tE“ü—ÍÀsE”»’èŠÖ”
+    #region å…¥åŠ›å—ä»˜ãƒ»å…¥åŠ›å®Ÿè¡Œãƒ»åˆ¤å®šé–¢æ•°
 
     /// <summary>
-    /// “ü—Í‚Ì‹¤’Êƒnƒ“ƒhƒ‰
+    /// å…¥åŠ›ã®å…±é€šãƒãƒ³ãƒ‰ãƒ©
     /// </summary>
     private void OnInputStarted(string actionName, InputAction.CallbackContext ctx) {
         switch (actionName) {
@@ -480,22 +483,22 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// “–‚½‚è”»’è‚Ì’†‚É“ü‚Á‚½uŠÔ‚É”­“®
+    /// å½“ãŸã‚Šåˆ¤å®šã®ä¸­ã«å…¥ã£ãŸç¬é–“ã«ç™ºå‹•
     /// </summary>
     protected void OnTriggerEnter(Collider _collider) {
-        //‘Šúreturn
+        //æ—©æœŸreturn
         if (!isLocalPlayer) return;
 
-        //switch‚Å•ªŠòB‚±‚±‚É‡Ÿ’Ç‰Á‚µ‚Ä‚¢‚­B
+        //switchã§åˆ†å²ã€‚ã“ã“ã«é †æ¬¡è¿½åŠ ã—ã¦ã„ãã€‚
         switch (_collider.tag) {
             case "Item":
-                // ƒtƒ‰ƒO‚ğ—§‚Ä‚é
+                // ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
                 isCanPickup = true;
                 useCollider = _collider;
 
                 break;
             case "SelectCharacterObject":
-                // ƒtƒ‰ƒO‚ğ—§‚Ä‚é
+                // ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
                 isCanInteruct = true;
                 useCollider = _collider;
                 break;
@@ -511,30 +514,30 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// “–‚½‚è”»’è‚©‚ç”²‚¯‚½uŠÔ‚É”­“®
+    /// å½“ãŸã‚Šåˆ¤å®šã‹ã‚‰æŠœã‘ãŸç¬é–“ã«ç™ºå‹•
     /// </summary>
     protected void OnTriggerExit(Collider _collider) {
-        //‘Šúreturn
+        //æ—©æœŸreturn
         if (!isLocalPlayer) return;
 
-        //switch‚Å•ªŠòB‚±‚±‚É‡Ÿ’Ç‰Á‚µ‚Ä‚¢‚­B
+        //switchã§åˆ†å²ã€‚ã“ã“ã«é †æ¬¡è¿½åŠ ã—ã¦ã„ãã€‚
         switch (_collider.tag) {
             case "Item":
-                // ƒtƒ‰ƒO‚ğ‰º‚ë‚·
+                // ãƒ•ãƒ©ã‚°ã‚’ä¸‹ã‚ã™
                 isCanPickup = false;
                 useCollider = null;
                 break;
             case "SelectCharacterObject":
-                // ƒtƒ‰ƒO‚ğ‰º‚ë‚·
+                // ãƒ•ãƒ©ã‚°ã‚’ä¸‹ã‚ã™
                 isCanInteruct = false;
                 useCollider = null;
                 break;
             case "RedTeam":
-                //”²‚¯‚½‚Æ‚«‚Íˆ—‚µ‚È‚¢B‰½‚©ˆ—‚ª‚ ‚Á‚½‚ç’Ç‰ÁB
+                //æŠœã‘ãŸã¨ãã¯å‡¦ç†ã—ãªã„ã€‚ä½•ã‹å‡¦ç†ãŒã‚ã£ãŸã‚‰è¿½åŠ ã€‚
                 CmdJoinTeam(GetComponent<NetworkIdentity>(), TeamColor.Red);
                 break;
             case "BlueTeam":
-                //”²‚¯‚½‚Æ‚«‚Íˆ—‚µ‚È‚¢B‰½‚©ˆ—‚ª‚ ‚Á‚½‚ç’Ç‰ÁB
+                //æŠœã‘ãŸã¨ãã¯å‡¦ç†ã—ãªã„ã€‚ä½•ã‹å‡¦ç†ãŒã‚ã£ãŸã‚‰è¿½åŠ ã€‚
                 CmdJoinTeam(GetComponent<NetworkIdentity>(), TeamColor.Blue);
                 break;
             default:
@@ -543,54 +546,54 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ˆÚ“®
+    /// ç§»å‹•
     /// </summary>
     public void OnMove(InputAction.CallbackContext context) {
         MoveInput = context.ReadValue<Vector2>();
     }
     /// <summary>
-    /// ‹“_(Œ»İ–¢g—p)
+    /// è¦–ç‚¹(ç¾åœ¨æœªä½¿ç”¨)
     /// </summary>
     public void OnLook(InputAction.CallbackContext context) {
         lookInput = context.ReadValue<Vector2>();
     }
     /// <summary>
-    /// ƒWƒƒƒ“ƒv
+    /// ã‚¸ãƒ£ãƒ³ãƒ—
     /// </summary>
     public void OnJump(InputAction.CallbackContext context) {
-        // ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½uŠÔ‚¾‚¯”½‰‚³‚¹‚é
+        // ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸç¬é–“ã ã‘åå¿œã•ã›ã‚‹
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
         }
     }
     /// <summary>
-    /// ƒƒCƒ“UŒ‚(Œ»İ–¢g—p)
+    /// ãƒ¡ã‚¤ãƒ³æ”»æ’ƒ(ç¾åœ¨æœªä½¿ç”¨)
     /// </summary
     public void OnAttack_Main(InputAction.CallbackContext context) {
         HandleAttack(context, CharacterEnum.AttackType.Main);
     }
     /// <summary>
-    /// ƒTƒuUŒ‚(Œ»İ–¢g—p)
+    /// ã‚µãƒ–æ”»æ’ƒ(ç¾åœ¨æœªä½¿ç”¨)
     /// </summary
     public void OnAttack_Sub(InputAction.CallbackContext context) {
         HandleAttack(context, CharacterEnum.AttackType.Sub);
     }
     /// <summary>
-    /// ƒXƒLƒ‹
+    /// ã‚¹ã‚­ãƒ«
     /// </summary
     public void OnUseSkill(InputAction.CallbackContext context) {
         if (context.performed)
             StartUseSkill();
     }
     /// <summary>
-    /// ƒCƒ“ƒ^ƒ‰ƒNƒg
+    /// ã‚¤ãƒ³ã‚¿ãƒ©ã‚¯ãƒˆ
     /// </summary>
     public void OnInteract(InputAction.CallbackContext context) {
         if (context.performed) Interact();
     }
 
     /// <summary>
-    /// UI•\¦
+    /// UIè¡¨ç¤º
     /// </summary>
     public void OnShowHostUI(InputAction.CallbackContext context) {
         if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
@@ -601,93 +604,93 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ˆÚ“®ŠÖ”(€–S’†‚ÍŒÄ‚Î‚È‚¢‚Å‚­‚¾‚³‚¢B)
+    /// ç§»å‹•é–¢æ•°(æ­»äº¡ä¸­ã¯å‘¼ã°ãªã„ã§ãã ã•ã„ã€‚)
     /// </summary>
     protected void MoveControl() {
-        //ˆÚ“®“ü—Í‚ªs‚í‚ê‚Ä‚¢‚éŠÔ‚ÍˆÚ“®’†ƒtƒ‰ƒO‚ğ—§‚Ä‚é
+        //ç§»å‹•å…¥åŠ›ãŒè¡Œã‚ã‚Œã¦ã„ã‚‹é–“ã¯ç§»å‹•ä¸­ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
         if (MoveInput != Vector2.zero) isMoving = true;
         else isMoving = false;
 
 
-        //ƒJƒƒ‰‚ÌŒü‚«‚ğæ“¾
+        //ã‚«ãƒ¡ãƒ©ã®å‘ãã‚’å–å¾—
         Transform cameraTransform = Camera.main.transform;
-        //is•ûŒü‚ÌƒxƒNƒgƒ‹‚ğæ“¾
+        //é€²è¡Œæ–¹å‘ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—
         Vector3 forward = cameraTransform.forward;
         forward.y = 0f;
         forward.Normalize();
-        //‰E•ûŒü‚ÌƒxƒNƒgƒ‹‚ğæ“¾
+        //å³æ–¹å‘ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—
         Vector3 right = cameraTransform.right;
         right.y = 0f;
         right.Normalize();
-        //2‚Â‚ÌƒxƒNƒgƒ‹‚ğ‡¬
+        //2ã¤ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’åˆæˆ
         moveDirection = forward * MoveInput.y + right * MoveInput.x;
 
-        // ƒJƒƒ‰‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚ğƒvƒŒƒCƒ„[‚Ì³–Ê‚É
-        Vector3 aimForward = forward; // …•½–Ê‚¾‚¯‚ğl—¶
+        // ã‚«ãƒ¡ãƒ©ã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ­£é¢ã«
+        Vector3 aimForward = forward; // æ°´å¹³é¢ã ã‘ã‚’è€ƒæ…®
         if (aimForward != Vector3.zero) {
             Quaternion targetRot = Quaternion.LookRotation(aimForward);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, PlayerConst.TURN_SPEED * Time.deltaTime);
         }
 
-        // ‹ó’†‚©’nã‚Å‹““®‚ğ•ª‚¯‚é
+        // ç©ºä¸­ã‹åœ°ä¸Šã§æŒ™å‹•ã‚’åˆ†ã‘ã‚‹
         Vector3 velocity = rigidbody.velocity;
         Vector3 targetVelocity = new(moveDirection.x * moveSpeed, velocity.y, moveDirection.z * moveSpeed);
 
-        //’n–Ê‚É—§‚Á‚Ä‚¢‚½‚ç’Êí’Ê‚è
+        //åœ°é¢ã«ç«‹ã£ã¦ã„ãŸã‚‰é€šå¸¸é€šã‚Š
         if (IsGrounded) {
             rigidbody.velocity = targetVelocity;
         }
         else {
-            // ‹ó’†‚Å‚Í’nã‘¬“x‚ÉŒü‚¯‚Ä‚ä‚é‚â‚©‚É•âŠÔiŠµ«‚ğc‚·j
+            // ç©ºä¸­ã§ã¯åœ°ä¸Šé€Ÿåº¦ã«å‘ã‘ã¦ã‚†ã‚‹ã‚„ã‹ã«è£œé–“ï¼ˆæ…£æ€§ã‚’æ®‹ã™ï¼‰
             rigidbody.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
         }
     }
 
     /// <summary>
-    /// ƒWƒƒƒ“ƒvŠÇ—ŠÖ”(€–S’†‚ÍŒÄ‚Î‚È‚¢‚Å‚­‚¾‚³‚¢B)
+    /// ã‚¸ãƒ£ãƒ³ãƒ—ç®¡ç†é–¢æ•°(æ­»äº¡ä¸­ã¯å‘¼ã°ãªã„ã§ãã ã•ã„ã€‚)
     /// </summary>
     protected void JumpControl() {
-        // ƒWƒƒƒ“ƒv”»’è
+        // ã‚¸ãƒ£ãƒ³ãƒ—åˆ¤å®š
         if (IsJumpPressed && IsGrounded) {
-            // Œ»İ‚Ì‘¬“x‚ğƒŠƒZƒbƒg‚µ‚Ä‚©‚çã•ûŒü‚É—Í‚ğ‰Á‚¦‚é
+            // ç¾åœ¨ã®é€Ÿåº¦ã‚’ãƒªã‚»ãƒƒãƒˆã—ã¦ã‹ã‚‰ä¸Šæ–¹å‘ã«åŠ›ã‚’åŠ ãˆã‚‹
             Vector3 velocity = rigidbody.velocity;
             velocity.y = 0f;
             rigidbody.velocity = velocity;
 
             rigidbody.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
-            IsJumpPressed = false; // ˜A‘Å–h~
+            IsJumpPressed = false; // é€£æ‰“é˜²æ­¢
         }
 
-        //ƒxƒNƒgƒ‹‚ªã•ûŒü‚É“­‚¢‚Ä‚¢‚é
+        //ãƒ™ã‚¯ãƒˆãƒ«ãŒä¸Šæ–¹å‘ã«åƒã„ã¦ã„ã‚‹æ™‚
         if (rigidbody.velocity.y > 0) {
-            //’Ç‰Á‚Ìd—Í•â³‚ğŠ|‚¯‚é
+            //è¿½åŠ ã®é‡åŠ›è£œæ­£ã‚’æ›ã‘ã‚‹
             rigidbody.velocity += (PlayerConst.JUMP_UPFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
         }
-        // ƒxƒNƒgƒ‹‚ª‰º•ûŒü‚É“­‚¢‚Ä‚¢‚é
+        // ãƒ™ã‚¯ãƒˆãƒ«ãŒä¸‹æ–¹å‘ã«åƒã„ã¦ã„ã‚‹æ™‚
         else if (rigidbody.velocity.y < 0) {
-            //’Ç‰Á‚Ìd—Í•â³‚ğŠ|‚¯‚é
+            //è¿½åŠ ã®é‡åŠ›è£œæ­£ã‚’æ›ã‘ã‚‹
             rigidbody.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
         }
 
 
-        // ’n–Ê”»’èi‰º•ûŒüSphereCast‚Å‚àOKB‚»‚±‚Ü‚Å[‚­l‚¦‚È‚­‚Ä‚¢‚¢‚©‚àBj
+        // åœ°é¢åˆ¤å®šï¼ˆä¸‹æ–¹å‘SphereCastã§ã‚‚OKã€‚ãã“ã¾ã§æ·±ãè€ƒãˆãªãã¦ã„ã„ã‹ã‚‚ã€‚ï¼‰
         IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }
 
     /// <summary>
-    /// ƒŠƒXƒ|[ƒ“ŠÇ—ŠÖ”(€–S’†‚àŒÄ‚ñ‚Å‚­‚¾‚³‚¢B)
+    /// ãƒªã‚¹ãƒãƒ¼ãƒ³ç®¡ç†é–¢æ•°(æ­»äº¡ä¸­ã‚‚å‘¼ã‚“ã§ãã ã•ã„ã€‚)
     /// </summary>
     [Command]
     virtual protected void RespawnControl() {
-        //€–S‚µ‚½uŠÔ‚Ìˆ—
+        //æ­»äº¡ã—ãŸç¬é–“ã®å‡¦ç†
         if (isDeadTrigger) {
             Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
         }
-        //•œŠˆŒã‚Å‚ ‚é‚Æ‚«‚Ìˆ—
+        //å¾©æ´»å¾Œã§ã‚ã‚‹ã¨ãã®å‡¦ç†
         if (isInvincible) {
-            //•œŠˆ‚µ‚Ä‚©‚ç‚ÌŠÔ‚ğ‰ÁZ
+            //å¾©æ´»ã—ã¦ã‹ã‚‰ã®æ™‚é–“ã‚’åŠ ç®—
             respownAfterTime += Time.deltaTime;
-            //‹K’èŠÔŒo‰ßŒã–³“Gó‘Ô‚ğ‰ğœ
+            //è¦å®šæ™‚é–“çµŒéå¾Œç„¡æ•µçŠ¶æ…‹ã‚’è§£é™¤
             if (respownAfterTime >= PlayerConst.RESPAWN_INVINCIBLE_TIME) {
                 isInvincible = false;
             }
@@ -695,41 +698,41 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// Abstruct : ƒXƒLƒ‹‚ÆƒpƒbƒVƒu‚Ì§Œä—pŠÖ”(€–S’†‚ÍŒÄ‚Î‚È‚¢‚Å‚­‚¾‚³‚¢B)
+    /// Abstruct : ã‚¹ã‚­ãƒ«ã¨ãƒ‘ãƒƒã‚·ãƒ–ã®åˆ¶å¾¡ç”¨é–¢æ•°(æ­»äº¡ä¸­ã¯å‘¼ã°ãªã„ã§ãã ã•ã„ã€‚)
     /// </summary>
     abstract protected void AbilityControl();
 
     /// <summary>
-    /// UŒ‚“ü—Í‚Ìƒnƒ“ƒhƒ‹•ªŠò
+    /// æ”»æ’ƒå…¥åŠ›ã®ãƒãƒ³ãƒ‰ãƒ«åˆ†å²
     /// </summary>
     private void HandleAttack(InputAction.CallbackContext context, CharacterEnum.AttackType _type) {
-        //€–S‚µ‚Ä‚¢‚½‚çUŒ‚‚Å‚«‚È‚¢
+        //æ­»äº¡ã—ã¦ã„ãŸã‚‰æ”»æ’ƒã§ããªã„
         if (isDead) return;
 
         switch (context.phase) {
-            //‰Ÿ‚µ‚½uŠÔ‚©‚ç
+            //æŠ¼ã—ãŸç¬é–“ã‹ã‚‰
             case InputActionPhase.Started:
                 isAttackPressed = true;
-                //“ü—ÍŠJnŠÔ‚ğ‹L˜^
+                //å…¥åŠ›é–‹å§‹æ™‚é–“ã‚’è¨˜éŒ²
                 attackStartTime = Time.time;
 
-                //ƒtƒ‹ƒI[ƒgó‘Ô‚Ìê‡ƒRƒ‹[ƒ`ƒ“‚ÅËŒ‚ŠÔŠu‚ğ’²®‚·‚é
+                //ãƒ•ãƒ«ã‚ªãƒ¼ãƒˆçŠ¶æ…‹ã®å ´åˆã‚³ãƒ«ãƒ¼ãƒãƒ³ã§å°„æ’ƒé–“éš”ã‚’èª¿æ•´ã™ã‚‹
                 if (autoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
                     StartCoroutine(AutoFire(_type));
                 }
                 break;
-            //—£‚µ‚½uŠÔ‚Ü‚Å
+            //é›¢ã—ãŸç¬é–“ã¾ã§
             case InputActionPhase.Canceled:
                 isAttackPressed = false;
-                //“ü—ÍI—¹ŠÔ‚ğ‹L˜^
+                //å…¥åŠ›çµ‚äº†æ™‚é–“ã‚’è¨˜éŒ²
                 float heldTime = Time.time - attackStartTime;
 
-                //ƒZƒ~ƒI[ƒgó‘Ô‚Ìê‡“ü—ÍŠÔ‚ª’Z‚¯‚ê‚Îˆê‰ñUŒ‚
+                //ã‚»ãƒŸã‚ªãƒ¼ãƒˆçŠ¶æ…‹ã®å ´åˆå…¥åŠ›æ™‚é–“ãŒçŸ­ã‘ã‚Œã°ä¸€å›æ”»æ’ƒ
                 if (autoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
                     StartAttack(_type);
                 }
                 break;
-            //‰Ÿ‚µ‚½uŠÔ
+            //æŠ¼ã—ãŸç¬é–“
             case InputActionPhase.Performed:
                 isAttackTrigger = true;
                 break;
@@ -737,7 +740,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ƒI[ƒgUŒ‚‚ÌƒRƒ‹[ƒ`ƒ“
+    /// ã‚ªãƒ¼ãƒˆæ”»æ’ƒã®ã‚³ãƒ«ãƒ¼ãƒãƒ³
     /// </summary>
     private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
         while (isAttackPressed) {
@@ -747,45 +750,45 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// UŒ‚ŠÖ”
+    /// æ”»æ’ƒé–¢æ•°
     /// </summary>
     virtual public void StartAttack(CharacterEnum.AttackType _type = CharacterEnum.AttackType.Main) {
         if (weaponController == null) return;
 
-        // •Ší‚ªUŒ‚‰Â”\‚©ƒ`ƒFƒbƒN‚µ‚ÄƒT[ƒo[–½—ß‚ğ‘—‚é
+        // æ­¦å™¨ãŒæ”»æ’ƒå¯èƒ½ã‹ãƒã‚§ãƒƒã‚¯ã—ã¦ã‚µãƒ¼ãƒãƒ¼å‘½ä»¤ã‚’é€ã‚‹
         Vector3 shootDir = GetShootDirection();
         weaponController.CmdRequestAttack(shootDir);
     }
 
     /// <summary>
-    /// UŒ‚‚Ég—p‚·‚éŒü‚¢‚Ä‚¢‚é•ûŒü‚ğæ“¾‚·‚éŠÖ”
+    /// æ”»æ’ƒã«ä½¿ç”¨ã™ã‚‹å‘ã„ã¦ã„ã‚‹æ–¹å‘ã‚’å–å¾—ã™ã‚‹é–¢æ•°
     /// </summary>
     protected Vector3 GetShootDirection() {
         Camera cam = Camera.main;
         Vector3 screenCenter = new(Screen.width / 2f, Screen.height / 2f, 0f);
 
-        // ƒJƒƒ‰’†S‚©‚ç‰“•û‚Ì–Ú•W“_‚ğŒˆ‚ß‚éi•Ç‚Í–³‹j
+        // ã‚«ãƒ¡ãƒ©ä¸­å¿ƒã‹ã‚‰é æ–¹ã®ç›®æ¨™ç‚¹ã‚’æ±ºã‚ã‚‹ï¼ˆå£ã¯ç„¡è¦–ï¼‰
         Ray camRay = cam.ScreenPointToRay(screenCenter);
-        Vector3 aimPoint = camRay.GetPoint(50f); // 50mæ‚É‰¼‚Ìƒ^[ƒQƒbƒg
+        Vector3 aimPoint = camRay.GetPoint(50f); // 50må…ˆã«ä»®ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆ
 
-        // firePoint ‚©‚ç aimPoint •ûŒü‚ÉƒŒƒC‚ğ”ò‚Î‚µ‚Ä•Ç”»’è
+        // firePoint ã‹ã‚‰ aimPoint æ–¹å‘ã«ãƒ¬ã‚¤ã‚’é£›ã°ã—ã¦å£åˆ¤å®š
         Vector3 direction = (aimPoint - firePoint.position).normalized;
         if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 100f)) {
-            // •Ç‚â°‚É“–‚½‚ê‚Î‚»‚ÌˆÊ’u‚É•â³
+            // å£ã‚„åºŠã«å½“ãŸã‚Œã°ãã®ä½ç½®ã«è£œæ­£
             return (hit.point - firePoint.position).normalized;
         }
 
-        // “–‚½‚ç‚È‚¯‚ê‚Î‚»‚Ì‚Ü‚ÜaimPoint•ûŒü
+        // å½“ãŸã‚‰ãªã‘ã‚Œã°ãã®ã¾ã¾aimPointæ–¹å‘
         return direction;
     }
 
     /// <summary>
-    /// ƒXƒLƒ‹ŒÄ‚Ño‚µŠÖ”
+    /// ã‚¹ã‚­ãƒ«å‘¼ã³å‡ºã—é–¢æ•°
     /// </summary>
     abstract protected void StartUseSkill();
 
     /// <summary>
-    /// ƒCƒ“ƒ^ƒ‰ƒNƒgŠÖ”
+    /// ã‚¤ãƒ³ã‚¿ãƒ©ã‚¯ãƒˆé–¢æ•°
     /// </summary>
     protected void Interact() {
         if (isCanPickup) {
@@ -802,39 +805,39 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
-    #region `ƒoƒtEƒXƒe[ƒ^ƒX‘€ìŒn`
+    #region ï½ãƒãƒ•ãƒ»ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æ“ä½œç³»ï½
     /// <summary>
-    /// HP‰ñ•œ(ŠÔŒo‰ß‚Å™X‚É‰ñ•œ)”­“® [_value‚Í1.0f‚ğ100“‚Æ‚µ‚½‘Š‘Î’l]
+    /// HPå›å¾©(æ™‚é–“çµŒéã§å¾ã€…ã«å›å¾©)ç™ºå‹• [_valueã¯1.0fã‚’100ï¼…ã¨ã—ãŸç›¸å¯¾å€¤]
     /// </summary>
     [Command]
     public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
-        //  ƒGƒtƒFƒNƒgÄ¶
+        //  ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿ
         PlayEffect(HEAL_BUFF_EFFECT);
 
-        // ‘‰ñ•œ—Ê‚ğ maxHP ‚ÌŠ„‡‚ÅŒvZi—áF_value=0.2 ¨ 20“‰ñ•œj
+        // ç·å›å¾©é‡ã‚’ maxHP ã®å‰²åˆã§è¨ˆç®—ï¼ˆä¾‹ï¼š_value=0.2 â†’ 20ï¼…å›å¾©ï¼‰
         float totalHeal = maxHP * _value;
-        //  ‰ñ•œÀsiƒRƒ‹[ƒ`ƒ“‚Å‰ñ‚·j
+        //  å›å¾©å®Ÿè¡Œï¼ˆã‚³ãƒ«ãƒ¼ãƒãƒ³ã§å›ã™ï¼‰
         healCoroutine = StartCoroutine(HealOverTime(totalHeal, _usingTime));
     }
 
     /// <summary>
-    ///  ŠÔ‚Ü‚Å™X‚É‰ñ•œ‚³‚¹‚Ä‚¢‚­Àsˆ—(ƒRƒ‹[ƒ`ƒ“)
+    ///  æ™‚é–“ã¾ã§å¾ã€…ã«å›å¾©ã•ã›ã¦ã„ãå®Ÿè¡Œå‡¦ç†(ã‚³ãƒ«ãƒ¼ãƒãƒ³)
     /// </summary>
     private IEnumerator HealOverTime(float _totalHeal, float _duration) {
         float elapsed = 0f;
         float healPerSec = _totalHeal / _duration;
-        float healBuffer = 0f; //   ¬”‚Ì‰ñ•œ‚ğ’~Ï
+        float healBuffer = 0f; //   å°æ•°ã®å›å¾©ã‚’è“„ç©
 
         while (elapsed < _duration) {
-            if (isDead) yield break; // €–S‚Í‘¦I—¹
+            if (isDead) yield break; // æ­»äº¡æ™‚ã¯å³çµ‚äº†
 
-            healBuffer += healPerSec * Time.deltaTime; // —İÏ
+            healBuffer += healPerSec * Time.deltaTime; // ç´¯ç©
             if (healBuffer >= 1f) {
-                int healInt = Mathf.FloorToInt(healBuffer); // ®”•ª‚¾‚¯”½‰f
+                int healInt = Mathf.FloorToInt(healBuffer); // æ•´æ•°åˆ†ã ã‘åæ˜ 
                 HP = Mathf.Min(HP + healInt, maxHP);
-                healBuffer -= healInt; // —]‚è‚ğ•Û
+                healBuffer -= healInt; // ä½™ã‚Šã‚’ä¿æŒ
             }
 
             elapsed += Time.deltaTime;
@@ -846,19 +849,19 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// UŒ‚—Íã¸ƒoƒt”­“® [_value‚Í1.0f‚ğ100“‚Æ‚µ‚½‘Š‘Î’l]
+    /// æ”»æ’ƒåŠ›ä¸Šæ˜‡ãƒãƒ•ç™ºå‹• [_valueã¯1.0fã‚’100ï¼…ã¨ã—ãŸç›¸å¯¾å€¤]
     /// </summary>
     [Command]
     public void AttackBuff(float _value, float _usingTime) {
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
-        //  ƒGƒtƒFƒNƒgÄ¶
+        //  ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿ
         PlayEffect(ATTACK_BUFF_EFFECT);
 
         attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
     }
 
     /// <summary>
-    ///  ŠÔ‚Ü‚ÅUŒ‚—Í‚ğã‚°‚Ä‚¨‚­Àsˆ—(ƒRƒ‹[ƒ`ƒ“)
+    ///  æ™‚é–“ã¾ã§æ”»æ’ƒåŠ›ã‚’ä¸Šã’ã¦ãŠãå®Ÿè¡Œå‡¦ç†(ã‚³ãƒ«ãƒ¼ãƒãƒ³)
     /// </summary>
     private IEnumerator AttackBuffRoutine(float _value, float _duration) {
         attack = Mathf.RoundToInt(defaultAttack * _value);
@@ -869,19 +872,19 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ˆÚ“®‘¬“xã¸ƒoƒt”­“® [_value‚Í1.0f‚ğ100“‚Æ‚µ‚½‘Š‘Î’l]
+    /// ç§»å‹•é€Ÿåº¦ä¸Šæ˜‡ãƒãƒ•ç™ºå‹• [_valueã¯1.0fã‚’100ï¼…ã¨ã—ãŸç›¸å¯¾å€¤]
     /// </summary>
     [Command]
     public void MoveSpeedBuff(float _value, float _usingTime) {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
-        //  ƒGƒtƒFƒNƒgÄ¶
+        //  ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿ
         PlayEffect(SPEED_BUFF_EFFECT);
 
         speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
 
     /// <summary>
-    ///  ŠÔ‚Ü‚ÅˆÚ“®‘¬“x‚ğã‚°‚Ä‚¨‚­Àsˆ—(ƒRƒ‹[ƒ`ƒ“)
+    ///  æ™‚é–“ã¾ã§ç§»å‹•é€Ÿåº¦ã‚’ä¸Šã’ã¦ãŠãå®Ÿè¡Œå‡¦ç†(ã‚³ãƒ«ãƒ¼ãƒãƒ³)
     /// </summary>
     private IEnumerator SpeedBuffRoutine(float _value, float _duration) {
         moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * _value);
@@ -892,7 +895,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ‚·‚×‚Ä‚Ìƒoƒt‚ğ‘¦‰ğœ
+    /// ã™ã¹ã¦ã®ãƒãƒ•ã‚’å³è§£é™¤
     /// </summary>
     [Command]
     public void RemoveBuff() {
@@ -904,24 +907,24 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ƒGƒtƒFƒNƒgÄ¶—pŠÖ”
+    /// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿç”¨é–¢æ•°
     /// </summary>
     private void PlayEffect(int effectNum) {
-        if (isServer) RpcPlayEffect(effectNum); // ƒT[ƒo[‘¤‚È‚ç’¼Ú‘Sˆõ‚É’Ê’m
-        else CmdPlayEffect(effectNum); // ƒNƒ‰ƒCƒAƒ“ƒg‚È‚çƒT[ƒo[‚Ö–½—ß
+        if (isServer) RpcPlayEffect(effectNum); // ã‚µãƒ¼ãƒãƒ¼å´ãªã‚‰ç›´æ¥å…¨å“¡ã«é€šçŸ¥
+        else CmdPlayEffect(effectNum); // ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãªã‚‰ã‚µãƒ¼ãƒãƒ¼ã¸å‘½ä»¤
     }
 
     /// <summary>
-    /// w’è‚ÌeƒIƒuƒWƒFƒNƒg‚Ìƒ^ƒO•t‚«qƒIƒuƒWƒFƒNƒg‚ğíœ‚·‚é
+    /// æŒ‡å®šã®è¦ªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¿ã‚°ä»˜ãå­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹
     /// </summary>
     private void DestroyChildrenWithTag(string tag) {
-        if (isServer) RpcDestroyChildrenWithTag(tag); // ƒT[ƒo[‚È‚ç‘Sˆõ‚É’Ê’m
-        else CmdDestroyChildrenWithTag(tag); // ƒNƒ‰ƒCƒAƒ“ƒg‚È‚çƒT[ƒo[‚Ö–½—ß
+        if (isServer) RpcDestroyChildrenWithTag(tag); // ã‚µãƒ¼ãƒãƒ¼ãªã‚‰å…¨å“¡ã«é€šçŸ¥
+        else CmdDestroyChildrenWithTag(tag); // ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãªã‚‰ã‚µãƒ¼ãƒãƒ¼ã¸å‘½ä»¤
     }
 
-    #region Command,ClientRpc‚ÌŠÖ”
+    #region Command,ClientRpcã®é–¢æ•°
     /// <summary>
-    /// ƒGƒtƒFƒNƒg¶¬
+    /// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”Ÿæˆ
     /// </summary>
     [Command]
     private void CmdPlayEffect(int effectNum) {
@@ -929,15 +932,15 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
     [ClientRpc]
     private void RpcPlayEffect(int effectNum) {
-        //  ƒ[ƒJƒ‹‚Åˆê“xqƒIƒuƒWƒFƒNƒg‚ğQÆ‚µ‚Ä”jŠü
+        //  ãƒ­ãƒ¼ã‚«ãƒ«ã§ä¸€åº¦å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‚ç…§ã—ã¦ç ´æ£„
         DestroyChildrenWithTagLocal(EFFECT_TAG);
 
-        //  ‚±‚±‚Å¶¬
+        //  ã“ã“ã§ç”Ÿæˆ
         Instantiate(buffEffect.effectInfos[effectNum].effect, transform);
     }
 
     /// <summary>
-    /// ƒGƒtƒFƒNƒg”jŠü
+    /// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç ´æ£„
     /// </summary>
     [Command]
     private void CmdDestroyChildrenWithTag(string tag) {
