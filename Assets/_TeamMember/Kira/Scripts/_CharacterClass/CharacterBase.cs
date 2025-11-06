@@ -356,7 +356,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-            var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
+            var RespownPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)TeamID);
             NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position, Quaternion.identity);
         }
 
@@ -383,7 +383,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
     [Command]
-    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+    public void CmdJoinTeam(NetworkIdentity _player, TeamColor _color) {
         GeneralCharacter player = _player.GetComponent<GeneralCharacter>();
         int currentTeam = player.TeamID;
         int newTeam = (int)_color;
@@ -500,10 +500,10 @@ public abstract class CharacterBase : NetworkBehaviour {
                 useCollider = _collider;
                 break;
             case "RedTeam":
-                CmdJoinTeam(netIdentity, teamColor.Red);
+                CmdJoinTeam(netIdentity, TeamColor.Red);
                 break;
             case "BlueTeam":
-                CmdJoinTeam(netIdentity, teamColor.Blue);
+                CmdJoinTeam(netIdentity, TeamColor.Blue);
                 break;
             default:
                 break;
@@ -531,11 +531,11 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(GetComponent<NetworkIdentity>(), teamColor.Red);
+                CmdJoinTeam(GetComponent<NetworkIdentity>(), TeamColor.Red);
                 break;
             case "BlueTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(GetComponent<NetworkIdentity>(), teamColor.Blue);
+                CmdJoinTeam(GetComponent<NetworkIdentity>(), TeamColor.Blue);
                 break;
             default:
                 break;

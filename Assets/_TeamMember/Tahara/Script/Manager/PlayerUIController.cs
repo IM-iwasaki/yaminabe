@@ -59,6 +59,10 @@ public class PlayerUIController : NetworkBehaviour {
 
     }
 
+    /// <summary>
+    /// ‰Šú‰»ŠÖ”
+    /// </summary>
+    /// <param name="_hp"></param>
     public void Initialize(int _hp) {
         hpText.text = _hp.ToString();
     }

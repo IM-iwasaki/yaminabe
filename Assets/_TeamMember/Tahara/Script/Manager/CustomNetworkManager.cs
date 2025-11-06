@@ -23,7 +23,9 @@ public class CustomNetworkManager : NetworkManager {
         }
 
     }
-
+    /// <summary>
+    /// サーバー開始時処理
+    /// </summary>
     public override void OnStartServer() {
         base.OnStartServer();
         // サーバーが起動したタイミングで SystemManager に Network 系の Spawn を任せる
@@ -71,6 +73,9 @@ public class CustomNetworkManager : NetworkManager {
         ChatManager.instance.CmdSendSystemMessage("Connect Player");
     }
 
+    /// <summary>
+    /// クライアントが参加した時の処理
+    /// </summary>
     public override void OnClientConnect() {
         base.OnClientConnect();
         if (TitleManager.instance.isClient) {
@@ -131,7 +136,7 @@ public class CustomNetworkManager : NetworkManager {
                 //各リスポーン地点に転送
                 if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch)
                     teamID = -1;
-                var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)teamID);
+                var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)teamID);
                 startPos.ServerTeleport(RespawnPos[Random.Range(0, RespawnPos.Count)].position, Quaternion.identity);
             }
             //ロビーシーンなら開始地点(0,0,0)に転送
@@ -159,6 +164,9 @@ public class CustomNetworkManager : NetworkManager {
             GameSceneManager.Instance.ResetIsChangedScene();
     }
 
+    /// <summary>
+    /// クライアントが止まった時の処理
+    /// </summary>
     public override void OnStopClient() {
         SceneManager.LoadScene("TitleScene");
     }
