@@ -48,10 +48,18 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  initializationOrder: 10
+  initializationOrder: 0
   bgmList: []
-  seList: []
-  initialSESourceCount: 5
+  worldSEList:
+  - name: FireBall
+    clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}
+    volume: 1
+    pitch: 1
+  - name: Explode
+    clip: {fileID: 8300000, guid: c3bb2d7eb7f9a554eb001ba6eef34088, type: 3}
+    volume: 1
+    pitch: 1
+  uiSEList: []
 --- !u!114 &6679198665712014928
 MonoBehaviour:
   m_ObjectHideFlags: 0

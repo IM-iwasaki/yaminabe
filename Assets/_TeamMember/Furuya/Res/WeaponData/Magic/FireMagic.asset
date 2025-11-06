@@ -15,10 +15,11 @@ MonoBehaviour:
   weaponName: FireMagic
   type: 2
   damage: 10
-  range: 0
-  cooldown: 0
+  cooldown: 1
   projectilePrefab: {fileID: 107947191535415832, guid: 5bedee4d4d724544688148cd86c7451f, type: 3}
   projectileSpeed: 10
+  range: 0
+  meleeAngle: 0
   muzzleFlashType: 1
   hitEffectType: 1
   chargeEffect: {fileID: 0}

@@ -61,6 +61,7 @@ public class GrenadeBase : NetworkBehaviour {
             target.TakeDamage(damage, ownerName);
         }
 
+        AudioManager.Instance.CmdPlayWorldSE("Explode", transform.position);
         RpcPlayExplosion(pos, effectType, 1.5f);
 
 #if UNITY_EDITOR

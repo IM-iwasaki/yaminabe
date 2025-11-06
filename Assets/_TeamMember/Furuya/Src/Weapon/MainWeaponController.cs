@@ -140,6 +140,7 @@ public class MainWeaponController : NetworkBehaviour {
             firePoint.position,
             Quaternion.LookRotation(direction)
         );
+        AudioManager.Instance.CmdPlayWorldSE("FireBall", transform.position);
 
         if (proj == null) return;
 
