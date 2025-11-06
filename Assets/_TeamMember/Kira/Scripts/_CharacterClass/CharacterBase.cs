@@ -313,7 +313,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
         //フェードアウトさせる
-        FadeManager.Instance.StartFadeOut(1.5f);
+        FadeManager.Instance.StartFadeOut(2.5f);
 
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
