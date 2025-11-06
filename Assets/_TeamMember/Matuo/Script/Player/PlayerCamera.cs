@@ -34,7 +34,13 @@ public class PlayerCamera : MonoBehaviour {
     private Vector3 targetOffset;     // 目標オフセット
 
     // 死亡中のカメラ処理用
-    private bool isDeathView = false;  // 死亡視点中か
+    private bool isDeathView = false;   // 死亡視点中か
+    private bool isTransitioningToDeathView = false; // 死亡カメラへ移行中か
+    private Vector3 deathCamTargetPos;               // 死亡時カメラ目標位置
+    private Quaternion deathCamTargetRot;            // 死亡時カメラ目標回転
+    private float transitionProgress = 0f;           // 補間進行度
+    public float deathCamTransitionTime = 2f;        // 死亡カメラ移行にかける時間
+
     private GameObject vignetteOverlay; // 画面暗転用オーバーレイ
     private Vector3 savedOffset;        // 復帰用のオフセット
     private float savedYaw;
@@ -67,8 +73,11 @@ public class PlayerCamera : MonoBehaviour {
         if (netIdentity && !netIdentity.isLocalPlayer)
             return;
 
-        if (isDeathView) return;
-        isDeathView = true;
+        if (isDeathView || isTransitioningToDeathView) return;
+
+        // 状態フラグ更新
+        isTransitioningToDeathView = true;
+        transitionProgress = 0f;
 
         // 現在のカメラ状態を保存
         savedOffset = currentOffset;
@@ -78,10 +87,10 @@ public class PlayerCamera : MonoBehaviour {
         // 外周暗転エフェクトを生成
         CreateVignetteOverlay();
 
-        // カメラをプレイヤー真上へ移動
+        // カメラの目標位置と回転を設定
         if (player) {
-            transform.position = player.position + Vector3.up * 10f;
-            transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            deathCamTargetPos = player.position + Vector3.up * 10f;
+            deathCamTargetRot = Quaternion.Euler(90f, 0f, 0f);
         }
     }
 
@@ -94,16 +103,26 @@ public class PlayerCamera : MonoBehaviour {
         if (netIdentity && !netIdentity.isLocalPlayer)
             return;
 
-        if (!isDeathView) return;
+        if (!isDeathView && !isTransitioningToDeathView) return;
+
+        // 死亡ビューまたは遷移中を強制終了
         isDeathView = false;
+        isTransitioningToDeathView = false;
+        transitionProgress = 0f;
 
         // 暗転エフェクトを削除
         if (vignetteOverlay) Destroy(vignetteOverlay);
 
-        // 保存しておいたカメラ角度・位置に復帰
+        // 保存しておいたカメラ角度・位置に一瞬で戻す
         currentOffset = savedOffset;
         yaw = savedYaw;
         pitch = savedPitch;
+
+        Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
+        Vector3 targetPos = player.position + rot * currentOffset;
+
+        transform.position = targetPos;
+        transform.rotation = rot;
     }
 
     private void LateUpdate() {
@@ -112,7 +131,22 @@ public class PlayerCamera : MonoBehaviour {
         if (netIdentity && !netIdentity.isLocalPlayer)
             return;
 
-        if (!player) return;      
+        if (!player) return;
+
+        // 死亡カメラ
+        if (isTransitioningToDeathView) {
+            transitionProgress += Time.deltaTime / deathCamTransitionTime;
+            float t = Mathf.SmoothStep(0f, 1f, transitionProgress); // イージング
+
+            transform.position = Vector3.Lerp(transform.position, deathCamTargetPos, t);
+            transform.rotation = Quaternion.Slerp(transform.rotation, deathCamTargetRot, t);
+
+            if (transitionProgress >= 1f) {
+                isTransitioningToDeathView = false;
+                isDeathView = true;
+            }
+            return;
+        }
 
         // 死亡中は通常TPS制御を停止（固定視点のまま）
         if (isDeathView)
