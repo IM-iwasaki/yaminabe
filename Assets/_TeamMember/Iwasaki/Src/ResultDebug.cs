@@ -92,8 +92,6 @@ public class ResultDebug : NetworkBehaviour {
     //===========================================================
 
     private void ShowIndividualBattle() {
-        Debug.Log("[ResultDebug] 個人戦リザルト表示");
-
         var scores = GetAllPlayerScores();                  // 全スコア取得
         var winner = GetWinnerName(scores, false);          // 勝者判定
 
