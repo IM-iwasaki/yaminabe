@@ -37,13 +37,21 @@ public class ChatManager : NetworkBehaviour {
     }
 
     #region スタンプ生成
-    //  クライアントからサーバーへ送信
+    /// <summary>
+    ///  クライアントからサーバーへ送信
+    /// </summary>
+    /// <param name="stampId"></param>
+    /// <param name="userName"></param>
     [Command(requiresAuthority = false)]
     public void CmdSendStamp(int stampId, string userName) {
         //  サーバーが全員に通知
         RpcAddStamp(stampId, userName);
     }
-    //  サーバーから全員へ同期
+    /// <summary>
+    ///  サーバーから全員へ同期
+    /// </summary>
+    /// <param name="stampId"></param>
+    /// <param name="userName"></param>
     [ClientRpc]
     private void RpcAddStamp(int stampId, string userName) {
 
@@ -117,12 +125,18 @@ public class ChatManager : NetworkBehaviour {
     #endregion
 
     #region システムメッセージ
-    //  クライアントからサーバーへ送信
+    /// <summary>
+    ///  クライアントからサーバーへ送信
+    /// </summary>
+    /// <param name="message"></param>
     [Command(requiresAuthority = false)]
     public void CmdSendSystemMessage(string message) {
         RpcAddMessage(message);
     }
-    //  サーバーから全員へ同期
+    /// <summary>
+    ///  サーバーから全員へ同期
+    /// </summary>
+    /// <param name="message"></param>
     [ClientRpc]
     private void RpcAddMessage(string message) {
         //  システムメッセージを生成
