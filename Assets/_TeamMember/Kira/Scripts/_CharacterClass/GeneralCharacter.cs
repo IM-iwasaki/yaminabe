@@ -81,8 +81,7 @@ class GeneralCharacter : CharacterBase {
         //TODO: 死亡中でもアクションが起こせてしまう。
 
         RespawnControl();
-        //HPが0以下になったとき死亡していなかったら死亡処理を行う
-        if (HP <= 0 && !IsDead) Dead();               
+            
         //死んでいたら以降の処理は行わない。
         if (IsDead) return;
 
