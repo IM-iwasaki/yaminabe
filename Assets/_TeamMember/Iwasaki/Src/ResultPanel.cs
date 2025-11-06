@@ -61,7 +61,7 @@ public class ResultPanel : NetworkBehaviour {
             winnerText.color = Color.white;
         }
 
-        Debug.Log($"[ResultPanel] èüîsï\é¶: {winnerText.text}");
+       
     }
 
     //================================================================

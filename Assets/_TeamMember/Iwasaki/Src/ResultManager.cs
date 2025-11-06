@@ -60,7 +60,6 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     private void RpcSpawnResultPanel() {
         // 既にUIが存在する場合はスキップ
         if (currentUIRoot != null) {
-            Debug.Log("[ResultManager] 既にUIが存在します。");
             return;
         }
 
@@ -77,7 +76,7 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
 
         // 勝敗パネルを表示
         currentResultPanel.RpcShowResult();
-        Debug.Log("[ResultManager] リザルトUI生成完了。");
+    
     }
 
     /// <summary>
@@ -85,7 +84,7 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     /// </summary>
     [ClientRpc]
     private void RpcDisplayResult(ResultData data) {
-        Debug.Log($"[ResultManager] 勝敗データ受信: {data.winnerName}, チーム戦: {data.isTeamBattle}");
+       
 
         // 勝敗表示
         if (currentResultPanel != null)
@@ -111,7 +110,7 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
             Destroy(currentUIRoot);
             currentUIRoot = null;
             currentResultPanel = null;
-            Debug.Log("[ResultManager] リザルトUIを削除しました。");
+           
         }
     }
 }
