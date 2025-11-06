@@ -31,34 +31,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
         }
     }
-    [ClientRpc]
-    public void LoadAndActivateScene(string _sceneName, string _prevSceneName) {
-        StartCoroutine(LoadSceneAndActivate(_sceneName, _prevSceneName));
-    }
-
-    private IEnumerator LoadSceneAndActivate(string _sceneName, string _prevSceneName) {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
-        FadeManager.Instance.StartFadeOut(0.5f);
-        // ロード完了まで待機
-        while (!asyncLoad.isDone) {
-            yield return null;
-        }
-
-        // シーンがロードされた後にアクティブに設定
-        Scene loadedScene = SceneManager.GetSceneByName(_sceneName);
-        if (loadedScene.IsValid() && loadedScene.isLoaded) {
-            SceneManager.SetActiveScene(loadedScene);
-            Debug.Log($"Scene '{_sceneName}' is now active.");
-
-        }
-        else {
-            Debug.LogError($"Scene '{_sceneName}' could not be activated.");
-        }
-        //動的にロビーのシーンを解放
-        SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(_prevSceneName));
-        FadeManager.Instance.StartFadeIn(1.0f);
-    }
-
+    
     /// <summary>
     /// 特定のシーンに全員を移行する(LobbyScene)
     /// </summary>
@@ -70,6 +43,10 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             NetworkSceneTransitionSystem.Instance.ChangeScene(lobbySceneName);
         }
     }
+
+    /// <summary>
+    /// 全員をタイトルシーンに戻す処理
+    /// </summary>
     [Server]
     public void LoadTitleSceneForAll() {
         if (!isChanged) {
@@ -79,6 +56,9 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         }
     }
 
+    /// <summary>
+    /// シーン遷移したという状態をリセットする関数
+    /// </summary>
 
     public void ResetIsChangedScene() {
         isChanged = false;

@@ -10,6 +10,7 @@ using System.Text;
 /// </summary>
 public class UDPBroadcaster : MonoBehaviour
 {
+    //UDP形式で送信するメッセージの構造体
     [System.Serializable]
     public class UdpMessage {
         public string ip;
@@ -18,8 +19,11 @@ public class UDPBroadcaster : MonoBehaviour
         public string hostName;
     }
 
+    //メッセージの実体
     public UdpMessage message = new UdpMessage();
+    //送るIPアドレスの文字列
     public string sendIPAddress = null;
+    //メッセージをjsonファイルに変更した時に保存する変数
     private string json = null;
     private void Awake() {
         DontDestroyOnLoad(gameObject);
@@ -29,21 +33,19 @@ public class UDPBroadcaster : MonoBehaviour
     void Start()
     {
         //送信するメッセージを初期化
-        MessageInitialized();
-        
+        MessageInitialized();   
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    /// <summary>
+    /// IPアドレスを送信
+    /// </summary>
     public void StartSendIP() {
         //定期的に送信
         InvokeRepeating(nameof(SendMesseageToClient), 0.0f, 0.1f);
     }
 
+    /// <summary>
+    /// メッセージの初期化
+    /// </summary>
     private void MessageInitialized() {
         message.ip = GetIpAddress();
         message.port = 9876;
@@ -52,7 +54,11 @@ public class UDPBroadcaster : MonoBehaviour
         Debug.Log(message.ip);
     }
 
-    public string GetIpAddress() {
+    /// <summary>
+    /// IPアドレスを取得
+    /// </summary>
+    /// <returns></returns>
+    private string GetIpAddress() {
         string hostName = Dns.GetHostName();
         IPAddress[] ips = Dns.GetHostAddresses(hostName);
 
@@ -64,7 +70,9 @@ public class UDPBroadcaster : MonoBehaviour
         return null;
     }
 
-    //定期的にclientにメッセージを送る
+    /// <summary>
+    /// 定期的にクライアントにメッセージを送る
+    /// </summary>
     public void SendMesseageToClient() {
         UdpClient client = new UdpClient();
         client.EnableBroadcast = true;

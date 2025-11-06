@@ -23,20 +23,23 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     public override void OnStartServer() {
         //リストを生成して、新しいデータを追加
-        int teamMax = (int)teamColor.ColorMax;
+        int teamMax = (int)TeamColor.ColorMax;
         teams = new List<TeamData>(teamMax);
         for (int i = 0; i < teamMax; i++) {
             teams.Add(new TeamData());
         }
     }
 
-
+    /// <summary>
+    /// 参加者をランダムなチームに振り分ける
+    /// </summary>
+    /// <param name="_teamCount"></param>
     private void JoinRandomTeam(int _teamCount = 2) {
         if (teams.Capacity != 0) {
             //まずはチームを全てリセット
             foreach (var resetTeam in teams) {
                 for (int i = 0, max = resetTeam.teamPlayerList.Count; i < max; i++) {
-                    resetTeam.teamPlayerList[i].GetComponent<DemoPlayer>().TeamID = -1;
+                    resetTeam.teamPlayerList[i].GetComponent<GeneralCharacter>().TeamID = -1;
                 }
                 resetTeam.teamPlayerList.Clear();
                 PlayerUIController.instance.ResetTeammateUI();
@@ -62,16 +65,8 @@ public class ServerManager : NetworkBehaviour {
                 teams[teamIndex].teamPlayerList.Add(connectPlayer[i]);
             }
             //プレイヤーのチームIDやUIを設定
-            player.GetComponent<DemoPlayer>().TeamID = teamIndex;
-            Debug.Log(player + "は" + teamIndex + "番目のチームに入りました!");
-
-            //チームメイトのIDをプレイヤーに送る
-            List<uint> teammateIds = new List<uint>();
-            foreach (var teammate in teams[teamIndex].teamPlayerList) {
-                teammateIds.Add(teammate.netId);
-            }
-            player.GetComponent<DemoPlayer>().TargetSendTeamList(player.connectionToClient, teammateIds.ToArray());
-
+            player.GetComponent<GeneralCharacter>().TeamID = teamIndex;
+            ChatManager.instance.CmdSendSystemMessage(player.GetComponent<GeneralCharacter>().PlayerName + "は" + teamIndex + "番目のチームに入りました!");
         }
 
     }
