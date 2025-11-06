@@ -12,6 +12,14 @@ public class PlayerListManager : NetworkBehaviour {
 
     private void Awake() {
         Instance = this;
+
+        if (Instance == null) {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else {
+            Destroy(gameObject);
+        }
     }
 
     [Server]
