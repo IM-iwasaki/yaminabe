@@ -30,7 +30,7 @@ public class TitleManager : MonoBehaviour {
         if (!once) {
             //明示的にホスト状態をtrueにし、ロビーシーンに移行
             isHost = true;
-            sender.StartSendIPAddres();
+            sender.StartSendIP();
             SceneManager.LoadScene(lobbySceneName);
             isTitle = false;
             once = true;

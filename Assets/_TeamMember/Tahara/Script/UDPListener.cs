@@ -41,7 +41,7 @@ public class UDPListener : MonoBehaviour {
         socket.SetSocketOption(SocketOptionLevel.Socket,SocketOptionName.ReuseAddress,true);
         socket.Bind(localEP);
 
-        UdpClient udpClient = new UdpClient(9876);
+        UdpClient udpClient = new UdpClient();
         udpClient.Client = socket;
         while (true) {
             if (udpClient.Available > 0) {
