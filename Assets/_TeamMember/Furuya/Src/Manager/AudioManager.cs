@@ -12,6 +12,9 @@ using Mirror;
 /// ワールド系SE→ AudioManager.Instance.CmdPlayWorldSE("GunShot", transform.position);
 /// パーソナル系SE→ AudioManager.Instance.CmdPlayUISE("ButtonClick");
 /// </summary>
+
+
+
 public class AudioManager : NetworkSystemObject<AudioManager> {
     [System.Serializable]
     public class AudioData {
@@ -19,6 +22,8 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
         public AudioClip clip;
         [Range(0f, 1f)] public float volume = 1f;
         [Range(0.1f, 3f)] public float pitch = 1f;
+        [Range(1f, 10f)] public float minDistance = 1f;
+        [Range(25f, 500f)] public float maxDistance = 50f;
     }
 
     public List<AudioData> bgmList;
@@ -74,8 +79,8 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
         source.volume = data.volume;
         source.pitch = data.pitch;
         source.spatialBlend = 1f; // 3D
-        source.minDistance = 1f;
-        source.maxDistance = 20f;
+        source.minDistance = data.minDistance;
+        source.maxDistance = data.maxDistance;
         source.rolloffMode = AudioRolloffMode.Linear;
 
         source.Play();
