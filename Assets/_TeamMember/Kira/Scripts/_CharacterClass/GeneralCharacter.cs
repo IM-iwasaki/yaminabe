@@ -39,18 +39,15 @@ class GeneralCharacter : CharacterBase {
 
     void Update() {
         if(!isLocalPlayer) return;  
-        //攻撃トリガーが立っていたら下す
-        isAttackTrigger = false;
+        //トリガーリセット関数の呼び出し
+        ResetTrigger();
         
         //TODO: MP管理系の処理がない。
         //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
-        //TODO: 死亡中でもアクションが起こせてしまう。
 
-        RespawnControl();
-        //HPが0以下になったとき死亡していなかったら死亡処理を行う
-        if (HP <= 0 && !IsDead) Dead();               
+        RespawnControl();           
         //死んでいたら以降の処理は行わない。
-        if (IsDead) return;
+        if (isDead) return;
 
         MoveControl();
         JumpControl();       
@@ -128,5 +125,5 @@ class GeneralCharacter : CharacterBase {
             SkillAfterTime = 0.0f;
             //デバッグログを出す
         }        
-    }   
+    }
 }

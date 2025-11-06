@@ -60,7 +60,9 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region ～状態管理・コンポーネント変数～
     //死亡しているか
-    [SyncVar] protected bool IsDead = false;
+    [SyncVar] protected bool isDead = false;
+    //死亡した瞬間か
+    public bool isDeadTrigger { get; protected set; } = false;
     //復活後の無敵時間中であるか
     protected bool isInvincible { get; private set; } = false;
     //復活してからの経過時間
@@ -188,7 +190,6 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
         }
     }
-
     public override void OnStartClient() {
         if (isLocalPlayer) {
             base.OnStartClient();
@@ -215,6 +216,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         moveSpeed = PlayerConst.DEFAULT_MOVESPEED;
     }
 
+    /// <summary>
+    /// 初期値を保存する
+    /// </summary>
     protected void InDefaultStatus() {
         defaultAttack = attack;
         defaultMoveSpeed = moveSpeed;
@@ -239,7 +243,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public virtual void Initalize() {
         HP = maxHP;
 
-        IsDead = false;
+        isDead = false;
         isInvincible = false;
         isMoving = false;
         isAttackPressed = false;
@@ -251,6 +255,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         respownAfterTime = 0;
         attackStartTime = 0;
         SkillAfterTime = 0;
+
+        //デスカメラのリセット(保険。要らないかも)
+        gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
     }
 
     /// <summary>
@@ -258,15 +265,15 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Server]
     public void TakeDamage(int _damage, string _name) {
-        //既に死亡状態なら帰る
-        if (IsDead) return;
+        //既に死亡状態かロビー内なら帰る
+        if (isDead || GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
-        _damage *= DamageRatio / 100;
+        float damage = _damage * (DamageRatio / 100);
         //ダメージが0以下だったら1に補正する
-        if (_damage <= 0) _damage = 1;
+        if (damage <= 0) damage = 1;
         //HPの減算処理
-        HP -= _damage;
+        HP -= (int)damage;
 
         //HPが0以下になったとき死亡していなかったら死亡処理を行う
         if (HP <= 0) Dead(_name);
@@ -288,8 +295,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     public void Dead(string _name) {
 
         //死亡フラグをたててHPを0にしておく
-        IsDead = true;
+        isDead = true;
         HP = 0;
+        //死亡トリガーを発火
+        isDeadTrigger = true;
         //バフ全解除
         RemoveBuff();
 
@@ -303,6 +312,8 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
+        //フェードアウトさせる
+        FadeManager.Instance.StartFadeOut(1.5f);
 
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
@@ -314,10 +325,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     virtual public void Respawn() {
         //死んでいなかったら即抜け
-        if (!IsDead) return;
+        if (!isDead) return;
 
         //復活させてHPを全回復
-        IsDead = false;
+        isDead = false;
         HP = maxHP;
 
         //リスポーン地点に移動させる
@@ -327,16 +338,23 @@ public abstract class CharacterBase : NetworkBehaviour {
             NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position, Quaternion.identity);
         }
 
-
-
         //リスポーン後の無敵時間にする
         isInvincible = true;
-
         //経過時間をリセット
         respownAfterTime = 0;
 
-        //カメラを暗くする
+        //カメラを明るくする
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
+        //フェードインさせる
+        FadeManager.Instance.StartFadeIn(1.0f);
+    }
+
+    /// <summary>
+    /// トリガー変数のリセット
+    /// </summary>
+    protected void ResetTrigger() {
+        isAttackTrigger = false;
+        isDeadTrigger = false;
     }
 
     /// <summary>
@@ -549,6 +567,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (context.performed) Interact();
     }
 
+    /// <summary>
+    /// UI表示
+    /// </summary>
     public void OnShowHostUI(InputAction.CallbackContext context) {
         if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
         if (context.started) {
@@ -636,8 +657,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     virtual protected void RespawnControl() {
-        //死亡中であるときの処理
-        if (IsDead) {
+        //死亡した瞬間の処理
+        if (isDeadTrigger) {
             Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
         }
         //復活後であるときの処理
@@ -661,7 +682,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     private void HandleAttack(InputAction.CallbackContext context, CharacterEnum.AttackType _type) {
         //死亡していたら攻撃できない
-        if (IsDead) return;
+        if (isDead) return;
 
         switch (context.phase) {
             //押した瞬間から
@@ -785,7 +806,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         float healBuffer = 0f; //   小数の回復を蓄積
 
         while (elapsed < _duration) {
-            if (IsDead) yield break; // 死亡時は即終了
+            if (isDead) yield break; // 死亡時は即終了
 
             healBuffer += healPerSec * Time.deltaTime; // 累積
             if (healBuffer >= 1f) {
