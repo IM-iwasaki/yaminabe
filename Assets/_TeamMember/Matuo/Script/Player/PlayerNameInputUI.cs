@@ -26,7 +26,7 @@ public class PlayerNameInputUI : MonoBehaviour {
         PlayerData data = PlayerSaveData.Load();
         string name = string.IsNullOrEmpty(data.playerName) ? "ñ¢ê›íË" : data.playerName;
         if (currentNameText != null)
-            currentNameText.text = $"Now Name: {name}";
+            currentNameText.text = $"Name: {name}";
     }
 
     private void OnConfirmClicked() {
