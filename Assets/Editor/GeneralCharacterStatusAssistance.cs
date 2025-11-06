@@ -40,7 +40,7 @@ public class GeneralCharacterStatusAssistance : Editor {
 
             case CharacterEnum.CharaterType.Gunner:
                 EditorGUILayout.LabelField("間接職専用ステータス", EditorStyles.boldLabel);
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("MaxMagazine"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("maxMagazine"));
                 break;
         }
 

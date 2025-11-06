@@ -24,12 +24,52 @@ class GeneralCharacter : CharacterBase {
 
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。レベルアップで最大MP(もしくは回復速度？)が上昇。
     protected int MP { get; private set; }
-    protected int MaxMP { get; private set; }
+    protected int maxMP { get; private set; }
     //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。レベルアップで最大弾容量が増加。
-    protected int Magazine { get; private set; }
-    protected int MaxMagazine { get; private set; }
+    protected int magazine { get; private set; }
+    protected int maxMagazine { get; private set; }
 
-    #endregion
+    #endregion  
+
+    protected new void Awake() {
+        base.Awake();
+        StatusInport(InputStatus);
+        Initalize();
+    }
+
+    void Update() {
+        if(!isLocalPlayer) return;  
+        //攻撃トリガーが立っていたら下す
+        isAttackTrigger = false;
+        
+        //TODO: MP管理系の処理がない。
+        //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
+        //TODO: 死亡中でもアクションが起こせてしまう。
+
+        RespawnControl();
+        //HPが0以下になったとき死亡していなかったら死亡処理を行う
+        if (HP <= 0 && !IsDead) Dead();               
+        //死んでいたら以降の処理は行わない。
+        if (IsDead) return;
+
+        MoveControl();
+        JumpControl();       
+        AbilityControl();
+    }
+
+    public override void Initalize() {
+        //HPやフラグ関連などの基礎的な初期化
+        base.Initalize();
+        //MaxMPが0でなければ最大値で初期化
+        if (maxMP != 0) MP = maxMP; 
+        //MaxMagazineが0でなければ最大値で初期化
+        if (maxMagazine != 0) magazine = maxMagazine;
+        //Passive関連の初期化
+        EquippedPassives[0].CoolTime = 0;
+        EquippedPassives[0].IsPassiveActive = false;
+        //Skill関連の初期化
+        EquippedSkills[0].IsSkillUse = false;
+    }
 
     public override void StatusInport(CharacterStatus _inport = null) {
         if (_inport == null) {
@@ -62,32 +102,7 @@ class GeneralCharacter : CharacterBase {
     }
 
     public void Reload() {
-        Magazine = MaxMagazine;
-    }
-
-    protected new void Awake() {
-        base.Awake();
-        StatusInport(InputStatus);
-        Initalize();
-    }
-
-    void Update() {
-        if(!isLocalPlayer) return;  
-        //攻撃トリガーが立っていたら下す
-        isAttackTrigger = false;
-        
-        //TODO: MP管理系の処理がない。
-        //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
-        //TODO: 死亡中でもアクションが起こせてしまう。
-
-        RespawnControl();
-            
-        //死んでいたら以降の処理は行わない。
-        if (IsDead) return;
-
-        MoveControl();
-        JumpControl();       
-        AbilityControl();
+        magazine = maxMagazine;
     }
 
     public override void Respawn() {
@@ -113,19 +128,5 @@ class GeneralCharacter : CharacterBase {
             SkillAfterTime = 0.0f;
             //デバッグログを出す
         }        
-    }
-
-    public override void Initalize() {
-        //HPやフラグ関連などの基礎的な初期化
-        base.Initalize();
-        //MaxMPが0でなければ最大値で初期化
-        if (MaxMP != 0) MP = MaxMP; 
-        //MaxMagazineが0でなければ最大値で初期化
-        if (MaxMagazine != 0) Magazine = MaxMagazine;
-        //Passive関連の初期化
-        EquippedPassives[0].CoolTime = 0;
-        EquippedPassives[0].IsPassiveActive = false;
-        //Skill関連の初期化
-        EquippedSkills[0].IsSkillUse = false;
-    }
+    }   
 }
