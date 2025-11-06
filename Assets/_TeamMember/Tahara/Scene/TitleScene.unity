@@ -152,10 +152,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ipAddress: localhost
-  isHost: 0
-  isClient: 0
   isTitle: 1
   lobbySceneName: LobbyScene
+  sender: {fileID: 699022356}
+  receiver: {fileID: 1111948503}
   inputField: {fileID: 723662198}
   stringIPAddress: {fileID: 708898018}
 --- !u!4 &228984084
@@ -697,7 +697,6 @@ MonoBehaviour:
     gameName: 
     hostName: 
   sendIPAddress: 
-  json: 
 --- !u!4 &699022357
 Transform:
   m_ObjectHideFlags: 0
@@ -1596,6 +1595,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 657a8ba31effb6e44b0a33a486350e88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isGetIP: 0
 --- !u!4 &1111948504
 Transform:
   m_ObjectHideFlags: 0
