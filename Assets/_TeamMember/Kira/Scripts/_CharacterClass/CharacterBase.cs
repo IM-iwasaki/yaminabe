@@ -32,7 +32,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //プレイヤーの名前
     [SyncVar] public string PlayerName = "Default";
     //受けるダメージ倍率
-    [System.NonSerialized]public int DamageRatio = 100;
+    [System.NonSerialized] public int DamageRatio = 100;
 
     //ランキング用変数の仮定義
     public int score { get; protected set; } = 0;
@@ -60,7 +60,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region ～状態管理・コンポーネント変数～
     //死亡しているか
-    [SyncVar]protected bool IsDead  = false;
+    [SyncVar] protected bool IsDead = false;
     //復活後の無敵時間中であるか
     protected bool isInvincible { get; private set; } = false;
     //復活してからの経過時間
@@ -86,7 +86,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
     //スキル使用後経過時間
-    [System.NonSerialized]public float SkillAfterTime = 0.0f;
+    [System.NonSerialized] public float SkillAfterTime = 0.0f;
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -212,7 +212,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         maxHP = PlayerConst.DEFAULT_MAXHP;
         HP = maxHP;
         attack = PlayerConst.DEFAULT_ATTACK;
-        moveSpeed = PlayerConst.DEFAULT_MOVESPEED;        
+        moveSpeed = PlayerConst.DEFAULT_MOVESPEED;
     }
 
     protected void InDefaultStatus() {
@@ -257,7 +257,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
-    [Server] public void TakeDamage(int _damage,string _name) {
+    [Server]
+    public void TakeDamage(int _damage, string _name) {
         //既に死亡状態なら帰る
         if (IsDead) return;
 
@@ -267,6 +268,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (_damage <= 0) _damage = 1;
         //HPの減算処理
         HP -= _damage;
+
+        //HPが0以下になったとき死亡していなかったら死亡処理を行う
+        if (HP <= 0) Dead(_name);
     }
 
     /// <summary>
@@ -281,7 +285,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 死亡時処理
     /// </summary>
-    [Command]public void Dead() {
+    [Command]
+    public void Dead(string _name) {
 
         //死亡フラグをたててHPを0にしておく
         IsDead = true;
@@ -299,6 +304,9 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
+
+        //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
+        KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
     }
 
     /// <summary>
@@ -317,11 +325,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (GameManager.Instance.IsGameRunning()) {
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
             var RespownPos = StageManager.Instance.GetTeamSpawnPoints((teamColor)TeamID);
-            NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position,Quaternion.identity);
+            NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position, Quaternion.identity);
         }
 
 
-        
+
         //リスポーン後の無敵時間にする
         isInvincible = true;
 
@@ -335,7 +343,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
-    [Command] public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
+    [Command]
+    public void CmdJoinTeam(NetworkIdentity _player, teamColor _color) {
         GeneralCharacter player = _player.GetComponent<GeneralCharacter>();
         int currentTeam = player.TeamID;
         int newTeam = (int)_color;
@@ -630,7 +639,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     virtual protected void RespawnControl() {
         //死亡中であるときの処理
         if (IsDead) {
-            Invoke(nameof(Respawn),PlayerConst.RESPAWN_TIME) ;
+            Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
         }
         //復活後であるときの処理
         if (isInvincible) {
@@ -678,8 +687,8 @@ public abstract class CharacterBase : NetworkBehaviour {
                     StartAttack(_type);
                 }
                 break;
-           //押した瞬間
-           case InputActionPhase.Performed:
+            //押した瞬間
+            case InputActionPhase.Performed:
                 isAttackTrigger = true;
                 break;
         }

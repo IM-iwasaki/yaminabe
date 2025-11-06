@@ -88,7 +88,7 @@ public class KillLogManager : NetworkBehaviour {
         SetName(killTextObj, killName);
 
         //  フェードアウトして消す
-        FadeAndDestroy(killLogObj);
+        StartCoroutine(FadeAndDestroy(killLogObj));
     }
 
     /// <summary>
