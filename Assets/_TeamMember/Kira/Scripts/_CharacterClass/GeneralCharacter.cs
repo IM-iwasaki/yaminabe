@@ -38,11 +38,11 @@ class GeneralCharacter : CharacterBase {
         }
 
         RunTimeStatus = _inport;
-        MaxHP = RunTimeStatus.MaxHP;
-        HP = MaxHP;
-        Attack = RunTimeStatus.Attack;
-        MoveSpeed = RunTimeStatus.MoveSpeed;
-        Debug.Log("MeleeCharacter.cs : StatusInportを実行しました。\nMaxHP:" + MaxHP + " Attack:" + Attack + " MoveSpeed:" + MoveSpeed);
+        maxHP = RunTimeStatus.MaxHP;
+        HP = maxHP;
+        attack = RunTimeStatus.Attack;
+        moveSpeed = RunTimeStatus.MoveSpeed;
+        Debug.Log("MeleeCharacter.cs : StatusInportを実行しました。\nMaxHP:" + maxHP + " attack:" + attack + " moveSpeed:" + moveSpeed);
         EquippedSkills = RunTimeStatus.Skills;
         /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */
         Debug.Log("MeleeCharacter.cs : スキルのインポートを行いました。\nインポートしたスキル: " + string.Join(", ", EquippedSkills.Where(i => i != null).Select(i => i.SkillName)));
@@ -55,9 +55,9 @@ class GeneralCharacter : CharacterBase {
     }
 
     protected override void StartUseSkill() {
-        if (IsCanSkill) {
+        if (isCanSkill) {
             EquippedSkills[0].Activate(this);
-            IsCanSkill = false;
+            isCanSkill = false;
         }       
     }
 
@@ -74,7 +74,7 @@ class GeneralCharacter : CharacterBase {
     void Update() {
         if(!isLocalPlayer) return;  
         //攻撃トリガーが立っていたら下す
-        IsAttackTrigger = false;
+        isAttackTrigger = false;
         
         //TODO: MP管理系の処理がない。
         //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
@@ -104,12 +104,12 @@ class GeneralCharacter : CharacterBase {
         EquippedSkills[0].SkillEffectUpdate(this);
 
         //スキル使用不可中、かつスキルがインポートされていれば時間を計測
-        if (!IsCanSkill && EquippedSkills[0] != null)
+        if (!isCanSkill && EquippedSkills[0] != null)
             SkillAfterTime += Time.deltaTime;
         //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
         var Skill = EquippedSkills[0];
-        if (!IsCanSkill && Skill != null && SkillAfterTime >= Skill.Cooldown) {
-            IsCanSkill = true;
+        if (!isCanSkill && Skill != null && SkillAfterTime >= Skill.Cooldown) {
+            isCanSkill = true;
             //経過時間をリセット
             SkillAfterTime = 0.0f;
             //デバッグログを出す

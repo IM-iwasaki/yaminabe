@@ -33,7 +33,7 @@ public class CommandMessenger : NetworkBehaviour {
     private void CmdMove(Vector3 direction) {
         // サーバーで物理処理
         Rigidbody rb = GetComponent<Rigidbody>();
-        rb.MovePosition(rb.position + direction * status.MoveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + direction * status.moveSpeed * Time.fixedDeltaTime);
 
         // 移動アニメーションなど
         RpcPlayMoveAnimation(direction);

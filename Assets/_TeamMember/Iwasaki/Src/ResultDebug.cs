@@ -59,10 +59,10 @@ public class ResultDebug : NetworkBehaviour {
            //     // CharacterBaseを継承しているのでPlayerNameとScoreを直接参照できる
            //     scores.Add(new ResultScoreData {
            //         playerName = c.PlayerName, // ← CharacterBase側の名前変数
-           //         score = c.Score            // ← CharacterBase側のスコア変数
+           //         score = c.score            // ← CharacterBase側のスコア変数
            //     });
            //
-           //     Debug.Log($"[ResultDebug] スコア取得: {c.PlayerName} = {c.Score}");
+           //     Debug.Log($"[ResultDebug] スコア取得: {c.PlayerName} = {c.score}");
            // }
            //
            // return scores;

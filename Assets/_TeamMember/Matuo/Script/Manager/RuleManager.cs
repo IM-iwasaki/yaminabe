@@ -62,7 +62,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             teamScores[teamId] = 0f;
 
         teamScores[teamId] += amount;
-        Debug.Log($"Team {teamId} Score: {teamScores[teamId]} (Rule: {rule})");
+        Debug.Log($"Team {teamId} score: {teamScores[teamId]} (Rule: {rule})");
 
         RpcUpdateScore(teamId, teamScores[teamId]);
 

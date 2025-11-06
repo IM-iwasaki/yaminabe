@@ -20,13 +20,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     //現在の体力
     [SyncVar(hook = nameof(ChangeHP))] public int HP;
     //最大の体力
-    public int MaxHP { get; protected set; }
+    public int maxHP { get; protected set; }
     //基礎攻撃力
-    [SyncVar] public int Attack;
+    [SyncVar] public int attack;
     //移動速度
-    [SyncVar] public int MoveSpeed = 5;
+    [SyncVar] public int moveSpeed = 5;
     //持っている武器の文字列
-    public string CurrentWeapon { get; protected set; }
+    public string currentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
@@ -37,7 +37,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [System.NonSerialized]public int DamageRatio = 100;
 
     //ランキング用変数の仮定義
-    public int Score { get; protected set; } = 0;
+    public int score { get; protected set; } = 0;
 
     #endregion
 
@@ -46,14 +46,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     //移動を要求する方向
     protected Vector2 MoveInput;
     //実際に移動する方向
-    public Vector3 MoveDirection { get; private set; }
+    public Vector3 moveDirection { get; private set; }
     //視点を要求する方向
-    protected Vector2 LookInput { get; private set; }
+    protected Vector2 lookInput { get; private set; }
     //向いている方向
-    public Vector3 LookDirection { get; private set; }
+    public Vector3 lookDirection { get; private set; }
 
     //リスポーン地点
-    public Vector3 RespownPosition { get; protected set; }
+    public Vector3 respownPosition { get; protected set; }
 
     //射撃位置
     public Transform firePoint;
@@ -64,28 +64,28 @@ public abstract class CharacterBase : NetworkBehaviour {
     //死亡しているか
     [SyncVar]protected bool IsDead  = false;
     //復活後の無敵時間中であるか
-    protected bool IsInvincible { get; private set; } = false;
+    protected bool isInvincible { get; private set; } = false;
     //復活してからの経過時間
-    protected float RespownAfterTime { get; private set; } = 0.0f;
+    protected float respownAfterTime { get; private set; } = 0.0f;
 
     //移動中か
-    public bool IsMoving { get; private set; } = false;
+    public bool isMoving { get; private set; } = false;
     //攻撃中か
-    public bool IsAttackPressed { get; private set; } = false;
+    public bool isAttackPressed { get; private set; } = false;
     //攻撃を押した瞬間か
-    public bool IsAttackTrigger { get; protected set; } = false;
+    public bool isAttackTrigger { get; protected set; } = false;
     //攻撃開始時間
-    public float AttackStartTime { get; private set; } = 0;
+    public float attackStartTime { get; private set; } = 0;
     //オート攻撃タイプ (デフォルトはフルオート)
-    public CharacterEnum.AutoFireType AutoFireType { get; protected set; } = CharacterEnum.AutoFireType.FullAutomatic;
+    public CharacterEnum.AutoFireType autoFireType { get; protected set; } = CharacterEnum.AutoFireType.FullAutomatic;
 
     //アイテムを拾える状態か
-    protected bool IsCanPickup { get; private set; } = false;
+    protected bool isCanPickup { get; private set; } = false;
     //インタラクトできる状態か
-    protected bool IsCanInteruct { get; private set; } = false;
+    protected bool isCanInteruct { get; private set; } = false;
 
     //スキルを使用できるか
-    public bool IsCanSkill { get; protected set; } = false;
+    public bool isCanSkill { get; protected set; } = false;
     //スキル使用後経過時間
     [System.NonSerialized]public float SkillAfterTime = 0.0f;
 
@@ -168,8 +168,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //firePoint = transform.Find("ShotRoot");
 
         // デフォルト値保存
-        defaultMoveSpeed = MoveSpeed;
-        defaultAttack = Attack;
+        defaultMoveSpeed = moveSpeed;
+        defaultAttack = attack;
     }
 
     /// <summary>
@@ -210,15 +210,15 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void DefaultStatusInport() {
         Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
-        MaxHP = PlayerConst.DEFAULT_MAXHP;
-        HP = MaxHP;
-        Attack = PlayerConst.DEFAULT_ATTACK;
-        MoveSpeed = PlayerConst.DEFAULT_MOVESPEED;        
+        maxHP = PlayerConst.DEFAULT_MAXHP;
+        HP = maxHP;
+        attack = PlayerConst.DEFAULT_ATTACK;
+        moveSpeed = PlayerConst.DEFAULT_MOVESPEED;        
     }
 
     protected void InDefaultStatus() {
-        defaultAttack = Attack;
-        defaultMoveSpeed = MoveSpeed;
+        defaultAttack = attack;
+        defaultMoveSpeed = moveSpeed;
     }
 
     /// <summary>
@@ -239,19 +239,19 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// (職業限定ステータスの初期化はoverrideを使用してください。)
     /// </summary>
     public virtual void Initalize() {
-        HP = MaxHP;
+        HP = maxHP;
 
         IsDead = false;
-        IsInvincible = false;
-        IsMoving = false;
-        IsAttackPressed = false;
-        IsAttackTrigger = false;
-        IsCanPickup = false;
-        IsCanInteruct = false;
-        IsCanSkill = false;
+        isInvincible = false;
+        isMoving = false;
+        isAttackPressed = false;
+        isAttackTrigger = false;
+        isCanPickup = false;
+        isCanInteruct = false;
+        isCanSkill = false;
 
-        RespownAfterTime = 0;
-        AttackStartTime = 0;
+        respownAfterTime = 0;
+        attackStartTime = 0;
         SkillAfterTime = 0;
     }
 
@@ -275,7 +275,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void ChangeHP(int _, int newValue) {
         if (!isLocalPlayer) return; // 自分のプレイヤーでなければUI更新しない
-        if (UI != null) UI.ChangeHPUI(MaxHP, newValue);
+        if (UI != null) UI.ChangeHPUI(maxHP, newValue);
         else Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
     }
 
@@ -292,12 +292,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         RemoveBuff();
 
         //不具合防止のためフラグをいろいろ下ろす。
-        IsAttackPressed = false;
-        IsCanInteruct = false;
-        IsCanPickup = false;
-        IsCanSkill = false;
+        isAttackPressed = false;
+        isCanInteruct = false;
+        isCanPickup = false;
+        isCanSkill = false;
         IsJumpPressed = false;
-        IsMoving = false;
+        isMoving = false;
 
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
@@ -313,7 +313,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //復活させてHPを全回復
         IsDead = false;
-        HP = MaxHP;
+        HP = maxHP;
 
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
@@ -325,10 +325,10 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         
         //リスポーン後の無敵時間にする
-        IsInvincible = true;
+        isInvincible = true;
 
         //経過時間をリセット
-        RespownAfterTime = 0;
+        respownAfterTime = 0;
 
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
@@ -444,13 +444,13 @@ public abstract class CharacterBase : NetworkBehaviour {
         switch (_collider.tag) {
             case "Item":
                 // フラグを立てる
-                IsCanPickup = true;
+                isCanPickup = true;
                 useCollider = _collider;
 
                 break;
             case "SelectCharacterObject":
                 // フラグを立てる
-                IsCanInteruct = true;
+                isCanInteruct = true;
                 useCollider = _collider;
                 break;
             case "RedTeam":
@@ -475,12 +475,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         switch (_collider.tag) {
             case "Item":
                 // フラグを下ろす
-                IsCanPickup = false;
+                isCanPickup = false;
                 useCollider = null;
                 break;
             case "SelectCharacterObject":
                 // フラグを下ろす
-                IsCanInteruct = false;
+                isCanInteruct = false;
                 useCollider = null;
                 break;
             case "RedTeam":
@@ -506,7 +506,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 視点(現在未使用)
     /// </summary>
     public void OnLook(InputAction.CallbackContext context) {
-        LookInput = context.ReadValue<Vector2>();
+        lookInput = context.ReadValue<Vector2>();
     }
     /// <summary>
     /// ジャンプ
@@ -556,8 +556,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void MoveControl() {
         //移動入力が行われている間は移動中フラグを立てる
-        if (MoveInput != Vector2.zero) IsMoving = true;
-        else IsMoving = false;
+        if (MoveInput != Vector2.zero) isMoving = true;
+        else isMoving = false;
 
 
         //カメラの向きを取得
@@ -571,7 +571,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         right.y = 0f;
         right.Normalize();
         //2つのベクトルを合成
-        MoveDirection = forward * MoveInput.y + right * MoveInput.x;
+        moveDirection = forward * MoveInput.y + right * MoveInput.x;
 
         // カメラの向いている方向をプレイヤーの正面に
         Vector3 aimForward = forward; // 水平面だけを考慮
@@ -582,7 +582,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         // 空中か地上で挙動を分ける
         Vector3 velocity = rigidbody.velocity;
-        Vector3 targetVelocity = new(MoveDirection.x * MoveSpeed, velocity.y, MoveDirection.z * MoveSpeed);
+        Vector3 targetVelocity = new(moveDirection.x * moveSpeed, velocity.y, moveDirection.z * moveSpeed);
 
         //地面に立っていたら通常通り
         if (IsGrounded) {
@@ -635,12 +635,12 @@ public abstract class CharacterBase : NetworkBehaviour {
             Invoke(nameof(Respawn),PlayerConst.RespownTime) ;
         }
         //復活後であるときの処理
-        if (IsInvincible) {
+        if (isInvincible) {
             //復活してからの時間を加算
-            RespownAfterTime += Time.deltaTime;
+            respownAfterTime += Time.deltaTime;
             //規定時間経過後無敵状態を解除
-            if (RespownAfterTime >= PlayerConst.RespownInvincibleTime) {
-                IsInvincible = false;
+            if (respownAfterTime >= PlayerConst.RespownInvincibleTime) {
+                isInvincible = false;
             }
         }
     }
@@ -660,12 +660,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         switch (context.phase) {
             //押した瞬間から
             case InputActionPhase.Started:
-                IsAttackPressed = true;
+                isAttackPressed = true;
                 //入力開始時間を記録
-                AttackStartTime = Time.time;
+                attackStartTime = Time.time;
 
                 //フルオート状態の場合コルーチンで射撃間隔を調整する
-                if (AutoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
+                if (autoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
                     Debug.Log("フルオート攻撃を開始しました。");
 
                     StartCoroutine(AutoFire(_type));
@@ -673,12 +673,12 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
-                IsAttackPressed = false;
+                isAttackPressed = false;
                 //入力終了時間を記録
-                float heldTime = Time.time - AttackStartTime;
+                float heldTime = Time.time - attackStartTime;
 
                 //セミオート状態の場合入力時間が短ければ一回攻撃
-                if (AutoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
+                if (autoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
                     Debug.Log("セミオート攻撃です。");
 
                     StartAttack(_type);
@@ -686,7 +686,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
            //押した瞬間
            case InputActionPhase.Performed:
-                IsAttackTrigger = true;
+                isAttackTrigger = true;
                 break;
         }
     }
@@ -695,7 +695,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// オート攻撃のコルーチン
     /// </summary>
     private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
-        while (IsAttackPressed) {
+        while (isAttackPressed) {
             Debug.Log("オート攻撃中...");
             StartAttack(_type);
             yield return new WaitForSeconds(weaponController.weaponData.cooldown);
@@ -744,12 +744,12 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// インタラクト関数
     /// </summary>
     protected void Interact() {
-        if (IsCanPickup) {
+        if (isCanPickup) {
             ItemBase item = useCollider.GetComponent<ItemBase>();
             item.Use(gameObject);
             return;
         }
-        if (IsCanInteruct) {
+        if (isCanInteruct) {
             CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
             select.StartCharacterSelect(gameObject);
             return;
@@ -769,8 +769,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //  エフェクト再生
         PlayEffect(HEAL_BUFF_EFFECT);
 
-        // 総回復量を MaxHP の割合で計算（例：_value=0.2 → 20％回復）
-        float totalHeal = MaxHP * _value;
+        // 総回復量を maxHP の割合で計算（例：_value=0.2 → 20％回復）
+        float totalHeal = maxHP * _value;
         //  回復実行（コルーチンで回す）
         healCoroutine = StartCoroutine(HealOverTime(totalHeal, _usingTime));
     }
@@ -789,7 +789,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             healBuffer += healPerSec * Time.deltaTime; // 累積
             if (healBuffer >= 1f) {
                 int healInt = Mathf.FloorToInt(healBuffer); // 整数分だけ反映
-                HP = Mathf.Min(HP + healInt, MaxHP);
+                HP = Mathf.Min(HP + healInt, maxHP);
                 healBuffer -= healInt; // 余りを保持
             }
 
@@ -817,9 +817,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///  時間まで攻撃力を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator AttackBuffRoutine(float value, float duration) {
-        Attack = Mathf.RoundToInt(defaultAttack * value);
+        attack = Mathf.RoundToInt(defaultAttack * value);
         yield return new WaitForSeconds(duration);
-        Attack = defaultAttack;
+        attack = defaultAttack;
         DestroyChildrenWithTag(EFFECT_TAG);
         attackCoroutine = null;
     }
@@ -840,9 +840,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///  時間まで移動速度を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator SpeedBuffRoutine(float value, float duration) {
-        MoveSpeed = Mathf.RoundToInt(defaultMoveSpeed * value);
+        moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * value);
         yield return new WaitForSeconds(duration);
-        MoveSpeed = defaultMoveSpeed;
+        moveSpeed = defaultMoveSpeed;
         DestroyChildrenWithTag(EFFECT_TAG);
         speedCoroutine = null;
     }
@@ -854,8 +854,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     public void RemoveBuff() {
         StopAllCoroutines();
         DestroyChildrenWithTag(EFFECT_TAG);
-        MoveSpeed = defaultMoveSpeed;
-        Attack = defaultAttack;
+        moveSpeed = defaultMoveSpeed;
+        attack = defaultAttack;
         healCoroutine = speedCoroutine = attackCoroutine = null;
     }
 

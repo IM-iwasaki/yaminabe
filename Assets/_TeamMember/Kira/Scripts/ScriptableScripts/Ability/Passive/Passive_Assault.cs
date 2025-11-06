@@ -36,7 +36,7 @@ public class Passive_Assault : PassiveBase {
         }
 
         //発動中にHPが条件を満たしたら発動。
-        if (IsPassiveActive && user.HP <= user.MaxHP/5 ) {
+        if (IsPassiveActive && user.HP <= user.maxHP/5 ) {
             Debug.Log("パッシブが発動しました。");
             user.Heal(0.3f,2.0f);
             //発動状態を解除
