@@ -111,7 +111,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //足元の確認用Transform
     private Transform GroundCheck;
     //接地しているか
-    private bool IsGrounded;
+    [SerializeField]private bool IsGrounded;
 
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
@@ -291,7 +291,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (isDead || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
-        float damage = _damage * (DamageRatio / 100);
+        float damage = _damage * ((float)DamageRatio / 100);
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理
