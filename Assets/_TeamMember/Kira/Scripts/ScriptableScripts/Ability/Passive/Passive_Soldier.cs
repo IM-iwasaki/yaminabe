@@ -15,13 +15,7 @@ public class Passive_Soldier : PassiveBase {
         else IsPassiveActive = false;
 
         //効果中はダメージを軽減。
-        if (IsPassiveActive){
-            user.DamageRatio = 80;
-            
-            //発動中はログを出す。
-            Debug.Log("パッシブが発動中です。");
-        } else user.DamageRatio = 100;
-
-        
+        if (IsPassiveActive) user.DamageRatio = 80;
+        else user.DamageRatio = 100;        
     }
 }

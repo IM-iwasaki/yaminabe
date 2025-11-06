@@ -3,18 +3,18 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Character/新規キャラクターデータ(全職業対応)")]
 public class GeneralCharacterStatus : CharacterStatus {
     //職業の割り当て
-    [Tooltip("職業タイプを選択してください。\n・Melee(近接職)\n・Wizard(魔法職)\n・Gunner(間接職)")]
+    [Header("職業タイプを選択してください。\n・Melee(近接職)\n・Wizard(魔法職)\n・Gunner(間接職)")]
     public CharacterEnum.CharaterType ChatacterType;
 
-    [Tooltip("体力補正値。\nStatusBase + [MaxHPCorrection] の値になります。")]
+    [Header("体力補正値。\nStatusBase + [MaxHPCorrection] の値になります。")]
     [Range(-50, 100)] public int MaxHPCorrection = 0;
-    [Tooltip("攻撃力補正値。\nStatusBase + [AttackCorrection]の値になります。")]
+    [Header("攻撃力補正値。\nStatusBase + [AttackCorrection]の値になります。")]
     [Range(-7, 20)] public int AttackCorrection = 0;
-    [Tooltip("移動速度補正値。\nStatusBase + [SpeedCorrection]の値になります。")]
+    [Header("移動速度補正値。\nStatusBase + [SpeedCorrection]の値になります。")]
     [Range(-3, 5)] public int SpeedCorrection = 0;
-    [Tooltip("魔力値。\n[MaxMPCorrection] の値になります。")]
+    [Header("魔力値。\n[MaxMPCorrection] の値になります。")]
     [Range(10, 100)] public int MaxMPCorrection = 10;
-    [Tooltip("弾倉値。\n[MaxMagazine] の値になります。")]
+    [Header("弾倉値。\n[MaxMagazine] の値になります。")]
     [Range(1, 50)] public int MaxMagazine = 1;
 
     public override int MaxHP => BaseStatus.MaxHP + MaxHPCorrection;

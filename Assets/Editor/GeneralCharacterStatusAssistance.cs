@@ -26,19 +26,20 @@ public class GeneralCharacterStatusAssistance : Editor {
         EditorGUILayout.PropertyField(serializedObject.FindProperty("AttackCorrection"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("SpeedCorrection"));
 
+        EditorGUILayout.Space();
         //キャラクタータイプで分岐
         switch (obj.ChatacterType) {
             case CharacterEnum.CharaterType.Melee:
-                EditorGUILayout.LabelField("近接職専用ステータスはまだありません！");
+                EditorGUILayout.LabelField("近接職専用ステータスはまだありません！", EditorStyles.boldLabel);
                 break;
 
             case CharacterEnum.CharaterType.Wizard:
-                EditorGUILayout.LabelField("魔法職専用ステータス");
+                EditorGUILayout.LabelField("魔法職専用ステータス", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("MaxMPCorrection"));
                 break;
 
             case CharacterEnum.CharaterType.Gunner:
-                EditorGUILayout.LabelField("間接職専用ステータス");
+                EditorGUILayout.LabelField("間接職専用ステータス", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("MaxMagazine"));
                 break;
         }

@@ -15,7 +15,5 @@ public class Skill_Soldier : SkillBase {
     public override void Activate(CharacterBase user) {
         //攻撃力上昇開始
         user.AttackBuff(1.3f,10.0f);
-        //デバッグログを出す
-        Debug.Log("スキルを使用しました。");
     }
 }

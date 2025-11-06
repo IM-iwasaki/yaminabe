@@ -30,9 +30,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
-    //TODO:プレイヤーセーブデータから取得できるようにする。
     [SyncVar] public string PlayerName = "Default";
-
     //受けるダメージ倍率
     [System.NonSerialized]public int DamageRatio = 100;
 
@@ -77,7 +75,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0;
     //オート攻撃タイプ (デフォルトはフルオート)
-    public CharacterEnum.AutoFireType autoFireType { get; protected set; } = CharacterEnum.AutoFireType.FullAutomatic;
+    public CharacterEnum.AutoFireType autoFireType { get; protected set; }
+        = CharacterEnum.AutoFireType.FullAutomatic;
 
     //アイテムを拾える状態か
     protected bool isCanPickup { get; private set; } = false;
@@ -283,7 +282,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死亡時処理
     /// </summary>
     [Command]public void Dead() {
-        Debug.Log("Dead関数が呼び出されました。");
 
         //死亡フラグをたててHPを0にしておく
         IsDead = true;
@@ -632,14 +630,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     virtual protected void RespawnControl() {
         //死亡中であるときの処理
         if (IsDead) {
-            Invoke(nameof(Respawn),PlayerConst.RespownTime) ;
+            Invoke(nameof(Respawn),PlayerConst.RESPAWN_TIME) ;
         }
         //復活後であるときの処理
         if (isInvincible) {
             //復活してからの時間を加算
             respownAfterTime += Time.deltaTime;
             //規定時間経過後無敵状態を解除
-            if (respownAfterTime >= PlayerConst.RespownInvincibleTime) {
+            if (respownAfterTime >= PlayerConst.RESPAWN_INVINCIBLE_TIME) {
                 isInvincible = false;
             }
         }
@@ -666,8 +664,6 @@ public abstract class CharacterBase : NetworkBehaviour {
 
                 //フルオート状態の場合コルーチンで射撃間隔を調整する
                 if (autoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
-                    Debug.Log("フルオート攻撃を開始しました。");
-
                     StartCoroutine(AutoFire(_type));
                 }
                 break;
@@ -679,8 +675,6 @@ public abstract class CharacterBase : NetworkBehaviour {
 
                 //セミオート状態の場合入力時間が短ければ一回攻撃
                 if (autoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
-                    Debug.Log("セミオート攻撃です。");
-
                     StartAttack(_type);
                 }
                 break;
@@ -696,7 +690,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
         while (isAttackPressed) {
-            Debug.Log("オート攻撃中...");
             StartAttack(_type);
             yield return new WaitForSeconds(weaponController.weaponData.cooldown);
         }
@@ -778,12 +771,12 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     ///  時間まで徐々に回復させていく実行処理(コルーチン)
     /// </summary>
-    private IEnumerator HealOverTime(float totalHeal, float duration) {
+    private IEnumerator HealOverTime(float _totalHeal, float _duration) {
         float elapsed = 0f;
-        float healPerSec = totalHeal / duration;
+        float healPerSec = _totalHeal / _duration;
         float healBuffer = 0f; //   小数の回復を蓄積
 
-        while (elapsed < duration) {
+        while (elapsed < _duration) {
             if (IsDead) yield break; // 死亡時は即終了
 
             healBuffer += healPerSec * Time.deltaTime; // 累積
@@ -816,9 +809,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     ///  時間まで攻撃力を上げておく実行処理(コルーチン)
     /// </summary>
-    private IEnumerator AttackBuffRoutine(float value, float duration) {
-        attack = Mathf.RoundToInt(defaultAttack * value);
-        yield return new WaitForSeconds(duration);
+    private IEnumerator AttackBuffRoutine(float _value, float _duration) {
+        attack = Mathf.RoundToInt(defaultAttack * _value);
+        yield return new WaitForSeconds(_duration);
         attack = defaultAttack;
         DestroyChildrenWithTag(EFFECT_TAG);
         attackCoroutine = null;
@@ -839,9 +832,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     ///  時間まで移動速度を上げておく実行処理(コルーチン)
     /// </summary>
-    private IEnumerator SpeedBuffRoutine(float value, float duration) {
-        moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * value);
-        yield return new WaitForSeconds(duration);
+    private IEnumerator SpeedBuffRoutine(float _value, float _duration) {
+        moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * _value);
+        yield return new WaitForSeconds(_duration);
         moveSpeed = defaultMoveSpeed;
         DestroyChildrenWithTag(EFFECT_TAG);
         speedCoroutine = null;
@@ -862,7 +855,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// エフェクト再生用関数
     /// </summary>
-    /// <param name="buffEffectNum"></param>
     private void PlayEffect(int effectNum) {
         if (isServer) RpcPlayEffect(effectNum); // サーバー側なら直接全員に通知
         else CmdPlayEffect(effectNum); // クライアントならサーバーへ命令
@@ -896,8 +888,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// エフェクト破棄
     /// </summary>
-    /// <param name="parent"></param>
-    /// <param name="tag"></param>
     [Command]
     private void CmdDestroyChildrenWithTag(string tag) {
         RpcDestroyChildrenWithTag(tag);

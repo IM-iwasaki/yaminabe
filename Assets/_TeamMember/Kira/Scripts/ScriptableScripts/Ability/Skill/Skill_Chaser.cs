@@ -20,10 +20,7 @@ public class Skill_Chaser : SkillBase {
 
     public override void Activate(CharacterBase user) {
         //既に使用中か確認
-        if (IsSkillUse) {
-            Debug.Log("スキルの効果中です。");
-            return;
-        }
+        if (IsSkillUse) return;
         //効果発動
         else IsSkillUse = true;
     }

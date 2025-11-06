@@ -13,8 +13,6 @@ public class Passive_Assault : PassiveBase {
     public override void PassiveSetting(CharacterBase user) {
         //発動中でなかったら発動中の状態にする
         if (!IsPassiveActive){
-            //仮。
-            Debug.Log("パッシブが発動できる状態になりました。");
             IsPassiveActive = true;
             //クールタイム計測をリセット
             CoolTime = 0;
@@ -27,8 +25,6 @@ public class Passive_Assault : PassiveBase {
             CoolTime += Time.deltaTime;
             //クールタイムがクールダウン以上になったら発動中にする
             if(CoolTime >= Cooldown) {
-                //仮。
-                Debug.Log("パッシブが発動できる状態になりました。");
                 IsPassiveActive = true;
                 //クールタイム計測をリセット
                 CoolTime = 0;
@@ -37,7 +33,6 @@ public class Passive_Assault : PassiveBase {
 
         //発動中にHPが条件を満たしたら発動。
         if (IsPassiveActive && user.HP <= user.maxHP/5 ) {
-            Debug.Log("パッシブが発動しました。");
             user.Heal(0.3f,2.0f);
             //発動状態を解除
             IsPassiveActive= false;

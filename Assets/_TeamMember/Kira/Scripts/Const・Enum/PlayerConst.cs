@@ -23,7 +23,7 @@ public class PlayerConst {
     public const float GROUND_DISTANCE = 0.2f;
 
     //リスポーンに必要な時間
-    public const float RespownTime = 3.0f;
+    public const float RESPAWN_TIME = 3.0f;
     //リスポーン後の無敵時間
-    public const float RespownInvincibleTime = 1.5f;
+    public const float RESPAWN_INVINCIBLE_TIME = 1.5f;
 }

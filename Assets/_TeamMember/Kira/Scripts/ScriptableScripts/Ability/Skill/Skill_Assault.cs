@@ -13,7 +13,5 @@ public class Skill_Assault : SkillBase {
     public override void Activate(CharacterBase user) {
         //移動速度上昇開始
         user.MoveSpeedBuff(5.0f,0.3f);
-        //デバッグログを出す
-        Debug.Log("スキルを使用しました。");
     }
 }

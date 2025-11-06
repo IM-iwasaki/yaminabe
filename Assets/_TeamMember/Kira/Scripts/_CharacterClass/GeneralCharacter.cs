@@ -13,9 +13,9 @@ class GeneralCharacter : CharacterBase {
     [SerializeField]CharacterStatus InputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
     private CharacterStatus RunTimeStatus;
-    [Tooltip("使用するスキル")]
+    [Header("使用するスキル")]
     private SkillBase[] EquippedSkills;
-    [Tooltip("使用するパッシブ")]
+    [Header("使用するパッシブ")]
     private PassiveBase[] EquippedPassives;
 
     #endregion
@@ -113,7 +113,6 @@ class GeneralCharacter : CharacterBase {
             //経過時間をリセット
             SkillAfterTime = 0.0f;
             //デバッグログを出す
-            Debug.Log("スキルが使用可能になりました。");
         }        
     }
 
