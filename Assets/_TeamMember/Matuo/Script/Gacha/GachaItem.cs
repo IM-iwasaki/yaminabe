@@ -11,7 +11,6 @@ public class GachaItem {
     [Header("アイテム情報")]
     public string itemName;
 
-    [Header("確率設定")]
-    [Range(0, 10)]
+    [Header("確率設定"),Range(0, 10)]
     public int rate = 1;
 }

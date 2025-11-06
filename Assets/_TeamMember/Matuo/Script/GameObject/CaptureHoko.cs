@@ -14,8 +14,7 @@ public class CaptureHoko : CaptureObjectBase {
     [SyncVar] private bool isHeld = false;             // プレイヤーが保持しているか
     [SyncVar] private NetworkIdentity holder;          // ホコを持つプレイヤー
     private Rigidbody rb;
-    [SerializeField]
-    private Collider hokoCollider;
+    [SerializeField] private Collider hokoCollider;
 
     /// <summary>
     /// 初期化処理

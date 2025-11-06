@@ -14,10 +14,6 @@ public class CharacterDatabase : ScriptableObject {
 
         [Header("スキン設定")]
         public List<SkinInfo> skins = new();          // スキン情報リスト
-
-        [Header("キャラ説明")]
-        [TextArea(2, 5)]
-        public string description;                   // キャラ説明
     }
 
     [System.Serializable]

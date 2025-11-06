@@ -7,11 +7,10 @@ using System.Collections.Generic;
 /// </summary>
 public class CaptureArea : CaptureObjectBase {
     [Header("エリア設定")]
-    public float captureTime = 3f;           // 制圧に必要な時間
+    public float captureTime = 3f;      // 制圧に必要な時間
     public Collider areaCollider;
-    [SerializeField]
-    private List<CharacterBase> playersInArea = new(); // エリア内プレイヤーリスト
-    private float captureProgress = 0f;               // 現在の制圧進行時間
+    [SerializeField] private List<CharacterBase> playersInArea = new(); // エリア内プレイヤーリスト
+    private float captureProgress = 0f;     // 現在の制圧進行時間
 
     /// <summary>
     /// プレイヤーがエリアに入った時にリストに追加

@@ -14,7 +14,6 @@ public static class PlayerSaveData {
     public static void Save(PlayerData data) {
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(filePath, json);
-        Debug.Log("Ç±Ç±Ç…ÉZÅ[ÉuÇµÇΩÇÊ: " + filePath);
     }
 
     /// <summary>
