@@ -33,9 +33,23 @@ public class PlayerListManager : NetworkBehaviour {
 
     [Server]
     public void UnregisterPlayer(CharacterBase player) {
-        if (players.Remove(player)) {
-            Debug.Log($"[PlayerListManager] 削除: {player.PlayerName}");
-            RpcUpdatePlayerList(GetPlayerNames());
+        if (players.Contains(player)) {
+            Debug.Log($"[PlayerListManager] 退室: {player.PlayerName} (Player{player.playerId + 1})");
+            players.Remove(player);
+        }
+
+        // --- ID再整理（前詰め） ---
+        ReassignPlayerIds();
+    }
+
+    [Server]
+    private void ReassignPlayerIds() {
+        // ID順にソートしてから0から振り直す
+        players.Sort((a, b) => a.playerId.CompareTo(b.playerId));
+
+        for (int i = 0; i < players.Count; i++) {
+            players[i].playerId = i;
+            Debug.Log($"[PlayerListManager] 再割り当て: {players[i].PlayerName} → Player{i + 1}");
         }
     }
 
