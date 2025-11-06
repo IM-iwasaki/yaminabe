@@ -52,7 +52,7 @@ public class CameraChangeController : MonoBehaviour {
 
         //  サブカメラを起動、メインカメラを停止
         subCameraObject.gameObject.SetActive(true);
-        playerCamera.gameObject.SetActive(false);
+        //playerCamera.gameObject.SetActive(false);
 
         // 移動コルーチン開始
         StartCoroutine(MoveCameraCoroutine(targetPosition, targetRotation));
