@@ -30,14 +30,16 @@ public class UDPBroadcaster : MonoBehaviour
     {
         //送信するメッセージを初期化
         MessageInitialized();
-        //定期的に送信
-        InvokeRepeating(nameof(SendMesseageToClient), 0.0f, 0.1f);
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+    public void StartSendIPAddres() {
+        //定期的に送信
+        InvokeRepeating(nameof(SendMesseageToClient), 0.0f, 0.1f);
     }
 
     private void MessageInitialized() {

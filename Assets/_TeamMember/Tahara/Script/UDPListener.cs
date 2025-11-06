@@ -16,19 +16,21 @@ public class UDPListener : MonoBehaviour {
         public string gameName;
         public string hostName;
     }
-    // Start is called before the first frame update
-    void Start() {
-        StartCoroutine(ReceiveMessageFromBroadcaster());
-    }
+
+    public bool isGetIP = false;
 
     // Update is called once per frame
     void Update() {
         if (!TitleManager.instance) return;
 
         if (messageQueue.TryDequeue(out UdpMessage msg)) {
-
             TitleManager.instance.ipAddress = msg.ip;
+            isGetIP = true;
         }
+    }
+
+    public void StartReceiveIP() {
+        StartCoroutine(ReceiveMessageFromBroadcaster());
     }
 
     /// <summary>
@@ -45,7 +47,7 @@ public class UDPListener : MonoBehaviour {
                 UdpMessage message = JsonUtility.FromJson<UdpMessage>(json);
 
                 messageQueue.Enqueue(message);
-
+                
             }
 
             yield return null;

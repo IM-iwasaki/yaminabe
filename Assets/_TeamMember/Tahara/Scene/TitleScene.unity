@@ -152,10 +152,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ipAddress: localhost
-  isHost: 0
-  isClient: 0
   isTitle: 1
   lobbySceneName: LobbyScene
+  sender: {fileID: 699022356}
+  receiver: {fileID: 1111948503}
   inputField: {fileID: 723662198}
   stringIPAddress: {fileID: 708898018}
 --- !u!4 &228984084
