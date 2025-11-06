@@ -302,7 +302,7 @@ public class PlayerCamera : MonoBehaviour {
         // 新しいCanvasとイメージを生成
         Canvas canvas = new GameObject("VignetteCanvas").AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 999; // とりま最前面に出す
+        canvas.sortingOrder = 1; // とりま最前面に出す
 
         GameObject imageObj = new GameObject("VignetteOverlay");
         imageObj.transform.SetParent(canvas.transform, false);
