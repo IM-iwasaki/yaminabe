@@ -1,8 +1,6 @@
 using Mirror;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using static TeamData;
 
 public class CustomNetworkManager : NetworkManager {

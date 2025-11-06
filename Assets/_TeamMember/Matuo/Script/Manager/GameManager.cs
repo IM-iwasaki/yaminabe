@@ -64,13 +64,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         isGameRunning = false;
         gameTimer.StopTimer();
-        //リザルト表示処理追加:タハラ-----------------------------------------------------------------
-        //ResultManager resultManager = FindObjectOfType<ResultManager>();
-        //if (resultManager == null) {
-        //    ChatManager.instance.CmdSendSystemMessage("resultManager is not Found");
-        //    return;
-        //}
-           
+        //リザルト表示処理追加:タハラ-----------------------------------------------------------------   
         var ResultData = new ResultManager.ResultData {
             isTeamBattle = false,
             winnerName = "Alice",
