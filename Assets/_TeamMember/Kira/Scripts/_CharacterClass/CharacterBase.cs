@@ -266,7 +266,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     public void TakeDamage(int _damage, string _name) {
         //既に死亡状態かロビー内なら帰る
-        if (isDead || GameManager.Instance.IsGameRunning()) return;
+        if (isDead || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
         float damage = _damage * (DamageRatio / 100);
