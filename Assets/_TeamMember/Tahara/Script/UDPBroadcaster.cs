@@ -21,13 +21,17 @@ public class UDPBroadcaster : MonoBehaviour
     public UdpMessage message = new UdpMessage();
     public string sendIPAddress = null;
     public string json = null;
+    private void Awake() {
+        DontDestroyOnLoad(gameObject);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         //送信するメッセージを初期化
         MessageInitialized();
         //定期的に送信
-        InvokeRepeating("SendMesseageToClient", 0.0f, 1.0f);
+        InvokeRepeating(nameof(SendMesseageToClient), 0.0f, 0.1f);
     }
 
     // Update is called once per frame
@@ -50,12 +54,9 @@ public class UDPBroadcaster : MonoBehaviour
 
         foreach (var sendIP in ips) {
             if (sendIP.AddressFamily.Equals(AddressFamily.InterNetwork)) {
-                
                 return sendIP.ToString();
-                
             }
         }
-        Debug.Log("nullやでー");
         return null;
     }
 
@@ -67,7 +68,6 @@ public class UDPBroadcaster : MonoBehaviour
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Broadcast,message.port);
         //jsonファイルに変更
         json = JsonUtility.ToJson(message);
-        Debug.Log("Send json:" + json);
         byte[] data = Encoding.UTF8.GetBytes(json);
 
         client.Send(data, data.Length, endPoint);

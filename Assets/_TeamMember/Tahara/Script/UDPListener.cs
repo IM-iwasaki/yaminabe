@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Collections.Concurrent;
 using System;
+using System.Collections;
+using System.Net;
 
 public class UDPListener : MonoBehaviour {
     ConcurrentQueue<UdpMessage> messageQueue = new ConcurrentQueue<UdpMessage>();
     [System.Serializable]
-    public class UdpMessage {
+    public struct UdpMessage {
         public string ip;
         public int port;
         public string gameName;
@@ -16,15 +18,16 @@ public class UDPListener : MonoBehaviour {
     }
     // Start is called before the first frame update
     void Start() {
-        Task.Run(ReceiveMessageFromBroadcaster);
+        StartCoroutine(ReceiveMessageFromBroadcaster());
     }
 
     // Update is called once per frame
     void Update() {
-        Debug.Log("更新してます");
-        while (messageQueue.TryDequeue(out UdpMessage msg)) {
-            TitleManager.instance.stringIPAddress.text = msg.ip;
-            Debug.Log(TitleManager.instance.ipAddress);
+        if (!TitleManager.instance) return;
+
+        if (messageQueue.TryDequeue(out UdpMessage msg)) {
+
+            TitleManager.instance.ipAddress = msg.ip;
         }
     }
 
@@ -32,24 +35,20 @@ public class UDPListener : MonoBehaviour {
     /// IPアドレスの定期受信
     /// </summary>
     /// <returns></returns>
-    public async Task ReceiveMessageFromBroadcaster() {
+    public IEnumerator ReceiveMessageFromBroadcaster() {
         UdpClient udpClient = new UdpClient(9876);
-        try {
-            while (true) {
-                UdpReceiveResult result = await udpClient.ReceiveAsync();
-                string json = Encoding.UTF8.GetString(result.Buffer);
+        while (true) {
+            if (udpClient.Available > 0) {
+                IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
+                byte[] result = udpClient.Receive(ref remoteEP);
+                string json = Encoding.UTF8.GetString(result);
                 UdpMessage message = JsonUtility.FromJson<UdpMessage>(json);
 
                 messageQueue.Enqueue(message);
 
             }
 
-        }
-        catch (Exception error) {
-            Debug.LogError(error.Message);
-        }
-        finally {
-            udpClient.Close();
+            yield return null;
         }
 
     }
