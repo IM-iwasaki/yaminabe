@@ -7,6 +7,7 @@ using System.Net;
 
 public class UDPListener : MonoBehaviour {
     ConcurrentQueue<UdpMessage> messageQueue = new ConcurrentQueue<UdpMessage>();
+    //受信するメッセージ
     [System.Serializable]
     public struct UdpMessage {
         public string ip;
@@ -14,7 +15,7 @@ public class UDPListener : MonoBehaviour {
         public string gameName;
         public string hostName;
     }
-
+    //タイトルシーンでIPアドレスが取得できたかどうかを判定する用変数
     public bool isGetIP = false;
 
     // Update is called once per frame
@@ -27,6 +28,9 @@ public class UDPListener : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// IPアドレスの受信を開始する
+    /// </summary>
     public void StartReceiveIP() {
         StartCoroutine(ReceiveMessageFromBroadcaster());
     }

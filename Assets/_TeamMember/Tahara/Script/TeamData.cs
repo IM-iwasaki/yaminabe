@@ -2,7 +2,8 @@ using Mirror;
 using System.Collections.Generic;
 
 public class TeamData{
-    public enum teamColor {
+    //ƒ`[ƒ€”»•Ê—p—ñ‹“’è”
+    public enum TeamColor {
         Invalid = -1,
         Red,
         Blue,
@@ -11,5 +12,4 @@ public class TeamData{
     }
     public List<NetworkIdentity> teamPlayerList = new List<NetworkIdentity>(TEAMMATE_MAX);
     public const int TEAMMATE_MAX = 3;
-    int Score;
 }

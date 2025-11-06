@@ -9,22 +9,25 @@ public class HostUI : NetworkBehaviour {
     private TextMeshProUGUI rule = null;
     [SerializeField, Header("表記するステージ名")] 
     private TextMeshProUGUI stage = null;
-
+    //親オブジェクト
     public static GameObject uiRootObject = null;
+    //ルールを変更する用のインデックス
     [SyncVar(hook = nameof(ChangeRuleAndUI))]
     public int ruleIndex = 0;
+    //ステージを変更する用のインデックス
     [SyncVar(hook = nameof(ChangeStageUI))]
     public int stageIndex = 0;
+    //UIを見せるかどうか
     public static bool isVisibleUI = false;
 
+    //ルールの名前のリスト
     [SerializeField]
     private List<string> ruleNames = null;
+    //ゲーム開始ボタン
     [SerializeField]
     private Button gameStartButton = null;
 
     private void Start() {
-        //スポーンさせる
-        //NetworkServer.Spawn(gameObject);
         uiRootObject = GameObject.Find("Background");
         uiRootObject.SetActive(false);
         //ホストでなければ処理しない
@@ -35,19 +38,37 @@ public class HostUI : NetworkBehaviour {
         rule.text = ruleNames[ruleIndex];
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
     }
+
+    /// <summary>
+    /// ルール用インデックス増加関数
+    /// </summary>
     public void IncrementRuleIndex() {
         ruleIndex++;
     }
+
+    /// <summary>
+    /// ルール用インデックス減少関数
+    /// </summary>
     public void DecrementRuleIndex() {
         ruleIndex--;
     }
+
+    /// <summary>
+    /// ステージ用インデックス増加関数
+    /// </summary>
     public void IncrementStageIndex() {
         stageIndex++;
     }
+
+    //ステージ用インデックス減少関数
     public void DecrementStageIndex() {
         stageIndex--;
     }
-
+    /// <summary>
+    /// hookで呼ばれるルール用インデックスに変更があった時に発火する関数
+    /// </summary>
+    /// <param name="_oldValue"></param>
+    /// <param name="_newValue"></param>
     private void ChangeRuleAndUI(int _oldValue, int _newValue) {
         int ruleCount = _newValue % ruleNames.Count;
         rule.text = ruleNames[Mathf.Abs(ruleCount)];
