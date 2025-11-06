@@ -16,11 +16,7 @@ public class ResultDebug : NetworkBehaviour {
     }
 
     void Update() {
-        if (Input.GetKeyUp(KeyCode.Escape) && isServer) {
-            toggle = !toggle;
-            if (toggle) ShowIndividualBattle();
-            else ShowTeamBattle();
-        }
+      
     }
 
     //===========================================================

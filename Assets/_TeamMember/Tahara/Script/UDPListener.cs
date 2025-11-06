@@ -1,9 +1,7 @@
 using UnityEngine;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using System.Text;
 using System.Collections.Concurrent;
-using System;
 using System.Collections;
 using System.Net;
 
@@ -38,18 +36,22 @@ public class UDPListener : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public IEnumerator ReceiveMessageFromBroadcaster() {
-        UdpClient udpClient = new UdpClient(9876);
+        IPEndPoint localEP = new IPEndPoint(IPAddress.Any, 9876);
+        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket.SetSocketOption(SocketOptionLevel.Socket,SocketOptionName.ReuseAddress,true);
+        socket.Bind(localEP);
+
+        UdpClient udpClient = new UdpClient();
+        udpClient.Client = socket;
         while (true) {
             if (udpClient.Available > 0) {
                 IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
                 byte[] result = udpClient.Receive(ref remoteEP);
                 string json = Encoding.UTF8.GetString(result);
                 UdpMessage message = JsonUtility.FromJson<UdpMessage>(json);
-
-                messageQueue.Enqueue(message);
-                
+                //ÉLÉÖÅ[Ç…í«â¡
+                messageQueue.Enqueue(message);   
             }
-
             yield return null;
         }
 

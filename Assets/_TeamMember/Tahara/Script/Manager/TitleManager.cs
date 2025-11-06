@@ -9,6 +9,7 @@ public class TitleManager : MonoBehaviour {
     public bool isHost { get; private set; } = false;
     public bool isClient { get; private set; } = false;
     public bool isTitle = true;
+    static private bool once = false;
 
     [SerializeField]
     private string lobbySceneName = null;
@@ -26,21 +27,28 @@ public class TitleManager : MonoBehaviour {
     }
 
     public void OnStartHostButton() {
-        //明示的にホスト状態をtrueにし、ロビーシーンに移行
-        isHost = true;
-        sender.StartSendIPAddres();
-        SceneManager.LoadScene(lobbySceneName);
-        isTitle = false;
+        if (!once) {
+            //明示的にホスト状態をtrueにし、ロビーシーンに移行
+            isHost = true;
+            sender.StartSendIP();
+            SceneManager.LoadScene(lobbySceneName);
+            isTitle = false;
+            once = true;
+        }
+
     }
 
     public void OnStartClientButton() {
-        //IPアドレス未設定を防ぐために早期リターン
-        if (ipAddress == null)
-            return;
-
-        //明示的にクライアント状態をtrueにし、IPアドレスが取得できたらロビーシーンに移行
-        StartCoroutine(WaitReceivedIP());
-        
+        if (!once) {
+            //IPアドレス未設定を防ぐために早期リターン
+            if (ipAddress == null)
+                return;
+            if (!once) {
+                //IPアドレスが取得できたらロビーシーンに移行
+                StartCoroutine(WaitReceivedIP());
+            }
+            once = true;
+        }
     }
 
     private IEnumerator WaitReceivedIP() {
@@ -51,6 +59,7 @@ public class TitleManager : MonoBehaviour {
 
         while (!receiver.isGetIP && timer < timeout) {
             timer += Time.deltaTime;
+            stringIPAddress.text = "Now Searching...";
             yield return null;
         }
         //取得できた
@@ -59,21 +68,18 @@ public class TitleManager : MonoBehaviour {
             SceneManager.LoadScene(lobbySceneName);
             isTitle = false;
         }
+        //取得できなかったのでシーンを再ロード
         else {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+            stringIPAddress.text = "Not Found";
+            yield return new WaitForSeconds(1.0f);
+            if (once)
+                once = false;
         }
 
 
     }
     public void SetIPAddress() {
-            ipAddress = inputField.text;
-    }
-
-    private void Update() {
-        if (isTitle == false) return;
-        if (ipAddress == null)
-            stringIPAddress.text = "404NotFound";
-        else
-            stringIPAddress.text = ipAddress;
+        ipAddress = inputField.text;
     }
 }

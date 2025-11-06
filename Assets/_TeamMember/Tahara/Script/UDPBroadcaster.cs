@@ -20,7 +20,7 @@ public class UDPBroadcaster : MonoBehaviour
 
     public UdpMessage message = new UdpMessage();
     public string sendIPAddress = null;
-    public string json = null;
+    private string json = null;
     private void Awake() {
         DontDestroyOnLoad(gameObject);
     }
@@ -30,6 +30,7 @@ public class UDPBroadcaster : MonoBehaviour
     {
         //送信するメッセージを初期化
         MessageInitialized();
+        
     }
 
     // Update is called once per frame
@@ -37,7 +38,8 @@ public class UDPBroadcaster : MonoBehaviour
     {
         
     }
-    public void StartSendIPAddres() {
+
+    public void StartSendIP() {
         //定期的に送信
         InvokeRepeating(nameof(SendMesseageToClient), 0.0f, 0.1f);
     }
