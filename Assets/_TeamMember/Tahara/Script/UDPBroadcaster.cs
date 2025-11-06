@@ -20,7 +20,7 @@ public class UDPBroadcaster : MonoBehaviour
 
     public UdpMessage message = new UdpMessage();
     public string sendIPAddress = null;
-    public string json = null;
+    private string json = null;
     private void Awake() {
         DontDestroyOnLoad(gameObject);
     }
