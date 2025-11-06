@@ -1,28 +1,31 @@
 using Mirror;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ƒLƒƒƒ‰ƒNƒ^[‘I‘ğƒ‚[ƒhŠÇ—ƒ}ƒl[ƒWƒƒ[
-/// EUI•\¦/”ñ•\¦AƒvƒŒƒCƒ„[‘€ì’â~ACameraChangeControllerŒÄ‚Ño‚µ‚ğŠÇ—
+/// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼é¸æŠãƒ¢ãƒ¼ãƒ‰ç®¡ç†ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
+/// ãƒ»UIè¡¨ç¤º/éè¡¨ç¤ºã€ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ“ä½œåœæ­¢ã€CameraChangeControllerå‘¼ã³å‡ºã—ã‚’ç®¡ç†
 /// </summary>
 public class CharacterSelectManager : NetworkBehaviour {
-    #region •Ï”’è‹`
+    #region å¤‰æ•°å®šç¾©
 
-    [Header("ƒJƒƒ‰§Œä")]
-    [SerializeField] private CameraChangeController cameraManager;  // ƒJƒƒ‰ˆÚ“®—pController
-    [SerializeField] private Transform cameraTargetPoint;           // ‘I‘ğ‰æ–ÊƒJƒƒ‰ˆÊ’u
+    private readonly string SKIN_TAG = "Skin";
+
+    [Header("ã‚«ãƒ¡ãƒ©åˆ¶å¾¡")]
+    [SerializeField] private CameraChangeController cameraManager;  // ã‚«ãƒ¡ãƒ©ç§»å‹•ç”¨Controller
+    [SerializeField] private Transform cameraTargetPoint;           // é¸æŠç”»é¢ã‚«ãƒ¡ãƒ©ä½ç½®
 
     [Header("UI")]
-    [SerializeField] private GameObject selectUI;                  // ‘I‘ğ‰æ–ÊUI
+    [SerializeField] private GameObject selectUI;                  // é¸æŠç”»é¢UI
 
-    [Header("ƒZƒŒƒNƒgƒIƒuƒWƒFƒNƒg")]
+    [Header("ã‚»ãƒ¬ã‚¯ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")]
     [SerializeField] private SelectObjectManager selectObj;
 
-    private GameObject currentPlayer; // Œ»İ‘I‘ğ’†‚ÌƒvƒŒƒCƒ„[
+    private GameObject currentPlayer; // ç¾åœ¨é¸æŠä¸­ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 
-    //  ƒLƒƒƒ‰ƒNƒ^[‚ğ–ˆ•b‚Ç‚ê‚¾‚¯‰ñ“]‚³‚¹‚é‚©
+    //  ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’æ¯ç§’ã©ã‚Œã ã‘å›è»¢ã•ã›ã‚‹ã‹
     private Vector3 characterRotation = new Vector3(0, 50f, 0);
-    [Header("ƒIƒuƒWƒFƒNƒg‚ğ‰ñ‚·")]
+    [Header("ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å›ã™")]
     [SerializeField] private GameObject rotateObject;
     #endregion
 
@@ -32,29 +35,26 @@ public class CharacterSelectManager : NetworkBehaviour {
     }
 
     private void Update() {
-        //  ƒIƒuƒWƒFƒNƒg‚ğ‰ñ“]‚³‚¹‚é
+        //  ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å›è»¢ã•ã›ã‚‹
         rotateObject.transform.Rotate(characterRotation * Time.deltaTime);
     }
     #endregion
 
-    #region ƒLƒƒƒ‰ƒNƒ^[‘I‘ğ‚ÌUI•\¦”ñ•\¦AƒJƒƒ‰‚Ì‹““®
+    #region ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼é¸æŠæ™‚ã®UIè¡¨ç¤ºéè¡¨ç¤ºã€ã‚«ãƒ¡ãƒ©ã®æŒ™å‹•
     /// <summary>
-    /// ƒLƒƒƒ‰ƒNƒ^[‘I‘ğƒ‚[ƒh‚ğŠJn
+    /// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼é¸æŠãƒ¢ãƒ¼ãƒ‰ã‚’é–‹å§‹
     /// </summary>
-    /// <param name="player">‘€ì’†‚ÌƒvƒŒƒCƒ„[</param>
+    /// <param name="player">æ“ä½œä¸­ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼</param>
     public void StartCharacterSelect(GameObject player) {
 
         if (currentPlayer != null) return;
         currentPlayer = player;
 
-        // ƒvƒŒƒCƒ„[‘€ì’â~
-        //  Œã‚Å“ü‚ê‚Ş
-
-        // UI‚ğ”ñ•\¦iˆÚ“®ŠJn‘Oj
+        // UIã‚’éè¡¨ç¤ºï¼ˆç§»å‹•é–‹å§‹å‰ï¼‰
         if (selectUI != null)
             selectUI.SetActive(false);
 
-        // ƒJƒƒ‰ˆÚ“®ŠJn
+        // ã‚«ãƒ¡ãƒ©ç§»å‹•é–‹å§‹
         if (cameraManager != null && cameraTargetPoint != null) {
             cameraManager.MoveCamera(
                 player,
@@ -63,15 +63,20 @@ public class CharacterSelectManager : NetworkBehaviour {
             );
         }
 
-        // ˆÚ“®Š®—¹Œã‚ÉUI‚ğ•\¦‚·‚éê‡‚ÍA
-        // CameraChangeController‚ÌƒRƒ‹[ƒ`ƒ“‚ªI‚í‚Á‚½ƒ^ƒCƒ~ƒ“ƒO‚ÅŒÄ‚Ô‚©
-        // ‚±‚±‚Å’x‰„ƒRƒ‹[ƒ`ƒ“‚ğ’Ç‰Á‚µ‚Ä‚à—Ç‚¢
+        //  ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¦‹ãŸç›®éè¡¨ç¤º
+        Transform parent = player.transform;
+        Transform skin = FindChildWithTag(parent, SKIN_TAG);
+        skin.gameObject.SetActive(false);
+
+        // ç§»å‹•å®Œäº†å¾Œã«UIã‚’è¡¨ç¤ºã™ã‚‹å ´åˆã¯ã€
+        // CameraChangeControllerã®ã‚³ãƒ«ãƒ¼ãƒãƒ³ãŒçµ‚ã‚ã£ãŸã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§å‘¼ã¶ã‹
+        // ã“ã“ã§é…å»¶ã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’è¿½åŠ ã—ã¦ã‚‚è‰¯ã„
         if (selectUI != null)
             StartCoroutine(ShowUIAfterDelay(cameraManager));
     }
 
     /// <summary>
-    /// ƒLƒƒƒ‰ƒNƒ^[‘I‘ğƒ‚[ƒh‚ğI—¹
+    /// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼é¸æŠãƒ¢ãƒ¼ãƒ‰ã‚’çµ‚äº†
     /// </summary>
     public void EndCharacterSelect() {
 
@@ -79,11 +84,11 @@ public class CharacterSelectManager : NetworkBehaviour {
 
         selectObj.ConfirmPlayerChange(currentPlayer);
 
-        // UI‚ğ”ñ•\¦i–ß‚é‘€ìŠJnj
+        // UIã‚’éè¡¨ç¤ºï¼ˆæˆ»ã‚‹æ“ä½œé–‹å§‹æ™‚ï¼‰
         if (selectUI != null)
             selectUI.SetActive(false);
 
-        // ƒJƒƒ‰‚ğ–ß‚·
+        // ã‚«ãƒ¡ãƒ©ã‚’æˆ»ã™
         if (cameraManager != null)
             cameraManager.ReturnCamera();
 
@@ -91,15 +96,38 @@ public class CharacterSelectManager : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ’x‰„‚µ‚ÄUI‚ğ•\¦iƒJƒƒ‰ˆÚ“®Š®—¹Œã‚ÉUI‚ğ•\¦‚·‚é•â•j
+    /// é…å»¶ã—ã¦UIã‚’è¡¨ç¤ºï¼ˆã‚«ãƒ¡ãƒ©ç§»å‹•å®Œäº†å¾Œã«UIã‚’è¡¨ç¤ºã™ã‚‹è£œåŠ©ï¼‰
     /// </summary>
     private System.Collections.IEnumerator ShowUIAfterDelay(CameraChangeController camController) {
-        // CameraChangeController ‚ÌˆÚ“®ŠÔ‚Æ“¯‚¶‚¾‚¯‘Ò‚Â
+        // CameraChangeController ã®ç§»å‹•æ™‚é–“ã¨åŒã˜ã ã‘å¾…ã¤
         float duration = camController != null ? camController.moveDuration : 1.5f;
         yield return new WaitForSeconds(duration);
 
         if (selectUI != null)
             selectUI.SetActive(true);
+    }
+
+    /// <summary>
+    /// æŒ‡å®šã—ãŸè¦ªä»¥ä¸‹ã‹ã‚‰ç‰¹å®šã®ã‚¿ã‚°ã‚’æŒã¤å…¨ã¦ã®å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ãƒªã‚¹ãƒˆã§å–å¾—
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    private Transform FindChildWithTag(Transform parent, string tag) {
+
+        // ã¾ãšç›´æ¥ã®å­ã‚’ç¢ºèª
+        foreach (Transform child in parent) {
+            if (child.CompareTag(tag))
+                return child;
+
+            // å­ã®ä¸­ã‚‚å†å¸°çš„ã«æ¢ç´¢
+            Transform found = FindChildWithTag(child, tag);
+            if (found != null)
+                return found;
+        }
+
+        // è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆ
+        return null;
     }
     #endregion
 
