@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class HostUI : NetworkBehaviour {
     [SerializeField, Header("表記するルール名")]
     private TextMeshProUGUI rule = null;
-    [SerializeField, Header("表記するステージ名")]
+    [SerializeField, Header("表記するステージ名")] 
     private TextMeshProUGUI stage = null;
 
     public static GameObject uiRootObject = null;
