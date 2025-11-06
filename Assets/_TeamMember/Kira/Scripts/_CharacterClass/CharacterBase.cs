@@ -223,7 +223,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// プレイヤー名用セッター
     /// </summary>
-    /// <param name="name">名前</param>
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
