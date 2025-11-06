@@ -71,6 +71,14 @@ public class CustomNetworkManager : NetworkManager {
         ChatManager.instance.CmdSendSystemMessage("Connect Player");
     }
 
+    public override void OnClientConnect() {
+        base.OnClientConnect();
+        if (TitleManager.instance.isClient) {
+            Destroy(FindObjectOfType<UDPBroadcaster>().gameObject);
+        }
+            
+    }
+
     /// <summary>
     /// オーバーライドしたOnServerDisconnect
     /// クライアントが抜けたタイミングでconnectPlayerからRemoveする
