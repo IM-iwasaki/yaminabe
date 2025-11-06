@@ -226,10 +226,32 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     /// <summary>
     /// プレイヤー名用セッター
+    /// 名前をサーバー側で反映し、PlayerListManager に登録する
     /// </summary>
+    /// <param name="name">新しいプレイヤー名</param>
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
+        // サーバー上でプレイヤー登録
+        if (PlayerListManager.Instance != null) {
+            PlayerListManager.Instance.RegisterPlayer(this);
+           
+        }
+        else {
+            Debug.LogWarning("[CharacterBase] PlayerListManager.Instance が存在しません。");
+        }
+    }
+
+    /// <summary>
+    /// サーバー上でプレイヤーが切断された時に呼ばれる
+    /// → PlayerListManager から削除
+    /// </summary>
+    public override void OnStopServer() {
+        base.OnStopServer();
+
+        if (PlayerListManager.Instance != null) {
+            PlayerListManager.Instance.UnregisterPlayer(this);
+        }
     }
 
     #endregion
