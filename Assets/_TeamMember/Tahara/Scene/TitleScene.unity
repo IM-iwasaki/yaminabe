@@ -153,11 +153,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ipAddress: localhost
   isTitle: 1
+  inputField: {fileID: 723662198}
+  SearchOrMissingText: {fileID: 708898018}
   lobbySceneName: LobbyScene
   sender: {fileID: 699022356}
   receiver: {fileID: 1111948503}
-  inputField: {fileID: 723662198}
-  stringIPAddress: {fileID: 708898018}
 --- !u!4 &228984084
 Transform:
   m_ObjectHideFlags: 0
@@ -769,7 +769,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Current IPAddres
+  m_text: IsSearching
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

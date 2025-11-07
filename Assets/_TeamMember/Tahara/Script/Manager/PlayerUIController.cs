@@ -12,7 +12,14 @@ public class PlayerUIController : NetworkBehaviour {
     public static PlayerUIController instance = null;
     [SerializeField]
     private List<Transform> UIRoots = null;
-
+    public enum UIRootType {
+        Invalid = -1,
+        BattleUIRoot,
+        NonBattleUIRoot,
+        HostUI,
+        
+        UIMax,
+    }
     #region 戦闘用UI
     #region プレイヤー体力管理用UI
     private const int FIXED_RATIO = 100;
@@ -56,7 +63,10 @@ public class PlayerUIController : NetworkBehaviour {
         hpBar.interactable = false;
         magazineBar.interactable = false;
         mpBar.interactable = false;
-
+        //ホストならホストUI群を表示
+        if(isServer && isLocalPlayer) {
+            ShowUIRoot(UIRootType.HostUI);
+        }
     }
 
     /// <summary>
@@ -125,15 +135,15 @@ public class PlayerUIController : NetworkBehaviour {
     /// 特定の"UI群"を表示する
     /// </summary>
     /// <param name="_index"></param>
-    public void ShowUIRoot(int _index) {
-        UIRoots[_index].gameObject.SetActive(true);
+    public void ShowUIRoot(UIRootType _index) {
+        UIRoots[(int)_index].gameObject.SetActive(true);
     }
     /// <summary>
     /// 特定のUI群を非表示にする
     /// </summary>
     /// <param name="_index"></param>
-    public void HideUIRoot(int _index) {
-        UIRoots[_index].gameObject.SetActive(false);
+    public void HideUIRoot(UIRootType _index) {
+        UIRoots[(int)_index].gameObject.SetActive(false);
     }
 
     /// <summary>
