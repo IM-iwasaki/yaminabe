@@ -35,7 +35,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [System.NonSerialized] public int DamageRatio = 100;
 
     //ランキング用変数の仮定義
-    public int score { get; protected set; } = 0;
+    public int score = 0;
 
     #endregion
 
@@ -310,7 +310,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 死亡時処理
     /// </summary>
-    [Command]
     public void Dead(NetworkIdentity killerIdentity, string _name) {
 
         //死亡フラグをたててHPを0にしておく
@@ -329,11 +328,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsJumpPressed = false;
         isMoving = false;
 
-        //カメラを暗くする
-        gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
-        //フェードアウトさせる
-        FadeManager.Instance.StartFadeOut(2.5f);
-
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
 
@@ -344,6 +338,13 @@ public abstract class CharacterBase : NetworkBehaviour {
                 killerCombat.OnKill(GetComponent<NetworkIdentity>());
             }
         }
+
+        if(!isLocalPlayer) {
+            //カメラを暗くする
+        gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
+        //フェードアウトさせる
+        FadeManager.Instance.StartFadeOut(2.5f);
+        }        
     }
 
     /// <summary>
