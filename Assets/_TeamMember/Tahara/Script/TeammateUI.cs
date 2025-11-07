@@ -18,7 +18,7 @@ public class TeammateUI : NetworkBehaviour {
     /// <param name="_player"></param>
     public void Initialize(NetworkIdentity _player) {
         if (!_player.isLocalPlayer) return;
-        nameText.text = _player.gameObject.name;
+        nameText.text = _player.GetComponent<GeneralCharacter>().PlayerName;
         Color teamColor = Color.white;
         switch (_player.GetComponent<GeneralCharacter>().TeamID) {
             case 0:
