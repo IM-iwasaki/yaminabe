@@ -145,7 +145,7 @@ public class CustomNetworkManager : NetworkManager {
             }
             //ロビーシーンなら開始地点(0,0,0)に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
-                Vector3 respawnPos = new Vector3(0, 0, 0);
+                Vector3 respawnPos = new Vector3(Random.Range(0,10), 0, 0);
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
             }
             //初期化
