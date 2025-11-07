@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using Mirror;
 
-public class CameraOptionMenu : NetworkBehaviour {
+public class CameraOptionMenu : MonoBehaviour {
     [Header("対象のPlayerCamera")]
     public PlayerCamera playerCamera;
 
@@ -13,7 +12,7 @@ public class CameraOptionMenu : NetworkBehaviour {
 
     private bool isOpen = false;
 
-    public override void OnStartLocalPlayer() {
+    public void Start() {
         // ローカルプレイヤー以外の UI は無効化しておく
         optionCanvas.enabled = false;
 
@@ -30,9 +29,6 @@ public class CameraOptionMenu : NetworkBehaviour {
     }
 
     private void Update() {
-        // ローカルプレイヤーだけ入力を受け付ける
-        if (!isLocalPlayer) return;
-
         if (Keyboard.current.escapeKey.wasPressedThisFrame) {
             ToggleMenu();
         }
