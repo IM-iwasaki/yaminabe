@@ -71,12 +71,12 @@ public class GameUIManager : MonoBehaviour {
         timerText.text = $"{minutes:00}:{seconds:00}";
 
         // スコア表示更新
-        if (ruleManager.TryGetTeamScore(1, out float redScore))
+        if (ruleManager.TryGetTeamScore(0, out float redScore))
             redTeamScoreText.text = $"RedTeam: {redScore:F0}";
         else
             redTeamScoreText.text = "RedTeam: 0";
 
-        if (ruleManager.TryGetTeamScore(2, out float blueScore))
+        if (ruleManager.TryGetTeamScore(1, out float blueScore))
             blueTeamScoreText.text = $"BlueTeam: {blueScore:F0}";
         else
             blueTeamScoreText.text = "BlueTeam: 0";
