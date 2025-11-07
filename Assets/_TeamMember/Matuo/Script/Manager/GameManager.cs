@@ -64,20 +64,12 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         isGameRunning = false;
         gameTimer.StopTimer();
-        //リザルト表示処理追加:タハラ-----------------------------------------------------------------   
-        var ResultData = new ResultManager.ResultData {
-            isTeamBattle = false,
-            winnerName = "Alice",
-            scores = new ResultScoreData[]
-            {
-                new ResultScoreData { playerName = "Alice", score = 1200 },
-                new ResultScoreData { playerName = "Bob", score = 800 },
-                new ResultScoreData { playerName = "Charlie", score = 1500 },
-                new ResultScoreData { playerName = "Delta", score = 600 }
-            }
-        };
-        ResultManager.Instance.ShowResult(ResultData);
-        //--------------------------------------------------------------------------------------------
+
+        // 勝敗処理をRuleManagerに任せる
+        if (ruleManager.currentRule == GameRuleType.DeathMatch)
+            ruleManager.EndDeathMatch();
+        else
+            ruleManager.CheckWinConditionAllTeams();
     }
 
     /// <summary>
