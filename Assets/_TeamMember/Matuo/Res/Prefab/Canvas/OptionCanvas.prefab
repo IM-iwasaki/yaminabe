@@ -227,7 +227,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7332233943753986315}
-  - {fileID: 2155408559015860158}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -330,6 +329,7 @@ RectTransform:
   m_Children:
   - {fileID: 9046113399274580898}
   - {fileID: 4276014849662989992}
+  - {fileID: 2155408559015860158}
   m_Father: {fileID: 5395955715154907386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -696,8 +696,12 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 5395955715154907386}
+    m_TransformParent: {fileID: 7332233943753986315}
     m_Modifications:
+    - target: {fileID: -4476942073065557986, guid: 130e0d15f07798f41ad172fd7ffd408c, type: 3}
+      propertyPath: _assetId
+      value: 1293904917
+      objectReference: {fileID: 0}
     - target: {fileID: 2357007275265105185, guid: 130e0d15f07798f41ad172fd7ffd408c, type: 3}
       propertyPath: m_Name
       value: reticle
@@ -728,15 +732,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8700379734931911907, guid: 130e0d15f07798f41ad172fd7ffd408c, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8700379734931911907, guid: 130e0d15f07798f41ad172fd7ffd408c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8700379734931911907, guid: 130e0d15f07798f41ad172fd7ffd408c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8700379734931911907, guid: 130e0d15f07798f41ad172fd7ffd408c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
