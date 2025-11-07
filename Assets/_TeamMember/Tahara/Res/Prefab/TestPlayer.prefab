@@ -81,6 +81,7 @@ GameObject:
   - component: {fileID: -140839760005440579}
   - component: {fileID: 8394261901866962481}
   - component: {fileID: 5429557689299820045}
+  - component: {fileID: 372889221504933099}
   m_Layer: 6
   m_Name: TestPlayer
   m_TagString: Player
@@ -421,9 +422,27 @@ MonoBehaviour:
   firePoint: {fileID: 878125566127400802}
   UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
+  playerId: -1
   weaponController: {fileID: 2825701905452532873}
+  IsGrounded: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
   InputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
+--- !u!114 &372889221504933099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5478059386412428429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 486862cbe5cecc94db69cfb57960fcef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  teamId: 0
 --- !u!1 &8141346529666802218
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,40 +10,41 @@ public class PlayerCombat : NetworkBehaviour {
     private RuleManager ruleManager;
 
     public override void OnStartServer() {
-        // RuleManagerをキャッシュ
         ruleManager = RuleManager.Instance;
     }
 
     /// <summary>
-    /// 敵を倒したときの処理（サーバー専用）
+    /// このプレイヤーが死亡したときに呼ばれる
     /// </summary>
-    /// <param name="target">倒した相手</param>
+    /// <param name="killer">倒した側のプレイヤー（自滅時は null または自分）</param>
     [Server]
-    public void OnKill(NetworkIdentity target) {
+    public void OnKill(NetworkIdentity killer) {
         if (ruleManager == null)
             ruleManager = RuleManager.Instance;
 
         if (ruleManager == null) return;
 
-        // 相手情報を取得
-        var victim = target ? target.GetComponent<PlayerCombat>() : null;
-        int victimTeam = victim ? victim.teamId : -1;
+        var attacker = killer ? killer.GetComponent<PlayerCombat>() : null;
+        int attackerTeam = attacker ? attacker.teamId : -1;
 
-        // チームキル判定
-        if (victim != null && victimTeam == teamId) {
-            Debug.LogWarning($"[TeamKill] Team {teamId} のプレイヤーが味方を倒しました！相手チームにポイントを加算します。");
-
-            // 相手チーム（ここでは「自分以外のチーム」として推定）
+        // 自滅
+        if (attacker == null || attacker == this) {
             int enemyTeamId = (teamId == 0) ? 1 : 0;
-
-            // 相手チームにスコア加算
+            Debug.LogWarning($"[自滅] Team{teamId} のプレイヤーが自滅 → Team{enemyTeamId} にスコア加算");
             ruleManager.OnTeamKill(enemyTeamId, 1);
             return;
         }
 
-        // 敵チームを倒した場合
-        ruleManager.OnTeamKill(teamId, 1);
+        // チームキル
+        if (attackerTeam == teamId) {
+            int enemyTeamId = (teamId == 0) ? 1 : 0;
+            Debug.LogWarning($"[チームキル] Team{attackerTeam} が味方を倒した → Team{enemyTeamId} にスコア加算");
+            ruleManager.OnTeamKill(enemyTeamId, 1);
+            return;
+        }
 
-        Debug.LogWarning($"[Kill] Team {teamId} が Team {victimTeam} のプレイヤーを撃破");
+        // 通常の敵キル
+        Debug.LogWarning($"[敵キル] Team{attackerTeam} が Team{teamId} を倒した → Team{attackerTeam} にスコア加算");
+        ruleManager.OnTeamKill(attackerTeam, 1);
     }
 }
