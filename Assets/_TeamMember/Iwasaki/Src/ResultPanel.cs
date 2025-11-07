@@ -30,7 +30,7 @@ public class ResultPanel : NetworkBehaviour {
     /// <summary>
     /// 全クライアントでリザルトUIを表示するRPC。
     /// </summary>
-    
+
     public void RpcShowResult() {
         bool isHost = NetworkServer.active;
 
@@ -51,17 +51,21 @@ public class ResultPanel : NetworkBehaviour {
     public void ShowWinner(string name, bool isTeamBattle) {
         if (winnerText == null) return;
 
+        // 引き分け専用処理
+        if (name == "Draw") {
+            winnerText.text = "Draw";
+            winnerText.color = Color.yellow; // 見やすい色に
+            return;
+        }
+
         if (isTeamBattle) {
             winnerText.text = $"{name} Team Win!";
             // チームカラーに合わせて色分け（例：Red / Blue）
             winnerText.color = (name == "Red") ? Color.red : Color.blue;
-        }
-        else {
+        } else {
             winnerText.text = $"Winner : {name}";
             winnerText.color = Color.white;
         }
-
-       
     }
 
     //================================================================
@@ -73,10 +77,13 @@ public class ResultPanel : NetworkBehaviour {
         isResultActive = false;
 
         Debug.Log("[ResultPanel] 再戦ボタン押下");
-        if (NetworkServer.active && resultManager != null)
+        if (NetworkServer.active && resultManager != null) {
+            // スコア初期化
+            RuleManager.Instance?.Initialize();
 
             GameSceneManager.Instance.LoadGameSceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（再戦処理は後で追加）
+        }
     }
 
     private void OnClickReturnLobby() {
@@ -84,8 +91,11 @@ public class ResultPanel : NetworkBehaviour {
         isResultActive = false;
 
         Debug.Log("[ResultPanel] ロビー戻りボタン押下");
-        if (NetworkServer.active && resultManager != null)
-                GameSceneManager.Instance.LoadLobbySceneForAll();
-        resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
+        if (NetworkServer.active && resultManager != null) {
+            // スコア初期化
+            RuleManager.Instance?.Initialize();
+            GameSceneManager.Instance.LoadLobbySceneForAll();
+            resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
+        }         
     }
 }

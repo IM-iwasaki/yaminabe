@@ -63,10 +63,6 @@ public class PlayerUIController : NetworkBehaviour {
         hpBar.interactable = false;
         magazineBar.interactable = false;
         mpBar.interactable = false;
-        //ホストならホストUI群を表示
-        if(isServer && isLocalPlayer) {
-            ShowUIRoot(UIRootType.HostUI);
-        }
     }
 
     /// <summary>
