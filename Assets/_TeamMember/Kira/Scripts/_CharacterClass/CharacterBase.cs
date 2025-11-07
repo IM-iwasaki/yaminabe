@@ -417,6 +417,21 @@ public abstract class CharacterBase : NetworkBehaviour {
         ChatManager.instance.CmdSendSystemMessage(_player.ToString() + "is joined" + newTeam + "team");
     }
 
+    /// <summary>
+    /// スコア加算
+    /// </summary>
+    /// <param name="value"></param>
+    [Server]
+    public void AddMyScore(int value) {
+        // 自分にスコアを加算
+        if (PlayerListManager.Instance != null)
+            PlayerListManager.Instance.PlayerAddScore(this, value);
+
+        Debug.Log($"[CharacterBase] {PlayerName} にスコア +{value}");
+    }
+
+
+
     #endregion
 
     #region 入力受付・入力実行・判定関数
