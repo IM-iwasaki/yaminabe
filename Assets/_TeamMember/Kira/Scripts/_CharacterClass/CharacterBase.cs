@@ -235,21 +235,16 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
-        // サーバー上でプレイヤー登録
-        if (PlayerListManager.Instance != null) {
+        Debug.Log($"[CharacterBase] 名前設定: {PlayerName}");
+
+        // 名前が確定したタイミングで登録（サーバー側のみ）
+        if (isServer && PlayerListManager.Instance != null) {
             PlayerListManager.Instance.RegisterPlayer(this);
-           
-        }
-        else {
-            Debug.LogWarning("[CharacterBase] PlayerListManager.Instance が存在しません。");
         }
     }
 
 
-    public override void OnStartServer() {
-        base.OnStartServer();
-        PlayerListManager.Instance?.RegisterPlayer(this);
-    }
+   
 
     public override void OnStopServer() {
         base.OnStopServer();
