@@ -51,17 +51,21 @@ public class ResultPanel : NetworkBehaviour {
     public void ShowWinner(string name, bool isTeamBattle) {
         if (winnerText == null) return;
 
+        // 引き分け専用処理
+        if (name == "Draw") {
+            winnerText.text = "Draw";
+            winnerText.color = Color.yellow; // 見やすい色に（任意）
+            return;
+        }
+
         if (isTeamBattle) {
             winnerText.text = $"{name} Team Win!";
             // チームカラーに合わせて色分け（例：Red / Blue）
             winnerText.color = (name == "Red") ? Color.red : Color.blue;
-        }
-        else {
+        } else {
             winnerText.text = $"Winner : {name}";
             winnerText.color = Color.white;
         }
-
-       
     }
 
     //================================================================
