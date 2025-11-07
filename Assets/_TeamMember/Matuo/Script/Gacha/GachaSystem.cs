@@ -7,6 +7,9 @@ using UnityEngine;
 /// ガチャシステム
 /// </summary>
 public class GachaSystem : MonoBehaviour {
+
+    private readonly string SKIN_TAG = "Skin";
+
     [Header("ガチャ設定")]
     public GachaData data;
 
@@ -163,6 +166,11 @@ public class GachaSystem : MonoBehaviour {
             );
         }
 
+        //  プレイヤーの見た目非表示
+        Transform parent = currentPlayer.transform;
+        Transform skin = FindChildWithTag(parent, SKIN_TAG);
+        skin.gameObject.SetActive(false);
+
         // 移動完了後にUIを表示する場合は、
         // CameraChangeControllerのコルーチンが終わったタイミングで呼ぶか
         // ここで遅延コルーチンを追加しても良い
@@ -184,6 +192,11 @@ public class GachaSystem : MonoBehaviour {
         if (gachaUI != null)
             gachaUI.SetActive(false);
 
+        //  プレイヤーの見た目非表示
+        Transform parent = currentPlayer.transform;
+        Transform skin = FindChildWithTag(parent, SKIN_TAG);
+        skin.gameObject.SetActive(true);
+
         // カメラを戻す
         if (cameraManager != null)
             cameraManager.ReturnCamera();
@@ -201,6 +214,29 @@ public class GachaSystem : MonoBehaviour {
 
         if (gachaUI != null)
             gachaUI.SetActive(true);
+    }
+
+    /// <summary>
+    /// 指定した親以下から特定のタグを持つ全ての子オブジェクトをリストで取得
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    private Transform FindChildWithTag(Transform parent, string tag) {
+
+        // まず直接の子を確認
+        foreach (Transform child in parent) {
+            if (child.CompareTag(tag))
+                return child;
+
+            // 子の中も再帰的に探索
+            Transform found = FindChildWithTag(child, tag);
+            if (found != null)
+                return found;
+        }
+
+        // 見つからなかった場合
+        return null;
     }
     #endregion
 
