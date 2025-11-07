@@ -101,11 +101,18 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         }
 
         if (maxScore >= winScores[currentRule]) {
-            if (winners.Count == 1)
-                Debug.Log($"Team {winners[0]} 勝利！(Rule: {currentRule})");
-            else
-                // 現在は引き分けになる。終了時にカウントが多い方の勝ちにする予定
+            if (winners.Count == 1) {
+                int winningTeam = winners[0];
+                Debug.Log($"Team {winningTeam} 勝利！(Rule: {currentRule})");
+
+                // 勝敗データをリザルトへ送信
+                SendTeamResultToAll(winningTeam);
+            } else {
                 Debug.LogWarning("引き分け");
+
+                // 引き分けの場合もリザルトへ送信
+                SendTeamResultToAll(-1);
+            }
 
             GameManager.Instance.EndGame();
         }
@@ -131,14 +138,20 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             }
         }
 
-        // 判定
+        // 勝利判定
         if (topTeams.Count == 1) {
-            Debug.LogWarning($"Team {topTeams[0]} の勝利！（スコア：{maxScore}）");
+            int winningTeam = topTeams[0];
+            Debug.LogWarning($"Team {winningTeam} の勝利！（スコア：{maxScore}）");
+
+            SendTeamResultToAll(winningTeam);
         } else if (topTeams.Count > 1) {
-            string teams = string.Join(", ", topTeams);
-            Debug.LogWarning($"引き分け！（チーム: {teams} | スコア：{maxScore}）");
+            Debug.LogWarning("引き分け！");
+
+            SendTeamResultToAll(-1);
         } else {
             Debug.LogWarning("誰もスコアを取らずに終わりました");
+
+            SendTeamResultToAll(-1);
         }
     }
 
@@ -147,5 +160,44 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// </summary>
     public bool TryGetTeamScore(int teamId, out float score) {
         return teamScores.TryGetValue(teamId, out score);
+    }
+
+    [Server]
+    private void SendTeamResultToAll(int winningTeamId) {
+        if (ResultManager.Instance == null) {
+            Debug.LogError("[RuleManager] ResultManager が存在しません！");
+            return;
+        }
+
+        // チーム名（簡易）：0=Red, 1=Blue, それ以外は Team {id}
+        string winnerName;
+        if (winningTeamId == 0)
+            winnerName = "Red";
+        else if (winningTeamId == 1)
+            winnerName = "Blue";
+        else
+            winnerName = "Draw";
+
+        // teamScores はこのクラスのフィールドとして存在している前提
+        List<ResultScoreData> scoreList = new();
+        foreach (var kvp in teamScores) {
+            string teamName = (kvp.Key == 0) ? "Red" :
+                              (kvp.Key == 1) ? "Blue" :
+                              $"Team {kvp.Key}";
+
+            var data = new ResultScoreData {
+                playerName = teamName,
+                score = (int)kvp.Value
+            };
+            scoreList.Add(data);
+        }
+
+        var resultData = new ResultManager.ResultData {
+            isTeamBattle = true,
+            winnerName = winnerName,
+            scores = scoreList.ToArray()
+        };
+
+        ResultManager.Instance.ShowResult(resultData);
     }
 }
