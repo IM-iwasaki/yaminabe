@@ -169,7 +169,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             return;
         }
 
-        // チーム名（簡易）：0=Red, 1=Blue, それ以外は Team {id}
+        // チーム名 0=Red, 1=Blue, それ以外は Team {id}
         string winnerName;
         if (winningTeamId == 0)
             winnerName = "Red";
