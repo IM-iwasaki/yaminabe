@@ -122,8 +122,12 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="sceneName"></param>
     public override void OnServerSceneChanged(string sceneName) {
         //ゲームシーンに遷移したならゲームスタート
-        if (sceneName == GameSceneManager.Instance.gameSceneName)
-            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[(int)RuleManager.Instance.currentRule]);
+        if (sceneName == GameSceneManager.Instance.gameSceneName) {
+            HostUI hostUi = FindObjectOfType<HostUI>();
+            int stageIndex = Mathf.Abs(hostUi.stageIndex % StageManager.Instance.stages.Count);
+            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
+        }
+            
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
         foreach (var conn in serverManager.connectPlayer) {
             //必要な変数をキャッシュ
@@ -141,7 +145,7 @@ public class CustomNetworkManager : NetworkManager {
             }
             //ロビーシーンなら開始地点(0,0,0)に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
-                Vector3 respawnPos = new Vector3(0, 0, 0);
+                Vector3 respawnPos = new Vector3(Random.Range(0,10), 0, 0);
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
             }
             //初期化
