@@ -231,26 +231,21 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// プレイヤー名用セッター
     /// 名前をサーバー側で反映し、PlayerListManager に登録する
     /// </summary>
-    /// <param name="name">新しいプレイヤー名</param>
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
-        // サーバー上でプレイヤー登録
-        if (PlayerListManager.Instance != null) {
+        Debug.Log($"[CharacterBase] 名前設定: {PlayerName}");
+
+        // 名前が確定したタイミングで登録（サーバー側のみ）
+        if (isServer && PlayerListManager.Instance != null) {
             PlayerListManager.Instance.RegisterPlayer(this);
-           
-        }
-        else {
-            Debug.LogWarning("[CharacterBase] PlayerListManager.Instance が存在しません。");
         }
     }
-
 
     public override void OnStartServer() {
         base.OnStartServer();
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.RegisterPlayer(this);
     }
-
     public override void OnStopServer() {
         base.OnStopServer();
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.UnregisterPlayer(this);
@@ -269,7 +264,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         HP = maxHP;
 
         isDead = false;
-        isInvincible = false;
         isMoving = false;
         isAttackPressed = false;
         isAttackTrigger = false;
@@ -291,7 +285,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     public void TakeDamage(int _damage, string _name) {
         //既に死亡状態かロビー内なら帰る
-        if (isDead || !GameManager.Instance.IsGameRunning()) return;
+        if (isDead || isInvincible || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
         float damage = _damage * ((float)DamageRatio / 100);
@@ -301,7 +295,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         HP -= (int)damage;
 
         //HPが0以下になったとき死亡していなかったら死亡処理を行う
-        if (HP <= 0) Dead(_name);
+        if (HP <= 0) Dead(connectionToClient.identity, _name);
     }
 
     /// <summary>
@@ -317,7 +311,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死亡時処理
     /// </summary>
     [Command]
-    public void Dead(string _name) {
+    public void Dead(NetworkIdentity killerIdentity, string _name) {
 
         //死亡フラグをたててHPを0にしておく
         isDead = true;
@@ -342,6 +336,14 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
+
+        // キルの処理
+        if (killerIdentity != null) {
+            var killerCombat = killerIdentity.GetComponent<PlayerCombat>();
+            if (killerCombat != null) {
+                killerCombat.OnKill(GetComponent<NetworkIdentity>());
+            }
+        }
     }
 
     /// <summary>
@@ -350,6 +352,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     virtual public void Respawn() {
         //死んでいなかったら即抜け
+        //TODO:復活関連の処理考え直せ
         if (!isDead) return;
 
         //復活させてHPを全回復
@@ -411,6 +414,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         //新しいチームに加入
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.TeamID = newTeam;
+
+        // PlayerCombatに同期
+        var combat = _player.GetComponent<PlayerCombat>();
+        if (combat != null) combat.teamId = newTeam;
+
         //ログを表示
         ChatManager.instance.CmdSendSystemMessage(_player.ToString() + "is joined" + newTeam + "team");
     }
@@ -683,7 +691,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     virtual protected void RespawnControl() {
         //死亡した瞬間の処理
-        if (isDeadTrigger) {
+        if (isDead) {
             Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
         }
         //復活後であるときの処理
