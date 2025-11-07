@@ -1,18 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using Mirror;
 
-public class CameraOptionMenu : MonoBehaviour {
+public class CameraOptionMenu : NetworkBehaviour {
     [Header("対象のPlayerCamera")]
-    public PlayerCamera playerCamera; // 対象のカメラスクリプトをInspectorで設定
+    public PlayerCamera playerCamera;
 
     [Header("UI参照")]
-    public Canvas optionCanvas;       // オプション用Canvas（非表示でOK）
-    public Slider sensitivitySlider;  // 感度調整スライダー
+    public Canvas optionCanvas;
+    public Slider sensitivitySlider;
 
     private bool isOpen = false;
 
-    private void Start() {
+    public override void OnStartLocalPlayer() {
+        // ローカルプレイヤー以外の UI は無効化しておく
+        optionCanvas.enabled = false;
+
         // PlayerPrefs から感度を読み込み
         float saved = PlayerPrefs.GetFloat("CameraSensitivity", playerCamera.rotationSpeed);
         playerCamera.rotationSpeed = saved;
@@ -26,7 +30,9 @@ public class CameraOptionMenu : MonoBehaviour {
     }
 
     private void Update() {
-        // ESCキーでメニュー開閉
+        // ローカルプレイヤーだけ入力を受け付ける
+        if (!isLocalPlayer) return;
+
         if (Keyboard.current.escapeKey.wasPressedThisFrame) {
             ToggleMenu();
         }
