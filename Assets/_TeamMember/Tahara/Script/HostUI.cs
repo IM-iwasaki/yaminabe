@@ -32,7 +32,8 @@ public class HostUI : NetworkBehaviour {
         uiRootObject.SetActive(false);
         //ƒzƒXƒg‚Å‚È‚¯‚ê‚Îˆ—‚µ‚È‚¢
         if (!isServer) return;
-        if (GameSceneManager.Instance != null) {
+        if (GameSceneManager.Instance != null) { 
+            gameStartButton.onClick.AddListener(ServerManager.instance.RandomTeamDecide);
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
         }
         rule.text = ruleNames[ruleIndex];
