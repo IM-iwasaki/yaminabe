@@ -37,23 +37,22 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     /// <param name="_allRandomTeam"></param>
     private void JoinRandomTeam(bool _allRandomTeam = false) {
-        //チームに所属していない人だけver
+        //チームに所属していない人を抜き出す
         List<NetworkIdentity> notInTeamPlayer = new List<NetworkIdentity>();
-        if (!_allRandomTeam) {
-            //チームに所属していない人を抜き出す
-            foreach (var player in connectPlayer) {
-                if (player.GetComponent<GeneralCharacter>().TeamID != -1)
-                    continue;
-                notInTeamPlayer.Add(player);
-            }
+        foreach (var player in connectPlayer) {
+            if (player.GetComponent<GeneralCharacter>().TeamID != -1)
+                continue;
+            notInTeamPlayer.Add(player);
         }
+
         //全員ランダムver
-        else {
+        if(_allRandomTeam) {
             if (teams.Capacity != 0) {
                 //まずはチームを全てリセット
                 foreach (var resetTeam in teams) {
                     for (int i = 0, max = resetTeam.teamPlayerList.Count; i < max; i++) {
                         resetTeam.teamPlayerList[i].GetComponent<GeneralCharacter>().TeamID = -1;
+                        notInTeamPlayer.Add(resetTeam.teamPlayerList[i]);
                     }
                     resetTeam.teamPlayerList.Clear();
                     PlayerUIController.instance.ResetTeammateUI();
@@ -90,5 +89,12 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     public void RandomTeamDecide() {
         JoinRandomTeam(isRandom);
+    }
+
+    /// <summary>
+    /// 全員ランダムかどうかをトグルで設定
+    /// </summary>
+    public void OnToggleChangeAllRandom() {
+        isRandom = !isRandom;
     }
 }
