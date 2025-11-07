@@ -94,6 +94,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Header("コンポーネント情報")]
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
+    private string useTag;
     [SerializeField] protected PlayerUIController UI;
     [SerializeField] private InputActionAsset inputActions;
 
@@ -509,6 +510,12 @@ public abstract class CharacterBase : NetworkBehaviour {
                 // フラグを立てる
                 isCanInteruct = true;
                 useCollider = _collider;
+                useTag = "SelectCharacterObject";
+                break;
+            case "Gacha":
+                isCanInteruct = true;
+                useCollider = _collider;
+                useTag = "Gacha";
                 break;
             case "RedTeam":
                 CmdJoinTeam(netIdentity, TeamColor.Red);
@@ -539,6 +546,12 @@ public abstract class CharacterBase : NetworkBehaviour {
                 // フラグを下ろす
                 isCanInteruct = false;
                 useCollider = null;
+                useTag = null;
+                break;
+            case "Gacha":
+                isCanInteruct = false;
+                useCollider = null;
+                useTag = null;
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
@@ -805,9 +818,17 @@ public abstract class CharacterBase : NetworkBehaviour {
             return;
         }
         if (isCanInteruct) {
-            CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
-            select.StartCharacterSelect(gameObject);
-            return;
+            if(useTag == "SelectCharacterObject") {
+                CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
+                select.StartCharacterSelect(gameObject);
+                return;
+            }
+            if(useTag == "Gacha") {
+                GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
+                gacha.StartGachaSelect(gameObject);
+                return;
+            }
+
         }
     }
 
