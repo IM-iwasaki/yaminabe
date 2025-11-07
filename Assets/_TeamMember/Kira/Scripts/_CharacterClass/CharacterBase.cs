@@ -264,7 +264,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         HP = maxHP;
 
         isDead = false;
-        isInvincible = false;
         isMoving = false;
         isAttackPressed = false;
         isAttackTrigger = false;
@@ -286,7 +285,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     public void TakeDamage(int _damage, string _name) {
         //既に死亡状態かロビー内なら帰る
-        if (isDead || !GameManager.Instance.IsGameRunning()) return;
+        if (isDead || isInvincible || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
         float damage = _damage * ((float)DamageRatio / 100);
@@ -353,6 +352,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     virtual public void Respawn() {
         //死んでいなかったら即抜け
+        //TODO:復活関連の処理考え直せ
         if (!isDead) return;
 
         //復活させてHPを全回復
@@ -691,7 +691,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     virtual protected void RespawnControl() {
         //死亡した瞬間の処理
-        if (isDeadTrigger) {
+        if (isDead) {
             Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
         }
         //復活後であるときの処理

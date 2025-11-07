@@ -25,5 +25,5 @@ public class PlayerConst {
     //リスポーンに必要な時間
     public const float RESPAWN_TIME = 3.0f;
     //リスポーン後の無敵時間
-    public const float RESPAWN_INVINCIBLE_TIME = 1.5f;
+    public const float RESPAWN_INVINCIBLE_TIME = 3.0f;
 }
