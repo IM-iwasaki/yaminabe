@@ -166,10 +166,6 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //GroundCheck変数をアタッチする。
         GroundCheck = transform.Find("FootRoot");
-        //FirePoint変数をアタッチする。
-
-        ///古谷が消した
-        //firePoint = transform.Find("ShotRoot");
 
         // デフォルト値保存
         defaultMoveSpeed = moveSpeed;
@@ -190,6 +186,16 @@ public abstract class CharacterBase : NetworkBehaviour {
             PlayerData data = PlayerSaveData.Load();
             if (!string.IsNullOrEmpty(data.playerName)) {
                 CmdSetPlayerName(data.playerName);
+            }
+
+            //古谷
+            // 子に既に配置されている ReticleOptionUI を探して初期化（ローカル用）
+            var option = GetComponentInChildren<ReticleOptionUI>(true);
+            if (option != null) {
+                option.Initialize(true);
+            }
+            else {
+                Debug.LogWarning("PlayerSetup: No ReticleOptionUI found as child for local player.");
             }
         }
     }

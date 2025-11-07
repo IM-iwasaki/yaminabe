@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8700379734931911907}
   - component: {fileID: 6108164157570514329}
   m_Layer: 0
-  m_Name: reticleChanger
+  m_Name: ReticleOptionUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49,7 +49,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previewImage: {fileID: 1779252317752160235}
-  hudImage: {fileID: 0}
   reticles:
   - {fileID: 21300000, guid: 56f433345b1faa64eb50cdb197d34f71, type: 3}
   - {fileID: 21300000, guid: 9ee137293631b9e46b1a401b72b130a4, type: 3}
@@ -62,10 +61,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: b26c1b2c24c056a43931e5b20d8d9193, type: 3}
   - {fileID: 21300000, guid: bfb6bd7e8471f5442bd8e524bdda3380, type: 3}
   - {fileID: 21300000, guid: dc7eb94056b536a4a9f810db7b171332, type: 3}
-  - {fileID: 21300000, guid: e4fa8d5cbc85f214297ce7de14b56d3f, type: 3}
-  - {fileID: 21300000, guid: b493e9a4650e7ec4cb70cf682d680f1e, type: 3}
   - {fileID: 21300000, guid: 1d1b964de9e4c50418b4d14cdf24d9ba, type: 3}
-  - {fileID: 21300000, guid: 3e60add3ecb1915459d46e3b3a0287f8, type: 3}
   - {fileID: 21300000, guid: 743aae4b5553cb24eb7caf0bce1a4128, type: 3}
   - {fileID: 21300000, guid: c186448c466fad9478c38ce9c2f7b71b, type: 3}
   - {fileID: 21300000, guid: 11e5ab06858788e4283a67ae91eca8b5, type: 3}
