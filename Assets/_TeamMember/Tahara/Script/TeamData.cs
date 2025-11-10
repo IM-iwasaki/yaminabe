@@ -1,6 +1,8 @@
 using Mirror;
 using System.Collections.Generic;
-
+/// <summary>
+/// チームデータ
+/// </summary>
 public class TeamData{
     //チーム判別用列挙定数
     public enum TeamColor {

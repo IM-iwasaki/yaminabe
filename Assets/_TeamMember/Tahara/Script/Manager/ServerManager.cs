@@ -57,7 +57,6 @@ public class ServerManager : NetworkBehaviour {
                     resetTeam.teamPlayerList.Clear();
                     PlayerUIController.instance.ResetTeammateUI();
                 }
-
             }
             teams = new List<TeamData>(TEAMMATE_MAX);
             //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
@@ -74,11 +73,11 @@ public class ServerManager : NetworkBehaviour {
                 teams[(teamIndex + 1) % teams.Count].teamPlayerList.Add(player);
                 teamIndex = (teamIndex + 1) % teams.Count;
             }
-            //それ以外はランダムにふりわける
+            //それ以外はランダムに振り分ける
             else {
                 teams[teamIndex].teamPlayerList.Add(player);
             }
-            //プレイヤーのチームIDやUIを設定
+            //プレイヤーのチームIDを設定
             player.GetComponent<GeneralCharacter>().TeamID = teamIndex;
             ChatManager.instance.CmdSendSystemMessage(player.GetComponent<GeneralCharacter>().PlayerName + " is " + teamIndex + "Team");
         }

@@ -3,6 +3,10 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
 
+/// <summary>
+/// タイトル管理クラス
+/// ホストかクライアントかで処理が変わる
+/// </summary>
 public class TitleManager : MonoBehaviour {
     //インスタンス
     public static TitleManager instance = null;

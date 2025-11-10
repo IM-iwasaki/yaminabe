@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+/// <summary>
+/// Host用UI
+/// </summary>
 public class HostUI : NetworkBehaviour {
     [SerializeField, Header("表記するルール名")]
     private TextMeshProUGUI rule = null;

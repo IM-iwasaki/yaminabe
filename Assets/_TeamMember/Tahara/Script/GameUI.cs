@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// 各クライアントに配置するロードで壊されないUI
+/// </summary>
 public class GameUI : MonoBehaviour
 {
     public static GameUI instance = null;
-    // Start is called before the first frame update
     private void Awake() {
         DontDestroyOnLoad(gameObject);
         if (instance == null)
