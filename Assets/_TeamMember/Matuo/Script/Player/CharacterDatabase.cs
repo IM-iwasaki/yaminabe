@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CharacterDatabase", menuName = "CharacterData/CharacterDatabase")]
+[CreateAssetMenu(fileName = "CharacterDatabase", menuName = "ScriptableObject/CharacterData/CharacterDatabase")]
 public class CharacterDatabase : ScriptableObject {
     [Header("登録されているキャラクター一覧")]
     public List<CharacterInfo> characters = new(); // キャラクター情報のリスト

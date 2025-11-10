@@ -4,7 +4,7 @@ using System.Collections.Generic;
 /// <summary>
 /// ガチャのアイテムとレアリティ確率を保持する ScriptableObject
 /// </summary>
-[CreateAssetMenu(fileName = "GachaData", menuName = "Gacha/GachaData")]
+[CreateAssetMenu(fileName = "GachaData", menuName = "ScriptableObject/Gacha/GachaData")]
 public class GachaData : ScriptableObject {
     [System.Serializable]
     public class RarityRate {

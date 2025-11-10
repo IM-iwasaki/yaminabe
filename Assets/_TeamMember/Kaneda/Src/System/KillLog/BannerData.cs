@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "BannerData", menuName = "Banner/BannerData")]
+[CreateAssetMenu(fileName = "BannerData", menuName = "ScriptableObject/Banner/BannerData")]
 public class BannerData : ScriptableObject
 {
     [Header("“o˜^‚³‚ê‚Ä‚¢‚éƒoƒi[ˆê——")]

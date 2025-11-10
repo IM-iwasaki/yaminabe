@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// ステージ情報を保持する ScriptableObject
 /// </summary>
-[CreateAssetMenu(fileName = "StageData", menuName = "Stage/StageData")]
+[CreateAssetMenu(fileName = "StageData", menuName = "ScriptableObject/Stage/StageData")]
 public class StageData : ScriptableObject {
     [Header("ステージ名")]
     public string stageName;

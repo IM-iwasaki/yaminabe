@@ -12,9 +12,9 @@ using UnityEngine;
 /// </summary>
 public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
 
-    // ==========================================
-    // ▼ 各アイテム個別設定クラス
-    // ==========================================
+    /// <summary>
+    /// 各アイテム個別設定クラス
+    /// </summary>
     [System.Serializable]
     public class SpawnableItem {
         [Header("生成するプレハブ")]
@@ -25,9 +25,9 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         public int spawnChancePercent = 100;   // カテゴリ内での個別出現確率
     }
 
-    // ==========================================
-    // ▼ カテゴリ（武器・消費アイテムなど）設定クラス
-    // ==========================================
+    /// <summary>
+    /// カテゴリ（武器・消費アイテムなど）設定クラス
+    /// </summary>
     [System.Serializable]
     public class ItemCategory {
         [Header("このカテゴリに含まれるアイテム群")]
@@ -61,15 +61,13 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
 
     #endregion
 
-    // ==========================================
-    // ▼ 内部変数
-    // ==========================================
+    //  内部変数
     private Transform[] spawnPoints;                                            // スポーンポイント一覧
     private readonly List<GameObject> spawnedItems = new List<GameObject>();    // 現在シーンに存在している生成済みアイテム一覧
 
-    // ==========================================
-    // ▼ 初期化処理（サーバー側のみ実行）
-    // ==========================================
+    /// <summary>
+    /// 初期化処理（サーバー側のみ実行）
+    /// </summary>
     public override void Initialize() {
         if (!isServer) return; // Mirrorの仕様上、生成はサーバー側でのみ行う
 
@@ -78,9 +76,9 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
 
     }
 
-    // ====================================================================================
-    // ▼ ステージ生成時にスポーンポイントを取得・アイテム生成を開始する処理
-    // ====================================================================================
+    /// <summary>
+    /// ステージ生成時にスポーンポイントを取得・アイテム生成を開始する処理
+    /// </summary>
     public void SetupSpawnPoint() {
         if (!isServer) return; // Mirrorの仕様上、生成はサーバー側でのみ行う
 
@@ -103,9 +101,9 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         InvokeRepeating(nameof(RespawnAllItems), respawnInterval, respawnInterval);
     }
 
-    // ==========================================
-    // ▼ スポーン関連のリセット
-    // ==========================================
+    /// <summary>
+    /// スポーン関連のリセット
+    /// </summary>
     public void ResetSpawnPoint() {
         // 既存Invokeを解除
         CancelInvoke(nameof(RespawnAllItems));
@@ -121,9 +119,9 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         spawnPoints = null;
     }
 
-    // ==========================================
-    // ▼ 全カテゴリからの一括スポーン処理
-    // ==========================================
+    /// <summary>
+    /// 全カテゴリからの一括スポーン処理
+    /// </summary>
     [Server]
     private void SpawnAllItems() {
         // スポーンポイントのリストを複製してシャッフル
@@ -143,9 +141,13 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         Debug.Log($"[ItemSpawnManager] 武器: {weaponSpawned}/{weaponPoints}, 消費: {consumableSpawned}/{consumablePoints}");
     }
 
-    // ==========================================
-    // ▼ 指定カテゴリから指定数のアイテムをスポーン
-    // ==========================================
+    /// <summary>
+    /// 指定カテゴリから指定数のアイテムをスポーン
+    /// </summary>
+    /// <param name="category"></param>
+    /// <param name="availablePoints"></param>
+    /// <param name="spawnPointsCount"></param>
+    /// <returns></returns>
     [Server]
     private int SpawnCategoryItems(ItemCategory category, List<Transform> availablePoints, int spawnPointsCount) {
         // カテゴリ内にアイテムが登録されていない場合はスキップ
@@ -187,9 +189,11 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         return spawned;
     }
 
-    // ==========================================
-    // ▼ カテゴリ内アイテムの「重み付き確率抽選」
-    // ==========================================
+    /// <summary>
+    /// カテゴリ内アイテムの「重み付き確率抽選」
+    /// </summary>
+    /// <param name="items"></param>
+    /// <returns></returns>
     private GameObject GetItemByChance(List<SpawnableItem> items) {
         // 登録されているすべてのアイテムの確率を合計
         int totalChance = items.Sum(item => item.spawnChancePercent);
@@ -210,9 +214,9 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         return null;
     }
 
-    // ==========================================
-    // ▼ 全アイテムを破棄し、再生成するリスポーン処理
-    // ==========================================
+    /// <summary>
+    /// 全アイテムを破棄し、再生成するリスポーン処理
+    /// </summary>
     [Server]
     private void RespawnAllItems() {
         if (!isServer) return;
@@ -229,9 +233,11 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         SpawnAllItems();
     }
 
-    // ==========================================
-    // ▼ 汎用シャッフル処理（リストの順序をランダム化）
-    // ==========================================
+    /// <summary>
+    /// シャッフル処理（リストの順序をランダム化）
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
     private void Shuffle<T>(List<T> list) {
         for (int i = 0; i < list.Count; i++) {
             int rand = Random.Range(i, list.Count);

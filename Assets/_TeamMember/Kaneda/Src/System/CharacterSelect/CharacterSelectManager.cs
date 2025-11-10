@@ -9,19 +9,24 @@ using UnityEngine;
 public class CharacterSelectManager : NetworkBehaviour {
     #region 変数定義
 
+    //  定数
     private readonly string SKIN_TAG = "Skin";
 
+    //  変数
     [Header("カメラ制御")]
-    [SerializeField] private CameraChangeController cameraManager;  // カメラ移動用Controller
-    [SerializeField] private Transform cameraTargetPoint;           // 選択画面カメラ位置
-
+    // カメラ移動用Controller
+    [SerializeField] private CameraChangeController cameraManager;
+    // 選択画面カメラ位置
+    [SerializeField] private Transform cameraTargetPoint;
+    // 選択画面UI
     [Header("UI")]
-    [SerializeField] private GameObject selectUI;                  // 選択画面UI
+    [SerializeField] private GameObject selectUI;
 
     [Header("セレクトオブジェクト")]
     [SerializeField] private SelectObjectManager selectObj;
 
-    private GameObject currentPlayer; // 現在選択中のプレイヤー
+    // 現在選択中のプレイヤー
+    private GameObject currentPlayer; 
 
     //  キャラクターを毎秒どれだけ回転させるか
     private Vector3 characterRotation = new Vector3(0, 50f, 0);

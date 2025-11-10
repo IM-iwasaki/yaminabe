@@ -6,11 +6,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class ChatManager : NetworkBehaviour {
+    //  オブジェクト名の定数
     private readonly string TEXT_OBJECT_NAME = "UserName";
     private readonly string IMAGE_OBJECT_NAME = "StampImage";
-
+    //  インスタンス用
     public static ChatManager instance = null;
 
+    //  変数
     [Header("チャットログ用の親オブジェクト")]
     [SerializeField] private Transform chatRoot;
 

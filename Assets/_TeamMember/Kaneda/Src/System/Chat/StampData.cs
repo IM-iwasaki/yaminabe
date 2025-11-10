@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "StampData", menuName = "Stamp/StampData")]
+[CreateAssetMenu(fileName = "StampData", menuName = "ScriptableObject/Stamp/StampData")]
 public class StampData : ScriptableObject
 {
     [Header("“o˜^‚³‚ê‚Ä‚¢‚éƒXƒ^ƒ“ƒvˆê——")]

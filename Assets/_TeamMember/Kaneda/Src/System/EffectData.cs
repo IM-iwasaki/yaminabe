@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EffectData", menuName = "Effect/EffectData")]
+[CreateAssetMenu(fileName = "EffectData", menuName = "ScriptableObject/Effect/EffectData")]
 public class EffectData : ScriptableObject 
 {
     [Header("登録されているエフェクト一覧")]

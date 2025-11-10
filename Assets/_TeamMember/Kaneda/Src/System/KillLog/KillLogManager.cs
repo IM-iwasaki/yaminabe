@@ -15,6 +15,7 @@ public class KillLogManager : NetworkBehaviour {
     //  instance
     public static KillLogManager instance = null;
 
+    //  変数
     [Header("キルログ用の親オブジェクト")]
     [SerializeField] private Transform killLogRoot;
 

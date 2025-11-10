@@ -4,7 +4,7 @@ using System.Collections.Generic;
 /// <summary>
 /// 実績データをまとめて管理する ScriptableObject
 /// </summary>
-[CreateAssetMenu(fileName = "AchievementData", menuName = "Achieve/AchievementData")]
+[CreateAssetMenu(fileName = "AchievementData", menuName = "ScriptableObject/Achieve/AchievementData")]
 public class AchievementDatabase : ScriptableObject {
     [Header("実績リスト")]
     public List<AchievementData> achievements = new();
