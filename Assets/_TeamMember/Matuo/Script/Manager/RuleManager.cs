@@ -186,8 +186,8 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
                               $"Team {kvp.Key}";
 
             var data = new ResultScoreData {
-                playerName = teamName,
-                score = (int)kvp.Value
+                PlayerName = teamName,
+                Score = (int)kvp.Value
             };
             scoreList.Add(data);
         }

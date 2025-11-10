@@ -149,8 +149,8 @@ public class PlayerListManager : NetworkBehaviour {
         List<ResultScoreData> list = new();
         foreach (var p in players) {
             list.Add(new ResultScoreData {
-                playerName = p.name,
-                score = p.score
+                PlayerName = p.name,
+                Score = p.score
             });
         }
         Debug.Log("[PlayerListManager] リザルト用データを作成しました");

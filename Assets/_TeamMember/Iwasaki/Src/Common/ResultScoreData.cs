@@ -1,10 +1,10 @@
 using System;
 
 /// <summary>
-/// リザルトサンプル用
+/// リザルトデータ変換用
 /// </summary>
 [Serializable]
 public struct ResultScoreData {
-    public string playerName;  // プレイヤー名
-    public int score;          // スコア値
+    public string PlayerName;  // プレイヤー名
+    public int Score;          // スコア値
 }
