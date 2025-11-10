@@ -20,7 +20,6 @@ public class PlayerUIController : NetworkBehaviour {
         UIMax,
     }
     #region 戦闘用UI
-    #region プレイヤー体力管理用UI
     private const int FIXED_RATIO = 100;
     [SerializeField, Header("体力のテキスト※デフォルトで設定済み")]
     private TextMeshProUGUI hpText = null;
@@ -40,8 +39,6 @@ public class PlayerUIController : NetworkBehaviour {
     private Slider mpBar = null;
     [SerializeField, Header("MPのバーのイメージ※デフォルトで設定済み")]
     private Image mpBarImage = null;
-    #endregion
-
     #endregion
 
     #region 非戦闘UI
