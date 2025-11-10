@@ -13,10 +13,8 @@ class GeneralCharacter : CharacterBase {
     [SerializeField]CharacterStatus InputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
     private CharacterStatus RunTimeStatus;
-    [Header("使用するスキル")]
-    private SkillBase[] EquippedSkills;
-    [Header("使用するパッシブ")]
-    private PassiveBase[] EquippedPassives;
+    public SkillBase[] equippedSkills{ get; private set; }
+    public PassiveBase[] equippedPassives{ get; private set; }
 
     #endregion
 
@@ -62,10 +60,10 @@ class GeneralCharacter : CharacterBase {
         //MaxMagazineが0でなければ最大値で初期化
         if (maxMagazine != 0) magazine = maxMagazine;
         //Passive関連の初期化
-        EquippedPassives[0].CoolTime = 0;
-        EquippedPassives[0].IsPassiveActive = false;
+        equippedPassives[0].CoolTime = 0;
+        equippedPassives[0].IsPassiveActive = false;
         //Skill関連の初期化
-        EquippedSkills[0].IsSkillUse = false;
+        equippedSkills[0].IsSkillUse = false;
     }
 
     public override void StatusInport(CharacterStatus _inport = null) {
@@ -80,20 +78,20 @@ class GeneralCharacter : CharacterBase {
         attack = RunTimeStatus.Attack;
         moveSpeed = RunTimeStatus.MoveSpeed;
         Debug.Log("MeleeCharacter.cs : StatusInportを実行しました。\nMaxHP:" + maxHP + " attack:" + attack + " moveSpeed:" + moveSpeed);
-        EquippedSkills = RunTimeStatus.Skills;
+        equippedSkills = RunTimeStatus.Skills;
         /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */
-        Debug.Log("MeleeCharacter.cs : スキルのインポートを行いました。\nインポートしたスキル: " + string.Join(", ", EquippedSkills.Where(i => i != null).Select(i => i.SkillName)));
-        EquippedPassives = RunTimeStatus.Passives;
-        Debug.Log("MeleeCharacter.cs : パッシブのインポートを行いました。\nインポートしたパッシブ: " + string.Join(", ", EquippedPassives.Where(i => i != null).Select(i => i.PassiveName)));
+        Debug.Log("MeleeCharacter.cs : スキルのインポートを行いました。\nインポートしたスキル: " + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.SkillName)));
+        equippedPassives = RunTimeStatus.Passives;
+        Debug.Log("MeleeCharacter.cs : パッシブのインポートを行いました。\nインポートしたパッシブ: " + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.PassiveName)));
         // パッシブの初期セットアップ
-        EquippedPassives[0].PassiveSetting(this);
+        equippedPassives[0].PassiveSetting(this);
         //  デフォルトステータスを代入
         InDefaultStatus();
     }
 
     protected override void StartUseSkill() {
         if (isCanSkill) {
-            EquippedSkills[0].Activate(this);
+            equippedSkills[0].Activate(this);
             isCanSkill = false;
         }       
     }
@@ -105,20 +103,22 @@ class GeneralCharacter : CharacterBase {
     public override void Respawn() {
         base.Respawn();
         //パッシブのセットアップ
-        EquippedPassives[0].PassiveSetting(this);
+        equippedPassives[0].PassiveSetting(this);
     }
 
     protected override void AbilityControl() {
         //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)
-        EquippedPassives[0].PassiveReflection(this);
+        equippedPassives[0].PassiveReflection(this);
         //スキル更新関数を呼ぶ(中身を未定義の場合は何もしない)
-        EquippedSkills[0].SkillEffectUpdate(this);
+        equippedSkills[0].SkillEffectUpdate(this);
 
-        //スキル使用不可中、かつスキルがインポートされていれば時間を計測
-        if (!isCanSkill && EquippedSkills[0] != null)
+        //スキル使用不可中、スキルクールタイム中かつスキルがインポートされていれば時間を計測
+        if (!isCanSkill && SkillAfterTime <= equippedSkills[0].Cooldown && equippedSkills[0] != null)
             SkillAfterTime += Time.deltaTime;
+        //スキルクールタイムを過ぎていたら丁度になるよう補正
+        else if (SkillAfterTime > equippedSkills[0].Cooldown) SkillAfterTime = equippedSkills[0].Cooldown;
         //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
-        var Skill = EquippedSkills[0];
+        var Skill = equippedSkills[0];
         if (!isCanSkill && Skill != null && SkillAfterTime >= Skill.Cooldown) {
             isCanSkill = true;
             //経過時間をリセット

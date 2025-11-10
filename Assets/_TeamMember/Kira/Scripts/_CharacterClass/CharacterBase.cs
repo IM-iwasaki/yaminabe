@@ -9,13 +9,11 @@ using static TeamData;
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Rigidbody))]
 
-/*
- *  @flie    First_CharacterClass
- */
+/// <summary>
+/// 初期化をここで行う。
+/// </summary>
 public abstract class CharacterBase : NetworkBehaviour {
-    #region ～変数宣言～
 
-    #region ～ステータス～
     [Header("基本ステータス")]
     //現在の体力
     [SyncVar(hook = nameof(ChangeHP))] public int HP;
@@ -37,9 +35,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     //ランキング用変数の仮定義
     public int score = 0;
 
-    #endregion
-
-    #region ～Vector系統変数～
 
     //移動を要求する方向
     protected Vector2 MoveInput;
@@ -56,9 +51,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //射撃位置
     public Transform firePoint;
 
-    #endregion
 
-    #region ～状態管理・コンポーネント変数～
     //死亡しているか
     [SyncVar] protected bool isDead = false;
     //死亡した瞬間か
@@ -100,9 +93,6 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
 
-    #endregion
-
-    #region ～アクション用変数～
 
     //武器を使用するため
     [Header("アクション用変数")]
@@ -116,11 +106,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //接地しているか
     [SerializeField]private bool IsGrounded;
 
-    //スタン、怯み(硬直する,カメラ以外操作無効化)
 
-    #endregion
-
-    #region ～バフ管理用変数～
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
     private Coroutine attackCoroutine;
@@ -128,17 +114,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     private int defaultAttack;
     [Header("バフに使用するエフェクトデータ")]
     [SerializeField] private EffectData buffEffect;
-    #region バフデータの定数
+
     private readonly string EFFECT_TAG = "Effect";
     private readonly int ATTACK_BUFF_EFFECT = 0;
     private readonly int SPEED_BUFF_EFFECT = 1;
     private readonly int HEAL_BUFF_EFFECT = 2;
     private readonly int DEBUFF_EFFECT = 3;
-    #endregion
 
-    #endregion
-
-    #endregion
 
     #region ～初期化関係関数～
 

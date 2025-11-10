@@ -12,7 +12,7 @@ public abstract class SkillBase : ScriptableObject {
     [TextArea(3, 6)] public string SkillDescription;
     //スキルのアイコン用
     [Header("スキルのアイコンを割り当ててください。")]
-    public Sprite SkillIcon;
+    public Sprite skillIcon;
     //スキルのクールダウン
     [Header("スキルのクールダウン時間を設定してください。")]
     [Range(0.1f,30.0f)]public float Cooldown;
