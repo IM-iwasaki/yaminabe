@@ -103,6 +103,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// <summary>
     /// 遅延してUIを表示（カメラ移動完了後にUIを表示する補助）
     /// </summary>
+    /// <param name="camController"></param>
+    /// <returns></returns>
     private System.Collections.IEnumerator ShowUIAfterDelay(CameraChangeController camController) {
         // CameraChangeController の移動時間と同じだけ待つ
         float duration = camController != null ? camController.moveDuration : 1.5f;
