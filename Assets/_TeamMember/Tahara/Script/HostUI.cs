@@ -11,21 +11,33 @@ public class HostUI : NetworkBehaviour {
     private TextMeshProUGUI rule = null;
     [SerializeField, Header("表記するステージ名")] 
     private TextMeshProUGUI stage = null;
-    //親オブジェクト
+    /// <summary>
+    /// 親オブジェクト
+    /// </summary>
     public static GameObject uiRootObject = null;
-    //ルールを変更する用のインデックス
+    /// <summary>
+    /// ルールを変更する用のインデックス
+    /// </summary>
     [SyncVar(hook = nameof(ChangeRuleAndUI))]
     public int ruleIndex = 0;
-    //ステージを変更する用のインデックス
+    /// <summary>
+    /// ステージを変更する用のインデックス
+    /// </summary>
     [SyncVar(hook = nameof(ChangeStageUI))]
     public int stageIndex = 0;
-    //UIを見せるかどうか
+    /// <summary>
+    /// UIを見せるかどうか
+    /// </summary>
     public static bool isVisibleUI = false;
 
-    //ルールの名前のリスト
+    /// <summary>
+    /// ルールの名前のリスト
+    /// </summary>
     [SerializeField]
     private List<string> ruleNames = null;
-    //ゲーム開始ボタン
+    /// <summary>
+    /// ゲーム開始ボタン
+    /// </summary>
     [SerializeField]
     private Button gameStartButton = null;
 
@@ -89,6 +101,7 @@ public class HostUI : NetworkBehaviour {
             uiRootObject.SetActive(true);
         else
             uiRootObject.SetActive(false);
+        Cursor.lockState = _isVisibleFlag ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
 

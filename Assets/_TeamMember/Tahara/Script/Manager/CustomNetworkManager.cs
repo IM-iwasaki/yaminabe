@@ -120,7 +120,7 @@ public class CustomNetworkManager : NetworkManager {
             HostUI.ShowOrHideUI(false);
             GameSceneManager.Instance.ResetIsChangedScene();
         }
-
+        Cursor.lockState = HostUI.isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
     /// <summary>

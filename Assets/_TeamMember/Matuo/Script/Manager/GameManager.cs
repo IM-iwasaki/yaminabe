@@ -64,7 +64,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         isGameRunning = false;
         gameTimer.StopTimer();
-
+        Cursor.lockState = CursorLockMode.None;
         // Ÿ”sˆ—‚ğRuleManager‚É”C‚¹‚é
         if (ruleManager.currentRule == GameRuleType.DeathMatch)
             ruleManager.EndDeathMatch();
