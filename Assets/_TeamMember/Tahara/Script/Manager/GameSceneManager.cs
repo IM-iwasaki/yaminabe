@@ -1,7 +1,5 @@
 using Mirror;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// ゲームシーンの管理クラス
