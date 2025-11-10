@@ -7,13 +7,14 @@ using UnityEngine.SceneManagement;
 /// ゲームシーンの管理クラス
 /// </summary>
 public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
-    [Header("読み込むロビーシーンの名前")]
+    [Header("読み込むシーンの名前")]
     public string lobbySceneName;
-    [Header("読み込むゲームシーンの名前")]
     public string gameSceneName;
-    [Header("読み込むゲームシーンの名前")]
     public string titleSceneName;
 
+    /// <summary>
+    /// シーン遷移が行われたかどうか
+    /// </summary>
     private bool isChanged = false;
 
 

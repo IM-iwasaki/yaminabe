@@ -7,6 +7,9 @@ using static TeamData;
 /// サーバー側での処理を管理するクラス
 /// </summary>
 public class ServerManager : NetworkBehaviour {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
     public static ServerManager instance = null;
     [Header("現在接続している人数")]
     public List<NetworkIdentity> connectPlayer = null;
