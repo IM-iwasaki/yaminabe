@@ -26,11 +26,11 @@ public class ScoreListUI : MonoBehaviour {
             Destroy(child.gameObject);
 
         // スコア降順にソート
-        scores.Sort((a, b) => b.score.CompareTo(a.score));
+        scores.Sort((a, b) => b.Score.CompareTo(a.Score));
 
         // 新規エントリ生成
         foreach (var data in scores)
-            AddScoreEntry(data.playerName, data.score);
+            AddScoreEntry(data.PlayerName, data.Score);
     }
 
     /// <summary>

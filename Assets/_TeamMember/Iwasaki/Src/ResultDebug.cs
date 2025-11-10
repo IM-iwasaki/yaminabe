@@ -31,37 +31,14 @@ public class ResultDebug : NetworkBehaviour {
         // --- 仮データ ---
         List<ResultScoreData> scores = new List<ResultScoreData>()
         {
-            new ResultScoreData { playerName = "Alic---",   score = 1200 },
-            new ResultScoreData { playerName = "Bob-n",     score = 800 },
-            new ResultScoreData { playerName = "Charlie", score = 1500 },
-            new ResultScoreData { playerName = "Delta",   score = 600 },
-            new ResultScoreData { playerName = "Boss",    score=30},
-            new ResultScoreData { playerName = "God" ,    score=2},
+            new ResultScoreData { PlayerName = "Alic---",   Score = 1200 },
+            new ResultScoreData { PlayerName = "Bob-n",     Score = 800 },
+            new ResultScoreData { PlayerName = "Charlie", Score = 1500 },
+            new ResultScoreData { PlayerName = "Delta",   Score = 600 },
+            new ResultScoreData { PlayerName = "Boss",    Score=30},
+            new ResultScoreData { PlayerName = "God" ,    Score=2},
         };
-        /// <summary>
-        /// 全プレイヤーのスコア情報を取得する
-        /// （CharacterBaseを継承しているGeneralCharacterから取得）
-        /// </summary>
-           // List<ResultScoreData> scores = new List<ResultScoreData>();
-           //
-           // // --- サーバーでのみ実行（Mirrorの正しい設計） ---
-           // if (!isServer) {
-           //     Debug.LogWarning("スコア集計はサーバーでのみ実行されます。");
-           //     return scores;
-           // }
-           //
-           // // --- シーン上の全 GeneralCharacter を探索 ---
-           // foreach (var c in FindObjectsOfType<GeneralCharacter>()) {
-           //     // CharacterBaseを継承しているのでPlayerNameとScoreを直接参照できる
-           //     scores.Add(new ResultScoreData {
-           //         playerName = c.PlayerName, // ← CharacterBase側の名前変数
-           //         score = c.score            // ← CharacterBase側のスコア変数
-           //     });
-           //
-           //     Debug.Log($"[ResultDebug] スコア取得: {c.PlayerName} = {c.score}");
-           // }
-           //
-           // return scores;
+       
         
 
         return scores;
@@ -78,8 +55,8 @@ public class ResultDebug : NetworkBehaviour {
         }
         else {
             // 仮：スコア最大のプレイヤーをWinnerとする
-            var topPlayer = scores.OrderByDescending(s => s.score).FirstOrDefault();
-            return topPlayer.playerName ?? "???";
+            var topPlayer = scores.OrderByDescending(s => s.Score).FirstOrDefault();
+            return topPlayer.PlayerName ?? "???";
         }
     }
 

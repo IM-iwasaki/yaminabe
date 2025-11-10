@@ -3,7 +3,6 @@ using UnityEngine;
 /// <summary>
 /// ESCキーでメニューUIを開閉し、
 /// ゲーム終了ボタンで自分だけゲームを終了するためのスクリプト。
-/// オンライン中でも他プレイヤーに影響しない安全設計。
 /// </summary>
 public class PauseMenu : MonoBehaviour {
     [Header("メニューUIの親オブジェクト（Canvas）")]

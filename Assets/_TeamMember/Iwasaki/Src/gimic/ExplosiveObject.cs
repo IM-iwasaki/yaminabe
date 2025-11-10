@@ -18,11 +18,7 @@ public class ExplosiveObject : MonoBehaviour {
     }
 
     void Explode() {
-        //// 爆発エフェクト生成
-        //if (explosionEffectPrefab != null) {
-        //    GameObject effect = Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
-        //    Destroy(effect, 3f);
-        //}
+        
 
         // 爆発範囲内のすべてのコライダーを取得
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
