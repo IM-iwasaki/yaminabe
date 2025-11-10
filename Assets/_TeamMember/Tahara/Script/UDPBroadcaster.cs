@@ -10,7 +10,9 @@ using System.Text;
 /// </summary>
 public class UDPBroadcaster : MonoBehaviour
 {
-    //UDP形式で送信するメッセージの構造体
+    /// <summary>
+    /// UDP形式で送信するメッセージの構造体
+    /// </summary>
     [System.Serializable]
     public class UdpMessage {
         public string ip;
@@ -19,11 +21,17 @@ public class UDPBroadcaster : MonoBehaviour
         public string hostName;
     }
 
-    //メッセージの実体
+    /// <summary>
+    /// メッセージの実体
+    /// </summary>
     public UdpMessage message = new UdpMessage();
-    //送るIPアドレスの文字列
+    /// <summary>
+    /// 送るIPアドレスの文字列
+    /// </summary>
     public string sendIPAddress = null;
-    //メッセージをjsonファイルに変更した時に保存する変数
+    /// <summary>
+    /// メッセージをjsonファイルに変更した時に保存する変数
+    /// </summary>
     private string json = null;
     private void Awake() {
         DontDestroyOnLoad(gameObject);

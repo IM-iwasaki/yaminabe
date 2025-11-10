@@ -6,12 +6,7 @@ using UnityEngine;
 /// </summary>
 public class GameUI : MonoBehaviour
 {
-    public static GameUI instance = null;
     private void Awake() {
         DontDestroyOnLoad(gameObject);
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(gameObject);
     }
 }

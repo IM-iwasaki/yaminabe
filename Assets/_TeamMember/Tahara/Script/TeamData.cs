@@ -4,7 +4,9 @@ using System.Collections.Generic;
 /// チームデータ
 /// </summary>
 public class TeamData{
-    //チーム判別用列挙定数
+    /// <summary>
+    /// チーム判別用列挙定数
+    /// </summary>
     public enum TeamColor {
         Invalid = -1,
         Red,

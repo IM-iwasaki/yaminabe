@@ -8,8 +8,13 @@ using System.Net;
 /// IPアドレスを定期的に受信する
 /// </summary>
 public class UDPListener : MonoBehaviour {
+    /// <summary>
+    /// 取り出せた時にだけ処理できる安全なキュー
+    /// </summary>
     ConcurrentQueue<UdpMessage> messageQueue = new ConcurrentQueue<UdpMessage>();
-    //受信するメッセージ
+    /// <summary>
+    /// 受信するメッセージ
+    /// </summary>
     [System.Serializable]
     public struct UdpMessage {
         public string ip;
@@ -17,7 +22,9 @@ public class UDPListener : MonoBehaviour {
         public string gameName;
         public string hostName;
     }
-    //タイトルシーンでIPアドレスが取得できたかどうかを判定する用変数
+    /// <summary>
+    /// タイトルシーンでIPアドレスが取得できたかどうかを判定する用変数
+    /// </summary>
     public bool isGetIP = false;
 
     // Update is called once per frame

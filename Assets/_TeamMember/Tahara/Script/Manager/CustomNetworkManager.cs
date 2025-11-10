@@ -6,6 +6,9 @@ using static TeamData;
 /// 元あるNetworkManagerの派生クラス
 /// </summary>
 public class CustomNetworkManager : NetworkManager {
+    /// <summary>
+    /// シーンにあるサーバーマネージャー
+    /// </summary>
     [SerializeField]
     private ServerManager serverManager = null;
 
@@ -147,9 +150,10 @@ public class CustomNetworkManager : NetworkManager {
                 var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)teamID);
                 startPos.ServerTeleport(RespawnPos[Random.Range(0, RespawnPos.Count)].position, Quaternion.identity);
             }
-            //ロビーシーンなら開始地点(0,0,0)に転送
+            //ロビーシーンなら開始地点に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
-                Vector3 respawnPos = new Vector3(Random.Range(0,10), 0, 0);
+                //重なることを考慮してランダムで座標をずらす
+                Vector3 respawnPos = new Vector3(Random.Range(1,10), 0, 0);
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
             }
             //初期化

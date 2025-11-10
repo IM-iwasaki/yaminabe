@@ -8,29 +8,51 @@ using System.Collections;
 /// ホストかクライアントかで処理が変わる
 /// </summary>
 public class TitleManager : MonoBehaviour {
-    //インスタンス
+    /// <summary>
+    /// インスタンス
+    /// </summary>
     public static TitleManager instance = null;
-    //参加するサーバーのIPアドレス(IPv4)
+    /// <summary>
+    /// 参加するサーバーのIPアドレス(IPv4)
+    /// </summary>
     public string ipAddress = null;
-    //ホストかどうか
+    /// <summary>
+    /// ホストかどうか
+    /// </summary>
     public bool isHost { get; private set; } = false;
-    //クライアントかどうか
+    /// <summary>
+    /// クライアントかどうか
+    /// </summary>
     public bool isClient { get; private set; } = false;
-    //今はタイトル画面なのか
+    /// <summary>
+    /// 今はタイトル画面なのか
+    /// </summary>
     public bool isTitle = true;
-    //IPアドレス入力用(現在は自動取得可能なので使わないかも)
+    /// <summary>
+    /// IPアドレス入力用(現在は自動取得可能なので使わないかも)
+    /// </summary>
     public TMP_InputField inputField = null;
-    //IPアドレスを探している状況を教えるUI
+    /// <summary>
+    /// IPアドレスを探している状況を教えるUI
+    /// </summary>
     public TextMeshProUGUI SearchOrMissingText = null;
-    //ボタン押下判定用変数
+    /// <summary>
+    /// ボタン押下判定用変数
+    /// </summary>
     static private bool once = false;
-    //ロードするロビーシーンの名前
+    /// <summary>
+    /// ロードするロビーシーンの名前
+    /// </summary>
     [SerializeField]
     private string lobbySceneName = null;
-    //IPアドレスを送信するクラス(使い分けするためにメンバで管理)
+    /// <summary>
+    /// IPアドレスを送信するクラス(使い分けするためにメンバで管理)
+    /// </summary>
     [SerializeField]
     private UDPBroadcaster sender = null;
-    //IPアドレスを受信するクラス(使い分けするためにメンバで管理)
+    /// <summary>
+    /// IPアドレスを受信するクラス(使い分けするためにメンバで管理)
+    /// </summary>
     [SerializeField]
     private UDPListener receiver = null;
     

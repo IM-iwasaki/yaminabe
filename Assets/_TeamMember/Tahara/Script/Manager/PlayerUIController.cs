@@ -9,35 +9,47 @@ using UnityEngine.UI;
 /// 各ローカルプレイヤーに複製してもらうので別に子オブジェクトとかにしなくていい
 /// </summary>
 public class PlayerUIController : NetworkBehaviour {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
     public static PlayerUIController instance = null;
+    /// <summary>
+    /// UIの親オブジェクト(主に戦闘用か非戦闘用かを管理)
+    /// </summary>
     [SerializeField]
     private List<Transform> UIRoots = null;
+    /// <summary>
+    /// 親オブジェクトのタイプ
+    /// </summary>
     public enum UIRootType {
         Invalid = -1,
         BattleUIRoot,
         NonBattleUIRoot,
-        
+
         UIMax,
     }
     #region 戦闘用UI
+    /// <summary>
+    /// バー補正用定数
+    /// </summary>
     private const int FIXED_RATIO = 100;
-    [SerializeField, Header("体力のテキスト※デフォルトで設定済み")]
+    [SerializeField, Header("数値のテキスト一覧")]
     private TextMeshProUGUI hpText = null;
-    [SerializeField, Header("体力のバー※デフォルトで設定済み")]
-    private Slider hpBar = null;
-    [SerializeField, Header("体力のバーのイメージ※デフォルトで設定済み")]
-    private Image hpBarImage = null;
-    [SerializeField, Header("残弾数のテキスト※デフォルトで設定済み")]
+    [SerializeField]
     private TextMeshProUGUI magazineText = null;
-    [SerializeField, Header("残弾数のバー※デフォルトで設定済み")]
-    private Slider magazineBar = null;
-    [SerializeField, Header("残弾数のバーのイメージ※デフォルトで設定済み")]
-    private Image magazineBarImage = null;
-    [SerializeField, Header("MPのテキスト※デフォルトで設定済み")]
+    [SerializeField]
     private TextMeshProUGUI mpText = null;
-    [SerializeField, Header("MPのバー※デフォルトで設定済み")]
+    [SerializeField, Header("バー一覧")]
+    private Slider hpBar = null;
+    [SerializeField]
+    private Slider magazineBar = null;
+    [SerializeField]
     private Slider mpBar = null;
-    [SerializeField, Header("MPのバーのイメージ※デフォルトで設定済み")]
+    [SerializeField, Header("バーのイメージ")]
+    private Image hpBarImage = null;
+    [SerializeField]
+    private Image magazineBarImage = null;
+    [SerializeField]
     private Image mpBarImage = null;
     #endregion
 
