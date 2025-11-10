@@ -16,7 +16,6 @@ public class PlayerUIController : NetworkBehaviour {
         Invalid = -1,
         BattleUIRoot,
         NonBattleUIRoot,
-        HostUI,
         
         UIMax,
     }
@@ -146,16 +145,16 @@ public class PlayerUIController : NetworkBehaviour {
     /// 特定の"UI"を表示させる
     /// </summary>
     /// <param name="_uiName"></param>
-    public void ShowUI(string _uiName) {
-        GameObject.Find(_uiName).SetActive(true);
+    public void ShowUI(GameObject _UI) {
+        _UI.SetActive(true);
     }
 
     /// <summary>
     /// 特定の"UI"を非表示させる
     /// </summary>
     /// <param name="_uiName"></param>
-    public void HideUI(string _uiName) {
-        GameObject.Find(_uiName).SetActive(false);
+    public void HideUI(GameObject _UI) {
+        _UI.SetActive(false);
     }
 
 
@@ -164,6 +163,7 @@ public class PlayerUIController : NetworkBehaviour {
     /// チームメイトが誰なのかを表示するUIを作り出す
     /// </summary>
     /// <param name="_player"></param>
+    [ClientRpc]
     public void CreateTeammateUI(NetworkIdentity _player) {
         if (!_player.isLocalPlayer || !_player.isClient) return;
         Transform createUIRoot = GameObject.Find("NonBattleUIRoot/TeammateUIRoot").transform;
@@ -175,6 +175,7 @@ public class PlayerUIController : NetworkBehaviour {
     /// <summary>
     /// チームメイトUIを削除
     /// </summary>
+    [ClientRpc]
     public void ResetTeammateUI() {
         for (int i = 0, max = teamMateUIRoot.childCount; i < max; i++) {
             Destroy(teamMateUIRoot.GetChild(i).gameObject);

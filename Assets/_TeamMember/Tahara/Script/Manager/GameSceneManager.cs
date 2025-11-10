@@ -3,9 +3,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
+/// <summary>
+/// ゲームシーンの管理クラス
+/// </summary>
 public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
-    //public static GameSceneManager instance = null;
     [Header("読み込むロビーシーンの名前")]
     public string lobbySceneName;
     [Header("読み込むゲームシーンの名前")]
@@ -27,7 +28,6 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         //フェードアウト
         if (!isChanged) {
             isChanged = true;
-            //FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
         }
     }
@@ -58,8 +58,8 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
 
     /// <summary>
     /// シーン遷移したという状態をリセットする関数
+    /// 重複ロードを回避
     /// </summary>
-
     public void ResetIsChangedScene() {
         isChanged = false;
     }

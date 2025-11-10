@@ -2,7 +2,9 @@ using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+/// <summary>
+/// チームUIを生成するクラス
+/// </summary>
 public class TeammateUI : NetworkBehaviour { 
 
     //武器のアイコン

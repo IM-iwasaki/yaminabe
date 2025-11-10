@@ -4,7 +4,9 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.Collections;
 using System.Net;
-
+/// <summary>
+/// IPアドレスを定期的に受信する
+/// </summary>
 public class UDPListener : MonoBehaviour {
     ConcurrentQueue<UdpMessage> messageQueue = new ConcurrentQueue<UdpMessage>();
     //受信するメッセージ

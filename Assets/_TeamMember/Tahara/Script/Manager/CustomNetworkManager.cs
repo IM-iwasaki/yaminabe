@@ -2,16 +2,23 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static TeamData;
-
+/// <summary>
+/// 元あるNetworkManagerの派生クラス
+/// </summary>
 public class CustomNetworkManager : NetworkManager {
     [SerializeField]
     private ServerManager serverManager = null;
 
+    /// <summary>
+    /// タイトルシーンから移動してきたときに通る処理
+    /// </summary>
     public override void Awake() {
+#if DEBUG
         if (TitleManager.instance == null) {
             base.Awake();
             return;
         }
+#endif
         if (TitleManager.instance.isHost) {
             //ホストとして開始
             StartHost();
@@ -90,15 +97,14 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="_conn"></param>
     public override void OnServerDisconnect(NetworkConnectionToClient _conn) {
-        serverManager.connectPlayer.Remove(_conn.identity);
         base.OnServerDisconnect(_conn);
-        Debug.Log("サーバーが切断されました！");
-        //Destroy(TitleManager.instance.gameObject);
+        //ローカルクライアントが抜けた場合
         if (!NetworkServer.localConnection.Equals(_conn)) {
+            //参加者全員に通知
             ChatManager.instance.CmdSendSystemMessage("Leave Player");
             return;
         }
-        SceneManager.LoadScene("TitleScene");
+        GameSceneManager.Instance.LoadTitleSceneForAll();
     }
     /// <summary>
     /// シーンが変わった時に発火
@@ -109,8 +115,6 @@ public class CustomNetworkManager : NetworkManager {
         if (newSceneName == GameSceneManager.Instance.gameSceneName) {
             HostUI.isVisibleUI = false;
             HostUI.ShowOrHideUI(false);
-
-
             GameSceneManager.Instance.ResetIsChangedScene();
         }
 
