@@ -24,8 +24,10 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
-        //ここで準備完了かどうか判定を取って全員準備完了ならゲームシーンに移動
-        foreach(var player in ServerManager.instance.connectPlayer) {
+        //フェードアウト
+        if (!isChanged) {
+            //ここで準備完了かどうか判定を取って全員準備完了ならゲームシーンに移動
+            foreach (var player in ServerManager.instance.connectPlayer) {
             CharacterBase readyPlayer = player.GetComponent<CharacterBase>();
             //そもそもPlayerが取れていない
             if (!readyPlayer) {
@@ -35,7 +37,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             //準備未完了なら
             if(!readyPlayer.ready)
             {
-                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().PlayerName + " is not ready!!");
+                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().PlayerName + " is not ready");
                 return;
             }
             else {
@@ -45,8 +47,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         //チーム決め
         ServerManager.instance.RandomTeamDecide();
 
-        //フェードアウト
-        if (!isChanged) {
+       
             isChanged = true;
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
         }
