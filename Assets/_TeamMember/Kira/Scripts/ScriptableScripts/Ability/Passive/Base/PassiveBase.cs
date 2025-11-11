@@ -12,7 +12,7 @@ public abstract class PassiveBase : ScriptableObject {
     [TextArea(3, 6)]public string PassiveDescription;
     //パッシブのアイコン用
     [Header("パッシブのアイコンを割り当ててください。")]
-    public Sprite PassiveIcon;
+    public Sprite passiveIcon;
     //パッシブが再発動可能になるまでの時間
     [Header("[任意]クールダウンを設定できます。\n(必要に応じて入力してください。)")]
     public float Cooldown;

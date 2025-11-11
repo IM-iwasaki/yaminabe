@@ -9,13 +9,11 @@ using static TeamData;
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Rigidbody))]
 
-/*
- *  @flie    First_CharacterClass
- */
+/// <summary>
+/// 初期化をここで行う。
+/// </summary>
 public abstract class CharacterBase : NetworkBehaviour {
-    #region ～変数宣言～
 
-    #region ～ステータス～
     [Header("基本ステータス")]
     //現在の体力
     [SyncVar(hook = nameof(ChangeHP))] public int HP;
@@ -35,11 +33,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     [System.NonSerialized] public int DamageRatio = 100;
 
     //ランキング用変数の仮定義
-    public int score { get; protected set; } = 0;
+    public int score = 0;
 
-    #endregion
-
-    #region ～Vector系統変数～
 
     //移動を要求する方向
     protected Vector2 MoveInput;
@@ -56,9 +51,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //射撃位置
     public Transform firePoint;
 
-    #endregion
 
-    #region ～状態管理・コンポーネント変数～
     //死亡しているか
     [SyncVar] protected bool isDead = false;
     //死亡した瞬間か
@@ -88,7 +81,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
     //スキル使用後経過時間
-    [System.NonSerialized] public float SkillAfterTime = 0.0f;
+    [System.NonSerialized] public float skillAfterTime = 0.0f;
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -96,14 +89,17 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected Collider useCollider;
     private string useTag;
     [SerializeField] protected PlayerUIController UI;
+    [SerializeField] private CameraOptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
 
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
+    /// <summary>
+    /// 追加:タハラ
+    /// プレイヤー準備完了状態
+    /// </summary>
+    [SyncVar] public bool ready = true;
 
-    #endregion
-
-    #region ～アクション用変数～
 
     //武器を使用するため
     [Header("アクション用変数")]
@@ -115,13 +111,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     //足元の確認用Transform
     private Transform GroundCheck;
     //接地しているか
-    [SerializeField]private bool IsGrounded;
+    [SerializeField] private bool IsGrounded;
 
-    //スタン、怯み(硬直する,カメラ以外操作無効化)
 
-    #endregion
-
-    #region ～バフ管理用変数～
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
     private Coroutine attackCoroutine;
@@ -129,17 +121,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     private int defaultAttack;
     [Header("バフに使用するエフェクトデータ")]
     [SerializeField] private EffectData buffEffect;
-    #region バフデータの定数
+
     private readonly string EFFECT_TAG = "Effect";
     private readonly int ATTACK_BUFF_EFFECT = 0;
     private readonly int SPEED_BUFF_EFFECT = 1;
     private readonly int HEAL_BUFF_EFFECT = 2;
     private readonly int DEBUFF_EFFECT = 3;
-    #endregion
 
-    #endregion
-
-    #endregion
 
     #region ～初期化関係関数～
 
@@ -198,6 +186,12 @@ public abstract class CharacterBase : NetworkBehaviour {
             else {
                 Debug.LogWarning("PlayerSetup: No ReticleOptionUI found as child for local player.");
             }
+
+            //タハラ
+            //準備状態を明示的に初期化
+            //ホストでなければ非準備状態
+            if (isLocalPlayer && !isServer)
+                ready = false;
         }
     }
     public override void OnStartClient() {
@@ -238,7 +232,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// プレイヤー名用セッター
     /// 名前をサーバー側で反映し、PlayerListManager に登録する
     /// </summary>
-    /// <param name="name">新しいプレイヤー名</param>
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
@@ -249,15 +242,15 @@ public abstract class CharacterBase : NetworkBehaviour {
             PlayerListManager.Instance.RegisterPlayer(this);
         }
     }
-
-
-   
-
+    public override void OnStartServer() {
+        base.OnStartServer();
+        if (PlayerListManager.Instance != null) PlayerListManager.Instance.RegisterPlayer(this);
+    }
     public override void OnStopServer() {
         base.OnStopServer();
-        PlayerListManager.Instance?.UnregisterPlayer(this);
+        if (PlayerListManager.Instance != null) PlayerListManager.Instance.UnregisterPlayer(this);
     }
-   
+
 
     #endregion
 
@@ -281,7 +274,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         respownAfterTime = 0;
         attackStartTime = 0;
-        SkillAfterTime = 0;
+        skillAfterTime = 0;
 
         //デスカメラのリセット(保険。要らないかも)
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
@@ -301,6 +294,13 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (damage <= 0) damage = 1;
         //HPの減算処理
         HP -= (int)damage;
+
+        //　nameをスコア加算関数み送る
+        if (HP <= 0) {
+            if (PlayerListManager.Instance != null) {
+                PlayerListManager.Instance.AddScoreByName(_name, 100);
+            }
+        }
 
         //HPが0以下になったとき死亡していなかったら死亡処理を行う
         if (HP <= 0) Dead(_name);
@@ -337,13 +337,25 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsJumpPressed = false;
         isMoving = false;
 
-        //カメラを暗くする
+        //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
+        KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
+    }
+
+    /// <summary>
+    /// 追加:タハラ
+    /// クライアント用準備状態切り替え関数
+    /// </summary>
+    [Command]
+    private void CmdChangePlayerReady() {
+        ready = !ready;
+        ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+
+        if(!isLocalPlayer) {
+            //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
         //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
-
-        //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
-        KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
+        }        
     }
 
     /// <summary>
@@ -414,22 +426,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.TeamID = newTeam;
         //ログを表示
-        ChatManager.instance.CmdSendSystemMessage(_player.ToString() + "is joined" + newTeam + "team");
+        ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<GeneralCharacter>().PlayerName + " is joined " + newTeam + " team ");
     }
-
-    /// <summary>
-    /// スコア加算
-    /// </summary>
-    /// <param name="value"></param>
-    [Server]
-    public void AddMyScore(int value) {
-        // 自分にスコアを加算
-        if (PlayerListManager.Instance != null)
-            PlayerListManager.Instance.PlayerAddScore(this, value);
-
-        Debug.Log($"[CharacterBase] {PlayerName} にスコア +{value}");
-    }
-
 
 
     #endregion
@@ -456,6 +454,12 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "ShowHostUI":
                 OnShowHostUI(ctx);
+                break;
+            case "CameraMenu":
+                OnShowCameraMenu(ctx);
+                break;
+            case "Ready":
+                OnReadyPlayer(ctx);
                 break;
         }
     }
@@ -622,6 +626,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 追加:タハラ
     /// UI表示
     /// </summary>
     public void OnShowHostUI(InputAction.CallbackContext context) {
@@ -629,6 +634,33 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (context.started) {
             HostUI.isVisibleUI = !HostUI.isVisibleUI;
             HostUI.ShowOrHideUI(HostUI.isVisibleUI);
+        }
+    }
+
+    public void OnShowCameraMenu(InputAction.CallbackContext context) {
+        if (!isLocalPlayer)
+            return;
+        if (context.started) {
+            CameraMenu.ToggleMenu();
+        }
+    }
+
+    /// <summary>
+    /// 追加:タハラ
+    /// プレイヤーの準備状態切り替え
+    /// </summary>
+    /// <param name="context"></param>
+    public void OnReadyPlayer(InputAction.CallbackContext context) {
+        if (!isLocalPlayer)
+            return;
+        //内部の準備状態を更新
+        if (context.started) {
+            if (!isServer)
+                CmdChangePlayerReady();
+            else {
+                ready = !ready;
+                ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+            }
         }
     }
 
@@ -826,12 +858,12 @@ public abstract class CharacterBase : NetworkBehaviour {
             return;
         }
         if (isCanInteruct) {
-            if(useTag == "SelectCharacterObject") {
+            if (useTag == "SelectCharacterObject") {
                 CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
                 select.StartCharacterSelect(gameObject);
                 return;
             }
-            if(useTag == "Gacha") {
+            if (useTag == "Gacha") {
                 GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
                 gacha.StartGachaSelect(gameObject);
                 return;

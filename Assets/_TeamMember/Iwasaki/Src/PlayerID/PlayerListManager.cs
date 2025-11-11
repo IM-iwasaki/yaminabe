@@ -103,14 +103,17 @@ public class PlayerListManager : NetworkBehaviour {
     //==============================================================
 
     /// <summary>
-    /// 指定プレイヤーにスコアを加算
+    /// 名前からスコアを加算（サーバー専用）
     /// </summary>
     [Server]
-    public void PlayerAddScore(CharacterBase player, int value) {
-        var target = players.Find(p => p.id == player.playerId);
+    public void AddScoreByName(string playerName, int value) {
+        var target = players.Find(p => p.name == playerName);
         if (target != null) {
             target.score += value;
-            Debug.Log($"[PlayerListManager] {target.name} のスコアを {value} 加算（合計 {target.score}）");
+            Debug.Log($"[PlayerListManager] {playerName} のスコアを {value} 加算（合計 {target.score}）");
+        }
+        else {
+            Debug.LogWarning($"[PlayerListManager] 名前 '{playerName}' のプレイヤーが見つかりません。");
         }
     }
 

@@ -17,25 +17,26 @@ public class GeneralCharacterStatusAssistance : Editor {
         var BaseStatus = AssetDatabase.LoadAssetAtPath<StatusBase>(StatusBasePath);
         if (BaseStatus != null)  EditorUtility.SetDirty(this);
         else Debug.LogWarning($"BaseStatusが見つかりません: {StatusBasePath}");
-        serializedObject.FindProperty("BaseStatus").objectReferenceValue = BaseStatus;
+        serializedObject.FindProperty("baseStatus").objectReferenceValue = BaseStatus;
 
         //プロパティを表示
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("BaseStatus"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("ChatacterType"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("MaxHPCorrection"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("AttackCorrection"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("SpeedCorrection"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("baseStatus"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("displayName"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("chatacterType"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("maxHPCorrection"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("attackCorrection"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("speedCorrection"));
 
         EditorGUILayout.Space();
         //キャラクタータイプで分岐
-        switch (obj.ChatacterType) {
+        switch (obj.chatacterType) {
             case CharacterEnum.CharaterType.Melee:
                 EditorGUILayout.LabelField("近接職専用ステータスはまだありません！", EditorStyles.boldLabel);
                 break;
 
             case CharacterEnum.CharaterType.Wizard:
                 EditorGUILayout.LabelField("魔法職専用ステータス", EditorStyles.boldLabel);
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("MaxMPCorrection"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("maxMPCorrection"));
                 break;
 
             case CharacterEnum.CharaterType.Gunner:
@@ -44,8 +45,8 @@ public class GeneralCharacterStatusAssistance : Editor {
                 break;
         }
 
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("Passives"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("Skills"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("passives"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("skills"));
 
         //反映
         serializedObject.ApplyModifiedProperties();

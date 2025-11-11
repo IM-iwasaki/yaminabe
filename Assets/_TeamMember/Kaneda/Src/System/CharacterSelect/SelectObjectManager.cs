@@ -224,9 +224,9 @@ public class SelectObjectManager : NetworkBehaviour {
         }
 
         //  ステータスデータを代入する
-        HP = characterStatuses.MaxHP;
-        ATK = characterStatuses.Attack;
-        SPD = characterStatuses.MoveSpeed;
+        HP = characterStatuses.maxHP;
+        ATK = characterStatuses.attack;
+        SPD = characterStatuses.moveSpeed;
     }
 
     /// <summary>
