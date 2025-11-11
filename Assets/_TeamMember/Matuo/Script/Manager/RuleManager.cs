@@ -177,6 +177,10 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             winnerName = "Blue";
         else
             winnerName = "Draw";
+        // 勝敗と名前とスコアを一括で表示してる
+        ResultManager.Instance?.OnTeamResultReceived(winnerName, true);
+
+
 
         // teamScores はこのクラスのフィールドとして存在している前提
         List<ResultScoreData> scoreList = new();
@@ -191,13 +195,8 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             };
             scoreList.Add(data);
         }
-
-        var resultData = new ResultManager.ResultData {
-            isTeamBattle = true,
-            winnerName = winnerName,
-            scores = scoreList.ToArray()
-        };
-
-        ResultManager.Instance.ShowResult(resultData);
+      
+       
+       
     }
 }
