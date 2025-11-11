@@ -275,7 +275,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6108164157570514329}
         m_TargetAssemblyTypeName: ReticleOptionUI, Assembly-CSharp
-        m_MethodName: PreviousPreview
+        m_MethodName: OnPreviousButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -407,7 +407,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6108164157570514329}
         m_TargetAssemblyTypeName: ReticleOptionUI, Assembly-CSharp
-        m_MethodName: NextPreview
+        m_MethodName: OnNextButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
