@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b57f1631f241f3c48a205884bc2b4846, type: 3}
   m_Name: Chaser
   m_EditorClassIdentifier: 
-  BaseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
-  DisplayName: 
-  Skills:
+  baseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
+  displayName: 
+  skills:
   - {fileID: 11400000, guid: 41b3e8762c0ff934e90c4a57a1d02e07, type: 2}
-  Passives:
+  passives:
   - {fileID: 11400000, guid: e33c413bf05ba0f48a52d1e72c1dff96, type: 2}
   ChatacterType: 1
-  MaxHPCorrection: -15
-  AttackCorrection: -4
-  SpeedCorrection: 1
-  MaxMPCorrection: 25
-  MaxMagazine: 1
+  maxHPCorrection: -10
+  attackCorrection: -7
+  speedCorrection: 1
+  maxMPCorrection: 30
+  maxMagazine: 1

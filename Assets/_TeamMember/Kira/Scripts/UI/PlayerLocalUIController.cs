@@ -24,7 +24,7 @@ public class PlayerLocalUIController : MonoBehaviour {
             skill_State.color = Color.yellow;
         }       
         else {
-            skill_State.fillAmount = player.SkillAfterTime / player.equippedSkills[0].Cooldown;
+            skill_State.fillAmount = player.skillAfterTime / player.equippedSkills[0].cooldown;
             skill_State.color = Color.white;           
         }
 

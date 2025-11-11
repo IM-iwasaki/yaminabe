@@ -81,7 +81,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
     //スキル使用後経過時間
-    [System.NonSerialized] public float SkillAfterTime = 0.0f;
+    [System.NonSerialized] public float skillAfterTime = 0.0f;
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -255,7 +255,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         respownAfterTime = 0;
         attackStartTime = 0;
-        SkillAfterTime = 0;
+        skillAfterTime = 0;
 
         //デスカメラのリセット(保険。要らないかも)
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
