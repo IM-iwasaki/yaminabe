@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CharacterDatabase
   m_EditorClassIdentifier: 
   characters:
-  - characterName: "\u30C7\u30D5\u30A9\u30EB\u30C8\u30AD\u30E3\u30E9"
+  - characterName: DefaultCharacter
     statusData: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
     skins:
     - skinName: DefaultCharacter
@@ -22,8 +22,7 @@ MonoBehaviour:
       skinPrefab: {fileID: 3108797039877070855, guid: 9147bb052d83cb748a579c1a6451d39e, type: 3}
     - skinName: GoldDefault
       skinPrefab: {fileID: 3108797039877070855, guid: ea8ee7ded32385c48a0ec769b5ee454f, type: 3}
-    description: 
-  - characterName: "\u30CB\u30EF\u30C8\u30EA"
+  - characterName: Chicken
     statusData: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
     skins:
     - skinName: DefaultChicken
@@ -32,4 +31,3 @@ MonoBehaviour:
       skinPrefab: {fileID: 3548868566056176881, guid: 15fa7e1f49cf3284ba1465b20791ea8b, type: 3}
     - skinName: CrazyChicken
       skinPrefab: {fileID: 3548868566056176881, guid: 80df7670b3ce0484e934d23878f7de37, type: 3}
-    description: 
