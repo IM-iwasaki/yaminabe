@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b57f1631f241f3c48a205884bc2b4846, type: 3}
   m_Name: Soldier
   m_EditorClassIdentifier: 
-  BaseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
-  DisplayName: 
-  Skills:
+  baseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
+  displayName: "\u30BD\u30EB\u30B8\u30E3\u30FC"
+  skills:
   - {fileID: 11400000, guid: 1e2dac8c21a5ebe4b995bfeaf1536426, type: 2}
-  Passives:
+  passives:
   - {fileID: 11400000, guid: c6893291512ea68478b8f923bde70045, type: 2}
-  ChatacterType: 0
-  MaxHPCorrection: 40
-  AttackCorrection: 5
-  SpeedCorrection: 2
-  MaxMPCorrection: 10
-  MaxMagazine: 1
+  chatacterType: 0
+  maxHPCorrection: 40
+  attackCorrection: 0
+  speedCorrection: 2
+  maxMPCorrection: 10
+  maxMagazine: 1

@@ -28,7 +28,7 @@ public class Passive_Chaser : PassiveBase {
             if(Chains != 10)Chains++;
 
             //チェインの多さに応じてスキルCTを短縮
-            user.SkillAfterTime += 0.07f * Chains;            
+            user.skillAfterTime += 0.07f * Chains;            
         }
     }
 }

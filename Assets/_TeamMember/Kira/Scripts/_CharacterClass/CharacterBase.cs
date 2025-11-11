@@ -9,13 +9,11 @@ using static TeamData;
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Rigidbody))]
 
-/*
- *  @flie    First_CharacterClass
- */
+/// <summary>
+/// 初期化をここで行う。
+/// </summary>
 public abstract class CharacterBase : NetworkBehaviour {
-    #region ～変数宣言～
 
-    #region ～ステータス～
     [Header("基本ステータス")]
     //現在の体力
     [SyncVar(hook = nameof(ChangeHP))] public int HP;
@@ -35,11 +33,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     [System.NonSerialized] public int DamageRatio = 100;
 
     //ランキング用変数の仮定義
-    public int score { get; protected set; } = 0;
+    public int score = 0;
 
-    #endregion
-
-    #region ～Vector系統変数～
 
     //移動を要求する方向
     protected Vector2 MoveInput;
@@ -56,9 +51,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //射撃位置
     public Transform firePoint;
 
-    #endregion
 
-    #region ～状態管理・コンポーネント変数～
     //死亡しているか
     [SyncVar] protected bool isDead = false;
     //死亡した瞬間か
@@ -88,7 +81,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
     //スキル使用後経過時間
-    [System.NonSerialized] public float SkillAfterTime = 0.0f;
+    [System.NonSerialized] public float skillAfterTime = 0.0f;
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -107,9 +100,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [SyncVar] public bool ready = true;
 
-    #endregion
-
-    #region ～アクション用変数～
 
     //武器を使用するため
     [Header("アクション用変数")]
@@ -123,11 +113,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //接地しているか
     [SerializeField] private bool IsGrounded;
 
-    //スタン、怯み(硬直する,カメラ以外操作無効化)
 
-    #endregion
-
-    #region ～バフ管理用変数～
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
     private Coroutine attackCoroutine;
@@ -135,17 +121,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     private int defaultAttack;
     [Header("バフに使用するエフェクトデータ")]
     [SerializeField] private EffectData buffEffect;
-    #region バフデータの定数
+
     private readonly string EFFECT_TAG = "Effect";
     private readonly int ATTACK_BUFF_EFFECT = 0;
     private readonly int SPEED_BUFF_EFFECT = 1;
     private readonly int HEAL_BUFF_EFFECT = 2;
     private readonly int DEBUFF_EFFECT = 3;
-    #endregion
 
-    #endregion
-
-    #endregion
 
     #region ～初期化関係関数～
 
@@ -250,7 +232,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// プレイヤー名用セッター
     /// 名前をサーバー側で反映し、PlayerListManager に登録する
     /// </summary>
-    /// <param name="name">新しいプレイヤー名</param>
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
@@ -261,13 +242,13 @@ public abstract class CharacterBase : NetworkBehaviour {
             PlayerListManager.Instance.RegisterPlayer(this);
         }
     }
-
-
-
-
+    public override void OnStartServer() {
+        base.OnStartServer();
+        if (PlayerListManager.Instance != null) PlayerListManager.Instance.RegisterPlayer(this);
+    }
     public override void OnStopServer() {
         base.OnStopServer();
-        PlayerListManager.Instance?.UnregisterPlayer(this);
+        if (PlayerListManager.Instance != null) PlayerListManager.Instance.UnregisterPlayer(this);
     }
 
 
@@ -293,7 +274,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         respownAfterTime = 0;
         attackStartTime = 0;
-        SkillAfterTime = 0;
+        skillAfterTime = 0;
 
         //デスカメラのリセット(保険。要らないかも)
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
@@ -349,11 +330,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsJumpPressed = false;
         isMoving = false;
 
-        //カメラを暗くする
-        gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
-        //フェードアウトさせる
-        FadeManager.Instance.StartFadeOut(2.5f);
-
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
     }
@@ -366,6 +342,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void CmdChangePlayerReady() {
         ready = !ready;
         ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+
+        if(!isLocalPlayer) {
+            //カメラを暗くする
+        gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
+        //フェードアウトさせる
+        FadeManager.Instance.StartFadeOut(2.5f);
+        }        
     }
 
     /// <summary>

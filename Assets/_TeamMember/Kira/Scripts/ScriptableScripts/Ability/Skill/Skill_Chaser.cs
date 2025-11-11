@@ -20,19 +20,19 @@ public class Skill_Chaser : SkillBase {
 
     public override void Activate(CharacterBase user) {
         //既に使用中か確認
-        if (IsSkillUse) return;
+        if (isSkillUse) return;
         //効果発動
-        else IsSkillUse = true;
+        else isSkillUse = true;
     }
 
     public override void SkillEffectUpdate(CharacterBase user) {
         //使用中か確認、効果中は時間を計測
-        if(IsSkillUse) {
+        if(isSkillUse) {
             UseTime += Time.deltaTime;
             IntervalTime += Time.deltaTime;
 
             //効果時間を過ぎたら効果を終了
-            if (UseTime >= EffectTime) IsSkillUse = false;
+            if (UseTime >= EffectTime) isSkillUse = false;
 
             //攻撃が入力された瞬間かつインターバルが経過していたら
             if(user.isAttackTrigger && IntervalTime >= user.weaponController.weaponData.cooldown) {
