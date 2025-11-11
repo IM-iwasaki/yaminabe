@@ -53,8 +53,34 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
     private void RpcPlayBGM(string name, float fadeTime) {
         var data = bgmList.Find(b => b.name == name);
         if (data == null) return;
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-        fadeCoroutine = StartCoroutine(FadeInBGM(data, fadeTime));
+
+        if (fadeCoroutine != null)
+            StopCoroutine(fadeCoroutine);
+
+        // 再生中なら一旦フェードアウトしてから次を再生
+        if (bgmSource.isPlaying && bgmSource.clip != null) {
+            StartCoroutine(SwitchBGM(data, fadeTime));
+        }
+        else {
+            fadeCoroutine = StartCoroutine(FadeInBGM(data, fadeTime));
+        }
+    }
+
+    private IEnumerator SwitchBGM(AudioData nextData, float fadeTime) {
+        // まずフェードアウト
+        float startVolume = bgmSource.volume;
+        float timer = 0f;
+        while (timer < fadeTime) {
+            timer += Time.deltaTime;
+            bgmSource.volume = Mathf.Lerp(startVolume, 0f, timer / fadeTime);
+            yield return null;
+        }
+
+        // 前のBGMを停止
+        bgmSource.Stop();
+
+        // 次をフェードイン
+        fadeCoroutine = StartCoroutine(FadeInBGM(nextData, fadeTime));
     }
 
     // ======================

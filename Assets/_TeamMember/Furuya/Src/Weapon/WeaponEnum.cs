@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 /// <summary>
-/// Enum宣言用
+/// デバッグ確認コード
 /// </summary>
+
 #if UNITY_EDITOR
 public class ExplosionDebugCircle : MonoBehaviour {
     private float radius;
@@ -34,6 +34,9 @@ public class ExplosionDebugCircle : MonoBehaviour {
 }
 #endif
 
+/// <summary>
+/// Enum宣言用
+/// </summary>
 public enum ProjectileCategory {
     Bullet,
     Grenade,
