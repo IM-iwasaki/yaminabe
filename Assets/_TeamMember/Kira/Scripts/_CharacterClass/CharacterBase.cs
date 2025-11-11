@@ -96,10 +96,16 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected Collider useCollider;
     private string useTag;
     [SerializeField] protected PlayerUIController UI;
+    [SerializeField] private CameraOptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
 
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
+    /// <summary>
+    /// 追加:タハラ
+    /// プレイヤー準備完了状態
+    /// </summary>
+    [SyncVar] public bool ready = true;
 
     #endregion
 
@@ -115,7 +121,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //足元の確認用Transform
     private Transform GroundCheck;
     //接地しているか
-    [SerializeField]private bool IsGrounded;
+    [SerializeField] private bool IsGrounded;
 
     //スタン、怯み(硬直する,カメラ以外操作無効化)
 
@@ -198,6 +204,12 @@ public abstract class CharacterBase : NetworkBehaviour {
             else {
                 Debug.LogWarning("PlayerSetup: No ReticleOptionUI found as child for local player.");
             }
+
+            //タハラ
+            //準備状態を明示的に初期化
+            //ホストでなければ非準備状態
+            if (isLocalPlayer && !isServer)
+                ready = false;
         }
     }
     public override void OnStartClient() {
@@ -251,13 +263,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
 
-   
+
 
     public override void OnStopServer() {
         base.OnStopServer();
         PlayerListManager.Instance?.UnregisterPlayer(this);
     }
-   
+
 
     #endregion
 
@@ -347,6 +359,16 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 追加:タハラ
+    /// クライアント用準備状態切り替え関数
+    /// </summary>
+    [Command]
+    private void CmdChangePlayerReady() {
+        ready = !ready;
+        ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+    }
+
+    /// <summary>
     /// リスポーン関数
     /// </summary>
     [Server]
@@ -414,7 +436,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.TeamID = newTeam;
         //ログを表示
-        ChatManager.instance.CmdSendSystemMessage(_player.ToString() + "is joined" + newTeam + "team");
+        ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<GeneralCharacter>().PlayerName + " is joined " + newTeam + " team ");
     }
 
     /// <summary>
@@ -456,6 +478,12 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "ShowHostUI":
                 OnShowHostUI(ctx);
+                break;
+            case "CameraMenu":
+                OnShowCameraMenu(ctx);
+                break;
+            case "Ready":
+                OnReadyPlayer(ctx);
                 break;
         }
     }
@@ -622,6 +650,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 追加:タハラ
     /// UI表示
     /// </summary>
     public void OnShowHostUI(InputAction.CallbackContext context) {
@@ -629,6 +658,33 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (context.started) {
             HostUI.isVisibleUI = !HostUI.isVisibleUI;
             HostUI.ShowOrHideUI(HostUI.isVisibleUI);
+        }
+    }
+
+    public void OnShowCameraMenu(InputAction.CallbackContext context) {
+        if (!isLocalPlayer)
+            return;
+        if (context.started) {
+            CameraMenu.ToggleMenu();
+        }
+    }
+
+    /// <summary>
+    /// 追加:タハラ
+    /// プレイヤーの準備状態切り替え
+    /// </summary>
+    /// <param name="context"></param>
+    public void OnReadyPlayer(InputAction.CallbackContext context) {
+        if (!isLocalPlayer)
+            return;
+        //内部の準備状態を更新
+        if (context.started) {
+            if (!isServer)
+                CmdChangePlayerReady();
+            else {
+                ready = !ready;
+                ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+            }
         }
     }
 
@@ -826,12 +882,12 @@ public abstract class CharacterBase : NetworkBehaviour {
             return;
         }
         if (isCanInteruct) {
-            if(useTag == "SelectCharacterObject") {
+            if (useTag == "SelectCharacterObject") {
                 CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
                 select.StartCharacterSelect(gameObject);
                 return;
             }
-            if(useTag == "Gacha") {
+            if (useTag == "Gacha") {
                 GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
                 gacha.StartGachaSelect(gameObject);
                 return;

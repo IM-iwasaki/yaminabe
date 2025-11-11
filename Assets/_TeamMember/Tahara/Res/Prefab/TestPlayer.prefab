@@ -311,6 +311,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: c27bb1d7-2258-4e76-bf1e-ffa09e16e288
     m_ActionName: Player/Reload[/Keyboard/r]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ef13aea6-06d4-49bd-9328-0c6d641e71dc
+    m_ActionName: Player/Ready[/Keyboard/c]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -421,8 +425,10 @@ MonoBehaviour:
   PlayerName: Default
   firePoint: {fileID: 878125566127400802}
   UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
+  CameraMenu: {fileID: 313406335442426388}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
   playerId: -1
+  ready: 0
   weaponController: {fileID: 2825701905452532873}
   IsGrounded: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
@@ -1370,6 +1376,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
+--- !u!114 &313406335442426388 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7813488620246310627, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
+  m_PrefabInstance: {fileID: 7509303668042204407}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 531b895a5ea30dc4fac1e2be73b30bdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3444573380917267672 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5187006418399954991, guid: c2dc230073d15c1468234564b34f50c6, type: 3}

@@ -80,7 +80,7 @@ public class CustomNetworkManager : NetworkManager {
         NetworkServer.AddPlayerForConnection(_conn, player);
 
         serverManager.connectPlayer.Add(_conn.identity);
-        ChatManager.instance.CmdSendSystemMessage("Connect Player");
+        ChatManager.instance.CmdSendSystemMessage("Connect Players is " + serverManager.connectPlayer.Count);
     }
 
     /// <summary>

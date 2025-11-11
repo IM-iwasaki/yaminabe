@@ -27,21 +27,13 @@ public class CameraOptionMenu : MonoBehaviour {
         // スライダー変更イベント登録
         sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
     }
-
-    private void Update() {
-        if (Keyboard.current.escapeKey.wasPressedThisFrame) {
-            ToggleMenu();
-        }
-    }
-
     /// <summary>
     /// オプションメニュー開閉切り替え
     /// </summary>
-    private void ToggleMenu() {
+    public void ToggleMenu() {
         isOpen = !isOpen;
         optionCanvas.enabled = isOpen;
 
-        Cursor.visible = isOpen;
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
     }
 

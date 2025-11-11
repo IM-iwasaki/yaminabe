@@ -24,6 +24,27 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
+        //ここで準備完了かどうか判定を取って全員準備完了ならゲームシーンに移動
+        foreach(var player in ServerManager.instance.connectPlayer) {
+            CharacterBase readyPlayer = player.GetComponent<CharacterBase>();
+            //そもそもPlayerが取れていない
+            if (!readyPlayer) {
+                ChatManager.instance.CmdSendSystemMessage("Not found player Info");
+                return;
+            }
+            //準備未完了なら
+            if(!readyPlayer.ready)
+            {
+                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().PlayerName + " is not ready!!");
+                return;
+            }
+            else {
+                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().PlayerName + " is ready!!");
+            }
+        }
+        //チーム決め
+        ServerManager.instance.RandomTeamDecide();
+
         //フェードアウト
         if (!isChanged) {
             isChanged = true;
