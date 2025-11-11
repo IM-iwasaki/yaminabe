@@ -348,14 +348,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     private void CmdChangePlayerReady() {
         ready = !ready;
-        ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
-
-        if(!isLocalPlayer) {
-            //カメラを暗くする
-        gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
-        //フェードアウトさせる
-        FadeManager.Instance.StartFadeOut(2.5f);
-        }        
+        ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);   
     }
 
     /// <summary>
