@@ -16,7 +16,7 @@ public class GeneralCharacterStatusAssistance : Editor {
         //BaseStatusを探して自動でアタッチ
         var BaseStatus = AssetDatabase.LoadAssetAtPath<StatusBase>(StatusBasePath);
         if (BaseStatus != null)  EditorUtility.SetDirty(this);
-        else Debug.LogWarning($"BaseStatusが見つかりません: {StatusBasePath}");
+        else Debug.LogWarning($"BaseStatusが見つかりません: { StatusBasePath }");
         serializedObject.FindProperty("baseStatus").objectReferenceValue = BaseStatus;
 
         //プロパティを表示

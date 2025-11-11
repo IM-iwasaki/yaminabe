@@ -639,7 +639,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 追加:タハラ
     /// プレイヤーの準備状態切り替え
     /// </summary>
     /// <param name="context"></param>
