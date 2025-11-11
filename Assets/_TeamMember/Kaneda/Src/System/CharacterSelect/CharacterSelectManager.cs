@@ -1,5 +1,6 @@
 using Mirror;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +8,7 @@ using UnityEngine;
 /// ・UI表示/非表示、プレイヤー操作停止、CameraChangeController呼び出しを管理
 /// </summary>
 public class CharacterSelectManager : NetworkBehaviour {
+
     #region 変数定義
 
     //  定数
@@ -26,7 +28,10 @@ public class CharacterSelectManager : NetworkBehaviour {
     [SerializeField] private SelectObjectManager selectObj;
 
     // 現在選択中のプレイヤー
-    private GameObject currentPlayer; 
+    private GameObject currentPlayer;
+
+    //  カーソルのOnOff
+    private bool isOpen;
 
     //  キャラクターを毎秒どれだけ回転させるか
     private Vector3 characterRotation = new Vector3(0, 50f, 0);
@@ -73,6 +78,9 @@ public class CharacterSelectManager : NetworkBehaviour {
         Transform skin = FindChildWithTag(parent, SKIN_TAG);
         skin.gameObject.SetActive(false);
 
+        //  カーソルをOnにする
+        ChangeCursorView();
+
         // 移動完了後にUIを表示する場合は、
         // CameraChangeControllerのコルーチンが終わったタイミングで呼ぶか
         // ここで遅延コルーチンを追加しても良い
@@ -96,6 +104,14 @@ public class CharacterSelectManager : NetworkBehaviour {
         // カメラを戻す
         if (cameraManager != null)
             cameraManager.ReturnCamera();
+
+        //  プレイヤーの見た目表示
+        Transform parent = currentPlayer.transform;
+        Transform skin = FindChildWithTag(parent, SKIN_TAG);
+        skin.gameObject.SetActive(true);
+
+        //  カーソルをOffにする
+        ChangeCursorView();
 
         currentPlayer = null;
     }
@@ -136,6 +152,19 @@ public class CharacterSelectManager : NetworkBehaviour {
         // 見つからなかった場合
         return null;
     }
+    #endregion
+
+    #region カーソルONOFF
+
+    /// <summary>
+    /// カーソルをOnOffする
+    /// </summary>
+    private void ChangeCursorView() {
+        isOpen = !isOpen;
+
+        Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
     #endregion
 
 }
