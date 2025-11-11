@@ -79,6 +79,7 @@ GameObject:
   - component: {fileID: 5651099519957018272}
   - component: {fileID: 8394261901866962481}
   - component: {fileID: 2825701905452532873}
+  - component: {fileID: -6841856271005435986}
   - component: {fileID: 6873416365445896134}
   m_Layer: 0
   m_Name: Soldier
@@ -439,6 +440,22 @@ MonoBehaviour:
   syncInterval: 0
   weaponData: {fileID: 11400000, guid: 4f55e02b6cd92db4fa746fc1d4e29f1c, type: 2}
   firePoint: {fileID: 878125566127400802}
+--- !u!114 &-6841856271005435986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5478059386412428429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e200804c269b8b34ab3803478f6c1526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  subWeaponData: {fileID: 11400000, guid: 8fa2c4c5f7650b747899e553f2c38e25, type: 2}
 --- !u!114 &6873416365445896134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -455,16 +472,19 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   HP: 0
-  Attack: 0
-  MoveSpeed: 0
+  attack: 0
+  moveSpeed: 5
   TeamID: -1
   PlayerName: Default
+  score: 0
   firePoint: {fileID: 878125566127400802}
   UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
+  playerId: -1
   weaponController: {fileID: 2825701905452532873}
+  IsGrounded: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
-  InputStatus: {fileID: 11400000, guid: 858d6782e6c183046af5d743d9d5b7e1, type: 2}
+  inputStatus: {fileID: 11400000, guid: 858d6782e6c183046af5d743d9d5b7e1, type: 2}
 --- !u!1 &8141346529666802218
 GameObject:
   m_ObjectHideFlags: 0

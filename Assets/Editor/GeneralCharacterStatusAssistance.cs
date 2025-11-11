@@ -21,14 +21,15 @@ public class GeneralCharacterStatusAssistance : Editor {
 
         //プロパティを表示
         EditorGUILayout.PropertyField(serializedObject.FindProperty("baseStatus"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("ChatacterType"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("displayName"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("chatacterType"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("maxHPCorrection"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("attackCorrection"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("speedCorrection"));
 
         EditorGUILayout.Space();
         //キャラクタータイプで分岐
-        switch (obj.ChatacterType) {
+        switch (obj.chatacterType) {
             case CharacterEnum.CharaterType.Melee:
                 EditorGUILayout.LabelField("近接職専用ステータスはまだありません！", EditorStyles.boldLabel);
                 break;

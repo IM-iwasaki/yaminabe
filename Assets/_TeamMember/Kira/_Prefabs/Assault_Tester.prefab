@@ -1002,7 +1002,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  subWeaponData: {fileID: 11400000, guid: 8fa2c4c5f7650b747899e553f2c38e25, type: 2}
+  subWeaponData: {fileID: 11400000, guid: 540c6cc0a970ca846a8652f19432467f, type: 2}
 --- !u!114 &6873416365445896134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1031,7 +1031,7 @@ MonoBehaviour:
   weaponController: {fileID: 2825701905452532873}
   IsGrounded: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
-  InputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
+  inputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
 --- !u!1 &5530330866741509323
 GameObject:
   m_ObjectHideFlags: 0

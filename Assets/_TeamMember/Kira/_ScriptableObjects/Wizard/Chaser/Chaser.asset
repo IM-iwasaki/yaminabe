@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Chaser
   m_EditorClassIdentifier: 
   baseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
-  displayName: 
+  displayName: "\u30C1\u30A7\u30A4\u30B5\u30FC"
   skills:
   - {fileID: 11400000, guid: 41b3e8762c0ff934e90c4a57a1d02e07, type: 2}
   passives:
   - {fileID: 11400000, guid: e33c413bf05ba0f48a52d1e72c1dff96, type: 2}
-  ChatacterType: 1
+  chatacterType: 1
   maxHPCorrection: -10
   attackCorrection: -7
   speedCorrection: 1
