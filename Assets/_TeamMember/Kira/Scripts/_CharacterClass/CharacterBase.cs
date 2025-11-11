@@ -295,6 +295,13 @@ public abstract class CharacterBase : NetworkBehaviour {
         //HPの減算処理
         HP -= (int)damage;
 
+        //　nameをスコア加算関数み送る
+        if (HP <= 0) {
+            if (PlayerListManager.Instance != null) {
+                PlayerListManager.Instance.AddScoreByName(_name, 100);
+            }
+        }
+
         //HPが0以下になったとき死亡していなかったら死亡処理を行う
         if (HP <= 0) Dead(_name);
     }
@@ -421,20 +428,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         //ログを表示
         ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<GeneralCharacter>().PlayerName + " is joined " + newTeam + " team ");
     }
-
-    /// <summary>
-    /// スコア加算
-    /// </summary>
-    /// <param name="value"></param>
-    [Server]
-    public void AddMyScore(int value) {
-        // 自分にスコアを加算
-        if (PlayerListManager.Instance != null)
-            PlayerListManager.Instance.PlayerAddScore(this, value);
-
-        Debug.Log($"[CharacterBase] {PlayerName} にスコア +{value}");
-    }
-
 
 
     #endregion
