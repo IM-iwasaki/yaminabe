@@ -2,7 +2,9 @@ using UnityEngine;
 using Mirror;
 using System.Collections;
 
-
+/// <summary>
+/// ’n—‹
+/// </summary>
 public class LandMine : TrapBase {
     private float explosionRadius;
     private int damage;
@@ -38,12 +40,20 @@ public class LandMine : TrapBase {
         }
     }
 
+    /// <summary>
+    /// ”š”­‚Ü‚Å‘Ò‹@
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
     [Server]
     private IEnumerator TimerExplosionRoutine(float delay) {
         yield return new WaitForSeconds(delay);
         if (!hasTriggered) Explode();
     }
 
+    /// <summary>
+    /// ”š”­
+    /// </summary>
     [Server]
     private void Explode() {
         hasTriggered = true;

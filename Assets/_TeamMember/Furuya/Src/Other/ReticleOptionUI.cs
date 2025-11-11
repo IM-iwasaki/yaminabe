@@ -25,7 +25,10 @@ public class ReticleOptionUI : MonoBehaviour {
         }
     }
 
-    // Next / Prev / Apply / Cancel はすべてローカルのみ有効
+    /// <summary>
+    /// Next / Prev / Apply / Cancel はすべてローカルのみ有効
+    /// それぞれ名前の通りの処理をする
+    /// </summary>
     public void OnNextButton() {
         if (!CheckLocal()) return;
         if (reticles == null || reticles.Length == 0) return;
@@ -47,7 +50,7 @@ public class ReticleOptionUI : MonoBehaviour {
         Sprite s = reticles[currentIndex];
         HudManager.Instance?.SetReticleSprite(s);
         cachedHudSprite = s;
-        // 必要なら PlayerPrefs やサーバ同期をここで行う（別実装）
+        // 必要なら PlayerPrefs やサーバ同期をここで行う
     }
 
     public void OnCancelButton() {
@@ -58,6 +61,9 @@ public class ReticleOptionUI : MonoBehaviour {
         currentIndex = idx >= 0 ? idx : 0;
     }
 
+    /// <summary>
+    /// プレビューを適用
+    /// </summary>
     private void ApplyPreviewToBoth() {
         if (reticles == null || reticles.Length == 0) return;
         Sprite s = reticles[currentIndex];
@@ -65,6 +71,10 @@ public class ReticleOptionUI : MonoBehaviour {
         HudManager.Instance?.SetReticleSprite(s);
     }
 
+
+    /// <summary>
+    /// スプライト名から番号取得
+    /// </summary>
     private int GetIndexFromSprite(Sprite s) {
         if (s == null || reticles == null) return -1;
         for (int i = 0; i < reticles.Length; i++)
@@ -72,7 +82,9 @@ public class ReticleOptionUI : MonoBehaviour {
         return -1;
     }
 
-    // 初期化済みかつローカルかチェック。false なら何もしない。
+    /// <summary>
+    /// 初期化済みかつローカルかチェック。false なら何もしない。
+    /// </summary>
     private bool CheckLocal() {
         if (!initialized) {
             Debug.LogWarning("ReticleOptionUI: not initialized. Call Initialize(isLocal) after instantiation.");

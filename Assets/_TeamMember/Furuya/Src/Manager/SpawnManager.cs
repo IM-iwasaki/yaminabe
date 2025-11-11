@@ -20,6 +20,10 @@ public class SpawnManager : NetworkSystemObject<SpawnManager> {
         return obj;
     }
 
+    /// <summary>
+    /// オブジェクト破棄用
+    /// </summary>
+    /// <param name="go">破棄するオブジェクト</param>
     [Server]
     public void DestroyNetworkObject(GameObject go) {
         if (go == null) return;

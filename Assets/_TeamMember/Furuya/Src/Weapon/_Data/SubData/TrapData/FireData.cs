@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "SubWeapons/Trap/FireTrap")]
+/// <summary>
+/// ‰Šƒgƒ‰ƒbƒv
+/// </summary>
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Trap/FireTrap")]
 public class FireData : TrapData
 {
     [Header("Fire Settings")]

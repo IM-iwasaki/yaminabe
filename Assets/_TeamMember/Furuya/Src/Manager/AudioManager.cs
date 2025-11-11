@@ -12,9 +12,6 @@ using Mirror;
 /// ワールド系SE→ AudioManager.Instance.CmdPlayWorldSE("GunShot", transform.position);
 /// パーソナル系SE→ AudioManager.Instance.CmdPlayUISE("ButtonClick");
 /// </summary>
-
-
-
 public class AudioManager : NetworkSystemObject<AudioManager> {
     [System.Serializable]
     public class AudioData {
@@ -33,7 +30,9 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
     private AudioSource bgmSource;
     private Coroutine fadeCoroutine;
 
+    // ======================
     // --- 初期化 ---
+    // ======================
     public override void Initialize() {
         if (!NetworkServer.active) return;
 

@@ -2,6 +2,9 @@ using Mirror;
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// トラップベース
+/// </summary>
 public struct TrapInitData {
     public int teamID;
     public string ownerName;
@@ -30,6 +33,11 @@ public abstract class TrapBase : NetworkBehaviour {
         isActivated = true;
     }
 
+    /// <summary>
+    /// クライアントにエフェクト表示
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="effectType"></param>
     [ClientRpc(includeOwner = true)]
     protected void RpcPlayEffect(Vector3 pos, EffectType effectType) {
         var fx = EffectPoolRegistry.Instance.GetHitEffect(effectType);

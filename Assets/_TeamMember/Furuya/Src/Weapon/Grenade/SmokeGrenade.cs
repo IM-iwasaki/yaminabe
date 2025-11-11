@@ -1,6 +1,9 @@
 using UnityEngine;
 using Mirror;
 
+/// <summary>
+/// スモークグレネード
+/// </summary>
 public class SmokeGrenade : GrenadeBase {
     private float smokeDuration;
 
@@ -23,6 +26,9 @@ public class SmokeGrenade : GrenadeBase {
         );
     }
 
+    /// <summary>
+    /// 爆発処理
+    /// </summary>
     [Server]
     protected override void Explode() {
         if (exploded) return;

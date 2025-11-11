@@ -2,6 +2,9 @@ using UnityEngine;
 using Mirror;
 using System.Collections;
 
+/// <summary>
+/// サブ武器操作用
+/// </summary>
 public class SubWeaponController : NetworkBehaviour {
     [Header("Sub Weapon")]
     public SubWeaponData subWeaponData;
@@ -25,11 +28,17 @@ public class SubWeaponController : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// サブ武器の使用可否判定
+    /// </summary>
     public void TryUseSubWeapon() {
         if (subWeaponData == null || currentUses <= 0) return;
         CmdUseSubWeapon();
     }
 
+    /// <summary>
+    /// サブ武器使用
+    /// </summary>
     [Command]
     private void CmdUseSubWeapon() {
         if (subWeaponData == null || currentUses <= 0 || !isServer) return;
@@ -56,6 +65,9 @@ public class SubWeaponController : NetworkBehaviour {
             StartCoroutine(RechargeRoutine());
     }
 
+    /// <summary>
+    /// グレ生成
+    /// </summary>
     [Server]
     private void SpawnGrenade() {
         if (subWeaponData.ObjectPrefab == null) return;
@@ -90,6 +102,9 @@ public class SubWeaponController : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// トラップ生成
+    /// </summary>
     [Server]
     private void SpawnTrap() {
         if (subWeaponData.ObjectPrefab == null) return;
@@ -128,6 +143,10 @@ public class SubWeaponController : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// リチャージ
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator RechargeRoutine() {
         isRecharging = true;
         while (currentUses < subWeaponData.maxUses) {

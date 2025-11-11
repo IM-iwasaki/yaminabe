@@ -1,8 +1,10 @@
 using UnityEngine;
 
 
-
-[CreateAssetMenu(menuName = "Weapons/WeaponData")]
+/// <summary>
+/// •Šíƒf[ƒ^
+/// </summary>
+[CreateAssetMenu(menuName = "ScriptableObject/Weapons/WeaponData")]
 public class WeaponData : ScriptableObject, IWeaponInfo {
     public string weaponName;
     public WeaponType type;

@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// HUD変更用のマネージャー
+/// </summary>
 public class HudManager : SystemObject<HudManager> {
 
     [Tooltip("HUD 上の Reticle Image をここに割り当ててください")]
@@ -19,13 +22,19 @@ public class HudManager : SystemObject<HudManager> {
         }
     }
 
-    // HUD にスプライトを即時反映する（呼び出し元がローカルチェックを行うこと）
+    /// <summary>
+    /// HUD にスプライトを即時反映する（呼び出し元がローカルチェックを行うこと）
+    /// </summary>
+    /// <param name="s"></param>
     public void SetReticleSprite(Sprite s) {
         if (reticleImage == null) return;
         reticleImage.sprite = s;
     }
 
-    // HUD の現在スプライトを取得（必要なら）
+    /// <summary>
+    /// HUD の現在スプライトを取得（必要なら）
+    /// </summary>
+    /// <returns></returns>
     public Sprite GetReticleSprite() {
         return reticleImage != null ? reticleImage.sprite : null;
     }

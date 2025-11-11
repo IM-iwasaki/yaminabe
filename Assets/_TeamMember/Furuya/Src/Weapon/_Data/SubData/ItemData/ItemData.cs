@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 
-[CreateAssetMenu(menuName = "SubWeapons/Item")]
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Item")]
 public class ItemData : SubWeaponData {
 
 }

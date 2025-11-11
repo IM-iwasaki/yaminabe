@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-
+/// <summary>
+/// トラップベースデータ
+/// </summary>
 public class TrapData : SubWeaponData {
 
     [Header("General Settings")]

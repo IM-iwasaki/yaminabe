@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(menuName = "SubWeapons/MagicData")]
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/MagicData")]
 public class MagicData : SubWeaponData {
 
 }

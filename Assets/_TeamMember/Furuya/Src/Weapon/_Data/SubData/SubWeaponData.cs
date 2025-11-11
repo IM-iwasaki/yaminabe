@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// サブ武器データ
+/// </summary>
 public abstract class SubWeaponData : ScriptableObject, IWeaponInfo {
     [Header("Basic Info")]
     public string subWeaponName;

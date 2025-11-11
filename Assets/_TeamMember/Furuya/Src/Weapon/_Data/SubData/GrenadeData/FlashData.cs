@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "SubWeapons/Grenade/FlashGrenade")]
+/// <summary>
+/// フラッシュグレネード
+/// </summary>
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Grenade/FlashGrenade")]
 public class FlashData : GrenadeData
 {
     [Header("Settings")]

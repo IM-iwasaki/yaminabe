@@ -1,6 +1,9 @@
 using Mirror;
 using UnityEngine;
 
+/// <summary>
+/// ネットワークマネージャーの拡張
+/// </summary>
 public class MyNetworkManager : NetworkManager {
     public override void OnStartServer() {
         base.OnStartServer();

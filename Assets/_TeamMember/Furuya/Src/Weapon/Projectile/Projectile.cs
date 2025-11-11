@@ -51,11 +51,18 @@ public class Projectile : NetworkBehaviour {
         Deactivate();
     }
 
+    /// <summary>
+    /// 自動非アクティブ化
+    /// </summary>
+    /// <returns></returns>
     IEnumerator AutoDisable() {
         yield return new WaitForSeconds(lifetime);
         Deactivate();
     }
 
+    /// <summary>
+    /// 非アクティブ化
+    /// </summary>
     [Server]
     private void Deactivate() {
         rb.velocity = Vector3.zero;
@@ -68,6 +75,11 @@ public class Projectile : NetworkBehaviour {
             NetworkServer.Destroy(gameObject);
     }
 
+    /// <summary>
+    /// クライアントエフェクト表示
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="effectType"></param>
     [ClientRpc(includeOwner = true)]
     void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
 

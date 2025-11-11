@@ -37,6 +37,10 @@ public class SystemManager : MonoBehaviour {
         // dedicated server またはホストが後から起動するケースは NetworkManager.OnStartServer() から SpawnNetworkSystems() を呼んでください。
     }
 
+
+    /// <summary>
+    /// ローカル用システムオブジェクトを生成
+    /// </summary>
     void InstantiateLocalSystems() {
         if (systemObjectPrefabs == null || systemObjectPrefabs.Count == 0) return;
 

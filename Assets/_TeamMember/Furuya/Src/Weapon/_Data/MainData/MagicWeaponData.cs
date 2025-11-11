@@ -1,7 +1,10 @@
 using UnityEngine;
 
 
-[CreateAssetMenu(menuName = "Weapons/MagicWeaponData")]
+/// <summary>
+/// 魔法武器データ
+/// </summary>
+[CreateAssetMenu(menuName = "ScriptableObject/Weapons/MagicWeaponData")]
 public class MagicWeaponData : WeaponData {
     [Header("Magic Settings")]
     public ParticleSystem chargeEffect;

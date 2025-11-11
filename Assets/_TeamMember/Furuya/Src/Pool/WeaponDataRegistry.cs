@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 名前保存用
+/// </summary>
 public interface IWeaponInfo {
     string WeaponName { get; }
 }
@@ -16,6 +19,9 @@ public class WeaponDataRegistry : MonoBehaviour {
         RegisterAll();
     }
 
+    /// <summary>
+    /// 内容確認
+    /// </summary>
     private void RegisterAll() {
         weaponDict.Clear();
 

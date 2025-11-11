@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-[CreateAssetMenu(menuName = "SubWeapons/Trap/SpikeTrap")]
+/// <summary>
+/// êjÉfÅ[É^
+/// </summary>
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Trap/SpikeTrap")]
 public class SpikeData : TrapData {
 
     [Header("Damage Settings")]

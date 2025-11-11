@@ -2,6 +2,9 @@
 using Mirror;
 using System.Collections;
 
+/// <summary>
+/// 魔法
+/// </summary>
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class MagicProjectile : NetworkBehaviour {
     private ProjectileType type = ProjectileType.Linear;
@@ -72,11 +75,18 @@ public class MagicProjectile : NetworkBehaviour {
         Deactivate();
     }
 
+    /// <summary>
+    /// 自動で不可視
+    /// </summary>
+    /// <returns></returns>
     IEnumerator AutoDisable() {
         yield return new WaitForSeconds(lifetime);
         Deactivate();
     }
 
+    /// <summary>
+    /// 非アクティブ化
+    /// </summary>
     [Server]
     private void Deactivate() {
         rb.velocity = Vector3.zero;
@@ -89,6 +99,11 @@ public class MagicProjectile : NetworkBehaviour {
             NetworkServer.Destroy(gameObject);
     }
 
+    /// <summary>
+    /// クライアントエフェクト表示
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="effectType"></param>
     [ClientRpc(includeOwner = true)]
     void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
         if (effectType == EffectType.Default) return;

@@ -2,8 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-#if UNITY_EDITOR
 
+/// <summary>
+/// EnumêÈåæóp
+/// </summary>
+#if UNITY_EDITOR
 public class ExplosionDebugCircle : MonoBehaviour {
     private float radius;
     private Color color;

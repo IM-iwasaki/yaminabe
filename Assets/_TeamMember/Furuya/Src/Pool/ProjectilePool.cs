@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// •úË•¨‚Ìƒv[ƒ‹
+/// </summary>
 public class ProjectilePool : NetworkBehaviour {
     public static ProjectilePool Instance;
 

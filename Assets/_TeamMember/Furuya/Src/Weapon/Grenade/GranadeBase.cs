@@ -3,6 +3,9 @@ using Mirror;
 using System.Collections;
 using UnityEditor;
 
+/// <summary>
+/// グレネードの基礎データ
+/// </summary>
 public class GrenadeBase : NetworkBehaviour {
     [SyncVar] private int ownerTeamID;
     private string ownerName;
@@ -37,6 +40,11 @@ public class GrenadeBase : NetworkBehaviour {
         StartCoroutine(FuseRoutine(explosionDelay));
     }
 
+    /// <summary>
+    /// 爆発まで待機
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
     [Server]
     private IEnumerator FuseRoutine(float delay) {
         yield return new WaitForSeconds(delay);
@@ -44,6 +52,9 @@ public class GrenadeBase : NetworkBehaviour {
         ReturnToPool();
     }
 
+    /// <summary>
+    /// 爆発処理
+    /// </summary>
     [Server]
     protected virtual void Explode() {
         if (exploded) return;
@@ -69,6 +80,12 @@ public class GrenadeBase : NetworkBehaviour {
 #endif
     }
 
+    /// <summary>
+    /// クライアントで爆発エフェクト表示
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="effectType"></param>
+    /// <param name="duration"></param>
     [ClientRpc(includeOwner = true)]
     protected void RpcPlayExplosion(Vector3 pos, EffectType effectType, float duration) {
         GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
@@ -79,6 +96,9 @@ public class GrenadeBase : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// プールに戻す
+    /// </summary>
     [Server]
     private void ReturnToPool() {
         if (rb != null) {

@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 武器用エフェクトプール
+/// </summary>
 public class WeaponEffectPool : NetworkBehaviour {
     public static WeaponEffectPool Instance;
 
     [System.Serializable]
     public class PoolItem {
-        //public string name;
         public GameObject prefab;
         public int size;
     }

@@ -2,6 +2,9 @@ using UnityEngine;
 using Mirror;
 using System.Collections;
 
+/// <summary>
+/// 弾頭
+/// </summary>
 public class ExplosionProjectile : NetworkBehaviour {
     private int damage;
     private float speed;
@@ -50,12 +53,23 @@ public class ExplosionProjectile : NetworkBehaviour {
         Explode();
     }
 
+    /// <summary>
+    /// 爆発まで待機
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
     [Server]
     private IEnumerator FuseRoutine(float delay) {
         yield return new WaitForSeconds(delay);
         Explode();
     }
 
+    /// <summary>
+    /// クライアントにエフェクト表示
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="effectType"></param>
+    /// <param name="duration"></param>
     [ClientRpc(includeOwner = true)]
     protected void RpcPlayExplosion(Vector3 pos, EffectType effectType, float duration) {
         GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
@@ -66,6 +80,9 @@ public class ExplosionProjectile : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// 爆発
+    /// </summary>
     [Server]
     protected virtual void Explode() {
         if (exploded) return;
@@ -92,6 +109,9 @@ public class ExplosionProjectile : NetworkBehaviour {
         Deactivate();
     }
 
+    /// <summary>
+    /// 非アクティブ化
+    /// </summary>
     [Server]
     private void Deactivate() {
         if (rb != null) {

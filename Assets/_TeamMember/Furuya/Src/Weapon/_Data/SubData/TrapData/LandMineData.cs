@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "SubWeapons/Trap/LandMine")]
+/// <summary>
+/// 地雷データ
+/// </summary>
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Trap/LandMine")]
 public class LandMineData : TrapData
 {
     [Header("Explosion Settings")]

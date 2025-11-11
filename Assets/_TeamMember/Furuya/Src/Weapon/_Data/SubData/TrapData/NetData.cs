@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "SubWeapons/Trap/NetTrap")]
+/// <summary>
+/// ñ‘ÉfÅ[É^
+/// </summary>
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Trap/NetTrap")]
 public class NetData : TrapData
 {
     [Header("Effect Settings")]

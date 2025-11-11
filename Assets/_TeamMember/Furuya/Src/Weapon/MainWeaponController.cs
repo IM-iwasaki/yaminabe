@@ -2,6 +2,9 @@
 using Mirror;
 using Mirror.BouncyCastle.Asn1.Pkcs;
 
+/// <summary>
+/// メイン武器コントローラー
+/// </summary>
 public class MainWeaponController : NetworkBehaviour {
     public WeaponData weaponData;           // メイン武器
     public Transform firePoint;
@@ -32,6 +35,10 @@ public class MainWeaponController : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// 追加攻撃用
+    /// </summary>
+    /// <param name="direction"></param>
     [Command]
     public void CmdRequestExtraAttack(Vector3 direction) {
         lastAttackTime = Time.time;
@@ -49,11 +56,19 @@ public class MainWeaponController : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// 攻撃可否判定
+    /// </summary>
+    /// <returns></returns>
     bool CanAttack() {
         // サブ武器も別クールダウンを持たせる場合は拡張可能
         return weaponData != null && Time.time >= lastAttackTime + weaponData.cooldown;
     }
 
+    /// <summary>
+    /// 武器データセット
+    /// </summary>
+    /// <param name="name"></param>
     [Command]
     public void SetWeaponData(string name) {
         var data = WeaponDataRegistry.GetWeapon(name);
@@ -185,6 +200,10 @@ public class MainWeaponController : NetworkBehaviour {
     }
 }
 
+
+/// <summary>
+/// 近接用ヒット判定可視化
+/// </summary>
 #if UNITY_EDITOR
 public class MeleeAttackDebugArc : MonoBehaviour {
     private float range;

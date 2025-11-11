@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// グレネードベースデータ
+/// </summary>
 public class GrenadeData : SubWeaponData {
 
     GrenadeType grenadeType;
