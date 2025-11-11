@@ -47,7 +47,6 @@ public class HostUI : NetworkBehaviour {
         //ÉzÉXÉgÇ≈Ç»ÇØÇÍÇŒèàóùÇµÇ»Ç¢
         if (!isServer) return;
         if (GameSceneManager.Instance != null) { 
-            gameStartButton.onClick.AddListener(ServerManager.instance.RandomTeamDecide);
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
         }
         rule.text = ruleNames[ruleIndex];
@@ -97,11 +96,8 @@ public class HostUI : NetworkBehaviour {
     /// </summary>
     /// <param name="_isVisibleFlag"></param>
     public static void ShowOrHideUI(bool _isVisibleFlag) {
-        if (_isVisibleFlag)
-            uiRootObject.SetActive(true);
-        else
-            uiRootObject.SetActive(false);
-        Cursor.lockState = _isVisibleFlag ? CursorLockMode.None : CursorLockMode.Locked;
+        uiRootObject.SetActive(_isVisibleFlag);
+        Cursor.lockState = _isVisibleFlag ? CursorLockMode.None : CursorLockMode.Locked ;
     }
 
 
