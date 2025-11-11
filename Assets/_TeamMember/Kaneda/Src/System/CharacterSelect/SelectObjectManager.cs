@@ -20,6 +20,8 @@ public class SelectObjectManager : NetworkBehaviour {
     [Header("解放していない場合に表示するUI")]
     [SerializeField] private GameObject unuseUI;
 
+    [Header("キャラクターの名前テキスト")]
+    [SerializeField] private TextMeshProUGUI nameText;
     [Header("キャラクターステータステキスト")]
     [SerializeField] private TextMeshProUGUI statusText;
 
@@ -157,6 +159,8 @@ public class SelectObjectManager : NetworkBehaviour {
         if (obj != null) Destroy(obj);
         //  使用不可能専用オブジェクトに切り替える
         obj = Instantiate(unuseObject, parent.transform);
+        //  名前テキストを切り替える
+        ChangeNameText();
         //  ステータステキストを切り替える
         ChangeStatusText();
     }
@@ -171,6 +175,8 @@ public class SelectObjectManager : NetworkBehaviour {
         localCanChange = true;
         //  キャラクターを切り替える
         ChangeCharacterObject(DEFAULT_SKIN_COUNT);
+        //  名前テキストを切り替える
+        ChangeNameText();
         //  ステータステキストを切り替える
         ChangeStatusText();
     }
@@ -197,6 +203,18 @@ public class SelectObjectManager : NetworkBehaviour {
         GameObject prefab = character.skins[skinCount].skinPrefab;
         //  子オブジェクトとして生成
         obj = Instantiate(prefab, parent.transform);
+    }
+
+    /// <summary>
+    /// 名前変更
+    /// </summary>
+    private void ChangeNameText() {
+        string characterName = character.characterName;
+        if (characterName == null) {
+            nameText.SetText("Name");
+            return;
+        }
+        nameText.SetText(characterName);
     }
 
     /// <summary>
