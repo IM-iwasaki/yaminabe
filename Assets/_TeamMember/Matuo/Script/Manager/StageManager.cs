@@ -11,9 +11,9 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
     private GameObject currentStageInstance;
     // リスポーン地点
-    private readonly SyncList<Transform> normalRespawnPoints = new();
-    private readonly SyncList<Transform> redRespawnPoints = new();
-    private readonly SyncList<Transform> blueRespawnPoints = new();
+    [SerializeField]private readonly SyncList<Transform> normalRespawnPoints = new();
+    [SerializeField]private readonly SyncList<Transform> redRespawnPoints = new();   
+    [SerializeField]private readonly SyncList<Transform> blueRespawnPoints = new();  
 
     // 現在のリスポーンモード
     private RespawnMode currentRespawnMode = RespawnMode.Team;
@@ -41,7 +41,6 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
-       
     }
 
     /// <summary>
@@ -53,16 +52,13 @@ public class StageManager : NetworkSystemObject<StageManager> {
         redRespawnPoints.Clear();
         blueRespawnPoints.Clear();
 
-        Transform RespawnRoot = GameObject.Find("RespawnPoints").transform;
-
-        foreach (Transform point in RespawnRoot.GetComponentsInChildren<Transform>(true)) {
+        foreach (Transform point in stageObj.GetComponentsInChildren<Transform>(true)) {
             if (point.CompareTag("NormalRespawnPoint"))
                 normalRespawnPoints.Add(point);
             else if (point.CompareTag("RedRespawnPoint"))
                 redRespawnPoints.Add(point);
             else if (point.CompareTag("BlueRespawnPoint"))
                 blueRespawnPoints.Add(point);
-            Debug.Log("Add point : " + point);
         }
     }
 

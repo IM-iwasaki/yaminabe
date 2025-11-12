@@ -370,8 +370,8 @@ public abstract class CharacterBase : NetworkBehaviour {
             int currentTeamID = TeamID;
             TeamID = -1;
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-            var RespownPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)TeamID);
-            NTH.CmdTeleport(RespownPos[0].transform.position,Quaternion.identity);
+            var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint");;
+            NTH.CmdTeleport(RespownPos[Random.Range(0,RespownPos.Length)].transform.position,Quaternion.identity);
 
             TeamID = currentTeamID;
         }

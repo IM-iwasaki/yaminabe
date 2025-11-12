@@ -90,7 +90,8 @@ public class PlayerUIController : NetworkBehaviour {
     public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar.value = (float)_hp / _maxHP * FIXED_RATIO;
-        if (_hp < 1)
+        
+        if (hpBar.value < 1)
             hpBarImage.gameObject.SetActive(false);
         else if (hpBar.value <= _maxHP / 5 && _hp >= 1) {
             hpBarImage.color = Color.red;
@@ -99,8 +100,6 @@ public class PlayerUIController : NetworkBehaviour {
         else if (hpBar.value <= _maxHP / 2) {
             hpBarImage.color = Color.yellow;
         }
-
-
         else {
             hpBarImage.gameObject.SetActive(true);
             hpBarImage.color = Color.green;
