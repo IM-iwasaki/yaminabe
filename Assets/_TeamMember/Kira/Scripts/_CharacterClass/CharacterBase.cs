@@ -299,8 +299,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (HP <= 0) {
             if (PlayerListManager.Instance != null) {
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
-                Dead(_name);
+                
             }
+            Dead(_name);
         }
     }
 
