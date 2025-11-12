@@ -46,8 +46,9 @@ public class ScoreListUI : MonoBehaviour {
 
         // 名前とスコアを設定
         foreach (var t in entry.GetComponentsInChildren<Text>()) {
+            // 代入するオブジェクトにName、Scoreが入っていれば取れる
             if (t.name.Contains("Name")) t.text = playerName;
-            else if (t.name.Contains("score")) t.text = score.ToString();
+            else if (t.name.Contains("Score")) t.text = score.ToString();
         }
     }
 }
