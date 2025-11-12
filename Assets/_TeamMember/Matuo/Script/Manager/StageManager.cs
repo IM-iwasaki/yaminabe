@@ -10,11 +10,10 @@ public class StageManager : NetworkSystemObject<StageManager> {
     public List<StageData> stages = new();
 
     private GameObject currentStageInstance;
-
     // リスポーン地点
-    [SyncVar,SerializeField]private List<Transform> normalRespawnPoints = new();
-    [SyncVar]private readonly List<Transform> redRespawnPoints = new();
-    [SyncVar]private readonly List<Transform> blueRespawnPoints = new();
+    private readonly SyncList<Transform> normalRespawnPoints = new();
+    private readonly SyncList<Transform> redRespawnPoints = new();
+    private readonly SyncList<Transform> blueRespawnPoints = new();
 
     // 現在のリスポーンモード
     private RespawnMode currentRespawnMode = RespawnMode.Team;
@@ -48,18 +47,22 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// <summary>
     /// ステージ内のリスポーン地点をタグから登録
     /// </summary>
+    [Server]
     private void RegisterRespawnPoints(GameObject stageObj) {
         normalRespawnPoints.Clear();
         redRespawnPoints.Clear();
         blueRespawnPoints.Clear();
 
-        foreach (Transform point in stageObj.GetComponentsInChildren<Transform>(true)) {
+        Transform RespawnRoot = GameObject.Find("RespawnPoints").transform;
+
+        foreach (Transform point in RespawnRoot.GetComponentsInChildren<Transform>(true)) {
             if (point.CompareTag("NormalRespawnPoint"))
                 normalRespawnPoints.Add(point);
             else if (point.CompareTag("RedRespawnPoint"))
                 redRespawnPoints.Add(point);
             else if (point.CompareTag("BlueRespawnPoint"))
                 blueRespawnPoints.Add(point);
+            Debug.Log("Add point : " + point);
         }
     }
 
@@ -85,7 +88,6 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// チームごとのリスポーン地点を返す
     /// </summary>
     public IReadOnlyList<Transform> GetTeamSpawnPoints(TeamData.TeamColor team) {
-        ChatManager.instance.CmdSendSystemMessage("RespawnPosCount : " + normalRespawnPoints.Count);
         return team switch {
             TeamData.TeamColor.Red => redRespawnPoints,
             TeamData.TeamColor.Blue => blueRespawnPoints,
