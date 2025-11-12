@@ -61,6 +61,8 @@ public class TitleManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         instance = this;
+
+        TitleAudio.Instance.PlayBGM("タイトル");
     }
 
     /// <summary>
@@ -69,7 +71,7 @@ public class TitleManager : MonoBehaviour {
     public void OnStartHostButton() {
         if (!once) {
             //明示的にホスト状態をtrueにし、ロビーシーンに移行
-            AudioManager.Instance.CmdPlayUISE("決定");
+            TitleAudio.Instance.PlaySE("決定");
             isHost = true;
             sender.StartSendIP();
             SceneManager.LoadScene(lobbySceneName);
@@ -87,7 +89,7 @@ public class TitleManager : MonoBehaviour {
             //IPアドレス未設定を防ぐために早期リターン
             if (ipAddress == null)
                 return;
-            AudioManager.Instance.CmdPlayUISE("決定");
+            TitleAudio.Instance.PlaySE("決定");
             if (!once) {
                 //IPアドレスが取得できたらロビーシーンに移行
                 StartCoroutine(WaitReceivedIP());
