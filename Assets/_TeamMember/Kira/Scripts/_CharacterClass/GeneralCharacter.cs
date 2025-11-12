@@ -37,13 +37,15 @@ class GeneralCharacter : CharacterBase {
 
     void Update() {
         if(!isLocalPlayer) return;  
-        //トリガーリセット関数の呼び出し
-        ResetTrigger();
+        
+        
         
         //TODO: MP管理系の処理がない。
         //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
 
-        RespawnControl();           
+        RespawnControl();    
+        //トリガーリセット関数の呼び出し
+        ResetTrigger();       
         //死んでいたら以降の処理は行わない。
         if (isDead) return;
 

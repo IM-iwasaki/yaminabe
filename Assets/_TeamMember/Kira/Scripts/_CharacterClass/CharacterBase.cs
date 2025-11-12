@@ -299,11 +299,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (HP <= 0) {
             if (PlayerListManager.Instance != null) {
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
+                Dead(_name);
             }
         }
-
-        //HPが0以下になったとき死亡していなかったら死亡処理を行う
-        if (HP <= 0) Dead(_name);
     }
 
     /// <summary>
@@ -318,9 +316,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 死亡時処理
     /// </summary>
-    [Command]
     public void Dead(string _name) {
-
+        if (!isLocalPlayer) return;
         //死亡フラグをたててHPを0にしておく
         isDead = true;
         HP = 0;
@@ -340,9 +337,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
 
-        //カメラを明るくする
+        //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
-        //フェードインさせる
+        //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
     }
 
@@ -352,6 +349,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     private void CmdChangePlayerReady() {
+        if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName)
+            return;
         ready = !ready;
         ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);   
     }
@@ -359,7 +358,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Server]
     virtual public void Respawn() {
         //死んでいなかったら即抜け
         if (!isDead) return;
@@ -738,7 +736,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン管理関数(死亡中も呼んでください。)
     /// </summary>
-    [Command]
     virtual protected void RespawnControl() {
         //死亡した瞬間の処理
         if (isDeadTrigger) {
