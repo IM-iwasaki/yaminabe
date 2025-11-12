@@ -182,20 +182,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
 
 
-        // teamScores はこのクラスのフィールドとして存在している前提
-        List<ResultScoreData> scoreList = new();
-        foreach (var kvp in teamScores) {
-            string teamName = (kvp.Key == 0) ? "Red" :
-                              (kvp.Key == 1) ? "Blue" :
-                              $"Team {kvp.Key}";
-
-            var data = new ResultScoreData {
-                PlayerName = teamName,
-                Score = (int)kvp.Value
-            };
-            scoreList.Add(data);
-        }
-      
+     
        
        
     }
