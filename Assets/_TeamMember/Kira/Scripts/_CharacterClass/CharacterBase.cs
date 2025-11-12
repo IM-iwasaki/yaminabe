@@ -294,11 +294,12 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //　nameをスコア加算関数み送る
         if (HP <= 0) {
+            Dead(_name);
             if (PlayerListManager.Instance != null) {
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
                 
             }
-            Dead(_name);
+            
         }
     }
 
@@ -314,6 +315,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 死亡時処理
     /// </summary>
+    [ClientRpc]
     public void Dead(string _name) {
         if (!isLocalPlayer) return;
         //死亡フラグをたててHPを0にしておく
@@ -340,7 +342,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
     }
-
     /// <summary>
     /// 追加:タハラ
     /// クライアント用準備状態切り替え関数
@@ -366,9 +367,13 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
+            int currentTeamID = TeamID;
+            TeamID = -1;
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
             var RespownPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)TeamID);
-            NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position, Quaternion.identity);
+            NTH.CmdTeleport(RespownPos[0].transform.position,Quaternion.identity);
+
+            TeamID = currentTeamID;
         }
 
         //リスポーン後の無敵時間にする

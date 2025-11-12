@@ -12,9 +12,9 @@ public class StageManager : NetworkSystemObject<StageManager> {
     private GameObject currentStageInstance;
 
     // リスポーン地点
-    private readonly List<Transform> normalRespawnPoints = new();
-    private readonly List<Transform> redRespawnPoints = new();
-    private readonly List<Transform> blueRespawnPoints = new();
+    [SyncVar,SerializeField]private List<Transform> normalRespawnPoints = new();
+    [SyncVar]private readonly List<Transform> redRespawnPoints = new();
+    [SyncVar]private readonly List<Transform> blueRespawnPoints = new();
 
     // 現在のリスポーンモード
     private RespawnMode currentRespawnMode = RespawnMode.Team;
@@ -42,6 +42,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
+       
     }
 
     /// <summary>
@@ -84,6 +85,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// チームごとのリスポーン地点を返す
     /// </summary>
     public IReadOnlyList<Transform> GetTeamSpawnPoints(TeamData.TeamColor team) {
+        ChatManager.instance.CmdSendSystemMessage("RespawnPosCount : " + normalRespawnPoints.Count);
         return team switch {
             TeamData.TeamColor.Red => redRespawnPoints,
             TeamData.TeamColor.Blue => blueRespawnPoints,
