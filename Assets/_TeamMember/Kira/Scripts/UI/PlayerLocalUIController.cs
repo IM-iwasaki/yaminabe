@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +12,9 @@ public class PlayerLocalUIController : MonoBehaviour {
     [SerializeField]Image[] passive_Icon;
     [SerializeField]Image passive_State;
     [SerializeField]GeneralCharacter player;
+    //[Syncvar]
+    float skillStateProgress = 0.0f;
+    float passiveStateProgress = 0.0f;
 
     void Start() {
         LocalUIChanged();
@@ -24,11 +26,14 @@ public class PlayerLocalUIController : MonoBehaviour {
             skill_State.color = Color.yellow;
         }       
         else {
-            skill_State.fillAmount = player.skillAfterTime / player.equippedSkills[0].cooldown;
+            skillStateProgress = player.skillAfterTime / player.equippedSkills[0].cooldown;
+            skill_State.fillAmount = skillStateProgress;
             skill_State.color = Color.white;           
         }
 
         if(player.equippedPassives[0].IsPassiveActive) {
+            //passiveStateProgress = player.equippedPassives[0].CoolTime / player.equippedPassives[0].Cooldown;
+            //passive_State.fillAmount = passiveStateProgress;
             passive_State.color = Color.yellow;
         }
         else {

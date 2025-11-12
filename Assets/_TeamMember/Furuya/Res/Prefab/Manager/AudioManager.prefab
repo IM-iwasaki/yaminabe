@@ -49,7 +49,25 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   initializationOrder: 0
-  bgmList: []
+  bgmList:
+  - name: "\u30B2\u30FC\u30E0"
+    clip: {fileID: 8300000, guid: 710f6c2508e8d974982aaa7723cc10fc, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 0
+    maxDistance: 0
+  - name: "\u30BF\u30A4\u30C8\u30EB"
+    clip: {fileID: 8300000, guid: eec53ef1dcd76824883177f8f12f2007, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 0
+    maxDistance: 0
+  - name: "\u30ED\u30D3\u30FC"
+    clip: {fileID: 8300000, guid: e3c96d181c6e51d4cb242e49837be2e0, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 0
+    maxDistance: 0
   worldSEList:
   - name: FireBall
     clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}
@@ -63,7 +81,25 @@ MonoBehaviour:
     pitch: 1
     minDistance: 1
     maxDistance: 75
-  uiSEList: []
+  - name: ShootRocket
+    clip: {fileID: 8300000, guid: 20f1dc2bd918f4a41b55d6afcb19b4f6, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 1
+    maxDistance: 75
+  uiSEList:
+  - name: "\u6C7A\u5B9A"
+    clip: {fileID: 8300000, guid: 72c910bb3c186904190072182620c2a6, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 0
+    maxDistance: 0
+  - name: "\u9078\u629E"
+    clip: {fileID: 8300000, guid: 3b69658535a17954c8b6ecbe329cc844, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 0
+    maxDistance: 0
 --- !u!114 &6679198665712014928
 MonoBehaviour:
   m_ObjectHideFlags: 0

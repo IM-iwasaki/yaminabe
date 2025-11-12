@@ -26,21 +26,21 @@ MonoBehaviour:
     rarity: 3
     rate: 1
   commonItems:
-  - characterName: "\u30CB\u30EF\u30C8\u30EA"
+  - characterName: Chicken
     itemName: DefaultChicken
     rate: 10
-  - characterName: "\u30A2\u30CA\u30B6\u30FC\u30A8\u30A4\u30EA\u30A2\u30F3"
+  - characterName: DefaultCharacter
     itemName: AnotherDefault
     rate: 10
   rareItems:
-  - characterName: "\u30C7\u30D5\u30A9\u30EB\u30C8\u30AD\u30E3\u30E9"
+  - characterName: DefaultCharacter
     itemName: GoldDefault
     rate: 10
   epicItems:
-  - characterName: "\u30CB\u30EF\u30C8\u30EA"
+  - characterName: Chicken
     itemName: CrazyChicken
     rate: 9
   legendaryItems:
-  - characterName: "\u30CB\u30EF\u30C8\u30EA"
+  - characterName: Chicken
     itemName: GoldChicken
     rate: 10

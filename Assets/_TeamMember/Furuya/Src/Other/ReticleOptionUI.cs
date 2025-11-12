@@ -32,6 +32,7 @@ public class ReticleOptionUI : MonoBehaviour {
     public void OnNextButton() {
         if (!CheckLocal()) return;
         if (reticles == null || reticles.Length == 0) return;
+        AudioManager.Instance.CmdPlayUISE("‘I‘ð");
         currentIndex = (currentIndex + 1) % reticles.Length;
         ApplyPreviewToBoth();
     }
@@ -39,6 +40,7 @@ public class ReticleOptionUI : MonoBehaviour {
     public void OnPreviousButton() {
         if (!CheckLocal()) return;
         if (reticles == null || reticles.Length == 0) return;
+        AudioManager.Instance.CmdPlayUISE("‘I‘ð");
         currentIndex--;
         if (currentIndex < 0) currentIndex = reticles.Length - 1;
         ApplyPreviewToBoth();

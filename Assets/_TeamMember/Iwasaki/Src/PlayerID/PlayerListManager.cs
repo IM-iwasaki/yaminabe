@@ -6,6 +6,7 @@ using System.Collections.Generic;
 /// 現在のプレイヤー一覧をサーバーで管理するマネージャー
 /// 名前・ID・スコアを一元管理
 /// ID（0〜5）を自動的に割り当て、抜けたら前詰めする
+/// スコア加算　スコア送信
 /// </summary>
 public class PlayerListManager : NetworkBehaviour {
     public static PlayerListManager Instance;
@@ -159,6 +160,40 @@ public class PlayerListManager : NetworkBehaviour {
         Debug.Log("[PlayerListManager] リザルト用データを作成しました");
         return list;
     }
+
+
+    //==============================================================
+    // ▼ リザルト送信処理（名前＋スコア付き）
+    //==============================================================
+
+    /// <summary>
+    /// 現在の全プレイヤーの名前とスコアをリザルトに送信
+    /// </summary>
+    [Server]
+    public void SendScoresToResult() {
+        if (ResultManager.Instance == null) {
+            Debug.LogWarning("[PlayerListManager] ResultManagerが見つかりません。");
+            return;
+        }
+
+        // 名前とスコアをまとめて取得
+        List<ResultScoreData> scoreList = GetResultDataList();
+
+        // リザルトデータを作成
+        ResultManager.ResultData resultData = new ResultManager.ResultData {
+            isTeamBattle = false,                // チーム戦でなければfalse
+            winnerName = "スコア一覧",           // 今は仮のタイトル（勝敗判定は別処理）
+            scores = scoreList.ToArray()         // ← ここに名前＋スコアが入ってる
+        };
+
+        // 全クライアントへ送信
+        ResultManager.Instance.ShowResult(resultData);
+        Debug.Log("[PlayerListManager] 名前とスコアをResultManagerへ送信しました。");
+    }
+
+
+
+
 
     //==============================================================
     // ▼ 補助関数

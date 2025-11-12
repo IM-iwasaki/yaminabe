@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 /// <summary>
@@ -28,6 +29,9 @@ public class GachaSystem : MonoBehaviour {
     [SerializeField] private Animator gachaAnim;
 
     private GameObject currentPlayer; // 現在選択中のプレイヤー
+
+    //  カーソルOnOff
+    private bool isOpen;
 
     private void Awake() {
         gachaUI.SetActive(false);
@@ -171,6 +175,9 @@ public class GachaSystem : MonoBehaviour {
         Transform skin = FindChildWithTag(parent, SKIN_TAG);
         skin.gameObject.SetActive(false);
 
+        //  カーソルOn
+        ChangeCursorView();
+
         // 移動完了後にUIを表示する場合は、
         // CameraChangeControllerのコルーチンが終わったタイミングで呼ぶか
         // ここで遅延コルーチンを追加しても良い
@@ -200,6 +207,9 @@ public class GachaSystem : MonoBehaviour {
         // カメラを戻す
         if (cameraManager != null)
             cameraManager.ReturnCamera();
+
+        //  カーソルOff
+        ChangeCursorView();
 
         currentPlayer = null;
     }
@@ -240,6 +250,20 @@ public class GachaSystem : MonoBehaviour {
     }
     #endregion
 
+    #region カーソルONOFF
+
+    /// <summary>
+    /// カーソルをOnOffする
+    /// </summary>
+    private void ChangeCursorView() {
+        isOpen = !isOpen;
+
+        Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    #endregion
+
+    #region ガチャアニメーション
     private void OnGachaAnim() {
         //  アニメーション追加
         gachaAnim.SetBool("Open", true);
@@ -255,5 +279,7 @@ public class GachaSystem : MonoBehaviour {
         yield return null;
         OnGachaAnim();
     }
+
+    #endregion
 
 }

@@ -177,27 +177,13 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             winnerName = "Blue";
         else
             winnerName = "Draw";
+        // 勝敗と名前とスコアを一括で表示してる
+        ResultManager.Instance?.OnTeamResultReceived(winnerName, true);
 
-        // teamScores はこのクラスのフィールドとして存在している前提
-        List<ResultScoreData> scoreList = new();
-        foreach (var kvp in teamScores) {
-            string teamName = (kvp.Key == 0) ? "Red" :
-                              (kvp.Key == 1) ? "Blue" :
-                              $"Team {kvp.Key}";
 
-            var data = new ResultScoreData {
-                PlayerName = teamName,
-                Score = (int)kvp.Value
-            };
-            scoreList.Add(data);
-        }
 
-        var resultData = new ResultManager.ResultData {
-            isTeamBattle = true,
-            winnerName = winnerName,
-            scores = scoreList.ToArray()
-        };
-
-        ResultManager.Instance.ShowResult(resultData);
+     
+       
+       
     }
 }

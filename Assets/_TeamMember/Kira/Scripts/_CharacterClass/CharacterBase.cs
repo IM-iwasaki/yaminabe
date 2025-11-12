@@ -242,10 +242,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             PlayerListManager.Instance.RegisterPlayer(this);
         }
     }
-    public override void OnStartServer() {
-        base.OnStartServer();
-        if (PlayerListManager.Instance != null) PlayerListManager.Instance.RegisterPlayer(this);
-    }
+    // 名前をリストから消す
     public override void OnStopServer() {
         base.OnStopServer();
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.UnregisterPlayer(this);
@@ -297,13 +294,13 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //　nameをスコア加算関数み送る
         if (HP <= 0) {
+            Dead(_name);
             if (PlayerListManager.Instance != null) {
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
+                
             }
+            
         }
-
-        //HPが0以下になったとき死亡していなかったら死亡処理を行う
-        if (HP <= 0) Dead(_name);
     }
 
     /// <summary>
@@ -318,9 +315,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 死亡時処理
     /// </summary>
-    [Command]
+    [ClientRpc]
     public void Dead(string _name) {
-
+        if (!isLocalPlayer) return;
         //死亡フラグをたててHPを0にしておく
         isDead = true;
         HP = 0;
@@ -339,14 +336,20 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
-    }
 
+        //カメラを暗くする
+        gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
+        //フェードアウトさせる
+        FadeManager.Instance.StartFadeOut(2.5f);
+    }
     /// <summary>
     /// 追加:タハラ
     /// クライアント用準備状態切り替え関数
     /// </summary>
     [Command]
     private void CmdChangePlayerReady() {
+        if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName)
+            return;
         ready = !ready;
         ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);   
     }
@@ -354,7 +357,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン関数
     /// </summary>
-    [Server]
     virtual public void Respawn() {
         //死んでいなかったら即抜け
         if (!isDead) return;
@@ -365,9 +367,13 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
+            int currentTeamID = TeamID;
+            TeamID = -1;
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-            var RespownPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)TeamID);
-            NTH.ServerTeleport(RespownPos[Random.Range(0, RespownPos.Count)].transform.position, Quaternion.identity);
+            var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint");;
+            NTH.CmdTeleport(RespownPos[Random.Range(0,RespownPos.Length)].transform.position,Quaternion.identity);
+
+            TeamID = currentTeamID;
         }
 
         //リスポーン後の無敵時間にする
@@ -639,7 +645,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 追加:タハラ
     /// プレイヤーの準備状態切り替え
     /// </summary>
     /// <param name="context"></param>
@@ -734,7 +739,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン管理関数(死亡中も呼んでください。)
     /// </summary>
-    [Command]
     virtual protected void RespawnControl() {
         //死亡した瞬間の処理
         if (isDeadTrigger) {

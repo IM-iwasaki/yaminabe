@@ -49,7 +49,7 @@ public class UDPListener : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public IEnumerator ReceiveMessageFromBroadcaster() {
-        IPEndPoint localEP = new IPEndPoint(IPAddress.Any, 9876);
+        IPEndPoint localEP = new IPEndPoint(IPAddress.Any, 55555);
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.SetSocketOption(SocketOptionLevel.Socket,SocketOptionName.ReuseAddress,true);
         socket.Bind(localEP);

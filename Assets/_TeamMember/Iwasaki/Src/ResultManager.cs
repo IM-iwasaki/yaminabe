@@ -16,6 +16,13 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
 
     private GameObject currentUIRoot;    // 現在のUIルート（生成後のCanvas）
     private ResultPanel currentResultPanel; // 勝敗パネル参照
+
+    // --- 勝敗＋スコア情報を一時保持する ---
+    private string cachedWinnerName;
+    private bool cachedIsTeamBattle;
+    private List<ResultScoreData> cachedScores = new();
+
+
     /// <summary>
     /// 勝敗＋スコアをまとめて送信する構造体
     /// </summary>
@@ -25,6 +32,33 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         public string winnerName;            // 勝者 or 勝利チーム名
         public ResultScoreData[] scores;     // スコア一覧
     }
+
+    // --------------------------
+    // RuleManager から呼ばれる
+    //勝敗名前スコアをまとめてリザルトを表示する
+    // --------------------------
+    [Server]
+    public void OnTeamResultReceived(string winnerName, bool isTeamBattle) {
+        cachedWinnerName = winnerName;
+        cachedIsTeamBattle = isTeamBattle;
+
+        // PlayerListManager から個人スコア取得
+        if (PlayerListManager.Instance != null)
+            cachedScores = PlayerListManager.Instance.GetResultDataList();
+
+        // まとめてリザルト表示
+        var resultData = new ResultData {
+            isTeamBattle = cachedIsTeamBattle,
+            winnerName = cachedWinnerName,
+            scores = cachedScores.ToArray()
+        };
+
+        ShowResult(resultData);
+    }
+
+
+
+
 
     //================================================================
     // サーバー側：UI生成とスコア送信

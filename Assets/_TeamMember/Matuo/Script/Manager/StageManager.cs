@@ -10,11 +10,10 @@ public class StageManager : NetworkSystemObject<StageManager> {
     public List<StageData> stages = new();
 
     private GameObject currentStageInstance;
-
     // リスポーン地点
-    private readonly List<Transform> normalRespawnPoints = new();
-    private readonly List<Transform> redRespawnPoints = new();
-    private readonly List<Transform> blueRespawnPoints = new();
+    [SerializeField]private readonly SyncList<Transform> normalRespawnPoints = new();
+    [SerializeField]private readonly SyncList<Transform> redRespawnPoints = new();   
+    [SerializeField]private readonly SyncList<Transform> blueRespawnPoints = new();  
 
     // 現在のリスポーンモード
     private RespawnMode currentRespawnMode = RespawnMode.Team;
@@ -47,6 +46,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// <summary>
     /// ステージ内のリスポーン地点をタグから登録
     /// </summary>
+    [Server]
     private void RegisterRespawnPoints(GameObject stageObj) {
         normalRespawnPoints.Clear();
         redRespawnPoints.Clear();
