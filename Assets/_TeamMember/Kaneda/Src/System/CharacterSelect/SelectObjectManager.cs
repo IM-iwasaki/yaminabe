@@ -77,9 +77,11 @@ public class SelectObjectManager : NetworkBehaviour {
     /// 左右切り替えボタン
     /// </summary>
     public void OnChangeLeft() {
+        AudioManager.Instance.CmdPlayUISE("選択");
         ChangeObject(SUB_ONE_COUNT);
     }
     public void OnChangeRight() {
+        AudioManager.Instance.CmdPlayUISE("選択");
         ChangeObject(ADD_ONE_COUNT);
     }
 

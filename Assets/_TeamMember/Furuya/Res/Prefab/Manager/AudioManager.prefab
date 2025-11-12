@@ -62,6 +62,12 @@ MonoBehaviour:
     pitch: 1
     minDistance: 0
     maxDistance: 0
+  - name: "\u30ED\u30D3\u30FC"
+    clip: {fileID: 8300000, guid: e3c96d181c6e51d4cb242e49837be2e0, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 0
+    maxDistance: 0
   worldSEList:
   - name: FireBall
     clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}
@@ -81,7 +87,19 @@ MonoBehaviour:
     pitch: 1
     minDistance: 1
     maxDistance: 75
-  uiSEList: []
+  uiSEList:
+  - name: "\u6C7A\u5B9A"
+    clip: {fileID: 8300000, guid: 72c910bb3c186904190072182620c2a6, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 0
+    maxDistance: 0
+  - name: "\u9078\u629E"
+    clip: {fileID: 8300000, guid: 3b69658535a17954c8b6ecbe329cc844, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 0
+    maxDistance: 0
 --- !u!114 &6679198665712014928
 MonoBehaviour:
   m_ObjectHideFlags: 0

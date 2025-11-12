@@ -95,6 +95,7 @@ public class CharacterSelectManager : NetworkBehaviour {
 
         if (currentPlayer == null) return;
 
+        AudioManager.Instance.CmdPlayUISE("決定");
         selectObj.ConfirmPlayerChange(currentPlayer);
 
         // UIを非表示（戻る操作開始時）
