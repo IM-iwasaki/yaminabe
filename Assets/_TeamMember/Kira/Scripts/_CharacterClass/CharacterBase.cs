@@ -242,10 +242,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             PlayerListManager.Instance.RegisterPlayer(this);
         }
     }
-    public override void OnStartServer() {
-        base.OnStartServer();
-        if (PlayerListManager.Instance != null) PlayerListManager.Instance.RegisterPlayer(this);
-    }
+    // 名前をリストから消す
     public override void OnStopServer() {
         base.OnStopServer();
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.UnregisterPlayer(this);
