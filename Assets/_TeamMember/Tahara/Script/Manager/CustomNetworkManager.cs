@@ -62,7 +62,6 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnServerConnect(NetworkConnectionToClient _conn) {
         //もし参加人数が既定の数超えていたら
         if (NetworkServer.connections.Count >= maxConnections) {
-            Debug.Log("参加人数をオーバーしています");
             _conn.Disconnect();
             return;
         }
@@ -80,7 +79,7 @@ public class CustomNetworkManager : NetworkManager {
         NetworkServer.AddPlayerForConnection(_conn, player);
 
         serverManager.connectPlayer.Add(_conn.identity);
-        ChatManager.instance.CmdSendSystemMessage("Connect Players is " + serverManager.connectPlayer.Count);
+        ChatManager.instance.CmdSendSystemMessage(serverManager.connectPlayer.Count + "is Connected ");
     }
 
     /// <summary>

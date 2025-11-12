@@ -294,6 +294,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //　nameをスコア加算関数み送る
         if (HP <= 0) {
+            HP = 0;
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
@@ -306,9 +307,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
     /// </summary>
-    public void ChangeHP(int _, int newValue) {
-        if (!isLocalPlayer) return; // 自分のプレイヤーでなければUI更新しない
-        if (UI != null) UI.ChangeHPUI(maxHP, newValue);
+    public void ChangeHP(int _, int _newValue) {
+        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
+        if (UI != null) UI.ChangeHPUI(maxHP, _newValue);
         else Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
     }
 
@@ -320,7 +321,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (!isLocalPlayer) return;
         //死亡フラグをたててHPを0にしておく
         isDead = true;
-        HP = 0;
         //死亡トリガーを発火
         isDeadTrigger = true;
         //バフ全解除
@@ -364,7 +364,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //復活させてHPを全回復
         isDead = false;
         HP = maxHP;
-
+        //保険で明示的に処理
+        ChangeHP(maxHP,HP);
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
             int currentTeamID = TeamID;
