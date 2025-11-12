@@ -339,6 +339,11 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
+
+        //カメラを明るくする
+        gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
+        //フェードインさせる
+        FadeManager.Instance.StartFadeOut(2.5f);
     }
 
     /// <summary>
