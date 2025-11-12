@@ -102,7 +102,6 @@ class GeneralCharacter : CharacterBase {
     public void Reload() {
         magazine = maxMagazine;
     }
-
     public override void Respawn() {
         base.Respawn();
         //パッシブのセットアップ
