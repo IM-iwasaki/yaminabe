@@ -276,6 +276,17 @@ public abstract class CharacterBase : NetworkBehaviour {
         //デスカメラのリセット(保険。要らないかも)
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
     }
+    /// <summary>
+    /// 追加:タハラ
+    /// クライアント用準備状態切り替え関数
+    /// </summary>
+    [Command]
+    private void CmdChangePlayerReady() {
+        if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName)
+            return;
+        ready = !ready;
+        ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+    }
 
     /// <summary>
     /// 被弾・死亡判定関数
@@ -298,9 +309,9 @@ public abstract class CharacterBase : NetworkBehaviour {
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
-                
+
             }
-            
+
         }
     }
 
@@ -312,20 +323,38 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (UI != null) UI.ChangeHPUI(maxHP, _newValue);
         else Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
     }
+    #region 禁断の死亡処理(グロ注意)
+    ///--------------------変更:タハラ---------------------
+
+    /* 読み解くにはこれを呼んでください
+     * ①サーバーで被ダメージ処理。
+     * ②HPが0以下ならTargetRPCで対象にのみ死亡通知。
+     * ③TargetRPC内で死亡演出(ローカル)とCommand属性のリスポーン要求。
+     * ④Commandからサーバーにリスポーンを要求。
+     * ⑤Invokeはサーバーでのみ処理されるのでリスポーンとHPのリセットを一定時間後に処理。
+     * ⑥リスポーンもTargetRPCで対象にのみ処理、SyncVarはサーバーでの変更のみ同期されるのでリスポーンとは別に関数を設けています。
+     * --------------------------------------------------------------------------------------------------------------------------
+     * ※大前提として死亡判定をプレイヤーが持っている設計自体Mirror的にはアウトらしいです。
+     * ※今の諸々の死亡判定、演出、リスポーンを全て嚙合わせるためにとっても回りくどいことをしています。多分もう何も変えない方がいいゾ！
+     */
 
     /// <summary>
     /// 死亡時処理
+    /// 対象にのみ通知
     /// </summary>
-    [ClientRpc]
+    [TargetRpc]
     public void Dead(string _name) {
-        if (!isLocalPlayer) return;
+        if (isDead) return;
+        //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
         //死亡フラグをたててHPを0にしておく
         isDead = true;
+        ChatManager.instance.CmdSendSystemMessage(_name + " is Dead!!");
         //死亡トリガーを発火
         isDeadTrigger = true;
         //バフ全解除
         RemoveBuff();
-
+        //ホコを所持していたらドロップ
+        CmdDropHoko();
         //不具合防止のためフラグをいろいろ下ろす。
         isAttackPressed = false;
         isCanInteruct = false;
@@ -333,7 +362,64 @@ public abstract class CharacterBase : NetworkBehaviour {
         isCanSkill = false;
         IsJumpPressed = false;
         isMoving = false;
+        //ローカルで死亡演出
+        LocalDeadEffect(_name);
+        //遅延しつつリスポーン
+        CmdRespawnDelay();
+    }
 
+    /// <summary>
+    /// サーバーにリスポーンしたい意思を伝える
+    /// TargetRPCで死亡処理しているのでこれが必要
+    /// </summary>
+    [Command]
+    private void CmdRespawnDelay() {
+        //サーバーに通知する
+        ServerRespawnDelay();
+    }
+    /// <summary>
+    /// サーバーにホコをドロップしたいことを通知
+    /// 死んだらホコを取得するようにします
+    /// </summary>
+    [Command]
+    private void CmdDropHoko() {
+        //サーバーに通知
+        //ホコ見つける
+        CaptureHoko hoko = GameObject.Find("HokoObj").GetComponent<CaptureHoko>();
+        //ホコがそもそも見つからないなら処理しない(保険)
+        if (!hoko) return;
+        //保持者が自分なら
+        if (hoko.holder == this) {
+            //サーバーに通知
+            ServerDropHoko(hoko);
+        }
+    }
+
+    /// <summary>
+    /// ホコをドロップ
+    /// </summary>
+    /// <param name="_hoko"></param>
+    [Server]
+    private void ServerDropHoko(CaptureHoko _hoko) {
+        _hoko.Drop();
+    }
+
+    /// <summary>
+    /// HPリセット関数
+    /// TargetRPCで死亡処理しているのでこれが必要
+    /// </summary>
+    [Server]
+    private void ServerRespawnDelay() {
+        //リスポーン要求
+        Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
+        Invoke(nameof(ResetHealth), PlayerConst.RESPAWN_TIME);
+    }
+    /// <summary>
+    /// ローカル上で死亡演出
+    /// 可読性向上のためまとめました
+    /// </summary>
+    /// <param name="_name"></param>
+    private void LocalDeadEffect(string _name) {
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
 
@@ -342,37 +428,33 @@ public abstract class CharacterBase : NetworkBehaviour {
         //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
     }
-    /// <summary>
-    /// 追加:タハラ
-    /// クライアント用準備状態切り替え関数
-    /// </summary>
-    [Command]
-    private void CmdChangePlayerReady() {
-        if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName)
-            return;
-        ready = !ready;
-        ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);   
+    [Server]
+    private void ResetHealth() {
+        //ここで体力を戻す
+        HP = maxHP;
     }
 
     /// <summary>
     /// リスポーン関数
+    /// 死亡した対象にのみ通知
     /// </summary>
+    [TargetRpc]
     virtual public void Respawn() {
         //死んでいなかったら即抜け
         if (!isDead) return;
 
         //復活させてHPを全回復
         isDead = false;
-        HP = maxHP;
+        ChatManager.instance.CmdSendSystemMessage("isDead : " + isDead);
         //保険で明示的に処理
-        ChangeHP(maxHP,HP);
+        ChangeHP(maxHP, HP);
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
             int currentTeamID = TeamID;
             TeamID = -1;
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-            var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint");;
-            NTH.CmdTeleport(RespownPos[Random.Range(0,RespownPos.Length)].transform.position,Quaternion.identity);
+            var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint"); ;
+            NTH.CmdTeleport(RespownPos[Random.Range(0, RespownPos.Length)].transform.position, Quaternion.identity);
 
             TeamID = currentTeamID;
         }
@@ -382,12 +464,23 @@ public abstract class CharacterBase : NetworkBehaviour {
         //経過時間をリセット
         respownAfterTime = 0;
 
+        LoaclRespawnEffect();
+    }
+
+    /// <summary>
+    /// ローカル上での演出
+    /// 可読性向上のたまとめました
+    /// </summary>
+    private void LoaclRespawnEffect() {
         //カメラを明るくする
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
         //フェードインさせる
         FadeManager.Instance.StartFadeIn(1.0f);
     }
 
+    ///--------------------------ここまで----------------------------------
+
+    #endregion
     /// <summary>
     /// トリガー変数のリセット
     /// </summary>
