@@ -90,9 +90,9 @@ public class GrenadeBase : NetworkBehaviour {
     protected void RpcPlayExplosion(Vector3 pos, EffectType effectType, float duration) {
         GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
-            var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            var fx = EffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
-            WeaponEffectPool.Instance.ReturnToPool(fx, duration);
+            EffectPool.Instance.ReturnToPool(fx, duration);
         }
     }
 

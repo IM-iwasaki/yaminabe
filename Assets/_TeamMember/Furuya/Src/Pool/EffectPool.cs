@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 武器用エフェクトプール
+/// エフェクトプール
 /// </summary>
-public class WeaponEffectPool : NetworkBehaviour {
-    public static WeaponEffectPool Instance;
+public class EffectPool : NetworkBehaviour {
+    public static EffectPool Instance;
 
     [System.Serializable]
     public class PoolItem {

@@ -568,6 +568,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DefaultChicken
       objectReference: {fileID: 0}
+    - target: {fileID: 3548868566056176881, guid: 98d6a2fbec6271046aea2df749876bb7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6190239496853605976, guid: 98d6a2fbec6271046aea2df749876bb7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 29.8
@@ -2270,53 +2274,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3757223501899727313, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 6211715025859193141, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
       propertyPath: sceneId
       value: 3986133434
       objectReference: {fileID: 0}
-    - target: {fileID: 6763317598680910543, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6763317598680910543, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6763317598680910543, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6763317598680910543, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7247356720031809479, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_Color.b
-      value: 0.8349056
-      objectReference: {fileID: 0}
-    - target: {fileID: 7247356720031809479, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_Color.g
-      value: 0.9410293
-      objectReference: {fileID: 0}
-    - target: {fileID: 7247356720031809479, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_Color.r
-      value: 1
+    - target: {fileID: 8204533575260599121, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 33.85
       objectReference: {fileID: 0}
     - target: {fileID: 8358714206395223592, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
       propertyPath: m_Name
       value: GameLobby
       objectReference: {fileID: 0}
-    - target: {fileID: 8358714206395223592, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 2817549992573173424, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc1d1ea3cf9391141a1b10bbf32ef22b, type: 3}
@@ -2328,9 +2299,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6022999112617308031, guid: deb04a98f73286d47b32d1fe73ae507e, type: 3}
+      propertyPath: sceneId
+      value: 1142759590
+      objectReference: {fileID: 0}
     - target: {fileID: 7261606519490768246, guid: deb04a98f73286d47b32d1fe73ae507e, type: 3}
       propertyPath: m_Name
       value: WarZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 7261606519490768246, guid: deb04a98f73286d47b32d1fe73ae507e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7566587573618742126, guid: deb04a98f73286d47b32d1fe73ae507e, type: 3}
       propertyPath: m_LocalPosition.x

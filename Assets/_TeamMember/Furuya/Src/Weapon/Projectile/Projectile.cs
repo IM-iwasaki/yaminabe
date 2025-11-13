@@ -85,9 +85,9 @@ public class Projectile : NetworkBehaviour {
 
         GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
         if (prefab != null) {
-            var fx = WeaponEffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            var fx = EffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
-            WeaponEffectPool.Instance.ReturnToPool(fx, 1.5f);
+            EffectPool.Instance.ReturnToPool(fx, 1.5f);
         }
     }
 }
