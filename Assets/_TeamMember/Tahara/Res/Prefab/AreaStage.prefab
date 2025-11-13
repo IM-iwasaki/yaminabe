@@ -12480,7 +12480,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: HokoObj
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1459807013328619005, guid: f5375901ce27ca24aafc67a0c5b6037d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
