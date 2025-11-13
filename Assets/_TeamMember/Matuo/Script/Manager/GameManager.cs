@@ -31,7 +31,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
 
-        StageManager.Instance.SpawnStage(stageData);
+        StageManager.Instance.SpawnStage(stageData, rule);
 
         if (rule == GameRuleType.DeathMatch)
             StageManager.Instance.SetRespawnMode(RespawnMode.Random);

@@ -27,7 +27,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// ステージを生成（サーバー専用）
     /// </summary>
     [Server]
-    public void SpawnStage(StageData stageData) {
+    public void SpawnStage(StageData stageData, GameRuleType rule) {
         if (stageData == null || stageData.stagePrefab == null) return;
 
         // 既存ステージを削除
@@ -41,7 +41,42 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
+
+        //ルールごとに生成するオブジェクトを変更する
+        UpdateRuleObjects(rule);
     }
+
+    /// <summary>
+    /// 古谷　ルールごとのオブジェクト取得
+    /// </summary>
+    /// <param name="rule"></param>
+    void UpdateRuleObjects(GameRuleType rule) {
+        // タグ付きオブジェクトを取得
+        var areaObjects = GameObject.FindGameObjectsWithTag("AreaObject");
+        var hokoObjects = GameObject.FindGameObjectsWithTag("HokoObject");
+        var deathMatchObjects = GameObject.FindGameObjectsWithTag("DeathMatchObject");
+
+        // まず全て非表示
+        foreach (var obj in areaObjects) obj.SetActive(false);
+        foreach (var obj in hokoObjects) obj.SetActive(false);
+        foreach (var obj in deathMatchObjects) obj.SetActive(false);
+
+        // ルールに応じて表示するものを切り替え
+        switch (rule) {
+            case GameRuleType.Area:
+                foreach (var obj in areaObjects) obj.SetActive(true);
+                break;
+
+            case GameRuleType.Hoko:
+                foreach (var obj in hokoObjects) obj.SetActive(true);
+                break;
+
+            case GameRuleType.DeathMatch:
+                foreach (var obj in deathMatchObjects) obj.SetActive(true);
+                break;
+        }
+    }
+
 
     /// <summary>
     /// ステージ内のリスポーン地点をタグから登録
