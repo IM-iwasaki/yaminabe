@@ -107,15 +107,14 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
                 // 勝敗データをリザルトへ送信
                 SendTeamResultToAll(winningTeam);
-            } else {
-                Debug.LogWarning("引き分け");
-
-                // 引き分けの場合もリザルトへ送信
-                SendTeamResultToAll(-1);
             }
+        } else {
+            Debug.LogWarning("引き分け");
 
-            GameManager.Instance.EndGame();
+            // 引き分けの場合もリザルトへ送信
+            SendTeamResultToAll(-1);
         }
+            GameManager.Instance.EndGame();
     }
 
     /// <summary>
@@ -179,11 +178,5 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             winnerName = "Draw";
         // 勝敗と名前とスコアを一括で表示してる
         ResultManager.Instance?.OnTeamResultReceived(winnerName, true);
-
-
-
-     
-       
-       
     }
 }
