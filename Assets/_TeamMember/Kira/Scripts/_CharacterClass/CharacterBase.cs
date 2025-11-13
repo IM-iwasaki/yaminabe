@@ -354,7 +354,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //バフ全解除
         RemoveBuff();
         //ホコを所持していたらドロップ
-        CmdDropHoko();
+        if (RuleManager.Instance.currentRule == GameRuleType.Hoko)
+            CmdDropHoko();
         //不具合防止のためフラグをいろいろ下ろす。
         isAttackPressed = false;
         isCanInteruct = false;
