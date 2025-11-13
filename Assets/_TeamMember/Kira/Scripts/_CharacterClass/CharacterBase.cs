@@ -353,7 +353,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         isDeadTrigger = true;
         //バフ全解除
         RemoveBuff();
-
+        //ホコを所持していたらドロップ
+        CmdDropHoko();
         //不具合防止のためフラグをいろいろ下ろす。
         isAttackPressed = false;
         isCanInteruct = false;
@@ -362,7 +363,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsJumpPressed = false;
         isMoving = false;
         //ローカルで死亡演出
-        ServerDeadEffect(_name);
+        LocalDeadEffect(_name);
         //遅延しつつリスポーン
         CmdRespawnDelay();
     }
@@ -375,6 +376,32 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void CmdRespawnDelay() {
         //サーバーに通知する
         ServerRespawnDelay();
+    }
+    /// <summary>
+    /// サーバーにホコをドロップしたいことを通知
+    /// 死んだらホコを取得するようにします
+    /// </summary>
+    [Command]
+    private void CmdDropHoko() {
+        //サーバーに通知
+        //ホコ見つける
+        CaptureHoko hoko = GameObject.Find("HokoObj").GetComponent<CaptureHoko>();
+        //ホコがそもそも見つからないなら処理しない(保険)
+        if (!hoko) return;
+        //保持者が自分なら
+        if (hoko.holder == this) {
+            //サーバーに通知
+            ServerDropHoko(hoko);
+        }
+    }
+
+    /// <summary>
+    /// ホコをドロップ
+    /// </summary>
+    /// <param name="_hoko"></param>
+    [Server]
+    private void ServerDropHoko(CaptureHoko _hoko) {
+        _hoko.Drop();
     }
 
     /// <summary>
@@ -389,9 +416,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
     /// <summary>
     /// ローカル上で死亡演出
+    /// 可読性向上のためまとめました
     /// </summary>
     /// <param name="_name"></param>
-    private void ServerDeadEffect(string _name) {
+    private void LocalDeadEffect(string _name) {
         //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
         KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
 
@@ -402,7 +430,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
     [Server]
     private void ResetHealth() {
-        //ここで先に体力を戻す
+        //ここで体力を戻す
         HP = maxHP;
     }
 
@@ -436,6 +464,14 @@ public abstract class CharacterBase : NetworkBehaviour {
         //経過時間をリセット
         respownAfterTime = 0;
 
+        LoaclRespawnEffect();
+    }
+
+    /// <summary>
+    /// ローカル上での演出
+    /// 可読性向上のたまとめました
+    /// </summary>
+    private void LoaclRespawnEffect() {
         //カメラを明るくする
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
         //フェードインさせる

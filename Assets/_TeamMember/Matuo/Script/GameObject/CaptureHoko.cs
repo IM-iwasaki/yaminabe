@@ -12,7 +12,7 @@ public class CaptureHoko : CaptureObjectBase {
     public float countSpeed = 1f;
 
     [SyncVar] private bool isHeld = false;             // プレイヤーが保持しているか
-    [SyncVar] private NetworkIdentity holder;          // ホコを持つプレイヤー
+    [SyncVar] public NetworkIdentity holder;          // ホコを持つプレイヤー
     private Rigidbody rb;
     [SerializeField] private Collider hokoCollider;
 
