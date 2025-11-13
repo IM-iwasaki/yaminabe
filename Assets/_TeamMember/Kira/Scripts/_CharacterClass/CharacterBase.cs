@@ -374,6 +374,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     private void CmdRespawnDelay() {
+        //RpcPlayDeathEffect();
         //サーバーに通知する
         ServerRespawnDelay();
     }
@@ -479,6 +480,25 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     ///--------------------------ここまで----------------------------------
+
+    //ここから古谷が追加
+    //エフェクト表示のための関数
+
+    /// <summary>
+    /// クライアントエフェクト表示
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="effectType"></param>
+    [ClientRpc(includeOwner = true)]
+    void RpcPlayDeathEffect() {
+
+        GameObject prefab = EffectPoolRegistry.Instance.GetDeathEffect(default);
+        if (prefab != null) {
+            var fx = EffectPool.Instance.GetFromPool(prefab, transform.position, Quaternion.identity);
+            fx.SetActive(true);
+            EffectPool.Instance.ReturnToPool(fx, 1.5f);
+        }
+    }
 
     #endregion
     /// <summary>
