@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MT_Crown_Frame 2
+  m_Shader: {fileID: 4800000, guid: 6f63dccf5360d4041af8bdcf52c5270d, type: 3}
+  m_ShaderKeywords: _USE_CUSTOMLIGHTCOLOR_ON _USE_SHADOW1_ON _USE_SHADOW_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _CrownTex_hairref:
+        m_Texture: {fileID: 2800000, guid: 6fc02c5020d75d742b7eb98a03dcdefc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureNormal:
+        m_Texture: {fileID: 2800000, guid: 91a6a9d4e576a0d43978ca60835560be, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tx_4s8f:
+        m_Texture: {fileID: 2800000, guid: bf45c8944dcb397469003098d87894ab, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tx_CrownMatCap_01:
+        m_Texture: {fileID: 2800000, guid: b9ceb7b71063c4e4b9c8e4ad7c73d991, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tx_Opacity:
+        m_Texture: {fileID: 2800000, guid: 3f9577241fcf0754d9e8d023d9bdafe4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tx_highlight:
+        m_Texture: {fileID: 2800000, guid: 8e304400629d1a44badcbbbe5961c83b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Animation: 1
+    - _Base: 1
+    - _Cutoff: 0.5
+    - _Light: 1
+    - _LightWeight: 0.5
+    - _Opacity: 1
+    - _RandomTiltSpeed: 1
+    - _RandomTiltValue: 1
+    - _RatateSpeed: 1
+    - _Resouce: 1
+    - _ShadowIntensity: 0.1
+    - _SwitchRotate: 0
+    - _UpDownSpeed: 1
+    - _UpDownValue: 1
+    - _Use_CustomLightColor: 1
+    - _Use_OpacityMask: 0
+    - _Use_PatternOutline: 0
+    - __dirty: 0
+    m_Colors:
+    - _AnimeHighlightColor: {r: 0.8579301, g: 1, b: 0.5424528, a: 1}
+    - _Color0: {r: 0.19063722, g: 0.33962262, b: 0.2068313, a: 1}
+    - _Color1: {r: 0.8588235, g: 0.8323094, b: 0.6588235, a: 1}
+    - _CustomLightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _HairReflectionColor: {r: 0.2520448, g: 0.2745098, b: 0.09803916, a: 0}
+    - _PatternOutlineColor: {r: 0, g: 0, b: 0, a: 0}
+    - _RimLightColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Shadow_Color: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 0}
