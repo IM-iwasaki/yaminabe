@@ -375,7 +375,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     private void CmdRespawnDelay() {
-        //RpcPlayDeathEffect();
+        RpcPlayDeathEffect();
         //サーバーに通知する
         ServerRespawnDelay();
     }
