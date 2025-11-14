@@ -306,11 +306,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         //　nameをスコア加算関数み送る
         if (HP <= 0) {
             HP = 0;
+           
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
-
             }
+           
 
         }
     }
@@ -367,6 +368,28 @@ public abstract class CharacterBase : NetworkBehaviour {
         LocalDeadEffect(_name);
         //遅延しつつリスポーン
         CmdRespawnDelay();
+        // --- _name が自分の名前なら自滅扱いにする ---
+        if (_name == PlayerName) {
+            _name = null;
+        }
+
+        // --- _name から NetworkIdentity を取得 ---
+        NetworkIdentity killerIdentity = null;
+
+        if (!string.IsNullOrEmpty(_name)) {
+            foreach (var p in FindObjectsOfType<CharacterBase>()) {
+                if (p.PlayerName == _name) {
+                    killerIdentity = p.GetComponent<NetworkIdentity>();
+                    break;
+                }
+            }
+        }
+
+        // --- PlayerCombat.OnKill を呼ぶ ---
+        var combat = GetComponent<PlayerCombat>();
+        if (combat != null) {
+            combat.OnKill(killerIdentity);
+        }
     }
 
     /// <summary>
