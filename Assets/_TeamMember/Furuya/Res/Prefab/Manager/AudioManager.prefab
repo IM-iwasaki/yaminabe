@@ -54,20 +54,20 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 710f6c2508e8d974982aaa7723cc10fc, type: 3}
     volume: 1
     pitch: 1
-    minDistance: 0
-    maxDistance: 0
+    minDistance: 1
+    maxDistance: 500
   - name: "\u30B2\u30FC\u30E02"
     clip: {fileID: 8300000, guid: c371cb8bf063e17478a5b419e3ec9102, type: 3}
     volume: 1
     pitch: 1
-    minDistance: 0
-    maxDistance: 0
+    minDistance: 1
+    maxDistance: 500
   - name: "\u30ED\u30D3\u30FC"
     clip: {fileID: 8300000, guid: e3c96d181c6e51d4cb242e49837be2e0, type: 3}
     volume: 1
     pitch: 1
-    minDistance: 0
-    maxDistance: 0
+    minDistance: 1
+    maxDistance: 500
   worldSEList:
   - name: FireBall
     clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}

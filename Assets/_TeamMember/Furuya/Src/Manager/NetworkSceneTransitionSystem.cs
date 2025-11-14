@@ -16,6 +16,13 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
     [Server]
     public void ChangeScene(string sceneName) {
         RpcStartFadeOut(sceneName);
+
+        if(sceneName == GameSceneManager.Instance.lobbySceneName) {
+            AudioManager.Instance.CmdPlayBGM("ロビー", 2f);
+        }
+        else if (sceneName == GameSceneManager.Instance.gameSceneName) {
+            AudioManager.Instance.CmdPlayBGM("ゲーム1", 2f);
+        }
     }
 
     /// <summary>
@@ -46,6 +53,8 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
         base.OnStartClient();
         // シーン切り替え後にフェードイン
         StartCoroutine(FadeInAfterSceneLoad());
+
+            AudioManager.Instance.CmdPlayBGM("ロビー", 2f);
     }
 
     /// <summary>

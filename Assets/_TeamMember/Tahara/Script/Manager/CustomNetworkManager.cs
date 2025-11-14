@@ -132,13 +132,6 @@ public class CustomNetworkManager : NetworkManager {
             HostUI hostUi = FindObjectOfType<HostUI>();
             int stageIndex = Mathf.Abs(hostUi.stageIndex % StageManager.Instance.stages.Count);
             GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
-
-            //BGM再生（ゲーム１、ゲーム２）
-            AudioManager.Instance.CmdPlayBGM("ゲーム1", 2f);
-        }
-        else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
-            //BGM再生（ゲーム１、ゲーム２）
-            AudioManager.Instance.CmdPlayBGM("ロビー", 2f);
         }
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
         foreach (var conn in serverManager.connectPlayer) {

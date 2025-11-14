@@ -55,17 +55,19 @@ public class TitleAudio : MonoBehaviour {
             AudioSource source = gameObject.AddComponent<AudioSource>();
             seSources.Add(source);
         }
+
+        PlayBGM();
     }
 
-    public void PlayBGM(string name, float fadeTime = 1f) {
-        AudioData data = bgmList.Find(b => b.name == name);
+    public void PlayBGM() {
+        AudioData data = bgmList.Find(b => b.name == "タイトル");
         if (data == null) {
             Debug.LogWarning("BGM not found: " + name);
             return;
         }
 
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-        fadeCoroutine = StartCoroutine(FadeInBGM(data, fadeTime));
+        fadeCoroutine = StartCoroutine(FadeInBGM(data, 1f));
     }
 
     public void StopBGM(float fadeTime = 1f) {

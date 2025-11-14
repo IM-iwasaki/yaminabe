@@ -61,8 +61,6 @@ public class TitleManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         instance = this;
-
-        TitleAudio.Instance.PlayBGM("ƒ^ƒCƒgƒ‹");
     }
 
     /// <summary>
