@@ -21,8 +21,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     void Update() {
-        if (!isLocalPlayer) return;
-
         if(player.isCanSkill) {
             skill_State.fillAmount = 1.0f;
             skill_State.color = Color.yellow;
