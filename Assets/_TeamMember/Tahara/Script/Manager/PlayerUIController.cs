@@ -96,15 +96,18 @@ public class PlayerUIController : NetworkBehaviour {
         //2Š„ˆÈ‰º
         else if (hpBar.value <= _maxHP / 5 && hpBar.value >= 1) {
             hpBarImage.color = Color.red;
+            hpText.color = Color.red;
         }
         //5Š„ˆÈ‰º
         else if (hpBar.value <= _maxHP / 2) {
             hpBarImage.color = Color.yellow;
+            hpText.color = Color.yellow;
         }
         //‚»‚êˆÈŠO
         else {
             hpBarImage.gameObject.SetActive(true);
             hpBarImage.color = Color.green;
+            hpText.color = Color.green;
         }
 
     }
