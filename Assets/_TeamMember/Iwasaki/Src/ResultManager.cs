@@ -17,43 +17,50 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     private GameObject currentUIRoot;    // 現在のUIルート（生成後のCanvas）
     private ResultPanel currentResultPanel; // 勝敗パネル参照
 
-    // --- 勝敗＋スコア情報を一時保持する ---
-    private string cachedWinnerName;
-    private bool cachedIsTeamBattle;
-    private List<ResultScoreData> cachedScores = new();
-
+    // チームスコアのための配列
+    [System.Serializable]
+    public struct TeamScoreEntry {
+        public int teamId;
+        public float score;
+    }
 
     /// <summary>
-    /// 勝敗＋スコアをまとめて送信する構造体
+    /// リザルトに必要なすべてのデータをまとめて送る構造体
+    /// ・勝者名
+    /// ・チーム戦かどうか
+    /// ・個人スコア
+    /// ・どのルールのリザルトか
+    /// ・ルール別の追加情報（チームスコア、ホコの距離など）
     /// </summary>
     [System.Serializable]
     public struct ResultData {
-        public bool isTeamBattle;            // チーム戦かどうか
-        public string winnerName;            // 勝者 or 勝利チーム名
-        public ResultScoreData[] scores;     // スコア一覧
+
+        // --- 基本データ ---
+        public bool isTeamBattle;         // チーム戦かどうか
+        public string winnerName;         // 勝利チーム名
+        public ResultScoreData[] scores;  //スコア一覧
+        public GameRuleType rule;         // Area / Hoko / DeathMatch を判別
+        /// <summary>
+        /// チームのスコア（エリア・ホコ・デスマッチ兼用）
+        /// Key = チームID, Value = 獲得スコア
+        /// </summary>
+        public TeamScoreEntry[] teamScores;
     }
+
+
 
     // --------------------------
     // RuleManager から呼ばれる
-    //勝敗名前スコアをまとめてリザルトを表示する
+    // リザルトのデータを全てリザルトに送る
     // --------------------------
     [Server]
-    public void OnTeamResultReceived(string winnerName, bool isTeamBattle) {
-        cachedWinnerName = winnerName;
-        cachedIsTeamBattle = isTeamBattle;
+    public void ShowTeamResult(ResultData data) {
+        // 個人スコアを PlayerListManager から取得して追加する
+        var scoreList = PlayerListManager.Instance.GetResultDataList();
+        data.scores = scoreList.ToArray();
 
-        // PlayerListManager から個人スコア取得
-        if (PlayerListManager.Instance != null)
-            cachedScores = PlayerListManager.Instance.GetResultDataList();
-
-        // まとめてリザルト表示
-        var resultData = new ResultData {
-            isTeamBattle = cachedIsTeamBattle,
-            winnerName = cachedWinnerName,
-            scores = cachedScores.ToArray()
-        };
-
-        ShowResult(resultData);
+        // 通常の結果表示を実行
+        ShowResult(data);
     }
 
 
@@ -124,7 +131,11 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         if (currentResultPanel != null)
             currentResultPanel.ShowWinner(data.winnerName, data.isTeamBattle);
 
-        // スコア一覧表示
+        // ルール別 UI 切替（★今回追加）
+        currentResultPanel.ShowRuleUI(data.rule);
+
+
+        // 個人スコア表示
         ScoreListUI ui = FindObjectOfType<ScoreListUI>();
         if (ui != null)
             ui.DisplayScores(new List<ResultScoreData>(data.scores));

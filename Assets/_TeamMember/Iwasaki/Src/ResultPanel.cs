@@ -14,6 +14,15 @@ public class ResultPanel : NetworkBehaviour {
     [SerializeField] private Button rematchButton;      // 再戦ボタン（ホスト専用）
     [SerializeField] private Button returnLobbyButton;  // ロビー戻りボタン（ホスト専用）
 
+
+
+    [Header("ルール別 UI")]
+    [SerializeField] private GameObject areaPanel;       // エリア戦用
+    [SerializeField] private GameObject hokoPanel;       // ホコ戦用
+    [SerializeField] private GameObject deathMatchPanel; // デスマッチ用
+
+
+
     private bool isResultActive = true;                 // 二重押し防止
     private ResultManager resultManager;
 
@@ -26,6 +35,33 @@ public class ResultPanel : NetworkBehaviour {
         if (returnLobbyButton != null)
             returnLobbyButton.onClick.AddListener(OnClickReturnLobby);
     }
+
+
+    // ================================================================
+    // ▼ ルールごとの UI を切り替えるための関数
+    // ================================================================
+    public void ShowRuleUI(GameRuleType rule) {
+
+        // 一旦すべて非表示
+        areaPanel?.SetActive(false);
+        hokoPanel?.SetActive(false);
+        deathMatchPanel?.SetActive(false);
+
+        switch (rule) {
+            case GameRuleType.Area:
+                areaPanel?.SetActive(true);
+                break;
+
+            case GameRuleType.Hoko:
+                hokoPanel?.SetActive(true);
+                break;
+
+            case GameRuleType.DeathMatch:
+                deathMatchPanel?.SetActive(true);
+                break;
+        }
+    }
+
 
     /// <summary>
     /// 全クライアントでリザルトUIを表示するRPC。
@@ -43,6 +79,13 @@ public class ResultPanel : NetworkBehaviour {
             winnerText.text = "";
 
         isResultActive = true;
+
+
+        // ルール別UIはいったん全部非表示にしておく
+        areaPanel?.SetActive(false);
+        hokoPanel?.SetActive(false);
+        deathMatchPanel?.SetActive(false);
+
     }
 
     /// <summary>
@@ -67,6 +110,10 @@ public class ResultPanel : NetworkBehaviour {
             winnerText.color = Color.white;
         }
     }
+
+
+
+
 
     //================================================================
     // ボタンイベント（ホストのみ有効）

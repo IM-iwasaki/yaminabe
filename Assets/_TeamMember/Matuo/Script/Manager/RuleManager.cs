@@ -161,6 +161,9 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         return teamScores.TryGetValue(teamId, out score);
     }
 
+    /// <summary>
+    /// チームの勝敗結果を ResultManager に送信する（ルール対応版）
+    /// </summary>
     [Server]
     private void SendTeamResultToAll(int winningTeamId) {
         if (ResultManager.Instance == null) {
@@ -176,7 +179,42 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             winnerName = "Blue";
         else
             winnerName = "Draw";
-        // 勝敗と名前とスコアを一括で表示してる
-        ResultManager.Instance?.OnTeamResultReceived(winnerName, true);
+
+        // --- チームスコアを ResultData 形式に変換 ---
+        //==============================
+        // ① Dictionary → 配列に変換
+        //==============================
+        List<ResultManager.TeamScoreEntry> teamScoreList = new();
+
+        foreach (var kvp in teamScores) {
+            teamScoreList.Add(new ResultManager.TeamScoreEntry {
+                teamId = kvp.Key,
+                score = kvp.Value
+            });
+        }
+
+
+        //==============================
+        // ② ResultData を作成
+        //==============================
+        ResultManager.ResultData data = new ResultManager.ResultData {
+            isTeamBattle = true,
+            winnerName = winnerName,
+
+            // 個人スコアは ShowTeamResult() 内で追加されるため空でOK
+            scores = new ResultScoreData[0],
+
+            rule = currentRule,
+
+            // ★ Mirror対応：Dictionaryではなく配列 ★
+            teamScores = teamScoreList.ToArray(),
+
+        };
+
+
+        //==============================
+        // ③ ResultManager に送信
+        //==============================
+        ResultManager.Instance.ShowTeamResult(data);
     }
 }
