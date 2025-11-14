@@ -191,7 +191,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         foreach (var kvp in teamScores) {
             teamScoreList.Add(new ResultManager.TeamScoreEntry {
                 teamId = kvp.Key,
-                score = kvp.Value
+                teamScore = kvp.Value
             });
         }
 
