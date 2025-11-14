@@ -1,4 +1,5 @@
 using Mirror;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,14 +8,22 @@ using UnityEngine.UI;
 /// </summary>
 public class PlayerLocalUIController : NetworkBehaviour {
 
+    enum TextIndex {
+        Current = 0,
+        Max,
+        Partition,
+    }
+
+    [SerializeField]TextMeshProUGUI[] mainWeaponText;
+    [SerializeField]TextMeshProUGUI[] subWeaponText;
+
     [SerializeField]Image[] skill_Icon;
     [SerializeField]Image skill_State;
     [SerializeField]Image[] passive_Icon;
     [SerializeField]Image passive_State;
     [SerializeField]GeneralCharacter player;
-    //[SyncVar] 
-    float skillStateProgress = 0.0f;
-    float passiveStateProgress = 0.0f;
+    [SyncVar]float skillStateProgress = 0.0f;
+    [SyncVar]float passiveStateProgress = 0.0f;
 
     void Start() {
         LocalUIChanged();
@@ -47,6 +56,16 @@ public class PlayerLocalUIController : NetworkBehaviour {
         }
         for (int i  = 0; i < passive_Icon.Length ; i++) {
             passive_Icon[i].sprite = player.equippedPassives[0].passiveIcon;
-        }  
+        } 
+        
+        //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
+        if( player.maxMagazine >= 1) {
+            for(int i = 0 ; i< mainWeaponText.Length ; i++) {
+                mainWeaponText[i].enabled = true;
+            }
+        }
+        //プレイヤーのサブウェポンUIを反映
+        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
+        subWeaponText[(int)TextIndex.Max].text = player.weaponController_sub.subWeaponData.maxUses.ToString();
     }
 }

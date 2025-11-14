@@ -21,11 +21,11 @@ class GeneralCharacter : CharacterBase {
     #region ～職業限定ステータス変数～
 
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。レベルアップで最大MP(もしくは回復速度？)が上昇。
-    protected int MP { get; private set; }
-    protected int maxMP { get; private set; }
+    public int MP { get; private set; }
+    public int maxMP { get; private set; }
     //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。レベルアップで最大弾容量が増加。
-    protected int magazine { get; private set; }
-    protected int maxMagazine { get; private set; }
+    public int magazine { get; private set; }
+    public int maxMagazine { get; private set; }
 
     #endregion  
 
