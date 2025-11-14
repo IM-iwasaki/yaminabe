@@ -43,34 +43,34 @@ public class StageManager : NetworkSystemObject<StageManager> {
         RegisterRespawnPoints(currentStageInstance);
 
         //ルールごとに生成するオブジェクトを変更する
-        UpdateRuleObjects(rule);
+        RpcUpdateRuleObjects(rule);
     }
 
     /// <summary>
     /// 古谷　ルールごとのオブジェクト取得
     /// </summary>
     /// <param name="rule"></param>
-    void UpdateRuleObjects(GameRuleType rule) {
-        // タグ付きオブジェクトを取得
+    [ClientRpc]
+    void RpcUpdateRuleObjects(GameRuleType rule) {
+        ApplyRuleObjects(rule);
+    }
+
+    void ApplyRuleObjects(GameRuleType rule) {
         var areaObjects = GameObject.FindGameObjectsWithTag("AreaObject");
         var hokoObjects = GameObject.FindGameObjectsWithTag("HokoObject");
         var deathMatchObjects = GameObject.FindGameObjectsWithTag("DeathMatchObject");
 
-        // まず全て非表示
         foreach (var obj in areaObjects) obj.SetActive(false);
         foreach (var obj in hokoObjects) obj.SetActive(false);
         foreach (var obj in deathMatchObjects) obj.SetActive(false);
 
-        // ルールに応じて表示するものを切り替え
         switch (rule) {
             case GameRuleType.Area:
                 foreach (var obj in areaObjects) obj.SetActive(true);
                 break;
-
             case GameRuleType.Hoko:
                 foreach (var obj in hokoObjects) obj.SetActive(true);
                 break;
-
             case GameRuleType.DeathMatch:
                 foreach (var obj in deathMatchObjects) obj.SetActive(true);
                 break;
