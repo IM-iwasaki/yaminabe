@@ -25,6 +25,7 @@ public static class PlayerSaveData {
         if (!File.Exists(filePath)) {
             return new PlayerData {
                 currentMoney = 0,
+                currentRate = 0,
                 items = new List<string>()
             };
         }
