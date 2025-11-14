@@ -79,6 +79,7 @@ public class PlayerUIController : NetworkBehaviour {
     /// <param name="_hp"></param>
     public void Initialize(int _hp) {
         hpText.text = _hp.ToString();
+        ChangeHPUI(_hp, _hp);
     }
 
     #region hookŠÖ”‚ÅŒÄ‚Ô‘z’è‚ÌŠÖ”
