@@ -9,7 +9,7 @@ public class SubWeaponController : NetworkBehaviour {
     [Header("Sub Weapon")]
     public SubWeaponData subWeaponData;
 
-    private int currentUses;
+    public int currentUses { get; private set; }
     private bool isRecharging;
 
     private CharacterBase characterBase; // ƒ`[ƒ€ID‚È‚Ç‚ğæ“¾‚·‚é‚½‚ß

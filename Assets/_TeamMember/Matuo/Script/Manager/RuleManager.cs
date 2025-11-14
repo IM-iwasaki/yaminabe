@@ -107,6 +107,8 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
                 // 勝敗データをリザルトへ送信
                 SendTeamResultToAll(winningTeam);
+                //追加:タハラ:勝敗に応じてレート更新
+                PlayerRankingManager.instance.ApplyRateAllPlayers(winningTeam);
             }
         } else {
             Debug.LogWarning("引き分け");
@@ -189,7 +191,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         foreach (var kvp in teamScores) {
             teamScoreList.Add(new ResultManager.TeamScoreEntry {
                 teamId = kvp.Key,
-                score = kvp.Value
+                teamScore = kvp.Value
             });
         }
 
