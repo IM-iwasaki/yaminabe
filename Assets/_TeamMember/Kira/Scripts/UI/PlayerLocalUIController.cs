@@ -5,14 +5,14 @@ using UnityEngine.UI;
 /// <summary>
 /// Playerì‡ÇÃLocalUIÇÃä«óù
 /// </summary>
-public class PlayerLocalUIController : MonoBehaviour {
+public class PlayerLocalUIController : NetworkBehaviour {
 
     [SerializeField]Image[] skill_Icon;
     [SerializeField]Image skill_State;
     [SerializeField]Image[] passive_Icon;
     [SerializeField]Image passive_State;
     [SerializeField]GeneralCharacter player;
-    //[Syncvar]
+    //[SyncVar] 
     float skillStateProgress = 0.0f;
     float passiveStateProgress = 0.0f;
 
@@ -21,6 +21,8 @@ public class PlayerLocalUIController : MonoBehaviour {
     }
 
     void Update() {
+        if (!isLocalPlayer) return;
+
         if(player.isCanSkill) {
             skill_State.fillAmount = 1.0f;
             skill_State.color = Color.yellow;
