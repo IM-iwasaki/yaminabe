@@ -21,6 +21,16 @@ public class ResultPanel : NetworkBehaviour {
     [SerializeField] private GameObject hokoPanel;       // ホコ戦用
     [SerializeField] private GameObject deathMatchPanel; // デスマッチ用
 
+    // チームスコア表示テキスト
+    [SerializeField] private Text areaRedScoreText;
+    [SerializeField] private Text areaBlueScoreText;
+    [SerializeField] private Text hokoRedProgressText;
+    [SerializeField] private Text hokoBlueProgressText;
+    [SerializeField] private Text deathRedKillText;
+    [SerializeField] private Text deathBlueKillText;
+
+
+
 
 
     private bool isResultActive = true;                 // 二重押し防止
@@ -109,6 +119,34 @@ public class ResultPanel : NetworkBehaviour {
             winnerText.text = $"Winner : {name}";
             winnerText.color = Color.white;
         }
+    }
+
+    // エリアチームスコア表示用関数
+    public void SetAreaScores(float redScore, float blueScore) {
+        if (areaRedScoreText != null)
+            areaRedScoreText.text = $"Red : {redScore:F0}%";
+
+        if (areaBlueScoreText != null)
+            areaBlueScoreText.text = $"Blue : {blueScore:F0}%";
+    }
+
+    // ホコチームスコア表示用関数
+    public void SetHokoScores(float red, float blue, float holdTime = 0) {
+        if (hokoRedProgressText != null)
+            hokoRedProgressText.text = $"Red : {red:F0}";
+
+        if (hokoBlueProgressText != null)
+            hokoBlueProgressText.text = $"Blue : {blue:F0}";
+
+    }
+
+    // デスマッチチームスコア表示用関数
+    public void SetDeathMatchScores(int redKills, int blueKills) {
+        if (deathRedKillText != null)
+            deathRedKillText.text = $"Red : {redKills}";
+
+        if (deathBlueKillText != null)
+            deathBlueKillText.text = $"Blue : {blueKills}";
     }
 
 
