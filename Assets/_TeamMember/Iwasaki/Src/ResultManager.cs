@@ -21,7 +21,7 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     [System.Serializable]
     public struct TeamScoreEntry {
         public int teamId;
-        public float score;
+        public float teamScore;
     }
 
     /// <summary>
@@ -125,22 +125,44 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     /// </summary>
     [ClientRpc]
     private void RpcDisplayResult(ResultData data) {
-       
-
-        // 勝敗表示
-        if (currentResultPanel != null)
+        // -----------------------------
+        // ① 勝敗表示
+        // -----------------------------
+        if (currentResultPanel != null) {
             currentResultPanel.ShowWinner(data.winnerName, data.isTeamBattle);
 
-        // ルール別 UI 切替（★今回追加）
-        currentResultPanel.ShowRuleUI(data.rule);
+            // ルール別UIを切替
+            currentResultPanel.ShowRuleUI(data.rule);
+        }
 
-
-        // 個人スコア表示
+        // -----------------------------
+        // ② 個人スコア一覧表示
+        // -----------------------------
         ScoreListUI ui = FindObjectOfType<ScoreListUI>();
         if (ui != null)
             ui.DisplayScores(new List<ResultScoreData>(data.scores));
         else
             Debug.LogWarning("[ResultManager] ScoreListUIが見つかりません。");
+
+        int len = data.teamScores?.Length ?? 0;
+
+        float scoreA = (len > 0) ? data.teamScores[0].teamScore : 0f;
+        float scoreB = (len > 1) ? data.teamScores[1].teamScore : 0f;
+
+        // ---- ルール別処理 ----
+        switch (data.rule) {
+            case GameRuleType.Area:
+                currentResultPanel.SetAreaScores(scoreA, scoreB);
+                break;
+
+            case GameRuleType.Hoko:
+                currentResultPanel.SetHokoScores(scoreA, scoreB);
+                break;
+
+            case GameRuleType.DeathMatch:
+                currentResultPanel.SetDeathMatchScores((int)scoreA, (int)scoreB);
+                break;
+        }
     }
 
     //================================================================
