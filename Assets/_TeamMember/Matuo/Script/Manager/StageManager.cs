@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// ステージ生成とリスポーン地点管理
@@ -36,46 +37,51 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // ステージ生成
         currentStageInstance = Instantiate(stageData.stagePrefab);
+
+        //ルールごとに生成するオブジェクトを変更する
+        RpcApplyRuleObjects(currentStageInstance, rule);
+
         NetworkServer.Spawn(currentStageInstance);
         ItemSpawnManager.Instance.SetupSpawnPoint();
 
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
 
-        //ルールごとに生成するオブジェクトを変更する
-        RpcUpdateRuleObjects(rule);
     }
 
     /// <summary>
     /// 古谷　ルールごとのオブジェクト取得
     /// </summary>
-    /// <param name="rule"></param>
-    [ClientRpc]
-    void RpcUpdateRuleObjects(GameRuleType rule) {
-        ApplyRuleObjects(rule);
-    }
+    void RpcApplyRuleObjects(GameObject stage, GameRuleType rule) {
+        if (stage == null) return;
 
-    void ApplyRuleObjects(GameRuleType rule) {
-        var areaObjects = GameObject.FindGameObjectsWithTag("AreaObject");
-        var hokoObjects = GameObject.FindGameObjectsWithTag("HokoObject");
-        var deathMatchObjects = GameObject.FindGameObjectsWithTag("DeathMatchObject");
+        var areaObjects = stage.GetComponentsInChildren<Transform>(true)
+                               .Where(t => t.CompareTag("AreaObject"))
+                               .ToArray();
+        var hokoObjects = stage.GetComponentsInChildren<Transform>(true)
+                               .Where(t => t.CompareTag("HokoObject"))
+                               .ToArray();
+        var deathMatchObjects = stage.GetComponentsInChildren<Transform>(true)
+                                     .Where(t => t.CompareTag("DeathMatchObject"))
+                                     .ToArray();
 
-        foreach (var obj in areaObjects) obj.SetActive(false);
-        foreach (var obj in hokoObjects) obj.SetActive(false);
-        foreach (var obj in deathMatchObjects) obj.SetActive(false);
+        foreach (var obj in areaObjects) obj.gameObject.SetActive(false);
+        foreach (var obj in hokoObjects) obj.gameObject.SetActive(false);
+        foreach (var obj in deathMatchObjects) obj.gameObject.SetActive(false);
 
         switch (rule) {
             case GameRuleType.Area:
-                foreach (var obj in areaObjects) obj.SetActive(true);
+                foreach (var obj in areaObjects) obj.gameObject.SetActive(true);
                 break;
             case GameRuleType.Hoko:
-                foreach (var obj in hokoObjects) obj.SetActive(true);
+                foreach (var obj in hokoObjects) obj.gameObject.SetActive(true);
                 break;
             case GameRuleType.DeathMatch:
-                foreach (var obj in deathMatchObjects) obj.SetActive(true);
+                foreach (var obj in deathMatchObjects) obj.gameObject.SetActive(true);
                 break;
         }
     }
+
 
 
     /// <summary>

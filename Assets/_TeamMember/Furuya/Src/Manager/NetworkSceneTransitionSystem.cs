@@ -54,7 +54,7 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
         // シーン切り替え後にフェードイン
         StartCoroutine(FadeInAfterSceneLoad());
 
-            AudioManager.Instance.CmdPlayBGM("ロビー", 2f);
+
     }
 
     /// <summary>
