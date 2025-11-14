@@ -12,15 +12,17 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField]Image[] passive_Icon;
     [SerializeField]Image passive_State;
     [SerializeField]GeneralCharacter player;
-    //
-    [SyncVar] float skillStateProgress = 0.0f;
-    [SyncVar] float passiveStateProgress = 0.0f;
+    //[SyncVar] 
+    float skillStateProgress = 0.0f;
+    float passiveStateProgress = 0.0f;
 
     void Start() {
         LocalUIChanged();
     }
 
     void Update() {
+        if (!isLocalPlayer) return;
+
         if(player.isCanSkill) {
             skill_State.fillAmount = 1.0f;
             skill_State.color = Color.yellow;
