@@ -41,6 +41,13 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
         bgmSource.spatialBlend = 0f; // BGMは2D
     }
 
+    protected override void OnClientInitialized() {
+
+        bgmSource = gameObject.AddComponent<AudioSource>();
+        bgmSource.loop = true;
+        bgmSource.spatialBlend = 0f; // BGMは2D
+    }
+
     // ======================
     // --- BGM ---
     // ======================
