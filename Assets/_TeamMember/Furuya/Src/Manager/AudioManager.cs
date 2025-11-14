@@ -46,6 +46,8 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
         bgmSource = gameObject.AddComponent<AudioSource>();
         bgmSource.loop = true;
         bgmSource.spatialBlend = 0f; // BGMは2D
+
+        AudioManager.Instance.CmdPlayBGM("ロビー", 2f);
     }
 
     // ======================
