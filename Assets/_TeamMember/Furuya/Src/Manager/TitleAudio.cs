@@ -17,7 +17,7 @@ using Unity.VisualScripting;
 
 public class TitleAudio : MonoBehaviour {
 
-    public static TitleAudio Instance { get; private set; }
+    public static TitleAudio Instance { get; private set; } = null;
 
     [System.Serializable]
     public class AudioData {

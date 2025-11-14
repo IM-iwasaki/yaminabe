@@ -31,7 +31,8 @@ public class CustomNetworkManager : NetworkManager {
             networkAddress = TitleManager.instance.ipAddress;
             StartClient();
         }
-
+        //サーバー参加時にカーソルロック
+        Cursor.lockState = CursorLockMode.Locked;
     }
     /// <summary>
     /// サーバー開始時処理
