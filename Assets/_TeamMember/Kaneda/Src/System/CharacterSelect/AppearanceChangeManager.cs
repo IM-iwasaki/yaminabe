@@ -13,7 +13,6 @@ public class AppearanceChangeManager : MonoBehaviour
 
     //  ここでインスタンス化
     private void Awake() {
-        DontDestroyOnLoad(this);
         instance = this;
     }
 
@@ -55,7 +54,7 @@ public class AppearanceChangeManager : MonoBehaviour
         //  プレイヤーのIDを取得・格納
         uint netId = player.GetComponent<NetworkIdentity>().netId;
         //  変更したデータを保存する
-        AppearanceSyncManager.Instance.RecordAppearance(netId, characterCount, skinCount);
+        AppearanceSyncManager.instance.RecordAppearance(netId, characterCount, skinCount);
     }
 
 }

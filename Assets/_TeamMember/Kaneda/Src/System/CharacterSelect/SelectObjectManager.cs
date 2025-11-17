@@ -307,8 +307,10 @@ public class SelectObjectManager : NetworkBehaviour {
         networkCharacterCount = characterCount;
         //  ローカルチェンジ判定をネットワークチェンジ判定に反映
         networkCanChange = canChange;
-        //  プレイヤー変更
+        //  自分自身のプレイヤー変更
         AppearanceChangeManager.instance.PlayerChange(player, networkCharacterCount, networkSkinCount, networkCanChange);
+        //  他のスキンを同時に読み込む
+        AppearanceSyncManager.instance.CmdRequestAllStates();
     }
     #endregion
 
