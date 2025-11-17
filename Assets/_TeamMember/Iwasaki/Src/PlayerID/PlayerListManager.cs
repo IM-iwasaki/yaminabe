@@ -176,10 +176,12 @@ public class PlayerListManager : NetworkBehaviour {
         foreach (var p in players) {
             list.Add(new ResultScoreData {
                 PlayerName = p.name,
-                Score = p.score
+                Score = p.score,
+                Kills = p.kills,
+                Deaths = p.deaths,
+                
             });
         }
-        Debug.Log("[PlayerListManager] リザルト用データを作成しました");
         return list;
     }
 
