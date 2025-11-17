@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AppearanceSyncManager : NetworkSystemObject<AppearanceSyncManager>
+public class AppearanceSyncManager : NetworkBehaviour
 {
+    //  インスタンス化
+    public static AppearanceSyncManager instance;
 
-    //  サーバー側が全プレイヤーの見た目を保持する
-    private Dictionary<uint, (int characterNo, int skinNo)> states = new Dictionary<uint, (int, int)>();
-
-    // クライアント側で netId → GameObject を保持
-    private Dictionary<uint, GameObject> clientPlayers = new Dictionary<uint, GameObject>();
+    //  ここでインスタンス化
+    private void Awake() {
+        instance = this;
+    }
 
     /// <summary>
     /// 見た目をプレイヤーの固有IDごとに保存する関数
@@ -20,33 +21,23 @@ public class AppearanceSyncManager : NetworkSystemObject<AppearanceSyncManager>
     /// <param name="skinNo"></param>
     [Server]
     public void RecordAppearance(uint netId, int characterNo, int skinNo) {
-        states[netId] = (characterNo, skinNo);
-    }
-
-    /// <summary>
-    /// クライアントが入った際に呼び出す
-    /// </summary>
-    protected override void OnClientInitialized() {
-        if(NetworkClient.active && !NetworkServer.active) {
-            //  クライアントからサーバーへ伝達
-            CmdRequestAllStates();
-        }
+        AppearanceDataHolder.instance.states[netId] = (characterNo, skinNo);
     }
 
     /// <summary>
     /// クライアントからサーバーへ伝達
     /// </summary>
     [Command(requiresAuthority = false)]
-    private void CmdRequestAllStates() {
-        TargetSendAllStates(connectionToClient);
+    public void CmdRequestAllStates() {
+        RpcSendAllStates();
     }
 
     /// <summary>
     /// id、番号を割り当てる
     /// </summary>
-    [TargetRpc]
-    public void TargetSendAllStates(NetworkConnection target) {
-        foreach (var kv in states) {
+    [ClientRpc]
+    public void RpcSendAllStates() {
+        foreach (var kv in AppearanceDataHolder.instance.states) {
             uint id = kv.Key;
             int c = kv.Value.characterNo;
             int s = kv.Value.skinNo;
@@ -62,16 +53,18 @@ public class AppearanceSyncManager : NetworkSystemObject<AppearanceSyncManager>
     [ClientRpc]
     void RpcApplyAppearanceToOne(uint netId, int charNo, int skinNo) {
         // すでに辞書に登録済みなら取得、なければ検索して登録
-        if (!clientPlayers.TryGetValue(netId, out GameObject playerObj)) {
+        if (!AppearanceDataHolder.instance.clientPlayers.TryGetValue(netId, out GameObject playerObj)) {
             NetworkIdentity identity = FindIdentity(netId);
             if (identity != null) playerObj = identity.gameObject;
-            clientPlayers[netId] = playerObj;
+            AppearanceDataHolder.instance.clientPlayers[netId] = playerObj;
         }
 
         // null チェック後に適用
-        if (playerObj != null) {
-            AppearanceChangeManager.instance.PlayerChange(playerObj, charNo, skinNo, true);
+        if (playerObj == null) {
+            Debug.LogWarning($"netId {netId} が見つかりません。デフォルトデータを適用します。");
+            return;
         }
+        AppearanceChangeManager.instance.PlayerChange(playerObj, charNo, skinNo, true);
     }
 
     /// <summary>
