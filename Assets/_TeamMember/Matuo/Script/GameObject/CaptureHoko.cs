@@ -89,4 +89,20 @@ public class CaptureHoko : CaptureObjectBase {
         if (!isHeld || holder == null) return 0f;
         return countSpeed;
     }
+
+    /// <summary>
+    /// ゲーム終了時にホコを落とす用
+    /// </summary>
+    [Server]
+    private void HandleGameEnd() {
+        Drop();
+    }
+
+    private void OnEnable() {
+        GameManager.OnGameEnded += HandleGameEnd;
+    }
+
+    private void OnDisable() {
+        GameManager.OnGameEnded -= HandleGameEnd;
+    }
 }
