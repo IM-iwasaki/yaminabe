@@ -310,9 +310,12 @@ public abstract class CharacterBase : NetworkBehaviour {
            
             Dead(_name);
             if (PlayerListManager.Instance != null) {
+                // スコア加算
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
             }
-           
+            // キル数加算
+            PlayerListManager.Instance?.AddKill(_name);
+
 
         }
     }
@@ -391,6 +394,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (combat != null) {
             combat.OnKill(killerIdentity);
         }
+        // 死亡回数を増やす
+        PlayerListManager.Instance?.AddDeath(this.PlayerName);
+
     }
 
     /// <summary>
