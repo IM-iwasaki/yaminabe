@@ -2,6 +2,9 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// UnityのEditorでバイナリファイルの中身を変更する用
+/// </summary>
 public class SaveDataEditorWindow : EditorWindow {
     private PlayerData data;
     private Vector2 scrollPos;
