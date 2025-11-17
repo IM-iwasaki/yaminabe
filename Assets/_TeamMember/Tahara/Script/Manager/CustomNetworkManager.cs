@@ -116,8 +116,8 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
         if (newSceneName == GameSceneManager.Instance.gameSceneName) {
-            HostUI.isVisibleUI = false;
-            HostUI.ShowOrHideUI(false);
+            if(HostUI.isVisibleUI)
+            HostUI.ShowOrHideUI();
             GameSceneManager.Instance.ResetIsChangedScene();
         }
         Cursor.lockState = HostUI.isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Playerì‡ÇÃLocalUIÇÃä«óù
 /// </summary>
-public class PlayerLocalUIController : NetworkBehaviour {
+public class PlayerLocalUIController : MonoBehaviour {
 
     [SerializeField]Image[] skill_Icon;
     [SerializeField]Image skill_State;

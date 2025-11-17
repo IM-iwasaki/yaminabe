@@ -89,7 +89,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
     private string useTag;
-    [SerializeField] protected PlayerUIController UI;
+    [SerializeField] public PlayerUIController UI = null;
     [SerializeField] private CameraOptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
 
@@ -776,8 +776,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     public void OnShowHostUI(InputAction.CallbackContext context) {
         if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
         if (context.started) {
-            HostUI.isVisibleUI = !HostUI.isVisibleUI;
-            HostUI.ShowOrHideUI(HostUI.isVisibleUI);
+            if (CameraMenu.isOpen)
+                CameraMenu.ToggleMenu();
+            HostUI.ShowOrHideUI();
         }
     }
 
@@ -785,6 +786,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (!isLocalPlayer)
             return;
         if (context.started) {
+            if (HostUI.isVisibleUI) {
+                HostUI.ShowOrHideUI();
+            }
+               
             CameraMenu.ToggleMenu();
         }
     }
@@ -1052,6 +1057,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             if (useTag == "Gacha") {
                 GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
                 gacha.StartGachaSelect(gameObject);
+                UI.gameObject.SetActive(false);
                 return;
             }
 
