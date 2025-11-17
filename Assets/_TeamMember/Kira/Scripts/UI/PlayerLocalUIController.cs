@@ -12,6 +12,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         Current = 0,
         Max,
         Partition,
+        WeaponName,
     }
 
     [SerializeField]TextMeshProUGUI[] mainWeaponText;
@@ -30,6 +31,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     void Update() {
+        //スキルの表示状態管理
         if(player.isCanSkill) {
             skill_State.fillAmount = 1.0f;
             skill_State.color = Color.yellow;
@@ -39,7 +41,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             skill_State.fillAmount = skillStateProgress;
             skill_State.color = Color.white;           
         }
-
+        //パッシブの表示状態管理
         if(player.equippedPassives[0].IsPassiveActive) {
             //passiveStateProgress = player.equippedPassives[0].CoolTime / player.equippedPassives[0].Cooldown;
             //passive_State.fillAmount = passiveStateProgress;
@@ -48,6 +50,9 @@ public class PlayerLocalUIController : NetworkBehaviour {
         else {
             passive_State.color = Color.white;
         }
+
+        //サブウェポンの現在所持数を更新
+        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
     }
 
     public void LocalUIChanged() {
@@ -67,5 +72,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
         //プレイヤーのサブウェポンUIを反映
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
         subWeaponText[(int)TextIndex.Max].text = player.weaponController_sub.subWeaponData.maxUses.ToString();
+        subWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_sub.subWeaponData.WeaponName;
     }
 }

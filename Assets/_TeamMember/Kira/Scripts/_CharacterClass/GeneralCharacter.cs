@@ -88,8 +88,12 @@ class GeneralCharacter : CharacterBase {
             "　：　インポートしたスキル..." + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.skillName)));
         // パッシブの初期セットアップ
         equippedPassives[0].PassiveSetting(this);
-        //  デフォルトステータスを代入
+        // デフォルトステータスを代入
         InDefaultStatus();
+
+        // メインウェポンとサブウェポンの参照を取得
+        weaponController_main = GetComponent<MainWeaponController>();
+        weaponController_sub = GetComponent<SubWeaponController>();
     }
 
     protected override void StartUseSkill() {
