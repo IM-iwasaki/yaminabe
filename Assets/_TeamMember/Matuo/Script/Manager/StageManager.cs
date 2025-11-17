@@ -38,10 +38,10 @@ public class StageManager : NetworkSystemObject<StageManager> {
         // ステージ生成
         currentStageInstance = Instantiate(stageData.stagePrefab);
 
-        NetworkServer.Spawn(currentStageInstance);
         //ルールごとに生成するオブジェクトを変更する
-        RpcApplyRuleObjects(rule);
+        RpcApplyRuleObjects(currentStageInstance, rule);
 
+        NetworkServer.Spawn(currentStageInstance);
         ItemSpawnManager.Instance.SetupSpawnPoint();
 
         // リスポーン地点登録
@@ -52,14 +52,18 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// <summary>
     /// 古谷　ルールごとのオブジェクト取得
     /// </summary>
-    [Server]
-    public void RpcApplyRuleObjects(GameRuleType rule) {
+    void RpcApplyRuleObjects(GameObject stage, GameRuleType rule) {
+        if (stage == null) return;
 
-        var areaObjects = GameObject.FindGameObjectsWithTag("AreaObject");
-
-        var hokoObjects = GameObject.FindGameObjectsWithTag("HokoObject");
-
-        var deathMatchObjects = GameObject.FindGameObjectsWithTag("DeathmatchObject");
+        var areaObjects = stage.GetComponentsInChildren<Transform>(true)
+                               .Where(t => t.CompareTag("AreaObject"))
+                               .ToArray();
+        var hokoObjects = stage.GetComponentsInChildren<Transform>(true)
+                               .Where(t => t.CompareTag("HokoObject"))
+                               .ToArray();
+        var deathMatchObjects = stage.GetComponentsInChildren<Transform>(true)
+                                     .Where(t => t.CompareTag("DeathMatchObject"))
+                                     .ToArray();
 
         foreach (var obj in areaObjects) obj.gameObject.SetActive(false);
         foreach (var obj in hokoObjects) obj.gameObject.SetActive(false);
@@ -77,7 +81,6 @@ public class StageManager : NetworkSystemObject<StageManager> {
                 break;
         }
     }
-
 
 
 
