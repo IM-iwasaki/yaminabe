@@ -184,7 +184,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
         // --- チームスコアを ResultData 形式に変換 ---
         //==============================
-        // ① Dictionary → 配列に変換
+        // 配列に変換
         //==============================
         List<ResultManager.TeamScoreEntry> teamScoreList = new();
 
@@ -208,7 +208,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
             rule = currentRule,
 
-            // ★ Mirror対応：Dictionaryではなく配列 ★
+            
             teamScores = teamScoreList.ToArray(),
 
         };
