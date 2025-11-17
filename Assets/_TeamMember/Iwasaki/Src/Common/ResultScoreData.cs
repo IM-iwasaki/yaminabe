@@ -7,4 +7,6 @@ using System;
 public struct ResultScoreData {
     public string PlayerName;  // プレイヤー名
     public int Score;          // スコア値
+    public int Kills;　　　　　// キル
+    public int Deaths;         // デス
 }
