@@ -1,4 +1,4 @@
-using Unity.VisualScripting;
+using System.Collections;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Character/Skill/Chaser_ダブルマジック")]
@@ -7,7 +7,7 @@ public class Skill_Chaser : SkillBase {
     //
     //  スキル名：ダブルマジック
     //  タイプ　：攻撃強化特殊型
-    //  効果    ：6秒の間、自身の攻撃が2段攻撃になる。
+    //  効果    ：5秒の間、自身の攻撃が2段攻撃になる。
     //　CT      ：18秒
     //
 
@@ -38,9 +38,21 @@ public class Skill_Chaser : SkillBase {
             if(user.isAttackTrigger && IntervalTime >= user.weaponController_main.weaponData.cooldown) {
                 //インターバルをリセット
                 IntervalTime = 0;
-                //追加攻撃発動
-                user.weaponController_main.CmdRequestExtraAttack(user.firePoint.rotation.eulerAngles);
+                //若干の遅延を入れて追加攻撃発動
+                RequestExtraAttackWithDelay(/*user.weaponController_main.weaponData.cooldown/3*/1.0f,user);
             }
         }
+    }
+
+    public void RequestExtraAttackWithDelay(float delay,CharacterBase user){
+        user.StartCoroutine(RequestExtraAttackRoutine(delay,user));
+    }
+
+    private IEnumerator RequestExtraAttackRoutine(float delay,CharacterBase user){
+        yield return new WaitForSeconds(delay);
+
+        // ここで実行
+        //ここ通ってない
+        user.weaponController_main.CmdRequestExtraAttack(user.firePoint.rotation.eulerAngles);
     }
 }

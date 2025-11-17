@@ -5,7 +5,7 @@ using Mirror;
 //
 //  @file   Second_CharacterClass
 //
-class GeneralCharacter : CharacterBase {
+public class GeneralCharacter : CharacterBase {
 
     #region ～キャラクターデータ管理変数～
 
@@ -44,14 +44,15 @@ class GeneralCharacter : CharacterBase {
         //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
 
         //RespawnControl();    
-        //トリガーリセット関数の呼び出し
-        ResetTrigger();       
+               
         //死んでいたら以降の処理は行わない。
         if (isDead) return;
 
         MoveControl();
         JumpControl();       
         AbilityControl();
+        //トリガーリセット関数の呼び出し
+        ResetTrigger();
     }
 
     public override void Initalize() {
