@@ -9,14 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ce6e5dcda118c9409df034ee11d7d7f, type: 3}
-  m_Name: Punch
+  m_Script: {fileID: 11500000, guid: 0ef3c3d8cad62024a8d183c950a23d32, type: 3}
+  m_Name: RPG
   m_EditorClassIdentifier: 
-  weaponName: Punch
-  type: 0
-  damage: 10
-  cooldown: 0.2
+  weaponName: RPG
+  type: 1
+  damage: 75
+  cooldown: 2
   muzzleFlashType: 0
-  hitEffectType: 0
-  range: 2
-  meleeAngle: 30
+  hitEffectType: 4
+  projectilePrefab: {fileID: 1010106222350519036, guid: 852cab755ea70894d8d5a763a13d6625, type: 3}
+  projectileSpeed: 5
+  explosionRange: 3
