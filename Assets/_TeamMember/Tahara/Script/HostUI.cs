@@ -95,9 +95,10 @@ public class HostUI : NetworkBehaviour {
     /// ホストのUIの表示非表示を担当true->見える、false->見えない
     /// </summary>
     /// <param name="_isVisibleFlag"></param>
-    public static void ShowOrHideUI(bool _isVisibleFlag) {
-        uiRootObject.SetActive(_isVisibleFlag);
-        Cursor.lockState = _isVisibleFlag ? CursorLockMode.None : CursorLockMode.Locked ;
+    public static void ShowOrHideUI() {
+        isVisibleUI = !isVisibleUI;
+        uiRootObject.SetActive(isVisibleUI);
+        Cursor.lockState = isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked ;
     }
 
 

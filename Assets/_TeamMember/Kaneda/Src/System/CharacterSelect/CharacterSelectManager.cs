@@ -102,6 +102,8 @@ public class CharacterSelectManager : NetworkBehaviour {
         if (selectUI != null)
             selectUI.SetActive(false);
 
+
+
         // カメラを戻す
         if (cameraManager != null)
             cameraManager.ReturnCamera();
