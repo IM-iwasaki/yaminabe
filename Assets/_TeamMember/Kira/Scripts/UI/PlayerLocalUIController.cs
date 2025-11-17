@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Playerì‡ÇÃLocalUIÇÃä«óù
 /// </summary>
-public class PlayerLocalUIController : MonoBehaviour {
+public class PlayerLocalUIController : NetworkBehaviour {
 
     enum TextIndex {
         Current = 0,
