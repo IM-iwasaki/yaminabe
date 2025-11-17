@@ -23,7 +23,7 @@ public class Passive_Chaser : PassiveBase {
         IntervalTime += Time.deltaTime;
 
         //攻撃した瞬間にインターバルが経過していたら
-        if(user.isAttackTrigger && IntervalTime >= user.weaponController.weaponData.cooldown) {
+        if(user.isAttackTrigger && IntervalTime >= user.weaponController_main.weaponData.cooldown) {
             //チェインは最大10個まで、最大でなければチェインを蓄積
             if(Chains < 10)Chains++;
 

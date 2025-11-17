@@ -147,7 +147,7 @@ public class MainWeaponController : NetworkBehaviour {
 
     // --- 魔法攻撃 ---
     void ServerMagicAttack(Vector3 direction) {
-        if (weaponData is not MagicWeaponData magicData || magicData.projectilePrefab == null)
+        if (weaponData is not MainMagicData magicData || magicData.projectilePrefab == null)
             return;
 
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(

@@ -3,25 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// プレイヤーデータのセーブ／ロードを行う静的クラス
+/// プレイヤーデータのバイナリセーブ／ロードを行う静的クラス
 /// </summary>
 public static class PlayerSaveData {
-    private static string filePath => Path.Combine(Application.persistentDataPath, "playerData.json");
+    public static string filePath => Path.Combine(Application.persistentDataPath, "playerData.dat");
 
     /// <summary>
-    /// プレイヤーデータを保存する
+    /// プレイヤーデータを保存する（バイナリ形式）
     /// </summary>
     public static void Save(PlayerData data) {
-        string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText(filePath, json);
+        using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+        using (var writer = new BinaryWriter(fs)) {
+            writer.Write(data.playerName);
+            writer.Write(data.currentMoney);
+            writer.Write(data.currentRate);
+
+            // items の数
+            writer.Write(data.items.Count);
+            foreach (var item in data.items) {
+                writer.Write(item);
+            }
+        }
     }
 
     /// <summary>
-    /// プレイヤーデータをロードする
-    /// ファイルが無ければ初期状態のデータを返す
+    /// プレイヤーデータをロードする（バイナリ形式）
     /// </summary>
     public static PlayerData Load() {
-
         if (!File.Exists(filePath)) {
             return new PlayerData {
                 currentMoney = 0,
@@ -30,7 +38,22 @@ public static class PlayerSaveData {
             };
         }
 
-        string json = File.ReadAllText(filePath);
-        return JsonUtility.FromJson<PlayerData>(json);
+        var data = new PlayerData();
+
+        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        using (var reader = new BinaryReader(fs)) {
+            data.playerName = reader.ReadString();
+            data.currentMoney = reader.ReadInt32();
+            data.currentRate = reader.ReadInt32();
+
+            int itemCount = reader.ReadInt32();
+            data.items = new List<string>(itemCount);
+
+            for (int i = 0; i < itemCount; i++) {
+                data.items.Add(reader.ReadString());
+            }
+        }
+
+        return data;
     }
 }

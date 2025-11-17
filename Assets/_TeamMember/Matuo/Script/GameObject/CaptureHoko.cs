@@ -26,6 +26,14 @@ public class CaptureHoko : CaptureObjectBase {
         hokoCollider.isTrigger = true;
     }
 
+    [ServerCallback]
+    protected new void Update() {
+        if (isHeld && holder != null) {
+            transform.position = holder.transform.position + new Vector3(0, 1.2f, 0);
+            transform.rotation = holder.transform.rotation;
+        }
+    }
+
     /// <summary>
     /// 衝突判定
     /// プレイヤーが当たったら拾う処理を呼び出す
@@ -80,5 +88,21 @@ public class CaptureHoko : CaptureObjectBase {
     protected override float CalculateProgress() {
         if (!isHeld || holder == null) return 0f;
         return countSpeed;
+    }
+
+    /// <summary>
+    /// ゲーム終了時にホコを落とす用
+    /// </summary>
+    [Server]
+    private void HandleGameEnd() {
+        Drop();
+    }
+
+    private void OnEnable() {
+        GameManager.OnGameEnded += HandleGameEnd;
+    }
+
+    private void OnDisable() {
+        GameManager.OnGameEnded -= HandleGameEnd;
     }
 }
