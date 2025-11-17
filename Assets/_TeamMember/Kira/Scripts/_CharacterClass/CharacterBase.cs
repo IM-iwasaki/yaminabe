@@ -1,5 +1,6 @@
 ﻿using Mirror;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -598,6 +599,12 @@ public abstract class CharacterBase : NetworkBehaviour {
             case "Ready":
                 OnReadyPlayer(ctx);
                 break;
+            case "SendMessage":
+                OnSendMessage(ctx);
+                break;
+            case "SendStamp":
+                OnSendStamp(ctx);
+                break;
         }
     }
     private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
@@ -783,6 +790,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 追加:タハラ
     /// プレイヤーの準備状態切り替え
     /// </summary>
     /// <param name="context"></param>
@@ -797,6 +805,49 @@ public abstract class CharacterBase : NetworkBehaviour {
                 ready = !ready;
                 ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
             }
+        }
+    }
+    
+    /// <summary>
+    /// 追加:タハラ
+    /// チャット送信
+    /// </summary>
+    /// <param name="context"></param>
+    public void OnSendMessage(InputAction.CallbackContext context) {
+        if (!isLocalPlayer)
+            return;
+        //チャット送信
+        var key = context.control.name;
+        string sendMessage;
+        switch (key) {
+            case "upArrow":
+                sendMessage = "fooooooooooooooo";
+                break;
+            case "leftArrow":
+                sendMessage = "ggEZ";
+                break;
+            case "rightArrow":
+                sendMessage = "(^3^)";
+                break;
+            default:
+                sendMessage = "4649";
+                break;
+        }
+        ChatManager.instance.CmdSendSystemMessage(PlayerName + ":" + sendMessage);
+    }
+
+    /// <summary>
+    /// 追加:タハラ
+    /// スタンプ送信
+    /// </summary>
+    /// <param name="context"></param>
+    public void OnSendStamp(InputAction.CallbackContext context) {
+        if (!isLocalPlayer)
+            return;
+        //チャット送信
+        if (context.started) {
+            int stampIndex = Random.Range(0, 4);
+            ChatManager.instance.CmdSendStamp(stampIndex,PlayerName);
         }
     }
 
