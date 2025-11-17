@@ -35,11 +35,11 @@ public class Skill_Chaser : SkillBase {
             if (UseTime >= EffectTime) isSkillUse = false;
 
             //攻撃が入力された瞬間かつインターバルが経過していたら
-            if(user.isAttackTrigger && IntervalTime >= user.weaponController.weaponData.cooldown) {
+            if(user.isAttackTrigger && IntervalTime >= user.weaponController_main.weaponData.cooldown) {
                 //インターバルをリセット
                 IntervalTime = 0;
                 //追加攻撃発動
-                user.weaponController.CmdRequestExtraAttack(user.firePoint.rotation.eulerAngles);
+                user.weaponController_main.CmdRequestExtraAttack(user.firePoint.rotation.eulerAngles);
             }
         }
     }

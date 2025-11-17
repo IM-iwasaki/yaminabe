@@ -104,7 +104,8 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     //武器を使用するため
     [Header("アクション用変数")]
-    public MainWeaponController weaponController;
+    public MainWeaponController weaponController_main;
+    public SubWeaponController weaponController_sub;
     //ジャンプ入力をしたか
     private bool IsJumpPressed = false;
     //GroundLayer
@@ -997,7 +998,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
         while (isAttackPressed) {
             StartAttack(_type);
-            yield return new WaitForSeconds(weaponController.weaponData.cooldown);
+            yield return new WaitForSeconds(weaponController_main.weaponData.cooldown);
         }
     }
 
@@ -1005,11 +1006,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 攻撃関数
     /// </summary>
     virtual public void StartAttack(CharacterEnum.AttackType _type = CharacterEnum.AttackType.Main) {
-        if (weaponController == null) return;
+        if (weaponController_main == null) return;
 
         // 武器が攻撃可能かチェックしてサーバー命令を送る
         Vector3 shootDir = GetShootDirection();
-        weaponController.CmdRequestAttack(shootDir);
+        weaponController_main.CmdRequestAttack(shootDir);
     }
 
     /// <summary>

@@ -18,10 +18,14 @@ public class PlayerListManager : NetworkBehaviour {
         public string name;   // プレイヤー名
         public int score;     // スコア
 
+        public int kills;   // キル
+        public int deaths;  // デス
+
         public PlayerInfo(int id, string name, int score = 0) {
             this.id = id;
             this.name = name;
             this.score = score;
+
         }
     }
 
@@ -139,6 +143,24 @@ public class PlayerListManager : NetworkBehaviour {
         Debug.Log("[PlayerListManager] 全スコアをリセットしました");
     }
     #endregion
+
+
+
+
+    // キル数
+    [Server]
+    public void AddKill(string name) {
+        var p = players.Find(x => x.name == name);
+        if (p != null) p.kills++;
+    }
+    // デス数
+    [Server]
+    public void AddDeath(string name) {
+        var p = players.Find(x => x.name == name);
+        if (p != null) p.deaths++;
+    }
+
+
 
 
     //==============================================================

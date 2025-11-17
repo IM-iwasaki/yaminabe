@@ -79,8 +79,11 @@ public class MainWeaponController : NetworkBehaviour {
 
     // --- 近接攻撃 ---
     void ServerMeleeAttack() {
+        if (weaponData is not MeleeData meleeData)
+            return;
+
         int attackLayer = LayerMask.GetMask("Character");
-        Collider[] hits = Physics.OverlapSphere(firePoint.position, weaponData.range, attackLayer);
+        Collider[] hits = Physics.OverlapSphere(firePoint.position, meleeData.range, attackLayer);
         // プレイヤーの前方ベクトル（視線や武器の向き）
         Vector3 forward = firePoint.forward;
 
@@ -94,24 +97,24 @@ public class MainWeaponController : NetworkBehaviour {
             // forwardとの角度を計算
             float angle = Vector3.Angle(forward, dir);
 
-            // 半円判定：前方180度（つまり90°以内なら当たり）
-            if (angle <= weaponData.meleeAngle) {
-                hp.TakeDamage(weaponData.damage, characterBase.PlayerName);
-                RpcSpawnHitEffect(c.transform.position, weaponData.hitEffectType);
+            if (angle <= meleeData.meleeAngle) {
+                hp.TakeDamage(meleeData.damage, characterBase.PlayerName);
+                RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
             }
         }
 #if UNITY_EDITOR
-                MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, weaponData.range, weaponData.meleeAngle, Color.yellow, 0.5f);
+                MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
     }
 
     // --- 銃撃処理（TPSレティクル方向） ---
     void ServerGunAttack(Vector3 direction) {
-        if (weaponData.projectilePrefab == null) return;
+        if (weaponData is not GunData gunData || gunData.projectilePrefab == null)
+            return;
 
         // 弾をネットワークプールから取得
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(
-            weaponData.projectilePrefab.name, // プール名で取得
+            gunData.projectilePrefab.name, // プール名で取得
             firePoint.position,
             Quaternion.LookRotation(direction)
         );
@@ -122,24 +125,24 @@ public class MainWeaponController : NetworkBehaviour {
             projScript.Init(
                 gameObject,
                 characterBase.PlayerName,
-                weaponData.hitEffectType,
-                weaponData.projectileSpeed,
-                weaponData.damage
+                gunData.hitEffectType,
+                gunData.projectileSpeed,
+                gunData.damage
             );
         }
         else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
             ExpProjScript.Init(
                 gameObject,
                 characterBase.PlayerName,
-                weaponData.hitEffectType,
-                weaponData.projectileSpeed,
-                weaponData.damage,
-                weaponData.range
+                gunData.hitEffectType,
+                gunData.projectileSpeed,
+                gunData.damage,
+                gunData.explosionRange
             );
         }
 
         if (proj.TryGetComponent(out Rigidbody rb)) {
-            rb.velocity = direction * weaponData.projectileSpeed;
+            rb.velocity = direction * gunData.projectileSpeed;
         }
 
         RpcPlayMuzzleFlash(firePoint.position, weaponData.muzzleFlashType);
