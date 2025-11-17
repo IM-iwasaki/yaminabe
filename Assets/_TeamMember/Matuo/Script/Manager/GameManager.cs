@@ -6,10 +6,11 @@ using UnityEngine;
 /// ゲーム開始・終了、ルール切替、タイマー管理
 /// </summary>
 public class GameManager : NetworkSystemObject<GameManager> {
+    public static event System.Action OnGameEnded;
     [SyncVar] private bool isGameRunning = false;
     private GameTimer gameTimer;
     private RuleManager ruleManager;
-    
+
     /// <summary>
     /// 初期化
     /// </summary>
@@ -70,6 +71,8 @@ public class GameManager : NetworkSystemObject<GameManager> {
             ruleManager.EndDeathMatch();
         else
             ruleManager.CheckWinConditionAllTeams();
+
+        OnGameEnded?.Invoke();
     }
 
     /// <summary>
