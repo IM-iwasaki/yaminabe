@@ -12,9 +12,6 @@ public class AppearanceSyncManager : NetworkSystemObject<AppearanceSyncManager>
     // クライアント側で netId → GameObject を保持
     private Dictionary<uint, GameObject> clientPlayers = new Dictionary<uint, GameObject>();
 
-    [Header("キャラ選択用のオブジェクト")]
-    [SerializeField] private SelectObjectManager selectObj = null;
-
     /// <summary>
     /// 見た目をプレイヤーの固有IDごとに保存する関数
     /// </summary>
@@ -26,13 +23,29 @@ public class AppearanceSyncManager : NetworkSystemObject<AppearanceSyncManager>
         states[netId] = (characterNo, skinNo);
     }
 
+    /// <summary>
+    /// クライアントが入った際に呼び出す
+    /// </summary>
     protected override void OnClientInitialized() {
-        TargetSendAllStates();
+        if(NetworkClient.active && !NetworkServer.active) {
+            //  クライアントからサーバーへ伝達
+            CmdRequestAllStates();
+        }
     }
 
+    /// <summary>
+    /// クライアントからサーバーへ伝達
+    /// </summary>
+    [Command(requiresAuthority = false)]
+    private void CmdRequestAllStates() {
+        TargetSendAllStates(connectionToClient);
+    }
 
+    /// <summary>
+    /// id、番号を割り当てる
+    /// </summary>
     [TargetRpc]
-    public void TargetSendAllStates() {
+    public void TargetSendAllStates(NetworkConnection target) {
         foreach (var kv in states) {
             uint id = kv.Key;
             int c = kv.Value.characterNo;
@@ -42,7 +55,6 @@ public class AppearanceSyncManager : NetworkSystemObject<AppearanceSyncManager>
             RpcApplyAppearanceToOne(id, c, s);
         }
     }
-
 
     /// <summary>
     /// クライアント側で見た目を適用
@@ -57,8 +69,8 @@ public class AppearanceSyncManager : NetworkSystemObject<AppearanceSyncManager>
         }
 
         // null チェック後に適用
-        if (playerObj != null && selectObj != null) {
-            selectObj.PlayerChange(playerObj, charNo, skinNo, true);
+        if (playerObj != null) {
+            AppearanceChangeManager.instance.PlayerChange(playerObj, charNo, skinNo, true);
         }
     }
 

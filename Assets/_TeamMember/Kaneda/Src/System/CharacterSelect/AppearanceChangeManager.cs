@@ -1,0 +1,61 @@
+using Mirror;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AppearanceChangeManager : MonoBehaviour
+{
+    //  インスタンス化
+    public static AppearanceChangeManager instance;
+
+    [Header("キャラクターデータ")]
+    [SerializeField] private CharacterDatabase data;
+
+    //  ここでインスタンス化
+    private void Awake() {
+        DontDestroyOnLoad(this);
+        instance = this;
+    }
+
+    /// <summary>
+    /// 指定の親オブジェクトのタグ付き子オブジェクトを削除する
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="tag"></param>
+    private void DestroyChildrenWithTag(Transform parent, string tag) {
+        if (tag == null) return;
+
+        foreach (Transform child in parent) {
+            if (child.CompareTag(tag)) {
+                Destroy(child.gameObject);
+            }
+        }
+    }
+
+    /// <summary>
+    /// プレイヤーに現在のキャラクターを反映させる
+    /// </summary>
+    /// <param name="player"></param>
+    public void PlayerChange(GameObject player, int characterCount, int skinCount, bool canChange) {
+        //  チェンジ不可なら処理しない
+        if (!canChange) return;
+
+        //  タグを取り破棄する
+        DestroyChildrenWithTag(player.transform, "Skin");
+        //  親の位置を保存
+        Transform parent = player.transform;
+        //  生成位置を取る
+        Vector3 spawnPos = parent.position + parent.TransformDirection(Vector3.down);
+        //  スキンの番号を同期させる
+        GameObject prefab = data.characters[characterCount].skins[skinCount].skinPrefab;
+        //  プレイヤーの子オブジェクトに生成
+        Instantiate(prefab, spawnPos, parent.rotation, parent);
+        //  プレイヤーのステータスを置き換える
+        player.GetComponent<GeneralCharacter>().StatusInport(data.characters[characterCount].statusData);
+        //  プレイヤーのIDを取得・格納
+        uint netId = player.GetComponent<NetworkIdentity>().netId;
+        //  変更したデータを保存する
+        AppearanceSyncManager.Instance.RecordAppearance(netId, characterCount, skinCount);
+    }
+
+}
