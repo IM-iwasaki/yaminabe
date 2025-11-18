@@ -51,6 +51,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
             passive_State.color = Color.white;
         }
 
+        //メインウェポンの現在弾倉数を更新
+        mainWeaponText[(int)TextIndex.Current].text = player.magazine.ToString();
         //サブウェポンの現在所持数を更新
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
     }
@@ -64,10 +66,13 @@ public class PlayerLocalUIController : NetworkBehaviour {
         } 
         
         //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
-        if( player.maxMagazine >= 1) {
+        if( player.magazine >= 1) {
             for(int i = 0 ; i< mainWeaponText.Length ; i++) {
                 mainWeaponText[i].enabled = true;
             }
+            mainWeaponText[(int)TextIndex.Current].text = player.magazine.ToString();
+            mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
+            mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;
         }
         //プレイヤーのサブウェポンUIを反映
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();

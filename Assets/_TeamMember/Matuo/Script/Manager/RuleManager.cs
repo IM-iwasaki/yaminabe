@@ -48,9 +48,15 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// キル通知 (デスマッチ用)
     /// </summary>
     [Server]
-    public void OnTeamKill(int teamId, int kills) {
-        if (currentRule == GameRuleType.DeathMatch)
-            AddScore(teamId, kills, GameRuleType.DeathMatch);
+    public void OnTeamKillByTeam(int teamId) {
+        // 0=Red, 1=Blue
+        if (!teamScores.ContainsKey(teamId))
+            teamScores[teamId] = 0f;
+
+        teamScores[teamId] += 1f;
+
+        // UI 更新
+        RpcUpdateScore(teamId, teamScores[teamId]);
     }
 
     /// <summary>
@@ -62,12 +68,17 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             teamScores[teamId] = 0f;
 
         teamScores[teamId] += amount;
-        Debug.Log($"Team {teamId} score: {teamScores[teamId]} (Rule: {rule})");
-
         RpcUpdateScore(teamId, teamScores[teamId]);
 
-        if (rule != GameRuleType.DeathMatch)
-            CheckWinConditionAllTeams();
+        // エリア・ホコルールの場合
+        if (rule == GameRuleType.Area || rule == GameRuleType.Hoko) {
+            // 50カウント以上なら即勝利判定
+            if (teamScores[teamId] >= winScores[rule]) {
+                Debug.Log($"Team {teamId} が {rule} ルールで勝利！スコア: {teamScores[teamId]}");
+                SendTeamResultToAll(teamId);
+                GameManager.Instance.EndGame();
+            }
+        }
     }
 
     /// <summary>
