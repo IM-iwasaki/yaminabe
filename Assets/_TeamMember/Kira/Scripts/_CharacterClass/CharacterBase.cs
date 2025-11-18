@@ -390,7 +390,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             // OnKill を呼ぶときに victimTeam を渡すように変更
             combat.OnKill(killerIdentity, victimTeam);
         }
-        // 死亡回数を増やす
+        // 死亡回数を増やすa
         PlayerListManager.Instance?.AddDeath(this.PlayerName);
 
     }
