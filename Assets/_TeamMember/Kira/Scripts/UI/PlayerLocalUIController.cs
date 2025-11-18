@@ -15,34 +15,40 @@ public class PlayerLocalUIController : NetworkBehaviour {
         WeaponName,
     }
 
-    [SerializeField]TextMeshProUGUI[] mainWeaponText;
-    [SerializeField]TextMeshProUGUI[] subWeaponText;
+    [SerializeField] TextMeshProUGUI[] mainWeaponText;
+    [SerializeField] TextMeshProUGUI[] subWeaponText;
 
-    [SerializeField]Image[] skill_Icon;
-    [SerializeField]Image skill_State;
-    [SerializeField]Image[] passive_Icon;
-    [SerializeField]Image passive_State;
-    [SerializeField]GeneralCharacter player;
-    [SyncVar]float skillStateProgress = 0.0f;
-    [SyncVar]float passiveStateProgress = 0.0f;
+    [SerializeField] Image[] skill_Icon;
+    [SerializeField] Image skill_State;
+    [SerializeField] Image[] passive_Icon;
+    [SerializeField] Image passive_State;
+    [SerializeField] GeneralCharacter player;
+    [SyncVar] float skillStateProgress = 0.0f;
+    [SyncVar] float passiveStateProgress = 0.0f;
 
     void Start() {
+        if (!GetComponent<CharacterBase>().isLocalPlayer) {
+            var LocalUI = GetComponentInChildren<Canvas>();
+            Debug.Log(LocalUI.name);
+            LocalUI.gameObject.SetActive(false);
+            return;
+        }
         LocalUIChanged();
     }
 
     void Update() {
         //スキルの表示状態管理
-        if(player.isCanSkill) {
+        if (player.isCanSkill) {
             skill_State.fillAmount = 1.0f;
             skill_State.color = Color.yellow;
-        }       
+        }
         else {
             skillStateProgress = player.skillAfterTime / player.equippedSkills[0].cooldown;
             skill_State.fillAmount = skillStateProgress;
-            skill_State.color = Color.white;           
+            skill_State.color = Color.white;
         }
         //パッシブの表示状態管理
-        if(player.equippedPassives[0].IsPassiveActive) {
+        if (player.equippedPassives[0].IsPassiveActive) {
             //passiveStateProgress = player.equippedPassives[0].CoolTime / player.equippedPassives[0].Cooldown;
             //passive_State.fillAmount = passiveStateProgress;
             passive_State.color = Color.yellow;
@@ -58,18 +64,15 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     public void LocalUIChanged() {
-        for (int i  = 0; i < skill_Icon.Length ; i++) {
+        for (int i = 0; i < skill_Icon.Length; i++) {
             skill_Icon[i].sprite = player.equippedSkills[0].skillIcon;
         }
-        for (int i  = 0; i < passive_Icon.Length ; i++) {
+        for (int i = 0; i < passive_Icon.Length; i++) {
             passive_Icon[i].sprite = player.equippedPassives[0].passiveIcon;
-        } 
-        
+        }
+
         //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
-        if( player.magazine >= 1) {
-            for(int i = 0 ; i< mainWeaponText.Length ; i++) {
-                mainWeaponText[i].enabled = true;
-            }
+        if (player.magazine >= 1) {
             mainWeaponText[(int)TextIndex.Current].text = player.magazine.ToString();
             mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
             mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;

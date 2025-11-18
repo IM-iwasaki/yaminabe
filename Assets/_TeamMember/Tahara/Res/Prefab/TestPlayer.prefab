@@ -107,9 +107,9 @@ Transform:
   - {fileID: 4807031412442243011}
   - {fileID: 1924772973200123176}
   - {fileID: 321994967542534626}
+  - {fileID: 6239178117605846626}
   - {fileID: 3444573380917267672}
   - {fileID: 4022569192853304098}
-  - {fileID: 6239178117605846626}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8153773122267771096
@@ -805,6 +805,10 @@ PrefabInstance:
     - target: {fileID: 2177224555997809794, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
       propertyPath: m_Name
       value: LocalPlayerUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 6231740509802659688, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
