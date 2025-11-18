@@ -729,6 +729,15 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
+    /// アイテム取得関連のフラグをリセットする
+    /// </summary>
+    public void ResetCanPickFlag() {
+        // フラグを下ろす
+        isCanPickup = false;
+        useCollider = null;
+    }
+
+    /// <summary>
     /// 移動
     /// </summary>
     public void OnMove(InputAction.CallbackContext context) {

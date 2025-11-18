@@ -46,6 +46,9 @@ public class ConsumableItem : ItemBase {
                 break;
         }
 
+        //  キャラクター側のフラグをリセットする
+        player.GetComponent<CharacterBase>().ResetCanPickFlag();
+
         // 使用後にアイテムを削除
         if (canDestroy) CmdRequestDestroy();
 
