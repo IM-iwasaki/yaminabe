@@ -350,7 +350,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死亡時処理
     /// サーバーで処理
     /// </summary>
-    [Server]
+    /// <summary>
+    /// 死亡時処理
+    /// 対象にのみ通知
+    /// </summary>
+    [TargetRpc]
     public void Dead(string _name) {
         if (isDead) return;
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
@@ -374,29 +378,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //ローカルで死亡演出
         LocalDeadEffect(_name);
         //遅延しつつリスポーン
-<<<<<<< HEAD
-        RespawnDelay();
-        // --- _name が自分の名前なら自滅扱いにする ---
-        if (_name == PlayerName) {
-            _name = null;
-        }
-
-        // --- _name から NetworkIdentity を取得 ---
-        NetworkIdentity killerIdentity = null;
-
-        if (!string.IsNullOrEmpty(_name)) {
-            foreach (var p in FindObjectsOfType<CharacterBase>()) {
-                if (p.PlayerName == _name) {
-                    killerIdentity = p.GetComponent<NetworkIdentity>();
-                    break;
-                }
-            }
-        }
-
-        // --- PlayerCombat.OnKill を呼ぶ ---
-=======
         CmdRespawnDelay();
->>>>>>> Matsuo
         var combat = GetComponent<PlayerCombat>();
         if (combat != null) {
             int victimTeam = TeamID; // ← CharacterBase の TeamID を使用
