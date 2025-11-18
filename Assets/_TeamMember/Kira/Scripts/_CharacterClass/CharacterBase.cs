@@ -377,9 +377,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         isMoving = false;
         //ローカルで死亡演出
         LocalDeadEffect(_name);
+        RespawnDelay();
+
+        // スコア計算にここから行きます
         var combat = GetComponent<PlayerCombat>();
         if (combat != null) {
-            int victimTeam = TeamID; // ← CharacterBase の TeamID を使用
+            int victimTeam = TeamID;
             NetworkIdentity killerIdentity = null;
 
             if (!string.IsNullOrEmpty(_name) && _name != PlayerName) {
