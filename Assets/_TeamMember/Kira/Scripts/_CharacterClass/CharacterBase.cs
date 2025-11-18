@@ -1019,9 +1019,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
         while (isAttackPressed) {
             StartAttack(_type);
+            //弾が残っていたら消費
+            if (magazine >= 1) magazine--;
             yield return new WaitForSeconds(weaponController_main.weaponData.cooldown);
         }
     }
+
+    //TODO:射撃の挙動がやばい。上のコルーチンやめたほうがいいかも。
 
     /// <summary>
     /// 攻撃関数
@@ -1033,14 +1037,11 @@ public abstract class CharacterBase : NetworkBehaviour {
             case WeaponType.Melee:
                 break;
             case WeaponType.Gun:
-                //使用しているのが銃の時、弾倉が残っていれば弾を消費して通過する
-                if (magazine > 0) magazine--;
-                //弾がなかったら通過不可。かわりにリロード関数をInvokeで呼ぶ。
-                else {
+                //使用武器が銃でかつ弾がなかったら通過不可。かわりにリロードを要求する。
+                if (weaponController_main.weaponData.type == WeaponType.Gun && magazine == 0) {
                     ReloadRequest();
                     return;
                 }
-
                 break;
             case WeaponType.Magic:
                 break;
