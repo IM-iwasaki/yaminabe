@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 
 /// <summary>
 /// スコア一覧をスクロールビューで表示するUI管理クラス。
@@ -30,13 +32,13 @@ public class ScoreListUI : MonoBehaviour {
 
         // 新規エントリ生成
         foreach (var data in scores)
-            AddScoreEntry(data.PlayerName, data.Score);
+            AddScoreEntry(data.PlayerName, data.Score,data.Kills,data.Deaths);
     }
 
     /// <summary>
     /// 1行分のスコアエントリを生成して内容を設定。
     /// </summary>
-    private void AddScoreEntry(string playerName, int score) {
+    private void AddScoreEntry(string playerName, int score ,int kills, int deaths) {
         if (scoreEntryPrefab == null) {
             Debug.LogError("[ScoreListUI] scoreEntryPrefab が未設定です。");
             return;
@@ -49,6 +51,11 @@ public class ScoreListUI : MonoBehaviour {
             // 代入するオブジェクトにName、Scoreが入っていれば取れる
             if (t.name.Contains("Name")) t.text = playerName;
             else if (t.name.Contains("Score")) t.text = score.ToString();
+            else if (t.name.Contains("Kill")) t.text = kills.ToString();
+            else if (t.name.Contains("Death")) t.text = deaths.ToString();
+
+
+
         }
     }
 }
