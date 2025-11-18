@@ -76,8 +76,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0;
     //オート攻撃タイプ (デフォルトはフルオート)
-    public CharacterEnum.AutoFireType autoFireType { get; protected set; }
-        = CharacterEnum.AutoFireType.FullAutomatic;
+    public bool isAutoAttackRunning { get; private set; }
 
     //アイテムを拾える状態か
     protected bool isCanPickup = false;
@@ -983,32 +982,19 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (isDead) return;
 
         switch (context.phase) {
-            //押した瞬間から
             case InputActionPhase.Started:
-                isAttackPressed = true;
-                //入力開始時間を記録
-                attackStartTime = Time.time;
+            isAttackPressed = true;
 
-                //フルオート状態の場合コルーチンで射撃間隔を調整する
-                if (autoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
-                    StartCoroutine(AutoFire(_type));
-                }
-                break;
-            //離した瞬間まで
-            case InputActionPhase.Canceled:
-                isAttackPressed = false;
-                //入力終了時間を記録
-                float heldTime = Time.time - attackStartTime;
+            if (!isAutoAttackRunning) StartCoroutine(AutoFire(_type));
+            break;
 
-                //セミオート状態の場合入力時間が短ければ一回攻撃
-                if (autoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
-                    StartAttack(_type);
-                }
-                break;
-            //押した瞬間
-            case InputActionPhase.Performed:
-                isAttackTrigger = true;
-                break;
+        case InputActionPhase.Canceled:
+            isAttackPressed = false;
+            break;
+
+        case InputActionPhase.Performed:
+            isAttackTrigger = true;
+            break;
         }
     }
 
@@ -1016,15 +1002,19 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// オート攻撃のコルーチン
     /// </summary>
     private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
+        isAutoAttackRunning = true;        
+
         while (isAttackPressed) {
+            if (magazine == 0) {
+                ReloadRequest();
+                break;
+            }
             StartAttack(_type);
-            //弾が残っていたら消費
-            if (magazine >= 1) magazine--;
+
             yield return new WaitForSeconds(weaponController_main.weaponData.cooldown);
         }
+        isAutoAttackRunning = false;
     }
-
-    //TODO:射撃の挙動がやばい。上のコルーチンやめたほうがいいかも。
 
     /// <summary>
     /// 攻撃関数
@@ -1051,6 +1041,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 武器が攻撃可能かチェックしてサーバー命令を送る
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
+        //攻撃後に弾を消費
+        magazine--;
     }
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
