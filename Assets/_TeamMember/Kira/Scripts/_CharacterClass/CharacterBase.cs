@@ -308,7 +308,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //　nameをスコア加算関数み送る
         if (HP <= 0) {
             HP = 0;
-           
+            //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
+            KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 // スコア加算
@@ -348,7 +349,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死亡時処理
     /// 対象にのみ通知
     /// </summary>
-    [TargetRpc]
+    [Server]
     public void Dead(string _name) {
         if (isDead) return;
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
@@ -404,7 +405,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// サーバーにリスポーンしたい意思を伝える
     /// TargetRPCで死亡処理しているのでこれが必要
     /// </summary>
-    [Command]
+    [Server]
     private void CmdRespawnDelay() {
         RpcPlayDeathEffect();
         //サーバーに通知する
@@ -452,10 +453,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 可読性向上のためまとめました
     /// </summary>
     /// <param name="_name"></param>
+    [TargetRpc]
     private void LocalDeadEffect(string _name) {
-        //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
-        KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
-
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
         //フェードアウトさせる
