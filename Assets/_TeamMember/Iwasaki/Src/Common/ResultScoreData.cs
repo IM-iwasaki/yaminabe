@@ -9,4 +9,6 @@ public struct ResultScoreData {
     public int Score;          // スコア値
     public int Kills;　　　　　// キル
     public int Deaths;         // デス
+    // --- KDR をプロパティで計算 ---
+    public float KD => (Deaths == 0) ? Kills : (float)Kills / Deaths;
 }
