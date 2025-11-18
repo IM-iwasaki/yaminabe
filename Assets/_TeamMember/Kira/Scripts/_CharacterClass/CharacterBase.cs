@@ -718,11 +718,11 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(GetComponent<NetworkIdentity>(), TeamColor.Red);
+                CmdJoinTeam(netIdentity, TeamColor.Red);
                 break;
             case "BlueTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(GetComponent<NetworkIdentity>(), TeamColor.Blue);
+                CmdJoinTeam(netIdentity, TeamColor.Blue);
                 break;
             default:
                 break;
