@@ -362,7 +362,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死亡時処理
     /// 対象にのみ通知
     /// </summary>
-    [TargetRpc]
+    [Server]
     public void Dead(string _name) {
         if (isDead) return;
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
