@@ -1,36 +1,43 @@
 using UnityEngine;
 using Mirror;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Collider))] // コライダーが必要
 /// <summary>
 /// ホコオブジェクト
-/// プレイヤーがホコを持っている間スコア加算
+/// プレイヤーが持っている間、チームのスコアを加算する
 /// </summary>
-public class CaptureHoko : CaptureObjectBase {
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider))]
+public class CaptureHoko : NetworkBehaviour {
     [Header("ホコ設定")]
-    public float countSpeed = 1f;
+    public float scorePerSecond = 1f;       // 1秒ごとのスコア
+    public float holdHeight = 1.2f;         // プレイヤー上のホコの位置
 
-    [SyncVar] private bool isHeld = false;             // プレイヤーが保持しているか
-    [SyncVar] public NetworkIdentity holder;          // ホコを持つプレイヤー
+    [SyncVar] private bool isHeld = false;
+    [SyncVar] public NetworkIdentity holder;  // 現在ホコを持っているプレイヤー
+
     private Rigidbody rb;
-    [SerializeField] private Collider hokoCollider;
+    private Collider col;
+    private float timer = 0f;
 
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
-    protected override void Start() {
-        base.Start();
+    private void Awake() {
         rb = GetComponent<Rigidbody>();
-        hokoCollider = GetComponent<Collider>();
-        hokoCollider.isTrigger = true;
+        col = GetComponent<Collider>();
+        col.isTrigger = true;
     }
 
     [ServerCallback]
-    protected new void Update() {
+    private void Update() {
         if (isHeld && holder != null) {
-            transform.position = holder.transform.position + new Vector3(0, 1.2f, 0);
+            // プレイヤーの頭上に追従
+            transform.position = holder.transform.position + Vector3.up * holdHeight;
             transform.rotation = holder.transform.rotation;
+
+            // スコア加算
+            timer += Time.deltaTime;
+            if (timer >= 1f) {
+                timer = 0f;
+                AddScoreToHolderTeam();
+            }
         }
     }
 
@@ -42,6 +49,7 @@ public class CaptureHoko : CaptureObjectBase {
     [ServerCallback]
     private void OnTriggerEnter(Collider other) {
         if (isHeld) return;
+
         var player = other.GetComponent<CharacterBase>();
         if (player != null && player.netIdentity != null) {
             TryPickup(player.netIdentity);
@@ -60,10 +68,7 @@ public class CaptureHoko : CaptureObjectBase {
         holder = player;
         rb.isKinematic = true;
         transform.SetParent(player.transform);
-        transform.localPosition = new Vector3(0, 1.2f, 0);
-
-        // チームIDを CharacterBase から取得
-        ownerTeamId = player.GetComponent<CharacterBase>().TeamID;
+        transform.localPosition = Vector3.up * holdHeight;
     }
 
     /// <summary>
@@ -77,25 +82,20 @@ public class CaptureHoko : CaptureObjectBase {
         holder = null;
         transform.SetParent(null);
         rb.isKinematic = false;
-        ownerTeamId = -1;
-    }
-
-    /// <summary>
-    /// カウント計算
-    /// ホコを持っている場合のみ加算
-    /// </summary>
-    /// <returns>ObjectManager に通知するカウント</returns>
-    protected override float CalculateProgress() {
-        if (!isHeld || holder == null) return 0f;
-        return countSpeed;
     }
 
     /// <summary>
     /// ゲーム終了時にホコを落とす用
     /// </summary>
     [Server]
-    private void HandleGameEnd() {
-        Drop();
+    private void AddScoreToHolderTeam() {
+        if (holder == null) return;
+
+        var player = holder.GetComponent<CharacterBase>();
+        if (player == null) return;
+
+        int teamId = player.TeamID;
+        RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
     }
 
     private void OnEnable() {
@@ -104,5 +104,10 @@ public class CaptureHoko : CaptureObjectBase {
 
     private void OnDisable() {
         GameManager.OnGameEnded -= HandleGameEnd;
+    }
+
+    [Server]
+    private void HandleGameEnd() {
+        Drop();
     }
 }

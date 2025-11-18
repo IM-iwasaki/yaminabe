@@ -43,8 +43,8 @@ public class ObjectManager : NetworkSystemObject<ObjectManager> {
     /// <summary>
     /// キル通知 (デスマッチ用)
     /// </summary>
-    [Server]
-    public void NotifyKill(int teamId, int kills) {
-        ruleManager?.OnTeamKill(teamId, kills);
-    }
+    //[Server]
+    //public void NotifyKill(int teamId, int kills) {
+    //    ruleManager?.OnTeamKill(teamId, kills);
+    //}
 }

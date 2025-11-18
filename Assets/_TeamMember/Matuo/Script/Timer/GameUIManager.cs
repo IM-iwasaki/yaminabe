@@ -89,11 +89,11 @@ public class GameUIManager : MonoBehaviour {
         if (!IsClientActive()) return;
 
         switch (teamId) {
-            case 1:
+            case 0:
                 if (redTeamScoreText != null)
                     redTeamScoreText.text = $"RedTeam: {score:F0}";
                 break;
-            case 2:
+            case 1:
                 if (blueTeamScoreText != null)
                     blueTeamScoreText.text = $"BlueTeam: {score:F0}";
                 break;

@@ -144,23 +144,29 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         else
             Debug.LogWarning("[ResultManager] ScoreListUIが見つかりません。");
 
-        int len = data.teamScores?.Length ?? 0;
+        // チームIDで明示的に取得
+        float redScore = 0f;
+        float blueScore = 0f;
 
-        float scoreA = (len > 0) ? data.teamScores[0].teamScore : 0f;
-        float scoreB = (len > 1) ? data.teamScores[1].teamScore : 0f;
+        if (data.teamScores != null) {
+            foreach (var entry in data.teamScores) {
+                if (entry.teamId == 0) redScore = entry.teamScore;
+                else if (entry.teamId == 1) blueScore = entry.teamScore;
+            }
+        }
 
         // ---- ルール別処理 ----
         switch (data.rule) {
             case GameRuleType.Area:
-                currentResultPanel.SetAreaScores(scoreA, scoreB);
+                currentResultPanel.SetAreaScores(redScore, blueScore);
                 break;
 
             case GameRuleType.Hoko:
-                currentResultPanel.SetHokoScores(scoreA, scoreB);
+                currentResultPanel.SetHokoScores(redScore, blueScore);
                 break;
 
             case GameRuleType.DeathMatch:
-                currentResultPanel.SetDeathMatchScores((int)scoreA, (int)scoreB);
+                currentResultPanel.SetDeathMatchScores((int)redScore, (int)blueScore);
                 break;
         }
     }
