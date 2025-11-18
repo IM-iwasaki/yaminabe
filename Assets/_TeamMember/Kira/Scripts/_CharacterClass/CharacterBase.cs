@@ -445,7 +445,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void TargetRespawnDelay() {
         //リスポーン要求
         Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
-        Invoke(nameof(ResetHealth), PlayerConst.RESPAWN_TIME);
+        Invoke(nameof(ResetHealth), PlayerConst.RESPAWN_TIME + 0.01f);
     }
     /// <summary>
     /// ローカル上で死亡演出
