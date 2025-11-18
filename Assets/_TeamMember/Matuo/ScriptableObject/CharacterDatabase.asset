@@ -13,21 +13,21 @@ MonoBehaviour:
   m_Name: CharacterDatabase
   m_EditorClassIdentifier: 
   characters:
-  - characterName: DefaultCharacter
+  - characterName: Alien
     statusData: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
     skins:
-    - skinName: DefaultCharacter
+    - skinName: Default
       skinPrefab: {fileID: 7369448170708576210, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
-    - skinName: AnotherDefault
+    - skinName: Another
       skinPrefab: {fileID: 3108797039877070855, guid: 9147bb052d83cb748a579c1a6451d39e, type: 3}
-    - skinName: GoldDefault
+    - skinName: Gold
       skinPrefab: {fileID: 3108797039877070855, guid: ea8ee7ded32385c48a0ec769b5ee454f, type: 3}
   - characterName: Chicken
     statusData: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
     skins:
-    - skinName: DefaultChicken
+    - skinName: Default
       skinPrefab: {fileID: 3548868566056176881, guid: 98d6a2fbec6271046aea2df749876bb7, type: 3}
-    - skinName: GoldChicken
-      skinPrefab: {fileID: 3548868566056176881, guid: 15fa7e1f49cf3284ba1465b20791ea8b, type: 3}
-    - skinName: CrazyChicken
+    - skinName: Crazy
       skinPrefab: {fileID: 3548868566056176881, guid: 80df7670b3ce0484e934d23878f7de37, type: 3}
+    - skinName: Gold
+      skinPrefab: {fileID: 3548868566056176881, guid: 15fa7e1f49cf3284ba1465b20791ea8b, type: 3}

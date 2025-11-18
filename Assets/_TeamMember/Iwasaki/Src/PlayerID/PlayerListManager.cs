@@ -18,10 +18,14 @@ public class PlayerListManager : NetworkBehaviour {
         public string name;   // プレイヤー名
         public int score;     // スコア
 
+        public int kills;   // キル
+        public int deaths;  // デス
+
         public PlayerInfo(int id, string name, int score = 0) {
             this.id = id;
             this.name = name;
             this.score = score;
+
         }
     }
 
@@ -141,6 +145,24 @@ public class PlayerListManager : NetworkBehaviour {
     #endregion
 
 
+
+
+    // キル数
+    [Server]
+    public void AddKill(string name) {
+        var p = players.Find(x => x.name == name);
+        if (p != null) p.kills++;
+    }
+    // デス数
+    [Server]
+    public void AddDeath(string name) {
+        var p = players.Find(x => x.name == name);
+        if (p != null) p.deaths++;
+    }
+
+
+
+
     //==============================================================
     // ▼ リザルト連携
     //==============================================================
@@ -154,10 +176,12 @@ public class PlayerListManager : NetworkBehaviour {
         foreach (var p in players) {
             list.Add(new ResultScoreData {
                 PlayerName = p.name,
-                Score = p.score
+                Score = p.score,
+                Kills = p.kills,
+                Deaths = p.deaths,
+                
             });
         }
-        Debug.Log("[PlayerListManager] リザルト用データを作成しました");
         return list;
     }
 

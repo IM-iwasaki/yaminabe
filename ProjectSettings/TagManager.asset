@@ -17,9 +17,7 @@ TagManager:
   - Effect
   - Reticle
   - Gacha
-  - HokoObject
-  - AreaObject
-  - DeathMatchObject
+  - RuleObject
   layers:
   - Default
   - TransparentFX
@@ -31,7 +29,7 @@ TagManager:
   - Item
   - Projectile
   - SubWeapon
-  - GameObject
+  - RuleObject
   - 
   - 
   - 

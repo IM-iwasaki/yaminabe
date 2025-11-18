@@ -27,20 +27,20 @@ MonoBehaviour:
     rate: 1
   commonItems:
   - characterName: Chicken
-    itemName: DefaultChicken
+    itemName: Default
     rate: 10
-  - characterName: DefaultCharacter
-    itemName: AnotherDefault
+  - characterName: Alien
+    itemName: Another
     rate: 10
   rareItems:
-  - characterName: DefaultCharacter
-    itemName: GoldDefault
+  - characterName: Alien
+    itemName: Gold
     rate: 10
   epicItems:
   - characterName: Chicken
-    itemName: CrazyChicken
+    itemName: Crazy
     rate: 9
   legendaryItems:
   - characterName: Chicken
-    itemName: GoldChicken
+    itemName: Gold
     rate: 10

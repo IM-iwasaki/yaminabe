@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime;
+using Mirror;
 using UnityEngine;
 
 /// <summary>
@@ -196,8 +196,16 @@ public class GachaSystem : MonoBehaviour {
         OffGachaAnim();
 
         // UIを非表示（戻る操作開始時）
-        if (gachaUI != null)
+        if (gachaUI != null) {
             gachaUI.SetActive(false);
+            //プレイヤーUIの表示を戻す
+            if (currentPlayer.GetComponent<NetworkIdentity>().isLocalPlayer) {
+                var playerUI = currentPlayer.GetComponent<CharacterBase>().UI;
+                playerUI.gameObject.SetActive(true);
+            }
+
+        }
+
 
         //  プレイヤーの見た目非表示
         Transform parent = currentPlayer.transform;

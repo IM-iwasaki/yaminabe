@@ -4,8 +4,13 @@ using UnityEngine;
 /// <summary>
 /// 魔法武器データ
 /// </summary>
-[CreateAssetMenu(menuName = "ScriptableObject/Weapons/MagicWeaponData")]
-public class MagicWeaponData : WeaponData {
+[CreateAssetMenu(menuName = "ScriptableObject/Weapons/MainMagicData")]
+public class MainMagicData : WeaponData {
+
+    [Header("Projectile Settings")]
+    public GameObject projectilePrefab;
+    public float projectileSpeed;
+
     [Header("Magic Settings")]
     public ParticleSystem chargeEffect;
     public float chargeTime = 1.0f;

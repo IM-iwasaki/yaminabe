@@ -12,16 +12,22 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
     private GameObject currentStageInstance;
     // リスポーン地点
-    [SerializeField]private readonly SyncList<Transform> normalRespawnPoints = new();
-    [SerializeField]private readonly SyncList<Transform> redRespawnPoints = new();   
-    [SerializeField]private readonly SyncList<Transform> blueRespawnPoints = new();  
+    [SerializeField] private readonly SyncList<Transform> normalRespawnPoints = new();
+    [SerializeField] private readonly SyncList<Transform> redRespawnPoints = new();
+    [SerializeField] private readonly SyncList<Transform> blueRespawnPoints = new();
 
     // 現在のリスポーンモード
     private RespawnMode currentRespawnMode = RespawnMode.Team;
 
+    //今後ルールが増えることがあれば追加する
+    [Header("ルール毎のオブジェクト")]
+    public GameObject areaPrefab;
+    public GameObject hokoPrefab;
+    private GameObject currentRuleObject;
+
     protected override void Awake() {
         base.Awake();
-        
+
     }
 
     /// <summary>
@@ -39,7 +45,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
         currentStageInstance = Instantiate(stageData.stagePrefab);
 
         //ルールごとに生成するオブジェクトを変更する
-        RpcApplyRuleObjects(currentStageInstance, rule);
+        ApplyRuleObjects(rule);
 
         NetworkServer.Spawn(currentStageInstance);
         ItemSpawnManager.Instance.SetupSpawnPoint();
@@ -50,39 +56,44 @@ public class StageManager : NetworkSystemObject<StageManager> {
     }
 
     /// <summary>
-    /// 古谷　ルールごとのオブジェクト取得
+    /// 古谷　ルールごとのオブジェクト生成
     /// </summary>
-    void RpcApplyRuleObjects(GameObject stage, GameRuleType rule) {
-        if (stage == null) return;
+    [Server]
+    void ApplyRuleObjects(GameRuleType rule) {
 
-        var areaObjects = stage.GetComponentsInChildren<Transform>(true)
-                               .Where(t => t.CompareTag("AreaObject"))
-                               .ToArray();
-        var hokoObjects = stage.GetComponentsInChildren<Transform>(true)
-                               .Where(t => t.CompareTag("HokoObject"))
-                               .ToArray();
-        var deathMatchObjects = stage.GetComponentsInChildren<Transform>(true)
-                                     .Where(t => t.CompareTag("DeathMatchObject"))
-                                     .ToArray();
-
-        foreach (var obj in areaObjects) obj.gameObject.SetActive(false);
-        foreach (var obj in hokoObjects) obj.gameObject.SetActive(false);
-        foreach (var obj in deathMatchObjects) obj.gameObject.SetActive(false);
-
-        switch (rule) {
-            case GameRuleType.Area:
-                foreach (var obj in areaObjects) obj.gameObject.SetActive(true);
-                break;
-            case GameRuleType.Hoko:
-                foreach (var obj in hokoObjects) obj.gameObject.SetActive(true);
-                break;
-            case GameRuleType.DeathMatch:
-                foreach (var obj in deathMatchObjects) obj.gameObject.SetActive(true);
-                break;
+        // 既存のルールオブジェクトをタグで検索して削除
+        var exist = GameObject.FindGameObjectsWithTag("RuleObject");
+        foreach (var obj in exist)
+        {
+            NetworkServer.Destroy(obj);
         }
+
+        currentRuleObject = null;
+
+        // DeathMatch の場合は生成なし
+        if (rule == GameRuleType.DeathMatch)
+            return;
+
+        // 作るプレハブを選ぶ
+        GameObject prefab = null;
+        switch (rule)
+        {
+            case GameRuleType.Area: prefab = areaPrefab; break;
+            case GameRuleType.Hoko: prefab = hokoPrefab; break;
+        }
+
+        if (prefab == null)
+            return;
+
+        // (0,0,0) に生成（親なし）
+        currentRuleObject = Instantiate(prefab, new Vector3(0,2,0), Quaternion.identity);
+
+        // クライアントでも判別できるよう統一タグをセット
+        currentRuleObject.tag = "RuleObject";
+
+        // これでクライアントへ同期開始
+        NetworkServer.Spawn(currentRuleObject);
     }
-
-
 
     /// <summary>
     /// ステージ内のリスポーン地点をタグから登録
@@ -140,7 +151,8 @@ public class StageManager : NetworkSystemObject<StageManager> {
         if (currentRespawnMode == RespawnMode.Random) {
             if (normalRespawnPoints.Count == 0) return null;
             return normalRespawnPoints[Random.Range(0, normalRespawnPoints.Count)];
-        } else {
+        }
+        else {
             var points = GetTeamSpawnPoints(team);
             if (points.Count == 0) return null;
             return points[Random.Range(0, points.Count)];

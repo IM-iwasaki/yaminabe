@@ -10,7 +10,7 @@ public class CameraOptionMenu : MonoBehaviour {
     public Canvas optionCanvas;
     public Slider sensitivitySlider;
 
-    private bool isOpen = false;
+    public bool isOpen { get; private set; } = false;
 
     public void Start() {
         // ローカルプレイヤー以外の UI は無効化しておく
