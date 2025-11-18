@@ -145,7 +145,7 @@ public class MainWeaponController : NetworkBehaviour {
             rb.velocity = direction * gunData.projectileSpeed;
         }
 
-        RpcPlayMuzzleFlash(firePoint.position, weaponData.muzzleFlashType);
+        RpcPlayMuzzleFlash(firePoint.position, gunData.muzzleFlashType);
     }
 
     // --- 魔法攻撃 ---

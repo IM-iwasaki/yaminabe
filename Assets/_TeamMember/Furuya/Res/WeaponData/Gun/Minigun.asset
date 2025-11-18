@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Minigun
   type: 1
-  damage: 5
-  cooldown: 0.1
+  damage: 4
+  cooldown: 0.05
   muzzleFlashType: 0
   hitEffectType: 0
-  projectilePrefab: {fileID: 8584663488555818686, guid: 85a0d588d9638a04aaa3c1596a30a193, type: 3}
+  projectilePrefab: {fileID: 8584663488555818686, guid: 70db9a753fa7abb46a7e62d41b2971cf, type: 3}
   projectileSpeed: 15
+  maxAmmo: 150
+  reloadTime: 2
   explosionRange: 0

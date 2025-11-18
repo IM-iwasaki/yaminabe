@@ -11,7 +11,7 @@ public class Projectile : NetworkBehaviour {
     private string ownerName;
     private EffectType hitEffectType;
     private bool initialized;
-    private float lifetime = 5f;
+    public float lifetime = 5f;
 
     public void Init(GameObject shooter, string _name, EffectType hitEffect, float _speed, int _damage) {
         owner = shooter;
