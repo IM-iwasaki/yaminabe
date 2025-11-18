@@ -55,7 +55,7 @@ public class AppearanceSyncManager : NetworkBehaviour
     /// </summary>
     [ClientRpc]
     void RpcApplyAppearanceToOne(uint netId, int charNo, int skinNo) {
-        // すでに辞書に登録済みなら取得、なければ検索して登録
+        // すでに登録済みならすぐ実行
         if (AppearanceDataHolder.instance.clientPlayers.TryGetValue(netId, out GameObject playerObj)) {
             //  生成
             if(playerObj != null) {
@@ -65,8 +65,8 @@ public class AppearanceSyncManager : NetworkBehaviour
 
         }
 
-        //  プレイヤーがスポーンされるまで最大1秒待つ
-        StartCoroutine(WaitGetObjct(netId, (obj) => {
+        //  プレイヤーがスポーンされるまで待つ
+        StartCoroutine(WaitGetObject(netId, (obj) => {
             // nullだった場合はデフォルト読み込み
             if (obj == null) {
                 Debug.LogWarning($"netId {netId} が見つかりません。デフォルトデータを適用します。");
@@ -82,23 +82,34 @@ public class AppearanceSyncManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// 最大一秒待ちのオブジェクト取得
+    /// プレイヤーが Spawn されるまで待機して取得
     /// </summary>
-    /// <param name="netId"></param>
-    /// <param name="callback"></param>
-    /// <returns></returns>
-    private IEnumerator WaitGetObjct(uint netId, System.Action<GameObject> callback) {
-        GameObject playerObj = null;
-        float timer = 1f;
-        while (timer > 0) {
-            if(NetworkClient.spawned.TryGetValue(netId, out NetworkIdentity network)) {
-                playerObj = network.gameObject;
+    /// <param name="netId">対象プレイヤーの netId</param>
+    /// <param name="callback">取得後に呼び出す処理</param>
+    /// <param name="timeout">最大待機時間（秒）。0以下で無制限待機</param>
+    private IEnumerator WaitGetObject(uint netId, System.Action<GameObject> callback, float timeout = 3f) {
+        float timer = timeout;
+        NetworkIdentity network = null;
+
+        while (true) {
+            if (NetworkClient.spawned.TryGetValue(netId, out network)) {
+                // Spawn 確認できたら即終了
                 break;
             }
-            timer -= Time.deltaTime;
+
+            if (timeout > 0f) {
+                timer -= Time.deltaTime;
+                if (timer <= 0f) {
+                    // タイムアウト
+                    network = null;
+                    break;
+                }
+            }
+
             yield return null;
         }
 
+        GameObject playerObj = network != null ? network.gameObject : null;
         callback?.Invoke(playerObj);
     }
 
