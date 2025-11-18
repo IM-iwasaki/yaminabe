@@ -16,25 +16,21 @@ public class PlayerCombat : NetworkBehaviour {
     /// <summary>
     /// プレイヤーキル処理
     /// </summary>
-    /// <param name="killer">倒した側のプレイヤー（自滅時は null または自分）</param>
     [Server]
-    public void OnKill(NetworkIdentity killer) {
-        if (ruleManager == null)
-            ruleManager = RuleManager.Instance;
+    public void OnKill(NetworkIdentity killerId, int victimTeam) {
+        int killerTeam = -1;
 
-        if (ruleManager == null) return;
+        if (killerId != null && killerId != netIdentity)
+            killerTeam = killerId.GetComponent<PlayerCombat>().teamId;
 
-        var attacker = killer ? killer.GetComponent<PlayerCombat>() : null;
-        int attackerTeam = attacker ? attacker.teamId : -1;
-
-        // 自滅またはチームメイトをキル
-        if (attacker == null || attacker == this || attackerTeam == teamId) {
-            int enemyTeamId = (teamId == 0) ? 1 : 0;
-            ruleManager.OnTeamKill(enemyTeamId, 1);
+        // 自滅または味方キル
+        if (killerId == null || killerId == netIdentity || killerTeam == victimTeam) {
+            int enemyTeam = (victimTeam == 0) ? 1 : 0;
+            RuleManager.Instance.OnTeamKillByTeam(enemyTeam);
             return;
         }
 
-        // 通常の敵キル
-        ruleManager.OnTeamKill(attackerTeam, 1);
+        // 敵キル
+        RuleManager.Instance.OnTeamKillByTeam(killerTeam);
     }
 }

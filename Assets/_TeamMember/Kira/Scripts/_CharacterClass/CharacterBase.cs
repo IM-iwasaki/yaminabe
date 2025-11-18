@@ -374,6 +374,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //ローカルで死亡演出
         LocalDeadEffect(_name);
         //遅延しつつリスポーン
+<<<<<<< HEAD
         RespawnDelay();
         // --- _name が自分の名前なら自滅扱いにする ---
         if (_name == PlayerName) {
@@ -393,9 +394,25 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
 
         // --- PlayerCombat.OnKill を呼ぶ ---
+=======
+        CmdRespawnDelay();
+>>>>>>> Matsuo
         var combat = GetComponent<PlayerCombat>();
         if (combat != null) {
-            combat.OnKill(killerIdentity);
+            int victimTeam = TeamID; // ← CharacterBase の TeamID を使用
+            NetworkIdentity killerIdentity = null;
+
+            if (!string.IsNullOrEmpty(_name) && _name != PlayerName) {
+                foreach (var p in FindObjectsOfType<CharacterBase>()) {
+                    if (p.PlayerName == _name) {
+                        killerIdentity = p.GetComponent<NetworkIdentity>();
+                        break;
+                    }
+                }
+            }
+
+            // OnKill を呼ぶときに victimTeam を渡すように変更
+            combat.OnKill(killerIdentity, victimTeam);
         }
         // 死亡回数を増やす
         PlayerListManager.Instance?.AddDeath(this.PlayerName);
