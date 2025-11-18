@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
+
 
 /// <summary>
 /// スコア一覧をスクロールビューで表示するUI管理クラス。
