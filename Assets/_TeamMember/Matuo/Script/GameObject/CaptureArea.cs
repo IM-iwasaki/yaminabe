@@ -1,58 +1,57 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Mirror;
 
 /// <summary>
 /// エリア制圧オブジェクト
-/// 範囲内に同じチームが一定時間いると制圧
+/// 範囲内にいるプレイヤーのチームにスコアを加算
 /// </summary>
-public class CaptureArea : CaptureObjectBase {
+[RequireComponent(typeof(Collider))]
+public class CaptureArea : NetworkBehaviour {
     [Header("エリア設定")]
-    public float captureTime = 3f;      // 制圧に必要な時間
+    public float scorePerSecond = 1f;        // 1秒ごとのスコア
     public Collider areaCollider;
-    [SerializeField] private List<CharacterBase> playersInArea = new(); // エリア内プレイヤーリスト
-    private float captureProgress = 0f;     // 現在の制圧進行時間
 
-    /// <summary>
-    /// プレイヤーがエリアに入った時にリストに追加
-    /// </summary>
-    /// <param name="other">衝突したコライダー</param>
+    private HashSet<CharacterBase> playersInArea = new(); // エリア内プレイヤー
+    private float timer = 0f;
+
+    private void Awake() {
+        if (areaCollider == null)
+            areaCollider = GetComponent<Collider>();
+
+        areaCollider.isTrigger = true;
+    }
+
+    [ServerCallback]
     private void OnTriggerEnter(Collider other) {
         var player = other.GetComponent<CharacterBase>();
-        if (player != null && !playersInArea.Contains(player))
+        if (player != null)
             playersInArea.Add(player);
     }
 
-    /// <summary>
-    /// プレイヤーがエリアから出た時にリストから削除
-    /// </summary>
-    /// <param name="other">衝突したコライダー</param>
+    [ServerCallback]
     private void OnTriggerExit(Collider other) {
         var player = other.GetComponent<CharacterBase>();
         if (player != null)
             playersInArea.Remove(player);
     }
 
-    /// <summary>
-    /// カウント進行度を計算
-    /// 同じチームのプレイヤーだけがいる場合に加算
-    /// </summary>
-    /// <returns>ObjectManager に通知するカウント</returns>
-    protected override float CalculateProgress() {
-        if (playersInArea.Count == 0) return 0f;
+    [ServerCallback]
+    private void Update() {
+        if (playersInArea.Count == 0) return;
 
-        // エリア内の全員が同じチームか確認
-        int teamId = playersInArea[0].TeamID;
-        bool sameTeam = playersInArea.TrueForAll(p => p.TeamID == teamId);
-        if (!sameTeam) return 0f;
-
-        // カウント進行
-        captureProgress += Time.deltaTime;
-        if (captureProgress >= captureTime) {
-            NotifyCaptured(teamId);
-            captureProgress = 0f;
+        // 全員同じチームかチェック
+        int teamId = -1;
+        foreach (var p in playersInArea) {
+            teamId = p.TeamID;
+            break; // 最初の要素のチームIDを取得したら抜ける
         }
 
-        ownerTeamId = teamId;
-        return Time.deltaTime;
+        // タイマーでスコア加算
+        timer += Time.deltaTime;
+        if (timer >= 1f) {
+            timer = 0f;
+            RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
+        }
     }
 }

@@ -163,6 +163,9 @@ public class ResultPanel : NetworkBehaviour {
 
         Debug.Log("[ResultPanel] 再戦ボタン押下");
         if (NetworkServer.active && resultManager != null) {
+            //  アイテムスポナーの自動リスポーン機能を停止
+            ItemSpawnManager.Instance.ResetSpawnPoint();
+
             // スコア初期化
             RuleManager.Instance?.Initialize();
 
@@ -177,6 +180,8 @@ public class ResultPanel : NetworkBehaviour {
 
         Debug.Log("[ResultPanel] ロビー戻りボタン押下");
         if (NetworkServer.active && resultManager != null) {
+            //  アイテムスポナーの自動リスポーン機能を停止
+            ItemSpawnManager.Instance.ResetSpawnPoint();
             // スコア初期化
             RuleManager.Instance?.Initialize();
             GameSceneManager.Instance.LoadLobbySceneForAll();
