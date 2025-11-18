@@ -308,7 +308,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //　nameをスコア加算関数み送る
         if (HP <= 0) {
             HP = 0;
-           
+            //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
+            KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 // スコア加算
@@ -332,7 +333,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     #region 禁断の死亡処理(グロ注意)
     ///--------------------変更:タハラ---------------------
 
-    /* 読み解くにはこれを呼んでください
+    /* なんかサーバーで処理できるようになったのでコマンド経由しなくていいです。
+     * 読み解くにはこれを呼んでください
      * ①サーバーで被ダメージ処理。
      * ②HPが0以下ならTargetRPCで対象にのみ死亡通知。
      * ③TargetRPC内で死亡演出(ローカル)とCommand属性のリスポーン要求。
@@ -346,9 +348,9 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     /// <summary>
     /// 死亡時処理
-    /// 対象にのみ通知
+    /// サーバーで処理
     /// </summary>
-    [TargetRpc]
+    [Server]
     public void Dead(string _name) {
         if (isDead) return;
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
@@ -372,7 +374,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //ローカルで死亡演出
         LocalDeadEffect(_name);
         //遅延しつつリスポーン
-        CmdRespawnDelay();
+        RespawnDelay();
         // --- _name が自分の名前なら自滅扱いにする ---
         if (_name == PlayerName) {
             _name = null;
@@ -402,19 +404,18 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     /// <summary>
     /// サーバーにリスポーンしたい意思を伝える
-    /// TargetRPCで死亡処理しているのでこれが必要
     /// </summary>
-    [Command]
-    private void CmdRespawnDelay() {
+    [Server]
+    private void RespawnDelay() {
         RpcPlayDeathEffect();
         //サーバーに通知する
-        ServerRespawnDelay();
+        TargetRespawnDelay();
     }
     /// <summary>
     /// サーバーにホコをドロップしたいことを通知
     /// 死んだらホコを取得するようにします
     /// </summary>
-    [Command]
+    [Server]
     private void CmdDropHoko() {
         //サーバーに通知
         //ホコ見つける
@@ -424,25 +425,15 @@ public abstract class CharacterBase : NetworkBehaviour {
         //保持者が自分なら
         if (hoko.holder == this) {
             //サーバーに通知
-            ServerDropHoko(hoko);
+            hoko.Drop();
         }
     }
 
     /// <summary>
-    /// ホコをドロップ
-    /// </summary>
-    /// <param name="_hoko"></param>
-    [Server]
-    private void ServerDropHoko(CaptureHoko _hoko) {
-        _hoko.Drop();
-    }
-
-    /// <summary>
     /// HPリセット関数
-    /// TargetRPCで死亡処理しているのでこれが必要
     /// </summary>
     [Server]
-    private void ServerRespawnDelay() {
+    private void TargetRespawnDelay() {
         //リスポーン要求
         Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
         Invoke(nameof(ResetHealth), PlayerConst.RESPAWN_TIME);
@@ -452,10 +443,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 可読性向上のためまとめました
     /// </summary>
     /// <param name="_name"></param>
+    [TargetRpc]
     private void LocalDeadEffect(string _name) {
-        //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
-        KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
-
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
         //フェードアウトさせる
@@ -502,7 +491,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     /// <summary>
     /// ローカル上での演出
-    /// 可読性向上のたまとめました
+    /// 可読性向上のためまとめました
     /// </summary>
     private void LoaclRespawnEffect() {
         //カメラを明るくする
@@ -718,11 +707,11 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(GetComponent<NetworkIdentity>(), TeamColor.Red);
+                CmdJoinTeam(netIdentity, TeamColor.Red);
                 break;
             case "BlueTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(GetComponent<NetworkIdentity>(), TeamColor.Blue);
+                CmdJoinTeam(netIdentity, TeamColor.Blue);
                 break;
             default:
                 break;
