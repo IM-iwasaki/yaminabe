@@ -452,8 +452,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
     [Server]
     private void ResetHealth() {
-        //ここで体力を戻す
+        //ここで体力と死亡状態を戻す
         HP = maxHP;
+        isDead = false;
     }
 
     /// <summary>
@@ -465,8 +466,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         //死んでいなかったら即抜け
         if (!isDead) return;
 
-        //復活させてHPを全回復
-        isDead = false;
         ChatManager.instance.CmdSendSystemMessage("isDead : " + isDead);
         //保険で明示的に処理
         ChangeHP(maxHP, HP);
