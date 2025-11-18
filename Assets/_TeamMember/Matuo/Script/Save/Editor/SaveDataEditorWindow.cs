@@ -79,7 +79,7 @@ public class SaveDataEditorWindow : EditorWindow {
 
         EditorGUILayout.BeginHorizontal();
 
-        if (GUILayout.Button("Reload")) {
+        if (GUILayout.Button("ReloadRequest")) {
             LoadData();
         }
 

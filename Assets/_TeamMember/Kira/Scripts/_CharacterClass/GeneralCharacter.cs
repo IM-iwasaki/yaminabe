@@ -18,17 +18,6 @@ public class GeneralCharacter : CharacterBase {
 
     #endregion
 
-    #region ～職業限定ステータス変数～
-
-    //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。レベルアップで最大MP(もしくは回復速度？)が上昇。
-    public int MP { get; private set; }
-    public int maxMP { get; private set; }
-    //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。レベルアップで最大弾容量が増加。
-    public int magazine { get; private set; }
-    public int maxMagazine { get; private set; }
-
-    #endregion  
-
     protected new void Awake() {
         base.Awake();
         StatusInport(inputStatus);
@@ -60,8 +49,8 @@ public class GeneralCharacter : CharacterBase {
         base.Initalize();
         //MaxMPが0でなければ最大値で初期化
         if (maxMP != 0) MP = maxMP; 
-        //MaxMagazineが0でなければ最大値で初期化
-        if (maxMagazine != 0) magazine = maxMagazine;
+        //弾倉が0でなければ最大値で初期化
+        if (weaponController_main.weaponData.maxAmmo != 0) magazine = weaponController_main.weaponData.maxAmmo;
         //Passive関連の初期化
         equippedPassives[0].CoolTime = 0;
         equippedPassives[0].IsPassiveActive = false;
@@ -102,10 +91,6 @@ public class GeneralCharacter : CharacterBase {
             equippedSkills[0].Activate(this);
             isCanSkill = false;
         }       
-    }
-
-    public void Reload() {
-        magazine = maxMagazine;
     }
     public override void Respawn() {
         base.Respawn();

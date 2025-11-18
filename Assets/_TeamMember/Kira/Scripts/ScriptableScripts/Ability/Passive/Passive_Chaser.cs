@@ -34,9 +34,9 @@ public class Passive_Chaser : PassiveBase {
             //チェインの多さに応じてスキルCTを短縮
             user.skillAfterTime += (0.06f * Chains);
             //スキルCTが最大だったら補正
-            //TODO:ゴミコード!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if(user.skillAfterTime >= user.GetComponent<GeneralCharacter>().equippedSkills[0].cooldown) {
-                user.skillAfterTime = user.GetComponent<GeneralCharacter>().equippedSkills[0].cooldown;
+            float skillCooldown = user.GetComponent<GeneralCharacter>().equippedSkills[0].cooldown;
+            if(user.skillAfterTime >= skillCooldown) {
+                user.skillAfterTime = skillCooldown;
             }
         }
     }

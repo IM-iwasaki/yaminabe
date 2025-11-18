@@ -24,6 +24,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SyncVar] public int attack;
     //移動速度
     [SyncVar] public int moveSpeed = 5;
+    //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
+    public int MP { get; protected set; }
+    public int maxMP { get; protected set; }
+    //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。
+    public int magazine { get; protected set; }
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
@@ -58,7 +63,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //死亡した瞬間か
     public bool isDeadTrigger { get; protected set; } = false;
     //復活後の無敵時間中であるか
-    protected bool isInvincible { get; private set; } = false;
+    protected bool isInvincible = false;
     //復活してからの経過時間
     protected float respownAfterTime { get; private set; } = 0.0f;
 
@@ -75,9 +80,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         = CharacterEnum.AutoFireType.FullAutomatic;
 
     //アイテムを拾える状態か
-    protected bool isCanPickup { get; private set; } = false;
+    protected bool isCanPickup = false;
     //インタラクトできる状態か
-    protected bool isCanInteruct { get; private set; } = false;
+    protected bool isCanInteruct = false;
+
+    //リロード中か
+    protected bool isReloading = false;
 
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
@@ -638,6 +646,9 @@ public abstract class CharacterBase : NetworkBehaviour {
             case "Interact":
                 OnInteract(ctx);
                 break;
+            case "Reload":
+                OnReload(ctx);
+                break;
         }
     }
     private void OnInputCanceled(string actionName, InputAction.CallbackContext ctx) {
@@ -775,7 +786,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     public void OnInteract(InputAction.CallbackContext context) {
         if (context.performed) Interact();
     }
-
+    /// <summary>
+    /// リロード
+    /// </summary>
+    public void OnReload(InputAction.CallbackContext context) {
+        if (context.performed && magazine < weaponController_main.weaponData.maxAmmo) {
+            ReloadRequest();
+        }
+    }
     /// <summary>
     /// 追加:タハラ
     /// UI表示
@@ -800,7 +818,6 @@ public abstract class CharacterBase : NetworkBehaviour {
             CameraMenu.ToggleMenu();
         }
     }
-
     /// <summary>
     /// 追加:タハラ
     /// プレイヤーの準備状態切り替え
@@ -1014,11 +1031,29 @@ public abstract class CharacterBase : NetworkBehaviour {
     virtual public void StartAttack(CharacterEnum.AttackType _type = CharacterEnum.AttackType.Main) {
         if (weaponController_main == null) return;
 
+        switch(weaponController_main.weaponData.type) {
+            case WeaponType.Melee:
+                break;
+            case WeaponType.Gun:
+                //使用しているのが銃の時、弾倉が残っていれば弾を消費して通過する
+                if (magazine > 0) magazine--;
+                //弾がなかったら通過不可。かわりにリロード関数をInvokeで呼ぶ。
+                else {
+                    ReloadRequest();
+                    return;
+                }
+
+                break;
+            case WeaponType.Magic:
+                break;
+            default:
+                break;
+        }
+
         // 武器が攻撃可能かチェックしてサーバー命令を送る
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
     }
-
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
     /// </summary>
@@ -1040,12 +1075,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 当たらなければそのままaimPoint方向
         return direction;
     }
-
     /// <summary>
     /// スキル呼び出し関数
     /// </summary>
     abstract protected void StartUseSkill();
-
     /// <summary>
     /// インタラクト関数
     /// </summary>
@@ -1069,6 +1102,26 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
 
         }
+    }
+
+    /// <summary>
+    /// リロードの要求関数(リロード中だったら弾く)
+    /// </summary>
+    protected void ReloadRequest() {
+        //リロード中ならやめる
+        if (isReloading) return;
+        //使っている武器が銃でなければやめる
+        if (weaponController_main.weaponData.type != WeaponType.Gun) return;
+
+        //リロード中にする
+        isReloading = true;
+        //リロードを行う
+        Invoke(nameof(Reload),weaponController_main.weaponData.reloadTime);
+    }
+
+    protected void Reload() {
+        magazine = weaponController_main.weaponData.maxAmmo;
+        isReloading = false;
     }
 
     #endregion
