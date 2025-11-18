@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 後入れのクライアントに他プレイヤーの変更後の見た目を対応させる
+/// </summary>
 public class AppearanceSyncManager : NetworkBehaviour
 {
     //  インスタンス化
@@ -53,29 +56,50 @@ public class AppearanceSyncManager : NetworkBehaviour
     [ClientRpc]
     void RpcApplyAppearanceToOne(uint netId, int charNo, int skinNo) {
         // すでに辞書に登録済みなら取得、なければ検索して登録
-        if (!AppearanceDataHolder.instance.clientPlayers.TryGetValue(netId, out GameObject playerObj)) {
-            NetworkIdentity identity = FindIdentity(netId);
-            if (identity != null) playerObj = identity.gameObject;
-            AppearanceDataHolder.instance.clientPlayers[netId] = playerObj;
+        if (AppearanceDataHolder.instance.clientPlayers.TryGetValue(netId, out GameObject playerObj)) {
+            //  生成
+            if(playerObj != null) {
+                AppearanceChangeManager.instance.PlayerChange(playerObj, charNo, skinNo, true);
+                return;
+            }
+
         }
 
-        // null チェック後に適用
-        if (playerObj == null) {
-            Debug.LogWarning($"netId {netId} が見つかりません。デフォルトデータを適用します。");
-            return;
-        }
-        AppearanceChangeManager.instance.PlayerChange(playerObj, charNo, skinNo, true);
+        //  プレイヤーがスポーンされるまで最大1秒待つ
+        StartCoroutine(WaitGetObjct(netId, (obj) => {
+            // nullだった場合はデフォルト読み込み
+            if (obj == null) {
+                Debug.LogWarning($"netId {netId} が見つかりません。デフォルトデータを適用します。");
+                return;
+            }
+
+            //  辞書に登録
+            AppearanceDataHolder.instance.clientPlayers[netId] = obj;
+
+            //  見た目を適応する
+            AppearanceChangeManager.instance.PlayerChange(obj, charNo, skinNo, true);
+        }));
     }
 
     /// <summary>
-    /// クライアント側で netId から NetworkIdentity を検索
+    /// 最大一秒待ちのオブジェクト取得
     /// </summary>
-    private NetworkIdentity FindIdentity(uint netId) {
-        foreach (var ni in NetworkClient.spawned.Values) {
-            if (ni.netId == netId) return ni;
+    /// <param name="netId"></param>
+    /// <param name="callback"></param>
+    /// <returns></returns>
+    private IEnumerator WaitGetObjct(uint netId, System.Action<GameObject> callback) {
+        GameObject playerObj = null;
+        float timer = 1f;
+        while (timer > 0) {
+            if(NetworkClient.spawned.TryGetValue(netId, out NetworkIdentity network)) {
+                playerObj = network.gameObject;
+                break;
+            }
+            timer -= Time.deltaTime;
+            yield return null;
         }
-        Debug.LogWarning($"NetId {netId} が見つかりません");
-        return null;
+
+        callback?.Invoke(playerObj);
     }
 
 }
