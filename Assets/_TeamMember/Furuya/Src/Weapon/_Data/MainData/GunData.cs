@@ -12,9 +12,5 @@ public class GunData : WeaponData {
     public GameObject projectilePrefab;
     public float projectileSpeed;
 
-
-    [Header("Gun Settings")]
-    public int maxAmmo;
-    public float reloadTime;
     public float explosionRange;
 }
