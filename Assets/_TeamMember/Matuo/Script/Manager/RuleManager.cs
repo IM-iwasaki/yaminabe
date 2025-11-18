@@ -7,7 +7,6 @@ using System.Collections.Generic;
 /// エリア / ホコ / デスマッチのスコア管理・勝敗判定
 /// </summary>
 public class RuleManager : NetworkSystemObject<RuleManager> {
-
     private Dictionary<int, float> teamScores = new();
     public GameRuleType currentRule = GameRuleType.Area;
 

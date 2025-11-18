@@ -425,14 +425,15 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Server]
     private void CmdDropHoko() {
-        //サーバーに通知
-        //ホコ見つける
-        CaptureHoko hoko = GameObject.Find("HokoObj").GetComponent<CaptureHoko>();
-        //ホコがそもそも見つからないなら処理しない(保険)
-        if (!hoko) return;
-        //保持者が自分なら
+        var stageManager = StageManager.Instance;
+        if (stageManager == null || stageManager.currentHoko == null) {
+            Debug.LogWarning("StageManager か Hoko が存在しません");
+            return;
+        }
+
+        CaptureHoko hoko = stageManager.currentHoko;
+
         if (hoko.holder == this) {
-            //サーバーに通知
             hoko.Drop();
         }
     }

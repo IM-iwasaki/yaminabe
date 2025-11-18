@@ -9,6 +9,7 @@ using System.Linq;
 public class StageManager : NetworkSystemObject<StageManager> {
     [Header("ステージ一覧")]
     public List<StageData> stages = new();
+    public CaptureHoko currentHoko;
 
     private GameObject currentStageInstance;
     // リスポーン地点
@@ -60,15 +61,14 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// </summary>
     [Server]
     void ApplyRuleObjects(GameRuleType rule) {
-
         // 既存のルールオブジェクトをタグで検索して削除
         var exist = GameObject.FindGameObjectsWithTag("RuleObject");
-        foreach (var obj in exist)
-        {
+        foreach (var obj in exist) {
             NetworkServer.Destroy(obj);
         }
 
         currentRuleObject = null;
+        currentHoko = null; // 古い参照はクリア
 
         // DeathMatch の場合は生成なし
         if (rule == GameRuleType.DeathMatch)
@@ -76,8 +76,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // 作るプレハブを選ぶ
         GameObject prefab = null;
-        switch (rule)
-        {
+        switch (rule) {
             case GameRuleType.Area: prefab = areaPrefab; break;
             case GameRuleType.Hoko: prefab = hokoPrefab; break;
         }
@@ -85,14 +84,14 @@ public class StageManager : NetworkSystemObject<StageManager> {
         if (prefab == null)
             return;
 
-        // (0,0,0) に生成（親なし）
-        currentRuleObject = Instantiate(prefab, new Vector3(0,2,0), Quaternion.identity);
-
-        // クライアントでも判別できるよう統一タグをセット
+        currentRuleObject = Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
         currentRuleObject.tag = "RuleObject";
-
-        // これでクライアントへ同期開始
         NetworkServer.Spawn(currentRuleObject);
+
+        // Hoko なら CaptureHoko コンポーネントを保持
+        if (rule == GameRuleType.Hoko) {
+            currentHoko = currentRuleObject.GetComponent<CaptureHoko>();
+        }
     }
 
     /// <summary>
