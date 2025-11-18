@@ -15,4 +15,8 @@ public class WeaponData : ScriptableObject, IWeaponInfo {
     public EffectType hitEffectType = EffectType.Default;
 
     public string WeaponName => weaponName;
+
+    [Header("Gun Settings")]
+    public int maxAmmo;
+    public float reloadTime;
 }

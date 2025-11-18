@@ -68,11 +68,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed0b112ba535525468e07c6828516b66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemName: AssaultRifle
   description: "\u305F\u3060\u306E\u30A2\u30B5\u30EB\u30C8\u30E9\u30A4\u30D5\u30EB"
   icon: {fileID: 0}
+  canDestroy: 1
   weaponType: 1
-  weaponData: {fileID: 11400000, guid: 1da35c8eea74fb44bba0707a4bd2ce3b, type: 2}
+  weaponData: {fileID: 11400000, guid: cbf78ef2dc65ab944827fe89a260bb63, type: 2}
 --- !u!114 &2524724192644132200
 MonoBehaviour:
   m_ObjectHideFlags: 0
