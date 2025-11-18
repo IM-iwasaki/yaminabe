@@ -377,8 +377,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         isMoving = false;
         //ローカルで死亡演出
         LocalDeadEffect(_name);
-        //遅延しつつリスポーン
-        CmdRespawnDelay();
         var combat = GetComponent<PlayerCombat>();
         if (combat != null) {
             int victimTeam = TeamID; // ← CharacterBase の TeamID を使用
