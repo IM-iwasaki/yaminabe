@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 見た目を変更させる実行
+/// </summary>
 public class AppearanceChangeManager : MonoBehaviour
 {
     //  インスタンス化

@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// OnClientInitialized‚ğŒÄ‚Ño‚·—p
+/// </summary>
 public class SendAppearanceSyncManager : NetworkSystemObject<SendAppearanceSyncManager>
 {
 
