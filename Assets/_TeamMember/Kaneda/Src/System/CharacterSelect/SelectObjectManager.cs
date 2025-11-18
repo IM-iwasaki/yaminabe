@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 
+/// <summary>
+/// キャラクター選択画面のオブジェクトを変更させる
+/// </summary>
 public class SelectObjectManager : NetworkBehaviour {
     //  値を変更させる定数
     private readonly int SUB_ONE_COUNT = -1;
@@ -138,6 +141,8 @@ public class SelectObjectManager : NetworkBehaviour {
         localCharacterCount = CheckCount(localCharacterCount, num);
         //  characterCount番目のキャラクターを取得して格納
         character = data.characters[localCharacterCount];
+        //  スキン番号を初期の番号に戻す
+        localSkinCount = DEFAULT_SKIN_COUNT;
         //  スキン選択ボタンの取得
         GenerateButtons();
         //  キャラクターがまだ取得されていない場合
