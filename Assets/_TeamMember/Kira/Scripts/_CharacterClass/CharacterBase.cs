@@ -27,8 +27,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
     public int MP { get; protected set; }
     public int maxMP { get; protected set; }
-    //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。
-    public int magazine { get; protected set; }
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
@@ -800,7 +798,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// リロード
     /// </summary>
     public void OnReload(InputAction.CallbackContext context) {
-        if (context.performed && magazine < weaponController_main.weaponData.maxAmmo) {
+        if (context.performed && weaponController_main.weaponData.ammo < weaponController_main.weaponData.maxAmmo) {
             ReloadRequest();
         }
     }
@@ -1028,11 +1026,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         //死亡していたら攻撃できない
         if (isDead) return;
 
+        //入力タイプで分岐
         switch (context.phase) {
             case InputActionPhase.Started:
             isAttackPressed = true;
-
-            if (!isAutoAttackRunning) StartCoroutine(AutoFire(_type));
             break;
 
         case InputActionPhase.Canceled:
@@ -1044,25 +1041,6 @@ public abstract class CharacterBase : NetworkBehaviour {
             break;
         }
     }
-
-    /// <summary>
-    /// オート攻撃のコルーチン
-    /// </summary>
-    private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
-        isAutoAttackRunning = true;        
-
-        while (isAttackPressed) {
-            if (magazine == 0) {
-                ReloadRequest();
-                break;
-            }
-            StartAttack(_type);
-
-            yield return new WaitForSeconds(weaponController_main.weaponData.cooldown);
-        }
-        isAutoAttackRunning = false;
-    }
-
     /// <summary>
     /// 攻撃関数
     /// </summary>
@@ -1074,7 +1052,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 //使用武器が銃でかつ弾がなかったら通過不可。かわりにリロードを要求する。
-                if (weaponController_main.weaponData.type == WeaponType.Gun && magazine == 0) {
+                if (weaponController_main.weaponData.ammo == 0) {
                     ReloadRequest();
                     return;
                 }
@@ -1084,12 +1062,10 @@ public abstract class CharacterBase : NetworkBehaviour {
             default:
                 break;
         }
-
         // 武器が攻撃可能かチェックしてサーバー命令を送る
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
-        //攻撃後に弾を消費
-        magazine--;
+        
     }
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
@@ -1155,9 +1131,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         //リロードを行う
         Invoke(nameof(Reload), weaponController_main.weaponData.reloadTime);
     }
-
+    /// <summary>
+    /// リロードの本実行
+    /// </summary>
     protected void Reload() {
-        magazine = weaponController_main.weaponData.maxAmmo;
+        weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
         isReloading = false;
     }
 

@@ -34,6 +34,10 @@ public class GeneralCharacter : CharacterBase {
         //€‚ñ‚Å‚¢‚½‚çˆÈ~‚Ìˆ—‚Ís‚í‚È‚¢B
         if (isDead) return;
 
+        //UŒ‚“ü—Í‚ª‚ ‚éŠÔUŒ‚ŠÖ”‚ğŒÄ‚Ô(ŠÔŠu‚Ì§Œä‚ÍMainWeaponController‚Éˆê”C)
+        if (isAttackPressed) StartAttack();
+
+
         MoveControl();
         JumpControl();       
         AbilityControl();
@@ -47,7 +51,8 @@ public class GeneralCharacter : CharacterBase {
         //MaxMP‚ª0‚Å‚È‚¯‚ê‚ÎÅ‘å’l‚Å‰Šú‰»
         if (maxMP != 0) MP = maxMP; 
         //’e‘q‚ª0‚Å‚È‚¯‚ê‚ÎÅ‘å’l‚Å‰Šú‰»
-        if (weaponController_main.weaponData.maxAmmo != 0) magazine = weaponController_main.weaponData.maxAmmo;
+        if (weaponController_main.weaponData.maxAmmo != 0)
+            weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
         //PassiveŠÖ˜A‚Ì‰Šú‰»
         equippedPassives[0].CoolTime = 0;
         equippedPassives[0].IsPassiveActive = false;
