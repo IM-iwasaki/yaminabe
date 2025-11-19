@@ -100,7 +100,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] public PlayerUIController UI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
-
+    [SerializeField] private Animator anim = null;
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
     /// <summary>
@@ -108,7 +108,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// プレイヤー準備完了状態
     /// </summary>
     [SyncVar] public bool ready = true;
-
 
     //武器を使用するため
     [Header("アクション用変数")]
@@ -319,6 +318,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
             KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
             Dead(_name);
+            anim.SetTrigger("Dead");
             if (PlayerListManager.Instance != null) {
                 // スコア加算
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
@@ -620,6 +620,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
+                anim.SetBool("Shoot", true);
                 HandleAttack(ctx, actionName == "Attack_Main"
                     ? CharacterEnum.AttackType.Main
                     : CharacterEnum.AttackType.Sub);
@@ -644,9 +645,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         switch (actionName) {
             case "Move":
                 MoveInput = Vector2.zero;
+                ResetRunAnimation();
                 break;
             case "Fire_Main":
             case "Fire_Sub":
+                anim.SetBool("Shoot", false);
                 HandleAttack(ctx, actionName == "Attack_Main"
                     ? CharacterEnum.AttackType.Main
                     : CharacterEnum.AttackType.Sub);
@@ -743,6 +746,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void OnMove(InputAction.CallbackContext context) {
         MoveInput = context.ReadValue<Vector2>();
+        float moveX = MoveInput.x;
+        float moveZ = MoveInput.y;
+        //アニメーション管理
+        ControllMoveAnimation(moveX, moveZ);
+
     }
     /// <summary>
     /// 視点(現在未使用)
@@ -757,6 +765,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
+            anim.SetTrigger("Jump");
         }
     }
     /// <summary>
@@ -812,7 +821,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             if (HostUI.isVisibleUI) {
                 HostUI.ShowOrHideUI();
             }
-               
+
             CameraMenu.ToggleMenu();
         }
     }
@@ -834,7 +843,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
         }
     }
-    
+
     /// <summary>
     /// 追加:タハラ
     /// チャット送信
@@ -874,7 +883,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //チャット送信
         if (context.started) {
             int stampIndex = Random.Range(0, 4);
-            ChatManager.instance.CmdSendStamp(stampIndex,PlayerName);
+            ChatManager.instance.CmdSendStamp(stampIndex, PlayerName);
         }
     }
 
@@ -919,6 +928,39 @@ public abstract class CharacterBase : NetworkBehaviour {
             // 空中では地上速度に向けてゆるやかに補間（慣性を残す）
             rigidbody.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
         }
+    }
+
+    /// <summary>
+    /// 移動アニメーションの管理
+    /// </summary>
+    /// <param name="_x"></param>
+    /// <param name="_z"></param>
+    private void ControllMoveAnimation(float _x, float _z) {
+        string trueAnimName;
+        //入力によってアニメーション変更
+        if (_x == 0 && _z > 0)
+            trueAnimName = "RunF";
+        else if (_x == 0 && _z < 0)
+            trueAnimName = "RunB";
+        else if (_x > 0)
+            trueAnimName = "RunR";
+        else if (_x < 0)
+            trueAnimName = "RunL";
+        
+        else
+            trueAnimName = "";
+
+        anim.SetBool(trueAnimName, true);
+    }
+
+    /// <summary>
+    /// 移動アニメーションのリセット
+    /// </summary>
+    private void ResetRunAnimation() {
+        anim.SetBool("RunF", false);
+        anim.SetBool("RunB", false);
+        anim.SetBool("RunL", false);
+        anim.SetBool("RunR", false);
     }
 
     /// <summary>
@@ -1033,7 +1075,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     virtual public void StartAttack(CharacterEnum.AttackType _type = CharacterEnum.AttackType.Main) {
         if (weaponController_main == null) return;
 
-        switch(weaponController_main.weaponData.type) {
+        switch (weaponController_main.weaponData.type) {
             case WeaponType.Melee:
                 break;
             case WeaponType.Gun:
@@ -1115,7 +1157,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //リロード中にする
         isReloading = true;
         //リロードを行う
-        Invoke(nameof(Reload),weaponController_main.weaponData.reloadTime);
+        Invoke(nameof(Reload), weaponController_main.weaponData.reloadTime);
     }
 
     protected void Reload() {
