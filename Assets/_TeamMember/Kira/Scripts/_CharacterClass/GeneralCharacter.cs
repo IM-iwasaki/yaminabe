@@ -27,8 +27,6 @@ public class GeneralCharacter : CharacterBase {
     void Update() {
         if(!isLocalPlayer) return;  
         
-        
-        
         //TODO: MP管理系の処理がない。
         //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
 
