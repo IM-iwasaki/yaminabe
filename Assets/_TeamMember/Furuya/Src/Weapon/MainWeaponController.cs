@@ -9,12 +9,18 @@ using System.Collections;
 public class MainWeaponController : NetworkBehaviour {
     public WeaponData weaponData;           // メイン武器
     public Transform firePoint;
-    float lastAttackTime;
+    private float lastAttackTime;
+
+    private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
 
     void Start() {
         characterBase = GetComponent<CharacterBase>();
+    }
+
+    public void SetCharacterType(CharacterEnum.CharaterType type) {
+        charaterType = type;
     }
 
     // --- 攻撃リクエスト ---
