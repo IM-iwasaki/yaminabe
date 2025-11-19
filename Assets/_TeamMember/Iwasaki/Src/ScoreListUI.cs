@@ -31,19 +31,31 @@ public class ScoreListUI : MonoBehaviour {
 
         // 新規エントリ生成
         foreach (var data in scores)
-            AddScoreEntry(data.PlayerName, data.Score,data.Kills,data.Deaths,data.KD);
+            AddScoreEntry(data.PlayerName, data.Score,data.Kills,data.Deaths,data.KD,data.TeamId);
     }
 
     /// <summary>
     /// 1行分のスコアエントリを生成して内容を設定。
     /// </summary>
-    private void AddScoreEntry(string playerName, int score ,int kills, int deaths, float kd) {
+    private void AddScoreEntry(string playerName, int score ,int kills, int deaths, float kd,int teamId) {
         if (scoreEntryPrefab == null) {
             Debug.LogError("[ScoreListUI] scoreEntryPrefab が未設定です。");
             return;
         }
 
         GameObject entry = Instantiate(scoreEntryPrefab, content);
+
+
+        //　背景カラーを取得
+        Image bg = entry.GetComponent<Image>();
+
+        if (bg != null) {
+            if (teamId == 0)
+                bg.color = new Color(1f, 0.3f, 0.3f, 0.5f); // 赤チーム（半透明）
+            else
+                bg.color = new Color(0.1f, 0.1f, 1f, 0.3f); // 青チーム（半透明）
+        }
+
 
         // 名前とスコアを設定
         foreach (var t in entry.GetComponentsInChildren<Text>()) {
