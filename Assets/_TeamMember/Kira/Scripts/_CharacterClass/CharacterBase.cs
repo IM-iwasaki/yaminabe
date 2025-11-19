@@ -98,7 +98,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected Collider useCollider;
     private string useTag;
     [SerializeField] public PlayerUIController UI = null;
-    [SerializeField] private CameraOptionMenu CameraMenu;
+    [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
 
 
