@@ -1,6 +1,7 @@
 ﻿using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// 現在のプレイヤー一覧をサーバーで管理するマネージャー
@@ -174,12 +175,22 @@ public class PlayerListManager : NetworkBehaviour {
     public List<ResultScoreData> GetResultDataList() {
         List<ResultScoreData> list = new();
         foreach (var p in players) {
+
+            // CharacterBaseから teamId を取る
+            var chara = FindObjectsOfType<CharacterBase>()
+                .FirstOrDefault(c => c.PlayerName == p.name);
+
+            int team = 0;
+            if (chara != null)
+                team = chara.TeamID;
+
             list.Add(new ResultScoreData {
                 PlayerName = p.name,
                 Score = p.score,
                 Kills = p.kills,
                 Deaths = p.deaths,
-                
+                TeamId = team
+
             });
         }
         return list;
