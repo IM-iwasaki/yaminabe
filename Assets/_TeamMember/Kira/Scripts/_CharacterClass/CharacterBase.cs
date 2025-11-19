@@ -325,10 +325,14 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
             // キル数加算
             PlayerListManager.Instance?.AddKill(_name);
-
-
         }
     }
+
+    /// <summary>
+    /// PlayerLocalUIControllerの取得用ゲッター
+    /// </summary>
+    /// <returns></returns>
+    public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>();}
 
     /// <summary>
     /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
