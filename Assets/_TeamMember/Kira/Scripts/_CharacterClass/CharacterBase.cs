@@ -782,7 +782,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
-            anim.SetTrigger("Jump");
+            anim.SetBool("Jump",true);
         }
     }
     /// <summary>
@@ -1021,6 +1021,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         else if (rigidbody.velocity.y < 0) {
             //追加の重力補正を掛ける
             rigidbody.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
+            anim.SetBool("Jump", false);
         }
 
 
