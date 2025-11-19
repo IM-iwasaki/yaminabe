@@ -27,8 +27,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
     public int MP { get; protected set; }
     public int maxMP { get; protected set; }
-    //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。
-    public int magazine { get; protected set; }
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
@@ -76,8 +74,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0;
     //オート攻撃タイプ (デフォルトはフルオート)
-    public CharacterEnum.AutoFireType autoFireType { get; protected set; }
-        = CharacterEnum.AutoFireType.FullAutomatic;
+    public bool isAutoAttackRunning { get; private set; }
 
     //アイテムを拾える状態か
     protected bool isCanPickup = false;
@@ -814,7 +811,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// リロード
     /// </summary>
     public void OnReload(InputAction.CallbackContext context) {
-        if (context.performed && magazine < weaponController_main.weaponData.maxAmmo) {
+        if (context.performed && weaponController_main.weaponData.ammo < weaponController_main.weaponData.maxAmmo) {
             ReloadRequest();
         }
     }
@@ -1059,55 +1056,25 @@ public abstract class CharacterBase : NetworkBehaviour {
         //死亡していたら攻撃できない
         if (isDead || !isLocalPlayer) return;
 
+        //入力タイプで分岐
         switch (context.phase) {
             //押した瞬間から
             case InputActionPhase.Started:
                 isAttackPressed = true;
-                //入力開始時間を記録
-                attackStartTime = Time.time;
-
-                //フルオート状態の場合コルーチンで射撃間隔を調整する
-                if (autoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
-                    StartCoroutine(AutoFire(_type));
-                }
-                //アニメーション開始
-                anim.SetBool("Shoot", true);
-                break;
+            break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
                 isAttackPressed = false;
-                //入力終了時間を記録
-                float heldTime = Time.time - attackStartTime;
-
-                //セミオート状態の場合入力時間が短ければ一回攻撃
-                if (autoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
-                    StartAttack(_type);
-                }
                 //アニメーション終了
                 anim.SetBool("Shoot", false);
-                break;
+            break;
             //押した瞬間
             case InputActionPhase.Performed:
                 isAttackTrigger = true;
-                break;
+            break;
         }
         
     }
-
-    /// <summary>
-    /// オート攻撃のコルーチン
-    /// </summary>
-    private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
-        while (isAttackPressed) {
-            StartAttack(_type);
-            //弾が残っていたら消費
-            if (magazine >= 1) magazine--;
-            yield return new WaitForSeconds(weaponController_main.weaponData.cooldown);
-        }
-    }
-
-    //TODO:射撃の挙動がやばい。上のコルーチンやめたほうがいいかも。
-
     /// <summary>
     /// 攻撃関数
     /// </summary>
@@ -1119,7 +1086,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 //使用武器が銃でかつ弾がなかったら通過不可。かわりにリロードを要求する。
-                if (weaponController_main.weaponData.type == WeaponType.Gun && magazine == 0) {
+                if (weaponController_main.weaponData.ammo == 0) {
                     ReloadRequest();
                     return;
                 }
@@ -1129,10 +1096,10 @@ public abstract class CharacterBase : NetworkBehaviour {
             default:
                 break;
         }
-
         // 武器が攻撃可能かチェックしてサーバー命令を送る
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
+        
     }
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
@@ -1198,9 +1165,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         //リロードを行う
         Invoke(nameof(Reload), weaponController_main.weaponData.reloadTime);
     }
-
+    /// <summary>
+    /// リロードの本実行
+    /// </summary>
     protected void Reload() {
-        magazine = weaponController_main.weaponData.maxAmmo;
+        weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
         isReloading = false;
     }
 
