@@ -53,7 +53,7 @@ public class AppearanceChangeManager : MonoBehaviour
         //  プレイヤーの子オブジェクトに生成
         Instantiate(prefab, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
-        player.GetComponent<GeneralCharacter>().StatusInport(data.characters[characterCount].statusData);
+        //player.GetComponent<GeneralCharacter>().StatusInport(data.characters[characterCount].statusData);
         //  プレイヤーのIDを取得・格納
         uint netId = player.GetComponent<NetworkIdentity>().netId;
         //  変更したデータを保存する
