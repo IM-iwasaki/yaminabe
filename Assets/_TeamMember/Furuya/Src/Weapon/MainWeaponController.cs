@@ -14,9 +14,11 @@ public class MainWeaponController : NetworkBehaviour {
     private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
+    private PlayerLocalUIController playerUI;
 
     void Start() {
         characterBase = GetComponent<CharacterBase>();
+        playerUI = characterBase.GetPlayerLocalUI();
     }
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
@@ -87,6 +89,7 @@ public class MainWeaponController : NetworkBehaviour {
         }
 
         weaponData = data;
+        playerUI.LocalUIChanged();
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 

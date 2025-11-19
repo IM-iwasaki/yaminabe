@@ -35,7 +35,8 @@ public static class PlayerSaveData {
             return new PlayerData {
                 currentMoney = 0,
                 currentRate = 0,
-                items = new List<string>()
+                items = new List<string>(),
+                currentReticle = 0,
             };
         }
 
@@ -46,6 +47,7 @@ public static class PlayerSaveData {
             data.playerName = reader.ReadString();
             data.currentMoney = reader.ReadInt32();
             data.currentRate = reader.ReadInt32();
+            data.currentReticle = reader.ReadInt32();
 
             int itemCount = reader.ReadInt32();
             data.items = new List<string>(itemCount);
