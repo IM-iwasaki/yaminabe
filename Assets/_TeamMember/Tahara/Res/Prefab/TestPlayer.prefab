@@ -434,6 +434,7 @@ MonoBehaviour:
   UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   CameraMenu: {fileID: 313406335442426388}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
+  anim: {fileID: 321994967542534653}
   playerId: -1
   ready: 0
   weaponController_main: {fileID: 0}
@@ -1598,6 +1599,11 @@ PrefabInstance:
 --- !u!4 &321994967542534626 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7369448170708576204, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
+  m_PrefabInstance: {fileID: 7075857222398031406}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &321994967542534653 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7369448170708576211, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
   m_PrefabInstance: {fileID: 7075857222398031406}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7509303668042204407
