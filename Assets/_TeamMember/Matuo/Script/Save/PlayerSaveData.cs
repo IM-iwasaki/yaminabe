@@ -50,6 +50,8 @@ public static class PlayerSaveData {
             data.currentReticle = reader.ReadInt32();
 
             int itemCount = reader.ReadInt32();
+            if (itemCount < 0 || itemCount > 10000)
+                itemCount = 0;
             data.items = new List<string>(itemCount);
 
             for (int i = 0; i < itemCount; i++) {

@@ -100,7 +100,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] public PlayerUIController UI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
-    [SerializeField] private Animator anim = null;
+    public Animator anim = null;
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
     /// <summary>
@@ -608,6 +608,9 @@ public abstract class CharacterBase : NetworkBehaviour {
                 HandleAttack(ctx, actionName == "Attack_Sub"
                     ? CharacterEnum.AttackType.Main
                     : CharacterEnum.AttackType.Sub);
+                break;
+            case "SubWeapon":
+                weaponController_sub.TryUseSubWeapon();
                 break;
             case "ShowHostUI":
                 OnShowHostUI(ctx);
