@@ -614,6 +614,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1403119992907617473}
     m_Modifications:
+    - target: {fileID: 1151828830765379794, guid: 8137bffaada3c4c428ed5151056eaa74, type: 3}
+      propertyPath: m_text
+      value: Fire_Main
+      objectReference: {fileID: 0}
     - target: {fileID: 1475006664841950799, guid: 8137bffaada3c4c428ed5151056eaa74, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
@@ -726,6 +730,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: OptionCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7274563300149388538, guid: 8137bffaada3c4c428ed5151056eaa74, type: 3}
+      propertyPath: m_text
+      value: Fire_Sub
+      objectReference: {fileID: 0}
+    - target: {fileID: 7520446221695892999, guid: 8137bffaada3c4c428ed5151056eaa74, type: 3}
+      propertyPath: m_text
+      value: Jump
+      objectReference: {fileID: 0}
+    - target: {fileID: 7859132456201799246, guid: 8137bffaada3c4c428ed5151056eaa74, type: 3}
+      propertyPath: m_text
+      value: Skill
+      objectReference: {fileID: 0}
     - target: {fileID: 7941062306661908055, guid: 8137bffaada3c4c428ed5151056eaa74, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -749,6 +765,10 @@ PrefabInstance:
     - target: {fileID: 8712141094956285250, guid: 8137bffaada3c4c428ed5151056eaa74, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9028368808518661794, guid: 8137bffaada3c4c428ed5151056eaa74, type: 3}
+      propertyPath: m_text
+      value: Reload
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
