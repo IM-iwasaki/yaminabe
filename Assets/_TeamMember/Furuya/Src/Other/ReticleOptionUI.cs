@@ -20,7 +20,8 @@ public class ReticleOptionUI : MonoBehaviour {
         if (HudManager.Instance != null) {
             cachedHudSprite = HudManager.Instance.GetReticleSprite();
             int idx = GetIndexFromSprite(cachedHudSprite);
-            currentIndex = idx >= 0 ? idx : 0;
+            //currentIndex = idx >= 0 ? idx : 0;
+            LoadIndex();
             ApplyPreviewToBoth();
         }
     }
@@ -71,6 +72,9 @@ public class ReticleOptionUI : MonoBehaviour {
         Sprite s = reticles[currentIndex];
         if (previewImage != null) previewImage.sprite = s;
         HudManager.Instance?.SetReticleSprite(s);
+
+        //セーブ
+        SaveIndex();
     }
 
 
@@ -94,5 +98,23 @@ public class ReticleOptionUI : MonoBehaviour {
         }
         if (!isLocal) return false;
         return true;
+    }
+
+    /// <summary>
+    /// レティクル番号のセーブ
+    /// </summary>
+    private void SaveIndex() {
+        // 既存データをロードして所持金だけ更新
+        var data = PlayerSaveData.Load();
+        data.currentReticle = currentIndex;
+        PlayerSaveData.Save(data);
+    }
+
+    /// <summary>
+    /// セーブされている所持金のロード
+    /// </summary>
+    private void LoadIndex() {
+        var data = PlayerSaveData.Load();
+        currentIndex = data.currentReticle;
     }
 }

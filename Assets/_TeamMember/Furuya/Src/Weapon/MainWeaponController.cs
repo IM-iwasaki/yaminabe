@@ -90,6 +90,12 @@ public class MainWeaponController : NetworkBehaviour {
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 
+    /// <summary>
+    /// 武器の使用可否判定
+    /// </summary>
+    /// <param name="character"></param>
+    /// <param name="weapon"></param>
+    /// <returns></returns>
     private bool CanUseWeapon(CharacterEnum.CharaterType character, WeaponType weapon) {
         return character switch {
             CharacterEnum.CharaterType.Melee => weapon == WeaponType.Melee,

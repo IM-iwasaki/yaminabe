@@ -9,4 +9,9 @@ public class PlayerData {
     /// 追加:タハラ　レートをデータとして保存
     /// </summary>
     public int currentRate;
+
+    /// <summary>
+    /// 古谷 レティクルの数値保存
+    /// </summary>
+    public int currentReticle;
 }

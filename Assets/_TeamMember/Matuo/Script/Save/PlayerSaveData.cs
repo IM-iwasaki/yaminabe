@@ -17,6 +17,7 @@ public static class PlayerSaveData {
             writer.Write(data.playerName);
             writer.Write(data.currentMoney);
             writer.Write(data.currentRate);
+            writer.Write(data.currentReticle);
 
             // items ‚Ì”
             writer.Write(data.items.Count);
