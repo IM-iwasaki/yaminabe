@@ -11,20 +11,28 @@ public class CaptureHoko : NetworkBehaviour {
     [Header("ホコ設定")]
     public float scorePerSecond = 1f;       // 1秒ごとのスコア
     public float holdHeight = 1.2f;         // プレイヤー上のホコの位置
+    public float dropHeightOffset = 0.5f;   // 落下時の少し上に置くオフセット
 
     [SyncVar] private bool isHeld = false;
-    [SyncVar] public NetworkIdentity holder;  // 現在ホコを持っているプレイヤー
+    [SyncVar] public NetworkIdentity holder;
 
     private Rigidbody rb;
     private Collider col;
     private float timer = 0f;
+    private Transform originalParent; // 元々の親を保持
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
         col.isTrigger = true;
+
+        // 元々の親を保存
+        originalParent = transform.parent;
     }
 
+    /// <summary>
+    /// ホコの追従とスコア加算
+    /// </summary>
     [ServerCallback]
     private void Update() {
         if (isHeld && holder != null) {
@@ -59,7 +67,7 @@ public class CaptureHoko : NetworkBehaviour {
     /// <summary>
     /// プレイヤーがホコを拾う
     /// </summary>
-    /// <param name="player">ホコ餅プレイヤー</param>
+    /// <param name="player">ホコを持つプレイヤーのNetworkIdentity</param>
     [Server]
     public void TryPickup(NetworkIdentity player) {
         if (isHeld) return;
@@ -73,6 +81,7 @@ public class CaptureHoko : NetworkBehaviour {
 
     /// <summary>
     /// ホコを落とす
+    /// 元の親に戻し、ステージ上に自然に置く
     /// </summary>
     [Server]
     public void Drop() {
@@ -80,12 +89,18 @@ public class CaptureHoko : NetworkBehaviour {
 
         isHeld = false;
         holder = null;
-        transform.SetParent(null);
         rb.isKinematic = false;
+
+        RpcDetachFromPlayer(); // 全クライアントで親子解除
+    }
+
+    [ClientRpc]
+    private void RpcDetachFromPlayer() {
+        transform.SetParent(null);
     }
 
     /// <summary>
-    /// ゲーム終了時にホコを落とす用
+    /// チームにスコアを加算する
     /// </summary>
     [Server]
     private void AddScoreToHolderTeam() {
@@ -106,6 +121,9 @@ public class CaptureHoko : NetworkBehaviour {
         GameManager.OnGameEnded -= HandleGameEnd;
     }
 
+    /// <summary>
+    /// ゲーム終了時にホコを落とす
+    /// </summary>
     [Server]
     private void HandleGameEnd() {
         Drop();
