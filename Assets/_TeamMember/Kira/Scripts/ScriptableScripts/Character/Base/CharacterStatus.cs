@@ -12,8 +12,14 @@ public abstract class CharacterStatus : ScriptableObject {
     public SkillBase[] skills;
     [Header("このキャラクターが発動可能なパッシブを割り当ててください。\n(複数アタッチできますが0番目のものしか使えません。)")]
     public PassiveBase[] passives;
+    [Header("このキャラクターの初期メイン武器を割り当ててください。")]
+    public WeaponData FirstMainWeapon;
+    [Header("このキャラクターの初期サブ武器を割り当ててください。")]
+    public WeaponData FirstSubWeapon;
 
     public virtual int maxHP => baseStatus.maxHP;
-    public virtual int attack => baseStatus.attack;
     public virtual int moveSpeed => baseStatus.moveSpeed;
+
+    //TODO:多分消す。
+    public virtual int baseAttack => baseStatus.attack;
 }

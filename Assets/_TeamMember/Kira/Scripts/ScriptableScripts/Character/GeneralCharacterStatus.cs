@@ -7,17 +7,17 @@ public class GeneralCharacterStatus : CharacterStatus {
     public CharacterEnum.CharaterType chatacterType;
 
     [Header("体力補正値。\nStatusBase + [maxHPCorrection] の値になります。")]
-    [Range(-50, 100)] public int maxHPCorrection = 0;
-    [Header("攻撃力補正値。\nStatusBase + [attackCorrection]の値になります。")]
-    [Range(-7, 20)] public int attackCorrection = 0;
+    [Range(-50, 100)] public int maxHPCorrection = 0;    
     [Header("移動速度補正値。\nStatusBase + [speedCorrection]の値になります。")]
     [Range(-3, 5)] public int speedCorrection = 0;
-    [Header("魔力値。\n[maxMPCorrection] の値になります。")]
-    [Range(10, 100)] public int maxMPCorrection = 10;
-    [Header("弾倉値。\n[maxMagazine] の値になります。")]
-    [Range(1, 50)] public int maxMagazine = 1;
+    [Header("攻撃力補正値。\n[attack]の値になります。")]
+    [Range(0, 50)] public int attack = 0;
+    [Header("魔力値。\n[maxMP] の値になります。")]
+    [Range(10, 100)] public int maxMP = 10;
 
     public override int maxHP => baseStatus.maxHP + maxHPCorrection;
-    public override int attack => baseStatus.attack + attackCorrection;
     public override int moveSpeed => baseStatus.moveSpeed + speedCorrection;
+
+    //TODO:これも多分消す。
+    public override int baseAttack => baseAttack + attack;
 }
