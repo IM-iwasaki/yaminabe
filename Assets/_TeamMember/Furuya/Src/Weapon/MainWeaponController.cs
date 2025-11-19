@@ -81,8 +81,22 @@ public class MainWeaponController : NetworkBehaviour {
     public void SetWeaponData(string name) {
         var data = WeaponDataRegistry.GetWeapon(name);
 
-        Debug.LogWarning($"'{data.weaponName}'　を使用します");
+        if (!CanUseWeapon(charaterType, data.type)) {
+            Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
+            return;
+        }
+
         weaponData = data;
+        Debug.LogWarning($"'{data.weaponName}' を使用します");
+    }
+
+    private bool CanUseWeapon(CharacterEnum.CharaterType character, WeaponType weapon) {
+        return character switch {
+            CharacterEnum.CharaterType.Melee => weapon == WeaponType.Melee,
+            CharacterEnum.CharaterType.Gunner => weapon == WeaponType.Gun,
+            CharacterEnum.CharaterType.Wizard => weapon == WeaponType.Magic,
+            _ => false
+        };
     }
 
     // --- 近接攻撃 ---
