@@ -9,12 +9,18 @@ using System.Collections;
 public class MainWeaponController : NetworkBehaviour {
     public WeaponData weaponData;           // メイン武器
     public Transform firePoint;
-    float lastAttackTime;
+    private float lastAttackTime;
+
+    private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
 
     void Start() {
         characterBase = GetComponent<CharacterBase>();
+    }
+
+    public void SetCharacterType(CharacterEnum.CharaterType type) {
+        charaterType = type;
     }
 
     // --- 攻撃リクエスト ---
@@ -75,8 +81,22 @@ public class MainWeaponController : NetworkBehaviour {
     public void SetWeaponData(string name) {
         var data = WeaponDataRegistry.GetWeapon(name);
 
-        Debug.LogWarning($"'{data.weaponName}'　を使用します");
+        if (!CanUseWeapon(charaterType, data.type)) {
+            Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
+            return;
+        }
+
         weaponData = data;
+        Debug.LogWarning($"'{data.weaponName}' を使用します");
+    }
+
+    private bool CanUseWeapon(CharacterEnum.CharaterType character, WeaponType weapon) {
+        return character switch {
+            CharacterEnum.CharaterType.Melee => weapon == WeaponType.Melee,
+            CharacterEnum.CharaterType.Gunner => weapon == WeaponType.Gun,
+            CharacterEnum.CharaterType.Wizard => weapon == WeaponType.Magic,
+            _ => false
+        };
     }
 
     // --- 近接攻撃 ---

@@ -84,6 +84,8 @@ public class GeneralCharacter : CharacterBase {
         // メインウェポンとサブウェポンの参照を取得
         weaponController_main = GetComponent<MainWeaponController>();
         weaponController_sub = GetComponent<SubWeaponController>();
+
+        weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
     }
 
     protected override void StartUseSkill() {
