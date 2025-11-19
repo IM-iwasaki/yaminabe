@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5187006418399954991}
-  - component: {fileID: 7813488620246310627}
+  - component: {fileID: 327840385888434660}
   m_Layer: 0
   m_Name: CameraOption
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7813488620246310627
+--- !u!114 &327840385888434660
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,5 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 0}
-  optionCanvas: {fileID: 27916797963828443, guid: f7d5e69ea01663b428bb255bb5915b82, type: 3}
+  optionCanvas: {fileID: 0}
   sensitivitySlider: {fileID: 0}
+  playerInput: {fileID: 0}

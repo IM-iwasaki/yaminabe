@@ -10,16 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ef3c3d8cad62024a8d183c950a23d32, type: 3}
-  m_Name: Assult
+  m_Name: Handgun
   m_EditorClassIdentifier: 
-  weaponName: Assult
+  weaponName: HandGun
   type: 1
-  damage: 10
-  cooldown: 0.2
+  damage: 15
+  cooldown: 0.3
   muzzleFlashType: 0
   hitEffectType: 0
-  maxAmmo: 30
-  reloadTime: 1.5
+  maxAmmo: 16
+  reloadTime: 0.2
   projectilePrefab: {fileID: 8584663488555818686, guid: 85a0d588d9638a04aaa3c1596a30a193, type: 3}
   projectileSpeed: 15
   explosionRange: 0
+  multiShot: 1
+  burstDelay: 0

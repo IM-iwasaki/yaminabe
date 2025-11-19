@@ -9,8 +9,8 @@ public class CharacterDatabase : ScriptableObject {
     [System.Serializable]
     public class CharacterInfo {
         [Header("キャラクター基本情報")]
-        public string characterName;                 // キャラ名
-        public CharacterStatus statusData;           // ステータスデータ
+        public string characterName;                  // キャラ名
+        public GeneralCharacterStatus statusData;     // ステータスデータ
 
         [Header("スキン設定")]
         public List<SkinInfo> skins = new();          // スキン情報リスト

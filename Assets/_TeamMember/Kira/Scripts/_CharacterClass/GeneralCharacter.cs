@@ -10,9 +10,9 @@ public class GeneralCharacter : CharacterBase {
     #region ～キャラクターデータ管理変数～
 
     [Header("インポートするステータス")]
-    [SerializeField]CharacterStatus inputStatus;
+    [SerializeField]GeneralCharacterStatus inputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
-    private CharacterStatus runtimeStatus;
+    private GeneralCharacterStatus runtimeStatus;
     public SkillBase[] equippedSkills{ get; private set; }
     public PassiveBase[] equippedPassives{ get; private set; }
 
@@ -55,7 +55,7 @@ public class GeneralCharacter : CharacterBase {
         equippedSkills[0].isSkillUse = false;
     }
 
-    public override void StatusInport(CharacterStatus _inport = null) {
+    public override void StatusInport(GeneralCharacterStatus _inport = null) {
         if (_inport == null) {
             DefaultStatusInport();
             return;
@@ -81,6 +81,8 @@ public class GeneralCharacter : CharacterBase {
         // メインウェポンとサブウェポンの参照を取得
         weaponController_main = GetComponent<MainWeaponController>();
         weaponController_sub = GetComponent<SubWeaponController>();
+
+        weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
     }
 
     protected override void StartUseSkill() {
