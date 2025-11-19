@@ -122,6 +122,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     //接地しているか
     [SerializeField] private bool IsGrounded;
 
+    private string prevRunAnim;
+
 
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
@@ -318,7 +320,6 @@ public abstract class CharacterBase : NetworkBehaviour {
             //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
             KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
             Dead(_name);
-            anim.SetTrigger("Dead");
             if (PlayerListManager.Instance != null) {
                 // スコア加算
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
@@ -388,9 +389,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsJumpPressed = false;
         isMoving = false;
         //ローカルで死亡演出
-        LocalDeadEffect(_name);
+        LocalDeadEffect();
         RespawnDelay();
-
+        //アニメーションは全員に反映
+        RpcDeadAnimation();
         // スコア計算にここから行きます
         var combat = GetComponent<PlayerCombat>();
         if (combat != null) {
@@ -457,12 +459,21 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     /// <param name="_name"></param>
     [TargetRpc]
-    private void LocalDeadEffect(string _name) {
+    private void LocalDeadEffect() {
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
         //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
     }
+    /// <summary>
+    /// NetworkAnimatorを使用した結果
+    /// ローカルでの変更によってアニメーション変更がかかるため制作
+    /// </summary>
+    [ClientRpc]
+    private void RpcDeadAnimation() {
+        anim.SetTrigger("Dead");
+    }
+
     [Server]
     private void ResetHealth() {
         //ここで体力と死亡状態を戻す
@@ -624,7 +635,6 @@ public abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
-                anim.SetBool("Shoot", true);
                 HandleAttack(ctx, actionName == "Attack_Main"
                     ? CharacterEnum.AttackType.Main
                     : CharacterEnum.AttackType.Sub);
@@ -653,7 +663,6 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "Fire_Main":
             case "Fire_Sub":
-                anim.SetBool("Shoot", false);
                 HandleAttack(ctx, actionName == "Attack_Main"
                     ? CharacterEnum.AttackType.Main
                     : CharacterEnum.AttackType.Sub);
@@ -749,6 +758,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 移動
     /// </summary>
     public void OnMove(InputAction.CallbackContext context) {
+        if (!isLocalPlayer) return;
         MoveInput = context.ReadValue<Vector2>();
         float moveX = MoveInput.x;
         float moveZ = MoveInput.y;
@@ -940,21 +950,38 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_x"></param>
     /// <param name="_z"></param>
     private void ControllMoveAnimation(float _x, float _z) {
-        string trueAnimName;
-        //入力によってアニメーション変更
-        if (_x == 0 && _z > 0)
-            trueAnimName = "RunF";
-        else if (_x == 0 && _z < 0)
-            trueAnimName = "RunB";
-        else if (_x > 0)
-            trueAnimName = "RunR";
-        else if (_x < 0)
-            trueAnimName = "RunL";
-        
-        else
-            trueAnimName = "";
+        //斜め入力の場合
+        if(_x != 0 && _z != 0) {
+            anim.SetBool("RunL", false);
+            anim.SetBool("RunR", false);
+            if(_z > 0) {
+                anim.SetBool("RunF", true);
+                return;
+            }
+            if(_z < 0) {
+                anim.SetBool("RunB", true);
+                return;
+            }
+            return;
 
-        anim.SetBool(trueAnimName, true);
+        }
+
+        if(_x > 0 && _z == 0) {
+            anim.SetBool("RunR", true);
+            return;
+        }
+        if(_x < 0 && _z == 0) {
+            anim.SetBool("RunL", true);
+            return;
+        }
+        if(_x == 0 && _z > 0) {
+            anim.SetBool("RunF", true);
+            return;
+        }
+        if(_x == 0 && _z < 0) {
+            anim.SetBool("RunB", true);
+            return;
+        }
     }
 
     /// <summary>
@@ -1027,7 +1054,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     private void HandleAttack(InputAction.CallbackContext context, CharacterEnum.AttackType _type) {
         //死亡していたら攻撃できない
-        if (isDead) return;
+        if (isDead || !isLocalPlayer) return;
 
         switch (context.phase) {
             //押した瞬間から
@@ -1040,6 +1067,8 @@ public abstract class CharacterBase : NetworkBehaviour {
                 if (autoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
                     StartCoroutine(AutoFire(_type));
                 }
+                //アニメーション開始
+                anim.SetBool("Shoot", true);
                 break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
@@ -1051,12 +1080,15 @@ public abstract class CharacterBase : NetworkBehaviour {
                 if (autoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
                     StartAttack(_type);
                 }
+                //アニメーション終了
+                anim.SetBool("Shoot", false);
                 break;
             //押した瞬間
             case InputActionPhase.Performed:
                 isAttackTrigger = true;
                 break;
         }
+        
     }
 
     /// <summary>
