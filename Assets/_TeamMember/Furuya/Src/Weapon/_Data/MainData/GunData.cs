@@ -13,4 +13,7 @@ public class GunData : WeaponData {
     public float projectileSpeed;
 
     public float explosionRange;
+
+    public int multiShot = 1;
+    public float burstDelay;
 }

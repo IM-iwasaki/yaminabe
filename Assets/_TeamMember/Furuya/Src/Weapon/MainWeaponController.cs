@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
 using Mirror.BouncyCastle.Asn1.Pkcs;
+using System.Collections;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -27,7 +28,8 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerMeleeAttack();
                 break;
             case WeaponType.Gun:
-                ServerGunAttack(direction);
+                if (weaponData is GunData gunData)
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                 break;
             case WeaponType.Magic:
                 ServerMagicAttack(direction);
@@ -108,6 +110,19 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     // --- 銃撃処理（TPSレティクル方向） ---
+    IEnumerator ServerBurstShoot(Vector3 direction, int multiShot, float shootDelay) {
+        int count = Mathf.Max(1, multiShot);
+        float delay = shootDelay;
+
+        for (int i = 0; i < count; i++) {
+            ServerGunAttack(direction);
+
+            // 最後の弾以外は待機
+            if (i < count - 1)
+                yield return new WaitForSeconds(delay);
+        }
+    }
+
     void ServerGunAttack(Vector3 direction) {
         if (weaponData is not GunData gunData || gunData.projectilePrefab == null)
             return;
