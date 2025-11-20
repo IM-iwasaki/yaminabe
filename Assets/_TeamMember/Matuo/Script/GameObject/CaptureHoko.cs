@@ -11,13 +11,15 @@ public class CaptureHoko : NetworkBehaviour {
     [Header("ホコ設定")]
     public float scorePerSecond = 1f;       // 1秒ごとのスコア
     public float holdHeight = 1.2f;         // プレイヤー上のホコの位置
+    public float pickupCooldown = 3.0f;     // Drop 後に再度拾えるまでの時間
 
-    [SyncVar] private bool isHeld = false;
-    [SyncVar] public NetworkIdentity holder;
+    [SyncVar(hook = nameof(OnHolderChanged))]
+    public NetworkIdentity holder;
 
     private Rigidbody rb;
     private Collider col;
-    private float timer = 0f;
+    private float scoreTimer = 0f;
+    private bool canBePickedUp = true;
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -34,18 +36,29 @@ public class CaptureHoko : NetworkBehaviour {
     }
 
     /// <summary>
+    /// SyncVar hook：holder の変化に応じて見た目を更新
+    /// </summary>
+    private void OnHolderChanged(NetworkIdentity oldHolder, NetworkIdentity newHolder) {
+        if (newHolder != null) {
+            rb.isKinematic = true;
+        } else {
+            rb.isKinematic = false;
+        }
+    }
+
+    /// <summary>
     /// ホコの追従とスコア加算（サーバー側のみ）
     /// </summary>
     [ServerCallback]
     private void Update() {
-        if (isHeld && holder != null && holder != StageManager.Instance.netIdentity) {
+        if (holder != null) {
             Vector3 targetPos = holder.transform.position + Vector3.up * holdHeight;
             transform.position = targetPos;
             transform.rotation = holder.transform.rotation;
 
-            timer += Time.deltaTime;
-            if (timer >= 1f) {
-                timer = 0f;
+            scoreTimer += Time.deltaTime;
+            if (scoreTimer >= 1f) {
+                scoreTimer = 0f;
                 AddScoreToHolderTeam();
             }
         }
@@ -56,7 +69,7 @@ public class CaptureHoko : NetworkBehaviour {
     /// </summary>
     [Server]
     private void OnTriggerEnter(Collider other) {
-        if (isHeld) return;
+        if (holder != null || !canBePickedUp) return;
 
         var player = other.GetComponent<CharacterBase>();
         if (player != null && player.netIdentity != null) {
@@ -69,20 +82,10 @@ public class CaptureHoko : NetworkBehaviour {
     /// </summary>
     [Server]
     public void TryPickup(NetworkIdentity player) {
-        if (isHeld) return;
+        if (holder != null) return;
 
-        isHeld = true;
         holder = player;
-        rb.isKinematic = true;
-
-        // 親子設定はサーバー側ではしないで位置追従のみ
-        // クライアントに見えるように位置を同期
-        RpcAttachToPlayer(player);
-    }
-
-    [ClientRpc]
-    private void RpcAttachToPlayer(NetworkIdentity player) {
-        holder = player;
+        scoreTimer = 0f; // スコア加算タイマーリセット
     }
 
     /// <summary>
@@ -90,18 +93,16 @@ public class CaptureHoko : NetworkBehaviour {
     /// </summary>
     [Server]
     public void Drop() {
-        if (!isHeld) return;
+        if (holder == null) return;
 
         holder = null;
-        isHeld = false;
-        rb.isKinematic = false;
-        RpcDetachFromPlayer();
+        canBePickedUp = false;
+        Invoke(nameof(EnablePickup), pickupCooldown);
     }
 
-    [ClientRpc]
-    private void RpcDetachFromPlayer() {
-        isHeld = false;                  // クライアント側でも追従停止
-        holder = null;
+    [Server]
+    private void EnablePickup() {
+        canBePickedUp = true;
     }
 
     /// <summary>
