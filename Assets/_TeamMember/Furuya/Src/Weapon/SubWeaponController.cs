@@ -1,6 +1,8 @@
 using UnityEngine;
 using Mirror;
 using System.Collections;
+using Mirror.Examples.Basic;
+using static CharacterEnum;
 
 /// <summary>
 /// サブ武器操作用
@@ -13,9 +15,11 @@ public class SubWeaponController : NetworkBehaviour {
     private bool isRecharging;
 
     private CharacterBase characterBase; // チームIDなどを取得するため
+    private PlayerLocalUIController playerUI;
 
     void Start() {
         characterBase = GetComponent<CharacterBase>();
+
 
         if (subWeaponData != null)
             currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
@@ -55,6 +59,19 @@ public class SubWeaponController : NetworkBehaviour {
 
         if (!isRecharging)
             StartCoroutine(RechargeRoutine());
+    }
+
+    /// <summary>
+    /// 武器データセット
+    /// </summary>
+    /// <param name="name"></param>
+    [Command]
+    public void SetWeaponData(string name) {
+        var data = WeaponDataRegistry.GetSubWeapon(name);
+
+        subWeaponData = data;
+        playerUI.LocalUIChanged();
+        Debug.LogWarning($"'{data.subWeaponName}' を使用します");
     }
 
     /// <summary>
