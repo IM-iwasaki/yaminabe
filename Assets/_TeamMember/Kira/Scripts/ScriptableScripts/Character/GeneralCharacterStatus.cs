@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// キャラクターデータScriptableObject用クラス
+/// </summary>
 [CreateAssetMenu(menuName = "Character/新規キャラクターデータ(全職業対応)")]
 public class GeneralCharacterStatus : CharacterStatus {
     //職業の割り当て
