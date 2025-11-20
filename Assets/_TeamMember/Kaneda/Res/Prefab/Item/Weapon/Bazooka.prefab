@@ -241,11 +241,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed0b112ba535525468e07c6828516b66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemName: "\u30D0\u30BA\u30FC\u30AB\u30FC"
   description: 
   icon: {fileID: 0}
+  canDestroy: 1
   weaponType: 1
-  weaponData: {fileID: 11400000, guid: 045edc35f2123ea41bca7449b337846b, type: 2}
+  weaponData: {fileID: 11400000, guid: 762ac1660da35bc46a73de2a68399863, type: 2}
 --- !u!114 &-4887643376390145924
 MonoBehaviour:
   m_ObjectHideFlags: 0
