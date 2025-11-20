@@ -811,7 +811,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void OnReload(InputAction.CallbackContext context) {
         if (context.performed && weaponController_main.weaponData.ammo < weaponController_main.weaponData.maxAmmo) {
-            ReloadRequest();
+            weaponController_main.ReloadRequest();
         }
     }
     /// <summary>
@@ -1076,24 +1076,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     virtual public void StartAttack() {
         if (weaponController_main == null) return;
 
-        switch (weaponController_main.weaponData.type) {
-            case WeaponType.Melee:
-                break;
-            case WeaponType.Gun:
-                //使用武器が銃でかつ弾がなかったら通過不可。かわりにリロードを要求する。
-                if (weaponController_main.weaponData.ammo == 0) {
-                    ReloadRequest();
-                    return;
-                } 
-                //その他リロード中は射撃できなくする。
-                else if (isReloading) return;
-                break;
-            case WeaponType.Magic:
-                break;
-            default:
-                break;
-        }
-        // 武器が攻撃可能かチェックしてサーバー命令を送る
+        // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
         
@@ -1146,29 +1129,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
 
         }
-    }
-
-    /// <summary>
-    /// リロードの要求関数(リロード中だったら弾く)
-    /// </summary>
-    protected void ReloadRequest() {
-        //射撃中やリロード中ならやめる
-        if (isAttackPressed && isReloading) return;
-        //使っている武器が銃でなければやめる
-        if (weaponController_main.weaponData.type != WeaponType.Gun) return;
-
-        //リロード中にする
-        isReloading = true;
-        //リロードを行う
-        Invoke(nameof(Reload), weaponController_main.weaponData.reloadTime);
-    }
-    /// <summary>
-    /// リロードの本実行
-    /// </summary>
-    protected void Reload() {
-        weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
-        isReloading = false;
-    }
+    }    
 
     #endregion
 

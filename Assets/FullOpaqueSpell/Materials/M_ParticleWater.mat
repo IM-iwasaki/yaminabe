@@ -111,6 +111,8 @@ Material:
     - _AdjustMask: 0.05
     - _AlphaClip: 0
     - _AlphaToMask: 0
+    - _BUILTIN_QueueControl: 0
+    - _BUILTIN_QueueOffset: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -174,6 +176,7 @@ Material:
     - _ShadowColor: {r: 0.03137255, g: 0.082352914, b: 0.12156857, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Speed: {r: 0, g: 1, b: 0, a: 0}
+    - _TilingMask: {r: 1, g: 1, b: 0, a: 0}
     - _Vector3: {r: 3.03, g: 0, b: 0, a: 0}
     - _WindDirection: {r: 0, g: 0, b: 0, a: 0}
     - _Wind_Direction: {r: 1, g: 2, b: 0, a: 0}

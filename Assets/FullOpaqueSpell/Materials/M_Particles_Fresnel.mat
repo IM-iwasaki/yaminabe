@@ -92,6 +92,8 @@ Material:
     - _AdjustMask: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
+    - _BUILTIN_QueueControl: 0
+    - _BUILTIN_QueueOffset: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _Bloom: 2
@@ -113,6 +115,7 @@ Material:
     - _GlossyReflections: 0
     - _Imobilise_End: 1
     - _IntesityNoise: 0.6
+    - _InvertFresnel: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -138,6 +141,7 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Speed: {r: 0, g: 0, b: 0, a: 0}
     - _TailNoise: {r: 1, g: 1, b: 0, a: 0}
+    - _TilingMask: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &3747738899747730291
 MonoBehaviour:

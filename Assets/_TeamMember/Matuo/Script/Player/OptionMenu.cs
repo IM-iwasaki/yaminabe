@@ -48,14 +48,14 @@ public class OptionMenu : MonoBehaviour {
 
         #region キーバインド読み込み
 
-        string[] actions = { "Jump", "Fire_Main", "Fire_Sub", "Skill", "Reload" };
+        string[] actions = { "Jump", "Fire_Main", "SubWeapon", "Skill", "Reload" };
         foreach (var act in actions)
             LoadRebind(act);
 
         // Canvas内のボタン取得
         jumpButton = optionCanvas.transform.Find("Rebind Jump")?.GetComponent<Button>();
         fireMainButton = optionCanvas.transform.Find("Rebind Fire_Main")?.GetComponent<Button>();
-        fireSubButton = optionCanvas.transform.Find("Rebind Fire_Sub")?.GetComponent<Button>();
+        fireSubButton = optionCanvas.transform.Find("Rebind SubWeapon")?.GetComponent<Button>();
         skillButton = optionCanvas.transform.Find("Rebind Skill")?.GetComponent<Button>();
         reloadButton = optionCanvas.transform.Find("Rebind Reload")?.GetComponent<Button>();
 
@@ -72,14 +72,14 @@ public class OptionMenu : MonoBehaviour {
         // ボタンにリスナー追加
         jumpButton?.onClick.AddListener(() => StartRebind("Jump", 0));
         fireMainButton?.onClick.AddListener(() => StartRebind("Fire_Main", 0));
-        fireSubButton?.onClick.AddListener(() => StartRebind("Fire_Sub", 0));
+        fireSubButton?.onClick.AddListener(() => StartRebind("SubWeapon", 0));
         skillButton?.onClick.AddListener(() => StartRebind("Skill", 0));
         reloadButton?.onClick.AddListener(() => StartRebind("Reload", 0));
 
         // ボタンテキスト更新
         UpdateButtonText("Jump", jumpText);
         UpdateButtonText("Fire_Main", fireMainText);
-        UpdateButtonText("Fire_Sub", fireSubText);
+        UpdateButtonText("SubWeapon", fireSubText);
         UpdateButtonText("Skill", skillText);
         UpdateButtonText("Reload", reloadText);
 
@@ -154,7 +154,7 @@ public class OptionMenu : MonoBehaviour {
         switch (actionName) {
             case "Jump": UpdateButtonText("Jump", jumpText); break;
             case "Fire_Main": UpdateButtonText("Fire_Main", fireMainText); break;
-            case "Fire_Sub": UpdateButtonText("Fire_Sub", fireSubText); break;
+            case "SubWeapon": UpdateButtonText("SubWeapon", fireSubText); break;
             case "Skill": UpdateButtonText("Skill", skillText); break;
             case "Reload": UpdateButtonText("Reload", reloadText); break;
         }
@@ -199,7 +199,7 @@ public class OptionMenu : MonoBehaviour {
         switch (actionName) {
             case "Jump": selectedButton = jumpButton; break;
             case "Fire_Main": selectedButton = fireMainButton; break;
-            case "Fire_Sub": selectedButton = fireSubButton; break;
+            case "SubWeapon": selectedButton = fireSubButton; break;
             case "Skill": selectedButton = skillButton; break;
             case "Reload": selectedButton = reloadButton; break;
         }

@@ -5,7 +5,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 /// <summary>
-/// Player内のLocalUIの管理
+/// Player内のLocalUI管理
 /// </summary>
 public class PlayerLocalUIController : NetworkBehaviour {
 
@@ -79,7 +79,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         }
 
         //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
-        if (player.weaponController_main.weaponData.ammo >= 1) {
+        if (player.weaponController_main.weaponData.type == WeaponType.Gun) {
             mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.weaponData.ammo.ToString();
             mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
             mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;
@@ -90,15 +90,18 @@ public class PlayerLocalUIController : NetworkBehaviour {
         subWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_sub.subWeaponData.WeaponName;
     }
 
-    public IEnumerator RotateReloadIcon(float duration) {
+    /// <summary>
+    /// リロードアイコンを1回転させる ( float _duration = 1回転するまでにかかる時間 )
+    /// </summary>
+    public IEnumerator RotateReloadIcon(float _duration) {
         reloadIconRotating = true;
         mainWeaponReloadIcon.enabled = true;
         float start = 0f;
         float end = -360f;
         float time = 0f;
 
-        while (time < duration) {
-            float t = time / duration;
+        while (time < _duration) {
+            float t = time / _duration;
             float angle = Mathf.Lerp(start, end, t);
             mainWeaponReloadIcon.transform.localRotation = Quaternion.Euler(0, 0, angle);
             time += Time.deltaTime;
