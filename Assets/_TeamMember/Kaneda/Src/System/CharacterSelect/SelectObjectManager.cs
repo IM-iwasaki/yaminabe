@@ -250,7 +250,7 @@ public class SelectObjectManager : NetworkBehaviour {
 
         //  ステータスデータを代入する
         HP = characterStatuses.maxHP;
-        ATK = characterStatuses.attack;
+        ATK = characterStatuses.baseAttack;
         SPD = characterStatuses.moveSpeed;
     }
 

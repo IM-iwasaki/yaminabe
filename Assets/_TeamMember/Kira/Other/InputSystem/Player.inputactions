@@ -122,6 +122,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SubWeapon",
+                    "type": "Button",
+                    "id": "ad8273d9-08c2-4a4e-aa05-e8a75845a0cd",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -221,17 +230,6 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Fire_Main",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "7cb489e5-6af4-401c-a2e7-5c650f706150",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Fire_Sub",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -375,6 +373,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "SendMessage",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2f4328b9-7b70-44b6-a4bb-c95854985789",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SubWeapon",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

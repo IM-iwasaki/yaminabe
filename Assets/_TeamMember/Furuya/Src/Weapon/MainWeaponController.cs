@@ -19,6 +19,8 @@ public class MainWeaponController : NetworkBehaviour {
     void Start() {
         characterBase = GetComponent<CharacterBase>();
         playerUI = characterBase.GetPlayerLocalUI();
+        // 追加：キラ   弾薬数を最大にする。
+        weaponData.AmmoReset();
     }
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
@@ -155,6 +157,10 @@ public class MainWeaponController : NetworkBehaviour {
     void ServerGunAttack(Vector3 direction) {
         if (weaponData is not GunData gunData || gunData.projectilePrefab == null)
             return;
+
+        //  追加：キラ   弾薬が残っていれば銃の弾薬を消費して通過
+        if (weaponData.ammo > 0) weaponData.ammo--;
+        else return;
 
         // 弾をネットワークプールから取得
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(

@@ -23,6 +23,9 @@ public class PlayerCombat : NetworkBehaviour {
         if (killerId != null && killerId != netIdentity)
             killerTeam = killerId.GetComponent<PlayerCombat>().teamId;
 
+        if (RuleManager.Instance.currentRule != GameRuleType.DeathMatch)
+            return;
+
         // Ž©–Å‚Ü‚½‚Í–¡•ûƒLƒ‹
         if (killerId == null || killerId == netIdentity || killerTeam == victimTeam) {
             int enemyTeam = (victimTeam == 0) ? 1 : 0;

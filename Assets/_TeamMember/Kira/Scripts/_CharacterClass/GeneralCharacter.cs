@@ -25,15 +25,18 @@ public class GeneralCharacter : CharacterBase {
     }
 
     void Update() {
-        if(!isLocalPlayer) return;  
+        if(!isLocalPlayer) return;          
         
         //TODO: MP管理系の処理がない。
-        //TODO: リロード処理を呼ぶところがないかも。(キーバインドは作った。)
 
         //RespawnControl();    
                
         //死んでいたら以降の処理は行わない。
         if (isDead) return;
+
+        //攻撃入力がある間攻撃関数を呼ぶ(間隔の制御はMainWeaponControllerに一任)
+        if (isAttackPressed) StartAttack();
+
 
         MoveControl();
         JumpControl();       
@@ -48,7 +51,8 @@ public class GeneralCharacter : CharacterBase {
         //MaxMPが0でなければ最大値で初期化
         if (maxMP != 0) MP = maxMP; 
         //弾倉が0でなければ最大値で初期化
-        if (weaponController_main.weaponData.maxAmmo != 0) magazine = weaponController_main.weaponData.maxAmmo;
+        if (weaponController_main.weaponData.maxAmmo != 0)
+            weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
         //Passive関連の初期化
         equippedPassives[0].CoolTime = 0;
         equippedPassives[0].IsPassiveActive = false;

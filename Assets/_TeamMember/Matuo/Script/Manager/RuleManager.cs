@@ -9,6 +9,7 @@ using System.Collections.Generic;
 public class RuleManager : NetworkSystemObject<RuleManager> {
     private Dictionary<int, float> teamScores = new();
     public GameRuleType currentRule = GameRuleType.Area;
+    private HashSet<int> winningTeams = new();
 
     public Dictionary<GameRuleType, float> winScores = new()
     {
@@ -48,12 +49,13 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// </summary>
     [Server]
     public void OnTeamKillByTeam(int teamId) {
-        // 0=Red, 1=Blue
+        if (winningTeams.Contains(teamId))
+            return; // 勝利済みならキル加算しない
+
         if (!teamScores.ContainsKey(teamId))
             teamScores[teamId] = 0f;
 
         teamScores[teamId] += 1f;
-
         // UI 更新
         RpcUpdateScore(teamId, teamScores[teamId]);
     }
@@ -63,6 +65,9 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// </summary>
     [Server]
     private void AddScore(int teamId, float amount, GameRuleType rule) {
+        if (winningTeams.Contains(teamId))
+            return; // すでに勝利済みならスコア加算しない
+
         if (!teamScores.ContainsKey(teamId))
             teamScores[teamId] = 0f;
 
@@ -74,11 +79,14 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             // 50カウント以上なら即勝利判定
             if (teamScores[teamId] >= winScores[rule]) {
                 Debug.Log($"Team {teamId} が {rule} ルールで勝利！スコア: {teamScores[teamId]}");
+
+                winningTeams.Add(teamId); // 勝利済みに追加
                 SendTeamResultToAll(teamId);
                 GameManager.Instance.EndGame();
             }
         }
     }
+
 
     /// <summary>
     /// クライアント全員にスコア更新を通知
@@ -192,10 +200,8 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         else
             winnerName = "Draw";
 
-        // --- チームスコアを ResultData 形式に変換 ---
-        //==============================
+        // チームスコアを ResultData 形式に変換
         // 配列に変換
-        //==============================
         List<ResultManager.TeamScoreEntry> teamScoreList = new();
 
         foreach (var kvp in teamScores) {
@@ -205,10 +211,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             });
         }
 
-
-        //==============================
-        // ② ResultData を作成
-        //==============================
+        // ResultData を作成
         ResultManager.ResultData data = new ResultManager.ResultData {
             isTeamBattle = true,
             winnerName = winnerName,
@@ -223,10 +226,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
         };
 
-
-        //==============================
-        // ③ ResultManager に送信
-        //==============================
+        // ResultManager に送信
         ResultManager.Instance.ShowTeamResult(data);
     }
 }

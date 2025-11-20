@@ -27,8 +27,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
     public int MP { get; protected set; }
     public int maxMP { get; protected set; }
-    //間接職のみ：攻撃するたびに弾薬を消費、空になるとリロードが必要。
-    public int magazine { get; protected set; }
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
@@ -76,8 +74,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0;
     //オート攻撃タイプ (デフォルトはフルオート)
-    public CharacterEnum.AutoFireType autoFireType { get; protected set; }
-        = CharacterEnum.AutoFireType.FullAutomatic;
+    public bool isAutoAttackRunning { get; private set; }
 
     //アイテムを拾える状態か
     protected bool isCanPickup = false;
@@ -100,7 +97,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] public PlayerUIController UI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
-    [SerializeField] private Animator anim = null;
+    public Animator anim = null;
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
     /// <summary>
@@ -121,6 +118,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     private Transform GroundCheck;
     //接地しているか
     [SerializeField] private bool IsGrounded;
+
+    private string prevRunAnim;
 
 
     private Coroutine healCoroutine;
@@ -318,7 +317,6 @@ public abstract class CharacterBase : NetworkBehaviour {
             //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
             KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
             Dead(_name);
-            anim.SetTrigger("Dead");
             if (PlayerListManager.Instance != null) {
                 // スコア加算
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
@@ -388,9 +386,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         IsJumpPressed = false;
         isMoving = false;
         //ローカルで死亡演出
-        LocalDeadEffect(_name);
+        LocalDeadEffect();
         RespawnDelay();
-
+        //アニメーションは全員に反映
+        RpcDeadAnimation();
         // スコア計算にここから行きます
         var combat = GetComponent<PlayerCombat>();
         if (combat != null) {
@@ -457,12 +456,21 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     /// <param name="_name"></param>
     [TargetRpc]
-    private void LocalDeadEffect(string _name) {
+    private void LocalDeadEffect() {
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
         //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
     }
+    /// <summary>
+    /// NetworkAnimatorを使用した結果
+    /// ローカルでの変更によってアニメーション変更がかかるため制作
+    /// </summary>
+    [ClientRpc]
+    private void RpcDeadAnimation() {
+        anim.SetTrigger("Dead");
+    }
+
     [Server]
     private void ResetHealth() {
         //ここで体力と死亡状態を戻す
@@ -598,6 +606,9 @@ public abstract class CharacterBase : NetworkBehaviour {
                     ? CharacterEnum.AttackType.Main
                     : CharacterEnum.AttackType.Sub);
                 break;
+            case "SubWeapon":
+                weaponController_sub.TryUseSubWeapon();
+                break;
             case "ShowHostUI":
                 OnShowHostUI(ctx);
                 break;
@@ -624,7 +635,6 @@ public abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
-                anim.SetBool("Shoot", true);
                 HandleAttack(ctx, actionName == "Attack_Main"
                     ? CharacterEnum.AttackType.Main
                     : CharacterEnum.AttackType.Sub);
@@ -653,7 +663,6 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "Fire_Main":
             case "Fire_Sub":
-                anim.SetBool("Shoot", false);
                 HandleAttack(ctx, actionName == "Attack_Main"
                     ? CharacterEnum.AttackType.Main
                     : CharacterEnum.AttackType.Sub);
@@ -749,6 +758,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 移動
     /// </summary>
     public void OnMove(InputAction.CallbackContext context) {
+        if (!isLocalPlayer) return;
         MoveInput = context.ReadValue<Vector2>();
         float moveX = MoveInput.x;
         float moveZ = MoveInput.y;
@@ -801,7 +811,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// リロード
     /// </summary>
     public void OnReload(InputAction.CallbackContext context) {
-        if (context.performed && magazine < weaponController_main.weaponData.maxAmmo) {
+        if (context.performed && weaponController_main.weaponData.ammo < weaponController_main.weaponData.maxAmmo) {
             ReloadRequest();
         }
     }
@@ -940,21 +950,38 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_x"></param>
     /// <param name="_z"></param>
     private void ControllMoveAnimation(float _x, float _z) {
-        string trueAnimName;
-        //入力によってアニメーション変更
-        if (_x == 0 && _z > 0)
-            trueAnimName = "RunF";
-        else if (_x == 0 && _z < 0)
-            trueAnimName = "RunB";
-        else if (_x > 0)
-            trueAnimName = "RunR";
-        else if (_x < 0)
-            trueAnimName = "RunL";
-        
-        else
-            trueAnimName = "";
+        //斜め入力の場合
+        if(_x != 0 && _z != 0) {
+            anim.SetBool("RunL", false);
+            anim.SetBool("RunR", false);
+            if(_z > 0) {
+                anim.SetBool("RunF", true);
+                return;
+            }
+            if(_z < 0) {
+                anim.SetBool("RunB", true);
+                return;
+            }
+            return;
 
-        anim.SetBool(trueAnimName, true);
+        }
+
+        if(_x > 0 && _z == 0) {
+            anim.SetBool("RunR", true);
+            return;
+        }
+        if(_x < 0 && _z == 0) {
+            anim.SetBool("RunL", true);
+            return;
+        }
+        if(_x == 0 && _z > 0) {
+            anim.SetBool("RunF", true);
+            return;
+        }
+        if(_x == 0 && _z < 0) {
+            anim.SetBool("RunB", true);
+            return;
+        }
     }
 
     /// <summary>
@@ -1027,52 +1054,27 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     private void HandleAttack(InputAction.CallbackContext context, CharacterEnum.AttackType _type) {
         //死亡していたら攻撃できない
-        if (isDead) return;
+        if (isDead || !isLocalPlayer) return;
 
+        //入力タイプで分岐
         switch (context.phase) {
             //押した瞬間から
             case InputActionPhase.Started:
                 isAttackPressed = true;
-                //入力開始時間を記録
-                attackStartTime = Time.time;
-
-                //フルオート状態の場合コルーチンで射撃間隔を調整する
-                if (autoFireType == CharacterEnum.AutoFireType.FullAutomatic) {
-                    StartCoroutine(AutoFire(_type));
-                }
-                break;
+            break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
                 isAttackPressed = false;
-                //入力終了時間を記録
-                float heldTime = Time.time - attackStartTime;
-
-                //セミオート状態の場合入力時間が短ければ一回攻撃
-                if (autoFireType == CharacterEnum.AutoFireType.SemiAutomatic && heldTime < 0.3f) {
-                    StartAttack(_type);
-                }
-                break;
+                //アニメーション終了
+                anim.SetBool("Shoot", false);
+            break;
             //押した瞬間
             case InputActionPhase.Performed:
                 isAttackTrigger = true;
-                break;
+            break;
         }
+        
     }
-
-    /// <summary>
-    /// オート攻撃のコルーチン
-    /// </summary>
-    private IEnumerator AutoFire(CharacterEnum.AttackType _type) {
-        while (isAttackPressed) {
-            StartAttack(_type);
-            //弾が残っていたら消費
-            if (magazine >= 1) magazine--;
-            yield return new WaitForSeconds(weaponController_main.weaponData.cooldown);
-        }
-    }
-
-    //TODO:射撃の挙動がやばい。上のコルーチンやめたほうがいいかも。
-
     /// <summary>
     /// 攻撃関数
     /// </summary>
@@ -1084,7 +1086,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 //使用武器が銃でかつ弾がなかったら通過不可。かわりにリロードを要求する。
-                if (weaponController_main.weaponData.type == WeaponType.Gun && magazine == 0) {
+                if (weaponController_main.weaponData.ammo == 0) {
                     ReloadRequest();
                     return;
                 }
@@ -1094,10 +1096,10 @@ public abstract class CharacterBase : NetworkBehaviour {
             default:
                 break;
         }
-
         // 武器が攻撃可能かチェックしてサーバー命令を送る
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
+        
     }
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
@@ -1163,9 +1165,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         //リロードを行う
         Invoke(nameof(Reload), weaponController_main.weaponData.reloadTime);
     }
-
+    /// <summary>
+    /// リロードの本実行
+    /// </summary>
     protected void Reload() {
-        magazine = weaponController_main.weaponData.maxAmmo;
+        weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
         isReloading = false;
     }
 

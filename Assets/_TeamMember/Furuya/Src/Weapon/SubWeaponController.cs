@@ -21,21 +21,13 @@ public class SubWeaponController : NetworkBehaviour {
             currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
     }
 
-    void Update() {
-        if (!isLocalPlayer) return; // ローカルプレイヤーのみ入力を処理
-        if (Input.GetKeyDown(KeyCode.G)) {
-            TryUseSubWeapon();
-        }
-    }
-
     /// <summary>
     /// サブ武器の使用可否判定
     /// </summary>
     public void TryUseSubWeapon() {
-        if (subWeaponData == null || currentUses <= 0) return;
+        if (subWeaponData == null || currentUses <= 0 || !characterBase.isLocalPlayer) return;
         CmdUseSubWeapon();
     }
-
     /// <summary>
     /// サブ武器使用
     /// </summary>
@@ -100,6 +92,8 @@ public class SubWeaponController : NetworkBehaviour {
                 grenadeData.explosionDelay
             );
         }
+        //アニメーション発火
+        ThrowAnimation();
     }
 
     /// <summary>
@@ -154,5 +148,10 @@ public class SubWeaponController : NetworkBehaviour {
             currentUses++;
         }
         isRecharging = false;
+    }
+
+    [ClientRpc]
+    private void ThrowAnimation() {
+        characterBase.anim.SetTrigger("Throw");
     }
 }
