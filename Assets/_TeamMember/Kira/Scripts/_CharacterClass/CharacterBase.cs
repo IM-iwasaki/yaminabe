@@ -375,7 +375,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         RemoveBuff();
         //ホコを所持していたらドロップ
         if (RuleManager.Instance.currentRule == GameRuleType.Hoko)
-            CmdDropHoko();
+            DropHoko();
         //不具合防止のためフラグをいろいろ下ろす。
         isAttackPressed = false;
         isCanInteruct = false;
@@ -425,7 +425,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死んだらホコを取得するようにします
     /// </summary>
     [Server]
-    private void CmdDropHoko() {
+    private void DropHoko() {
         var stageManager = StageManager.Instance;
         if (stageManager == null || stageManager.currentHoko == null) {
             Debug.LogWarning("StageManager か Hoko が存在しません");
@@ -434,7 +434,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         CaptureHoko hoko = stageManager.currentHoko;
 
-        if (hoko.holder.gameObject == gameObject) {
+        if (hoko.holder != null && hoko.holder.gameObject == gameObject) {
             hoko.Drop();
         }
     }
