@@ -38,6 +38,14 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerMeleeAttack();
                 break;
             case WeaponType.Gun:
+                //使用武器が銃でかつ弾がなかったら通過不可。かわりにリロードを要求する。
+                if (weaponData.ammo == 0) {
+                    ReloadRequest();
+                    return;
+                } 
+                //その他リロード中は射撃できなくする。
+                else if (characterBase.isReloading) return;
+
                 if (weaponData is GunData gunData)
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                 break;
@@ -48,7 +56,7 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 追加攻撃用
+    /// 追加攻撃用(こちらの処理は弾やMPなどを消費しません。)
     /// </summary>
     /// <param name="direction"></param>
     [Command]
@@ -250,6 +258,28 @@ public class MainWeaponController : NetworkBehaviour {
 
     bool IsValidTarget(GameObject obj) {
         return obj != gameObject; // 自分以外
+    }
+
+    /// <summary>
+    /// リロードの要求関数(リロード中だったら弾く)
+    /// </summary>
+    public void ReloadRequest() {
+        //射撃中やリロード中ならやめる
+        if (characterBase.isAttackPressed && characterBase.isReloading) return;
+        //使っている武器が銃でなければやめる
+        if (weaponData.type != WeaponType.Gun) return;
+
+        //リロード中にする
+        characterBase.isReloading = true;
+        //リロードを行う
+        Invoke(nameof(Reload), weaponData.reloadTime);
+    }
+    /// <summary>
+    /// リロードの本実行
+    /// </summary>
+    void Reload() {
+        weaponData.ammo = weaponData.maxAmmo;
+        characterBase.isReloading = false;
     }
 }
 
