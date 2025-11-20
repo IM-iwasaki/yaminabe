@@ -82,7 +82,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected bool isCanInteruct = false;
 
     //リロード中か
-    protected bool isReloading = false;
+    public bool isReloading = false;
 
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
@@ -98,6 +98,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
     public Animator anim = null;
+    private string currentAnimation;
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
     /// <summary>
@@ -118,9 +119,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     private Transform GroundCheck;
     //接地しているか
     [SerializeField] private bool IsGrounded;
-
-    private string prevRunAnim;
-
 
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
@@ -330,7 +328,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// PlayerLocalUIControllerの取得用ゲッター
     /// </summary>
     /// <returns></returns>
-    public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>();}
+    public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>(); }
 
     /// <summary>
     /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
@@ -377,7 +375,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         RemoveBuff();
         //ホコを所持していたらドロップ
         if (RuleManager.Instance.currentRule == GameRuleType.Hoko)
-            CmdDropHoko();
+            DropHoko();
         //不具合防止のためフラグをいろいろ下ろす。
         isAttackPressed = false;
         isCanInteruct = false;
@@ -427,7 +425,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死んだらホコを取得するようにします
     /// </summary>
     [Server]
-    private void CmdDropHoko() {
+    private void DropHoko() {
         var stageManager = StageManager.Instance;
         if (stageManager == null || stageManager.currentHoko == null) {
             Debug.LogWarning("StageManager か Hoko が存在しません");
@@ -436,7 +434,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         CaptureHoko hoko = stageManager.currentHoko;
 
-        if (hoko.holder == this) {
+        if (hoko.holder != null && hoko.holder.gameObject == gameObject) {
             hoko.Drop();
         }
     }
@@ -779,7 +777,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
-            anim.SetTrigger("Jump");
+            bool isJumping = !IsGrounded;
+            anim.SetBool("Jump", isJumping);
         }
     }
     /// <summary>
@@ -950,48 +949,43 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_x"></param>
     /// <param name="_z"></param>
     private void ControllMoveAnimation(float _x, float _z) {
+        ResetRunAnimation();
         //斜め入力の場合
-        if(_x != 0 && _z != 0) {
+        if (_x != 0 && _z != 0) {
             anim.SetBool("RunL", false);
             anim.SetBool("RunR", false);
-            if(_z > 0) {
-                anim.SetBool("RunF", true);
-                return;
+            if (_z > 0) {
+                currentAnimation = "RunF";
             }
-            if(_z < 0) {
-                anim.SetBool("RunB", true);
-                return;
+            if (_z < 0) {
+                currentAnimation = "RunB";
             }
+            anim.SetBool(currentAnimation, true);
             return;
 
         }
 
-        if(_x > 0 && _z == 0) {
-            anim.SetBool("RunR", true);
-            return;
+        if (_x > 0 && _z == 0) {
+            currentAnimation = "RunR";
         }
-        if(_x < 0 && _z == 0) {
-            anim.SetBool("RunL", true);
-            return;
+        if (_x < 0 && _z == 0) {
+            currentAnimation = "RunL";
         }
-        if(_x == 0 && _z > 0) {
-            anim.SetBool("RunF", true);
-            return;
+        if (_x == 0 && _z > 0) {
+            currentAnimation = "RunF";
         }
-        if(_x == 0 && _z < 0) {
-            anim.SetBool("RunB", true);
-            return;
+        if (_x == 0 && _z < 0) {
+            currentAnimation = "RunB";
         }
+        anim.SetBool(currentAnimation, true);
     }
 
     /// <summary>
     /// 移動アニメーションのリセット
     /// </summary>
     private void ResetRunAnimation() {
-        anim.SetBool("RunF", false);
-        anim.SetBool("RunB", false);
-        anim.SetBool("RunL", false);
-        anim.SetBool("RunR", false);
+        anim.SetBool(currentAnimation, false);
+        currentAnimation = null;
     }
 
     /// <summary>
@@ -1018,6 +1012,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         else if (rigidbody.velocity.y < 0) {
             //追加の重力補正を掛ける
             rigidbody.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
+            anim.SetBool("Jump", false);
         }
 
 
@@ -1073,7 +1068,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 isAttackTrigger = true;
             break;
         }
-        
+
     }
     /// <summary>
     /// 攻撃関数
@@ -1089,7 +1084,9 @@ public abstract class CharacterBase : NetworkBehaviour {
                 if (weaponController_main.weaponData.ammo == 0) {
                     ReloadRequest();
                     return;
-                }
+                } 
+                //その他リロード中は射撃できなくする。
+                else if (isReloading) return;
                 break;
             case WeaponType.Magic:
                 break;
@@ -1155,8 +1152,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// リロードの要求関数(リロード中だったら弾く)
     /// </summary>
     protected void ReloadRequest() {
-        //リロード中ならやめる
-        if (isReloading) return;
+        //射撃中やリロード中ならやめる
+        if (isAttackPressed && isReloading) return;
         //使っている武器が銃でなければやめる
         if (weaponController_main.weaponData.type != WeaponType.Gun) return;
 
