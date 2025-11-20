@@ -19,7 +19,6 @@ public class CaptureHoko : NetworkBehaviour {
     private Rigidbody rb;
     private Collider col;
     private float timer = 0f;
-    private Transform originalParent; // 元々の親を保持
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -27,7 +26,6 @@ public class CaptureHoko : NetworkBehaviour {
         col.isTrigger = true;
 
         // 元々の親を保存
-        originalParent = transform.parent;
     }
 
     /// <summary>
