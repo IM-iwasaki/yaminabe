@@ -436,7 +436,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         CaptureHoko hoko = stageManager.currentHoko;
 
-        if (hoko.holder == this) {
+        if (hoko.holder.gameObject == gameObject) {
             hoko.Drop();
         }
     }
