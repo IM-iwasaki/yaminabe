@@ -53,11 +53,15 @@ public class AppearanceChangeManager : MonoBehaviour
         //  プレイヤーの子オブジェクトに生成
         Instantiate(prefab, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
-        //player.GetComponent<CharacterBase>().StatusInport(data.characters[characterCount].statusData);
+        player.GetComponent<CharacterBase>().StatusInport(data.characters[characterCount].statusData);
         //  プレイヤーのIDを取得・格納
         uint netId = player.GetComponent<NetworkIdentity>().netId;
         //  変更したデータを保存する
         AppearanceSyncManager.instance.RecordAppearance(netId, characterCount, skinCount);
+        //追加タハラ:アニメーターを再度保存
+        Animator newAnimator = prefab.GetComponent<Animator>();
+        player.GetComponent<NetworkAnimator>().animator = newAnimator;
+        player.GetComponent<CharacterBase>().anim = newAnimator;
     }
 
 }
