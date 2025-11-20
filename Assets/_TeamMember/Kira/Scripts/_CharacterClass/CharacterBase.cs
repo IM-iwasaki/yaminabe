@@ -95,6 +95,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected Collider useCollider;
     private string useTag;
     [SerializeField] public PlayerUIController UI = null;
+    [SerializeField] public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
     public Animator anim = null;
@@ -810,7 +811,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// リロード
     /// </summary>
     public void OnReload(InputAction.CallbackContext context) {
-        if (context.performed && weaponController_main.weaponData.ammo < weaponController_main.weaponData.maxAmmo) {
+        if (context.performed && weaponController_main.ammo < weaponController_main.weaponData.maxAmmo) {
             weaponController_main.ReloadRequest();
         }
     }

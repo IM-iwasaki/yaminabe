@@ -10,7 +10,8 @@ public class MainWeaponController : NetworkBehaviour {
     public WeaponData weaponData;           // メイン武器
     public Transform firePoint;
     private float lastAttackTime;
-
+    [SyncVar, System.NonSerialized] public int ammo;
+    
     private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
@@ -21,6 +22,7 @@ public class MainWeaponController : NetworkBehaviour {
         playerUI = characterBase.GetPlayerLocalUI();
         // 追加：キラ   弾薬数を最大にする。
         weaponData.AmmoReset();
+        ammo = weaponData.maxAmmo;
     }
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
@@ -39,7 +41,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 //使用武器が銃でかつ弾がなかったら通過不可。かわりにリロードを要求する。
-                if (weaponData.ammo == 0) {
+                if (ammo == 0) {
                     ReloadRequest();
                     return;
                 } 
@@ -167,7 +169,7 @@ public class MainWeaponController : NetworkBehaviour {
             return;
 
         //  追加：キラ   弾薬が残っていれば銃の弾薬を消費して通過
-        if (weaponData.ammo > 0) weaponData.ammo--;
+        if (ammo > 0) ammo--;
         else return;
 
         // 弾をネットワークプールから取得
@@ -278,7 +280,7 @@ public class MainWeaponController : NetworkBehaviour {
     /// リロードの本実行
     /// </summary>
     void Reload() {
-        weaponData.ammo = weaponData.maxAmmo;
+        ammo = weaponData.maxAmmo;
         characterBase.isReloading = false;
     }
 }

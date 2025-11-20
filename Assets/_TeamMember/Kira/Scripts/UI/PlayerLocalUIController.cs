@@ -29,8 +29,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SyncVar] float skillStateProgress = 0.0f;
     [SyncVar] float passiveStateProgress = 0.0f;
 
-    void Start() {
-        if (!GetComponent<CharacterBase>().isLocalPlayer) {
+    public void Initialize() {
+        if (!isLocalPlayer) {
             var LocalUI = GetComponentInChildren<Canvas>();
             Debug.Log(LocalUI.name);
             LocalUI.gameObject.SetActive(false);
@@ -62,7 +62,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         }
 
         //メインウェポンの現在弾倉数を更新
-        mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.weaponData.ammo.ToString();
+        mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
         //リロード中になったらアイコン回転を指示(重複の対策もする)
         if(player.isReloading && !reloadIconRotating)
             StartCoroutine(RotateReloadIcon(player.weaponController_main.weaponData.reloadTime));
@@ -80,7 +80,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
 
         //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
         if (player.weaponController_main.weaponData.type == WeaponType.Gun) {
-            mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.weaponData.ammo.ToString();
+            mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
             mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
             mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;
         }

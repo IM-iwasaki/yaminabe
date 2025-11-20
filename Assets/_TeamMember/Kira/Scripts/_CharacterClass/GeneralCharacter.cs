@@ -24,6 +24,11 @@ public class GeneralCharacter : CharacterBase {
         Initalize();
     }
 
+    public override void OnStartClient() {
+        base.OnStartClient();
+        localUI.Initialize();
+    }
+
     void Update() {
         if(!isLocalPlayer) return;          
         

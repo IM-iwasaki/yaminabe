@@ -19,7 +19,7 @@ public class WeaponData : ScriptableObject, IWeaponInfo {
 
     [Header("Gun Settings")]
     //  ’Ç‰ÁFƒLƒ‰   Œ»İ’e–ò”
-    [SyncVar,System.NonSerialized]public int ammo;
+    [System.NonSerialized]public int ammo;
     public int maxAmmo;
     public float reloadTime;
 
