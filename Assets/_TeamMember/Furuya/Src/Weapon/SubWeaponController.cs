@@ -17,9 +17,9 @@ public class SubWeaponController : NetworkBehaviour {
     private CharacterBase characterBase; // チームIDなどを取得するため
     private PlayerLocalUIController playerUI;
 
-    void Start() {
+    public void Awake() {
         characterBase = GetComponent<CharacterBase>();
-
+        playerUI = characterBase.GetPlayerLocalUI();
 
         if (subWeaponData != null)
             currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
@@ -65,7 +65,7 @@ public class SubWeaponController : NetworkBehaviour {
     /// 武器データセット
     /// </summary>
     /// <param name="name"></param>
-    [Command]
+    //[Command]
     public void SetWeaponData(string name) {
         var data = WeaponDataRegistry.GetSubWeapon(name);
 

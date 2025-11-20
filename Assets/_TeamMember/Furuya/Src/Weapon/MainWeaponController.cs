@@ -16,7 +16,7 @@ public class MainWeaponController : NetworkBehaviour {
     private CharacterBase characterBase; // 名前を取得するため
     private PlayerLocalUIController playerUI;
 
-    void Start() {
+    public void Awake() {
         characterBase = GetComponent<CharacterBase>();
         playerUI = characterBase.GetPlayerLocalUI();
         // 追加：キラ   弾薬数を最大にする。
@@ -81,7 +81,7 @@ public class MainWeaponController : NetworkBehaviour {
     /// 武器データセット
     /// </summary>
     /// <param name="name"></param>
-    [Command]
+    //[Command]
     public void SetWeaponData(string name) {
         var data = WeaponDataRegistry.GetWeapon(name);
 

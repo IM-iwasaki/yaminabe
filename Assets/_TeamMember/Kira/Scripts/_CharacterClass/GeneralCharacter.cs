@@ -91,8 +91,10 @@ public class GeneralCharacter : CharacterBase {
         weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
 
         //‰Šú•Ší‚Ìİ’è
-        weaponController_main.SetWeaponData(runtimeStatus.FirstMainWeapon.WeaponName);
-        weaponController_sub.SetWeaponData(runtimeStatus.FirstSubWeapon.WeaponName);
+        var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
+        var subWeapon = runtimeStatus.SubWeapon.WeaponName;
+        weaponController_main.SetWeaponData(mainWeapon);
+        weaponController_sub.SetWeaponData(subWeapon);
 
     }
 

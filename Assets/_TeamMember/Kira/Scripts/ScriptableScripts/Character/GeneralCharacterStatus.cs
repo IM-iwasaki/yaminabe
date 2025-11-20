@@ -19,5 +19,5 @@ public class GeneralCharacterStatus : CharacterStatus {
     public override int moveSpeed => baseStatus.moveSpeed + speedCorrection;
 
     //TODO:‚±‚ê‚à‘½•ªÁ‚·B
-    public override int baseAttack => baseAttack + attack;
+    //public override int baseAttack => baseAttack + attack;
 }

@@ -43,8 +43,8 @@ public class GeneralCharacterStatusAssistance : Editor {
 
         EditorGUILayout.PropertyField(serializedObject.FindProperty("passives"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skills"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("FirstMainWeapon"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("FirstSubWeapon"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("MainWeapon"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("SubWeapon"));
 
         //”½‰f
         serializedObject.ApplyModifiedProperties();
