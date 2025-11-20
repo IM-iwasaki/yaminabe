@@ -18,9 +18,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 41b3e8762c0ff934e90c4a57a1d02e07, type: 2}
   passives:
   - {fileID: 11400000, guid: e33c413bf05ba0f48a52d1e72c1dff96, type: 2}
+  FirstMainWeapon: {fileID: 0}
+  FirstSubWeapon: {fileID: 0}
   chatacterType: 1
   maxHPCorrection: -10
-  attackCorrection: -7
   speedCorrection: 1
-  maxMPCorrection: 30
-  maxMagazine: 1
+  attack: 0
+  maxMP: 10

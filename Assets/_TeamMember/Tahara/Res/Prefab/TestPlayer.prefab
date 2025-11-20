@@ -329,6 +329,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 882834ea-2aaa-4cd9-a263-d59a130e3774
     m_ActionName: Player/SendMessage[/Keyboard/upArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ad8273d9-08c2-4a4e-aa05-e8a75845a0cd
+    m_ActionName: Player/SubWeapon[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -439,6 +443,7 @@ MonoBehaviour:
   PlayerName: Default
   score: 0
   firePoint: {fileID: 878125566127400802}
+  isReloading: 0
   UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   CameraMenu: {fileID: 7834819685942672659}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
@@ -449,7 +454,7 @@ MonoBehaviour:
   weaponController_sub: {fileID: 0}
   IsGrounded: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
-  inputStatus: {fileID: 11400000, guid: 2b2b23650934ee54687ca8d729b424b1, type: 2}
+  inputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
 --- !u!114 &372889221504933099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -486,6 +491,7 @@ MonoBehaviour:
   - {fileID: 1314883369017460032}
   - {fileID: 5915191474471208104}
   - {fileID: 2320125293228299286}
+  mainWeaponReloadIcon: {fileID: 5377141683935845775}
   subWeaponText:
   - {fileID: 4643152614906981142}
   - {fileID: 6500871602390130844}
@@ -949,6 +955,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1403119992907617473}
     m_Modifications:
+    - target: {fileID: 543183634441477326, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1041986378542769761, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
       propertyPath: player
       value: 
@@ -1038,6 +1048,10 @@ PrefabInstance:
       value: LocalPlayerUI
       objectReference: {fileID: 0}
     - target: {fileID: 6231740509802659688, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7391898519197950590, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -1137,6 +1151,17 @@ MonoBehaviour:
 --- !u!114 &5294733728983648864 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 952522257813334141, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 4918675937597612573}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5377141683935845775 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1071245843219447698, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
   m_PrefabInstance: {fileID: 4918675937597612573}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

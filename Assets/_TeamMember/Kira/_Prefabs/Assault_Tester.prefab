@@ -482,6 +482,7 @@ MonoBehaviour:
   UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   CameraMenu: {fileID: 0}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
+  anim: {fileID: 0}
   playerId: -1
   ready: 1
   weaponController_main: {fileID: 0}
@@ -509,6 +510,7 @@ MonoBehaviour:
   - {fileID: 8917390079733120802}
   - {fileID: 4317108421746360010}
   - {fileID: 5317965952796257908}
+  mainWeaponReloadIcon: {fileID: 2549311912944756717}
   subWeaponText:
   - {fileID: 2994967149706711412}
   - {fileID: 3731289696327441150}
@@ -740,6 +742,17 @@ MonoBehaviour:
 --- !u!114 &2343318990112616450 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 952522257813334141, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 3295840833425315967}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2549311912944756717 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1071245843219447698, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
   m_PrefabInstance: {fileID: 3295840833425315967}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

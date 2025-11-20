@@ -82,7 +82,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected bool isCanInteruct = false;
 
     //リロード中か
-    protected bool isReloading = false;
+    public bool isReloading = false;
 
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
@@ -1089,7 +1089,9 @@ public abstract class CharacterBase : NetworkBehaviour {
                 if (weaponController_main.weaponData.ammo == 0) {
                     ReloadRequest();
                     return;
-                }
+                } 
+                //その他リロード中は射撃できなくする。
+                else if (isReloading) return;
                 break;
             case WeaponType.Magic:
                 break;
@@ -1155,8 +1157,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// リロードの要求関数(リロード中だったら弾く)
     /// </summary>
     protected void ReloadRequest() {
-        //リロード中ならやめる
-        if (isReloading) return;
+        //射撃中やリロード中ならやめる
+        if (isAttackPressed && isReloading) return;
         //使っている武器が銃でなければやめる
         if (weaponController_main.weaponData.type != WeaponType.Gun) return;
 

@@ -1,6 +1,7 @@
 using Mirror;
 using TMPro;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.UI;
 
 /// <summary>
@@ -16,6 +17,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     [SerializeField] TextMeshProUGUI[] mainWeaponText;
+    [SerializeField] Image mainWeaponReloadIcon;
+    private bool reloadIconRotating = false;
     [SerializeField] TextMeshProUGUI[] subWeaponText;
 
     [SerializeField] Image[] skill_Icon;
@@ -33,6 +36,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             LocalUI.gameObject.SetActive(false);
             return;
         }
+        mainWeaponReloadIcon.enabled = false;
         LocalUIChanged();
     }
 
@@ -59,6 +63,9 @@ public class PlayerLocalUIController : NetworkBehaviour {
 
         //メインウェポンの現在弾倉数を更新
         mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.weaponData.ammo.ToString();
+        //リロード中になったらアイコン回転を指示(重複の対策もする)
+        if(player.isReloading && !reloadIconRotating)
+            StartCoroutine(RotateReloadIcon(player.weaponController_main.weaponData.reloadTime));
         //サブウェポンの現在所持数を更新
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
     }
@@ -81,5 +88,26 @@ public class PlayerLocalUIController : NetworkBehaviour {
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
         subWeaponText[(int)TextIndex.Max].text = player.weaponController_sub.subWeaponData.maxUses.ToString();
         subWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_sub.subWeaponData.WeaponName;
+    }
+
+    public IEnumerator RotateReloadIcon(float duration) {
+        reloadIconRotating = true;
+        mainWeaponReloadIcon.enabled = true;
+        float start = 0f;
+        float end = -360f;
+        float time = 0f;
+
+        while (time < duration) {
+            float t = time / duration;
+            float angle = Mathf.Lerp(start, end, t);
+            mainWeaponReloadIcon.transform.localRotation = Quaternion.Euler(0, 0, angle);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // 最後に角度をリセットしてアイコンを非表示にする
+        mainWeaponReloadIcon.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        reloadIconRotating = false;
+        mainWeaponReloadIcon.enabled = false;
     }
 }
