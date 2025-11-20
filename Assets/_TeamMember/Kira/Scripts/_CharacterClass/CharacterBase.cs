@@ -627,8 +627,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
         switch (actionName) {
             case "Move":
-                //if (currentAnimation != null)
-                //    ResetRunAnimation();
                 OnMove(ctx);
                 break;
             case "Jump":
@@ -779,7 +777,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
-            anim.SetBool("Jump", true);
+            bool isJumping = !IsGrounded;
+            anim.SetBool("Jump", isJumping);
         }
     }
     /// <summary>
@@ -950,6 +949,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_x"></param>
     /// <param name="_z"></param>
     private void ControllMoveAnimation(float _x, float _z) {
+        ResetRunAnimation();
         //斜め入力の場合
         if (_x != 0 && _z != 0) {
             anim.SetBool("RunL", false);

@@ -973,10 +973,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1403119992907617473}
     m_Modifications:
-    - target: {fileID: 543183634441477326, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1041986378542769761, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
       propertyPath: player
       value: 
@@ -1066,10 +1062,6 @@ PrefabInstance:
       value: LocalPlayerUI
       objectReference: {fileID: 0}
     - target: {fileID: 6231740509802659688, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7391898519197950590, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
