@@ -87,7 +87,13 @@ public class GeneralCharacter : CharacterBase {
         weaponController_main = GetComponent<MainWeaponController>();
         weaponController_sub = GetComponent<SubWeaponController>();
 
+        //キャラクターの職業設定
         weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
+
+        //初期武器の設定
+        weaponController_main.SetWeaponData(runtimeStatus.FirstMainWeapon.WeaponName);
+        weaponController_sub.SetWeaponData(runtimeStatus.FirstSubWeapon.WeaponName);
+
     }
 
     protected override void StartUseSkill() {
