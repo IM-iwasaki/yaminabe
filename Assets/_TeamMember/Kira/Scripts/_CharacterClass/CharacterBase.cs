@@ -1073,7 +1073,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃関数
     /// </summary>
-    virtual public void StartAttack(CharacterEnum.AttackType _type = CharacterEnum.AttackType.Main) {
+    virtual public void StartAttack() {
         if (weaponController_main == null) return;
 
         switch (weaponController_main.weaponData.type) {

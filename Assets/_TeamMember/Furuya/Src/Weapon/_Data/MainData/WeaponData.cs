@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 
@@ -18,7 +19,7 @@ public class WeaponData : ScriptableObject, IWeaponInfo {
 
     [Header("Gun Settings")]
     //  í«â¡ÅFÉLÉâ   åªç›íeñÚêî
-    [System.NonSerialized]public int ammo;
+    [SyncVar,System.NonSerialized]public int ammo;
     public int maxAmmo;
     public float reloadTime;
 
