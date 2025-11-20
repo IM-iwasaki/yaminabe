@@ -83,6 +83,7 @@ GameObject:
   - component: {fileID: 5429557689299820045}
   - component: {fileID: 372889221504933099}
   - component: {fileID: 8966501722716295590}
+  - component: {fileID: 6333738302978058651}
   m_Layer: 6
   m_Name: TestPlayer
   m_TagString: Player
@@ -329,6 +330,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 882834ea-2aaa-4cd9-a263-d59a130e3774
     m_ActionName: Player/SendMessage[/Keyboard/upArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ad8273d9-08c2-4a4e-aa05-e8a75845a0cd
+    m_ActionName: Player/SubWeapon[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -449,7 +454,7 @@ MonoBehaviour:
   weaponController_sub: {fileID: 0}
   IsGrounded: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
-  inputStatus: {fileID: 11400000, guid: 2b2b23650934ee54687ca8d729b424b1, type: 2}
+  inputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
 --- !u!114 &372889221504933099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -500,6 +505,23 @@ MonoBehaviour:
   - {fileID: 4180901003423180416}
   passive_State: {fileID: 2354609807238841131}
   player: {fileID: 5429557689299820045}
+--- !u!114 &6333738302978058651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5478059386412428429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  clientAuthority: 0
+  animator: {fileID: 321994967542534653}
 --- !u!1 &8141346529666802218
 GameObject:
   m_ObjectHideFlags: 0
@@ -1824,38 +1846,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7369448170708576210, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7399890024116833574}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
 --- !u!4 &321994967542534626 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7369448170708576204, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
   m_PrefabInstance: {fileID: 7075857222398031406}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &321994967542534652 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7369448170708576210, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
-  m_PrefabInstance: {fileID: 7075857222398031406}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7399890024116833574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 321994967542534652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  clientAuthority: 1
-  animator: {fileID: 321994967542534653}
 --- !u!95 &321994967542534653 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7369448170708576211, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}

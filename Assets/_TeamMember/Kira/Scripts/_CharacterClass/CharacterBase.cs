@@ -101,6 +101,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
     public Animator anim = null;
+    private string currentAnimation;
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
     /// <summary>
@@ -121,9 +122,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     private Transform GroundCheck;
     //接地しているか
     [SerializeField] private bool IsGrounded;
-
-    private string prevRunAnim;
-
 
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
@@ -333,7 +331,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// PlayerLocalUIControllerの取得用ゲッター
     /// </summary>
     /// <returns></returns>
-    public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>();}
+    public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>(); }
 
     /// <summary>
     /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
@@ -632,6 +630,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
         switch (actionName) {
             case "Move":
+                //if (currentAnimation != null)
+                //    ResetRunAnimation();
                 OnMove(ctx);
                 break;
             case "Jump":
@@ -782,7 +782,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
-            anim.SetBool("Jump",true);
+            anim.SetBool("Jump", true);
         }
     }
     /// <summary>
@@ -954,47 +954,41 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_z"></param>
     private void ControllMoveAnimation(float _x, float _z) {
         //斜め入力の場合
-        if(_x != 0 && _z != 0) {
+        if (_x != 0 && _z != 0) {
             anim.SetBool("RunL", false);
             anim.SetBool("RunR", false);
-            if(_z > 0) {
-                anim.SetBool("RunF", true);
-                return;
+            if (_z > 0) {
+                currentAnimation = "RunF";
             }
-            if(_z < 0) {
-                anim.SetBool("RunB", true);
-                return;
+            if (_z < 0) {
+                currentAnimation = "RunB";
             }
+            anim.SetBool(currentAnimation, true);
             return;
 
         }
 
-        if(_x > 0 && _z == 0) {
-            anim.SetBool("RunR", true);
-            return;
+        if (_x > 0 && _z == 0) {
+            currentAnimation = "RunR";
         }
-        if(_x < 0 && _z == 0) {
-            anim.SetBool("RunL", true);
-            return;
+        if (_x < 0 && _z == 0) {
+            currentAnimation = "RunL";
         }
-        if(_x == 0 && _z > 0) {
-            anim.SetBool("RunF", true);
-            return;
+        if (_x == 0 && _z > 0) {
+            currentAnimation = "RunF";
         }
-        if(_x == 0 && _z < 0) {
-            anim.SetBool("RunB", true);
-            return;
+        if (_x == 0 && _z < 0) {
+            currentAnimation = "RunB";
         }
+        anim.SetBool(currentAnimation, true);
     }
 
     /// <summary>
     /// 移動アニメーションのリセット
     /// </summary>
     private void ResetRunAnimation() {
-        anim.SetBool("RunF", false);
-        anim.SetBool("RunB", false);
-        anim.SetBool("RunL", false);
-        anim.SetBool("RunR", false);
+        anim.SetBool(currentAnimation, false);
+        currentAnimation = null;
     }
 
     /// <summary>
@@ -1092,7 +1086,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 isAttackTrigger = true;
                 break;
         }
-        
+
     }
 
     /// <summary>
