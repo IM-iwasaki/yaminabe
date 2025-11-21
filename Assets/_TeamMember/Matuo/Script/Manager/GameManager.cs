@@ -6,7 +6,7 @@ using UnityEngine;
 /// ゲーム開始・終了、ルール切替、タイマー管理
 /// </summary>
 public class GameManager : NetworkSystemObject<GameManager> {
-    public static event System.Action OnGameEnded;
+    public CaptureHoko hoko { get; private set; }
     [SyncVar] private bool isGameRunning = false;
     private GameTimer gameTimer;
     private RuleManager ruleManager;
@@ -56,6 +56,11 @@ public class GameManager : NetworkSystemObject<GameManager> {
         gameTimer.StartTimer();
     }
 
+    [Server]
+    public void RegisterHoko(CaptureHoko h) {
+        hoko = h;
+    }
+
     /// <summary>
     /// ゲーム終了
     /// </summary>
@@ -65,14 +70,16 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         isGameRunning = false;
         gameTimer.StopTimer();
-        Cursor.lockState = CursorLockMode.None;
-        // 勝敗処理をRuleManagerに任せる
+        Cursor.lockState = CursorLockMode.None;     
+
+        // 勝敗処理
         if (ruleManager.currentRule == GameRuleType.DeathMatch)
             ruleManager.EndDeathMatch();
         else
             ruleManager.CheckWinConditionAllTeams();
 
-        OnGameEnded?.Invoke();
+        if (hoko != null)
+            hoko.HandleGameEnd();
     }
 
     /// <summary>

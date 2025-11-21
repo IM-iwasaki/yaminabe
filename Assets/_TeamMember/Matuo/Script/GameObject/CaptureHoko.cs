@@ -27,12 +27,9 @@ public class CaptureHoko : NetworkBehaviour {
         col.isTrigger = true;
     }
 
-    private void OnEnable() {
-        GameManager.OnGameEnded += HandleGameEnd;
-    }
-
-    private void OnDisable() {
-        GameManager.OnGameEnded -= HandleGameEnd;
+    public override void OnStartServer() {
+        base.OnStartServer();
+        GameManager.Instance.RegisterHoko(this);
     }
 
     /// <summary>
@@ -120,11 +117,10 @@ public class CaptureHoko : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ゲーム終了時にホコを消す
+    /// ゲーム終了時にホコ落とす
     /// </summary>
     [Server]
-    private void HandleGameEnd() {
+    public void HandleGameEnd() {
         Drop();
-        Destroy(gameObject);
     }
 }
