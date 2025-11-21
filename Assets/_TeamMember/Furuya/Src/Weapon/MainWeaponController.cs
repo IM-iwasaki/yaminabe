@@ -7,7 +7,7 @@ using System.Collections;
 /// メイン武器コントローラー
 /// </summary>
 public class MainWeaponController : NetworkBehaviour {
-    public WeaponData weaponData;           // メイン武器
+    [SyncVar(hook = (nameof(ChangeWeapon)))] public WeaponData weaponData;           // メイン武器
     public Transform firePoint;
     private float lastAttackTime;
     [SyncVar, System.NonSerialized] public int ammo;
@@ -27,6 +27,16 @@ public class MainWeaponController : NetworkBehaviour {
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
         charaterType = type;
+    }
+
+    /// <summary>
+    /// 武器チェンジ後処理
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="_new"></param>
+    private void ChangeWeapon(WeaponData _, WeaponData _new) {
+        _new.AmmoReset();
+        playerUI.LocalUIChanged();
     }
 
     // --- 攻撃リクエスト ---
@@ -91,7 +101,7 @@ public class MainWeaponController : NetworkBehaviour {
     /// 武器データセット
     /// </summary>
     /// <param name="name"></param>
-    //[Command]
+    [Command]
     public void SetWeaponData(string name) {
         var data = WeaponDataRegistry.GetWeapon(name);
 
@@ -101,6 +111,7 @@ public class MainWeaponController : NetworkBehaviour {
         }
 
         weaponData = data;
+        ammo = weaponData.ammo;
         playerUI.LocalUIChanged();
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
