@@ -22,6 +22,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     public override void Initialize() {
         base.Initialize();
         teamScores.Clear();
+        winningTeams.Clear();
     }
 
     /// <summary>
