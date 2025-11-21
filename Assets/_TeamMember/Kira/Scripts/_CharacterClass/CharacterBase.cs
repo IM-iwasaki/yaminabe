@@ -209,6 +209,14 @@ public abstract class CharacterBase : NetworkBehaviour {
             UI = playerUI.GetComponent<PlayerUIController>();
             UI.Initialize(HP);
         }
+
+        // ここを追加：クライアント側で TeamGlowManager に登録
+        if (TeamGlowManager.Instance != null) {
+            TeamGlowManager.Instance.RegisterPlayer(this);
+        }
+
+
+
     }
 
     /// <summary>
@@ -669,7 +677,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         switch (actionName) {
             case "Move":
                 MoveInput = Vector2.zero;
-                ResetRunAnimation();
+                CmdResetAnimation();
                 break;
             case "Fire_Main":
             case "Fire_Sub":
@@ -768,7 +776,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 移動
     /// </summary>
     public void OnMove(InputAction.CallbackContext context) {
-        if (!isLocalPlayer) return;
         MoveInput = context.ReadValue<Vector2>();
         float moveX = MoveInput.x;
         float moveZ = MoveInput.y;
@@ -960,6 +967,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     /// <param name="_x"></param>
     /// <param name="_z"></param>
+    [Command]
     private void ControllMoveAnimation(float _x, float _z) {
         ResetRunAnimation();
         //斜め入力の場合
@@ -996,8 +1004,17 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 移動アニメーションのリセット
     /// </summary>
     private void ResetRunAnimation() {
-        anim.SetBool(currentAnimation, false);
+        anim.SetBool("RunF", false);
+        anim.SetBool("RunR", false);
+        anim.SetBool("RunL", false);
+        anim.SetBool("RunB", false);
+
         currentAnimation = null;
+    }
+
+    [Command]
+    private void CmdResetAnimation() {
+        ResetRunAnimation();
     }
 
     /// <summary>
