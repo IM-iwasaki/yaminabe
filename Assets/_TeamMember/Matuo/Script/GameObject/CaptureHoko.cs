@@ -46,12 +46,14 @@ public class CaptureHoko : NetworkBehaviour {
     /// <summary>
     /// ホコの追従とスコア加算（サーバー側のみ）
     /// </summary>
-    [ServerCallback]
+    [Server]
     private void Update() {
         if (holder != null) {
             Vector3 targetPos = holder.transform.position + Vector3.up * holdHeight;
             transform.position = targetPos;
             transform.rotation = holder.transform.rotation;
+
+            RpcUpdateHokoPosition(targetPos, holder.transform.rotation);
 
             scoreTimer += Time.deltaTime;
             if (scoreTimer >= 1f) {
@@ -59,6 +61,12 @@ public class CaptureHoko : NetworkBehaviour {
                 AddScoreToHolderTeam();
             }
         }
+    }
+
+    [ClientRpc]
+    private void RpcUpdateHokoPosition(Vector3 position, Quaternion rotation) {
+        transform.position = position;
+        transform.rotation = rotation;
     }
 
     /// <summary>
