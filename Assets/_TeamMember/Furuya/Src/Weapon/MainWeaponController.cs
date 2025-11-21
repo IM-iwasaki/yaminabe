@@ -217,6 +217,7 @@ public class MainWeaponController : NetworkBehaviour {
         }
 
         RpcPlayMuzzleFlash(firePoint.position, gunData.muzzleFlashType);
+        characterBase.anim.SetBool("Shoot", true);
     }
 
     // --- 魔法攻撃 ---
