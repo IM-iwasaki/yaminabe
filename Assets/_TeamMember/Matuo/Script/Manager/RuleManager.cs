@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public class RuleManager : NetworkSystemObject<RuleManager> {
     private Dictionary<int, float> teamScores = new();
     public GameRuleType currentRule = GameRuleType.Area;
-    private HashSet<int> winningTeams = new();
+    public HashSet<int> winningTeams = new();
 
     public Dictionary<GameRuleType, float> winScores = new()
     {
@@ -78,8 +78,6 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         if (rule == GameRuleType.Area || rule == GameRuleType.Hoko) {
             // 50カウント以上なら即勝利判定
             if (teamScores[teamId] >= winScores[rule]) {
-                Debug.Log($"Team {teamId} が {rule} ルールで勝利！スコア: {teamScores[teamId]}");
-
                 winningTeams.Add(teamId); // 勝利済みに追加
                 SendTeamResultToAll(teamId);
                 GameManager.Instance.EndGame();

@@ -1,7 +1,6 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// ステージ生成とリスポーン地点管理
@@ -53,6 +52,8 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
+
+        RuleManager.Instance.winningTeams.Clear();
 
     }
 

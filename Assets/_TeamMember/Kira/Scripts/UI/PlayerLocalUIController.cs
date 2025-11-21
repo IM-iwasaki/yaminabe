@@ -63,9 +63,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
 
         //メインウェポンの現在弾倉数を更新
         mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
-        //リロード中になったらアイコン回転を指示(重複の対策もする)
-        if(player.isReloading && !reloadIconRotating)
-            StartCoroutine(RotateReloadIcon(player.weaponController_main.weaponData.reloadTime));
+        
         //サブウェポンの現在所持数を更新
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
     }
@@ -89,6 +87,16 @@ public class PlayerLocalUIController : NetworkBehaviour {
         subWeaponText[(int)TextIndex.Max].text = player.weaponController_sub.subWeaponData.maxUses.ToString();
         subWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_sub.subWeaponData.WeaponName;
     }
+
+    /// <summary>
+    /// hook関数で自動的に呼べるよう一度かませる関数
+    /// player.isReloadingがtrueで自動発火
+    /// </summary>
+    public void StartRotateReloadIcon() {
+        if(!reloadIconRotating)
+            StartCoroutine(RotateReloadIcon(player.weaponController_main.weaponData.reloadTime));
+    }
+
 
     /// <summary>
     /// リロードアイコンを1回転させる ( float _duration = 1回転するまでにかかる時間 )

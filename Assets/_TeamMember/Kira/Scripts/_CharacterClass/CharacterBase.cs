@@ -82,7 +82,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected bool isCanInteruct = false;
 
     //リロード中か
-    public bool isReloading = false;
+    [SyncVar(hook = nameof(UpdateReloadIcon))] public bool isReloading = false;
 
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
@@ -95,7 +95,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected Collider useCollider;
     private string useTag;
     [SerializeField] public PlayerUIController UI = null;
-    [SerializeField] public PlayerLocalUIController localUI = null;
+    public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
     public Animator anim = null;
@@ -550,6 +550,17 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
+    /// リロードアイコンの処理を発火
+    /// hook関数で呼び出す
+    /// </summary>
+    /// <param name="_">無名変数</param>
+    /// <param name="_new">新たに変更された値(今回でいうとisReloading)</param>
+    private void UpdateReloadIcon(bool _, bool _new) {
+        if (_new)
+            localUI.StartRotateReloadIcon();
+    }
+
+    /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
     [Command]
@@ -812,7 +823,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void OnReload(InputAction.CallbackContext context) {
         if (context.performed && weaponController_main.ammo < weaponController_main.weaponData.maxAmmo) {
-            weaponController_main.ReloadRequest();
+            weaponController_main.CmdReloadRequest();
         }
     }
     /// <summary>
@@ -1057,17 +1068,17 @@ public abstract class CharacterBase : NetworkBehaviour {
             //押した瞬間から
             case InputActionPhase.Started:
                 isAttackPressed = true;
-            break;
+                break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
                 isAttackPressed = false;
                 //アニメーション終了
                 anim.SetBool("Shoot", false);
-            break;
+                break;
             //押した瞬間
             case InputActionPhase.Performed:
                 isAttackTrigger = true;
-            break;
+                break;
         }
 
     }
@@ -1077,10 +1088,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     virtual public void StartAttack() {
         if (weaponController_main == null) return;
 
+        if (HostUI.isVisibleUI == true) return;
+
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
-        weaponController_main.CmdRequestAttack(shootDir);
-        
+        weaponController_main.CmdRequestAttack(shootDir);        
     }
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
@@ -1130,7 +1142,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
 
         }
-    }    
+    }
 
     #endregion
 
