@@ -209,6 +209,14 @@ public abstract class CharacterBase : NetworkBehaviour {
             UI = playerUI.GetComponent<PlayerUIController>();
             UI.Initialize(HP);
         }
+
+        // ここを追加：クライアント側で TeamGlowManager に登録
+        if (TeamGlowManager.Instance != null) {
+            TeamGlowManager.Instance.RegisterPlayer(this);
+        }
+
+
+
     }
 
     /// <summary>
