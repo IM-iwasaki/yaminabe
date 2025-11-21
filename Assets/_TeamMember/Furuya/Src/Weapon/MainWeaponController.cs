@@ -263,8 +263,17 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     /// <summary>
+    /// リロード入力専用Cmd
+    /// </summary>
+    [Command]
+    public void CmdReloadRequest() {
+        ReloadRequest();
+    }
+
+    /// <summary>
     /// リロードの要求関数(リロード中だったら弾く)
     /// </summary>
+    [Server]
     public void ReloadRequest() {
         //射撃中やリロード中ならやめる
         if (characterBase.isAttackPressed && characterBase.isReloading) return;
@@ -279,6 +288,7 @@ public class MainWeaponController : NetworkBehaviour {
     /// <summary>
     /// リロードの本実行
     /// </summary>
+    [Server]
     void Reload() {
         ammo = weaponData.maxAmmo;
         characterBase.isReloading = false;
