@@ -1088,10 +1088,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     virtual public void StartAttack() {
         if (weaponController_main == null) return;
 
+        if (HostUI.isVisibleUI == true) return;
+
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
-        weaponController_main.CmdRequestAttack(shootDir);
-
+        weaponController_main.CmdRequestAttack(shootDir);        
     }
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
