@@ -120,10 +120,11 @@ public class CaptureHoko : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ゲーム終了時にホコを落とす
+    /// ゲーム終了時にホコを消す
     /// </summary>
     [Server]
     private void HandleGameEnd() {
         Drop();
+        Destroy(gameObject);
     }
 }
