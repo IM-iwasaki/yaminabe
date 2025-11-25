@@ -112,7 +112,7 @@ public class MagicProjectile : NetworkBehaviour {
         if (prefab != null) {
             var fx = EffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
-            EffectPool.Instance.ReturnToPool(fx, 1.5f);
+            EffectPool.Instance.ReturnToPool(fx, 3f);
         }
     }
 }
