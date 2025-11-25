@@ -32,7 +32,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
     public void Initialize() {
         if (!isLocalPlayer) {
             var LocalUI = GetComponentInChildren<Canvas>();
-            Debug.Log(LocalUI.name);
             LocalUI.gameObject.SetActive(false);
             return;
         }
