@@ -42,8 +42,15 @@ public class GameManager : NetworkSystemObject<GameManager> {
         isGameRunning = true;
         ruleManager.currentRule = rule;
 
-        gameTimer.OnTimerFinished += () =>
-        {
+        // スコア初期化（TeamManager を使わず RuleManager の teamScores を利用）
+        foreach (var teamId in RuleManager.Instance.teamScores.Keys) {
+            if (rule == GameRuleType.DeathMatch)
+                RuleManager.Instance.SetInitialScore(teamId, 0f);     // 加算方式
+            else
+                RuleManager.Instance.SetInitialScore(teamId, 50f);    // カウントダウン方式
+        }
+
+        gameTimer.OnTimerFinished += () => {
             if (rule == GameRuleType.DeathMatch)
                 ruleManager.EndDeathMatch();
             else
@@ -70,7 +77,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         isGameRunning = false;
         gameTimer.StopTimer();
-        Cursor.lockState = CursorLockMode.None;     
+        Cursor.lockState = CursorLockMode.None;
 
         // 勝敗処理
         if (ruleManager.currentRule == GameRuleType.DeathMatch)

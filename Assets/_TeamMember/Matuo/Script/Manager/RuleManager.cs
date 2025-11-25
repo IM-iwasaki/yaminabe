@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// エリア / ホコ / デスマッチのスコア管理・勝敗判定
 /// </summary>
 public class RuleManager : NetworkSystemObject<RuleManager> {
-    private Dictionary<int, float> teamScores = new();
+    public Dictionary<int, float> teamScores = new();
     public GameRuleType currentRule = GameRuleType.Area;
     public HashSet<int> winningTeams = new();
 
@@ -22,6 +22,12 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     public override void Initialize() {
         base.Initialize();
         teamScores.Clear();
+    }
+
+    [Server]
+    public void SetInitialScore(int teamId, float value) {
+        teamScores[teamId] = value;
+        RpcUpdateScore(teamId, value);
     }
 
     /// <summary>
@@ -66,25 +72,30 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     [Server]
     private void AddScore(int teamId, float amount, GameRuleType rule) {
         if (winningTeams.Contains(teamId))
-            return; // すでに勝利済みならスコア加算しない
+            return;
 
         if (!teamScores.ContainsKey(teamId))
-            teamScores[teamId] = 0f;
+            teamScores[teamId] = winScores[rule];
 
-        teamScores[teamId] += amount;
+        if (rule == GameRuleType.DeathMatch) {
+            teamScores[teamId] += amount;
+        } else {
+            teamScores[teamId] -= amount;
+            if (teamScores[teamId] < 0)
+                teamScores[teamId] = 0;
+        }
+
         RpcUpdateScore(teamId, teamScores[teamId]);
 
         // エリア・ホコルールの場合
         if (rule == GameRuleType.Area || rule == GameRuleType.Hoko) {
-            // 50カウント以上なら即勝利判定
-            if (teamScores[teamId] >= winScores[rule]) {
-                winningTeams.Add(teamId); // 勝利済みに追加
+            if (teamScores[teamId] <= 0f) {
+                winningTeams.Add(teamId);
                 SendTeamResultToAll(teamId);
                 GameManager.Instance.EndGame();
             }
         }
     }
-
 
     /// <summary>
     /// クライアント全員にスコア更新を通知
@@ -103,36 +114,34 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// </summary>
     [Server]
     public void CheckWinConditionAllTeams() {
-        float maxScore = -1f;
+        if (currentRule == GameRuleType.DeathMatch) {
+            EndDeathMatch();
+            return;
+        }
+
+        float minScore = float.MaxValue;
         List<int> winners = new();
 
         foreach (var kvp in teamScores) {
-            if (kvp.Value > maxScore) {
-                maxScore = kvp.Value;
+            if (kvp.Value < minScore) {
+                minScore = kvp.Value;
                 winners.Clear();
                 winners.Add(kvp.Key);
-            } else if (kvp.Value == maxScore) {
+            } else if (Mathf.Approximately(kvp.Value, minScore)) {
                 winners.Add(kvp.Key);
             }
         }
 
-        if (maxScore >= winScores[currentRule]) {
-            if (winners.Count == 1) {
-                int winningTeam = winners[0];
-                Debug.Log($"Team {winningTeam} 勝利！(Rule: {currentRule})");
+        if (winners.Count == 1) {
+            int winningTeam = winners[0];
 
-                // 勝敗データをリザルトへ送信
-                SendTeamResultToAll(winningTeam);
-                //追加:タハラ:勝敗に応じてレート更新
-                PlayerRankingManager.instance.ApplyRateAllPlayers(winningTeam);
-            }
+            SendTeamResultToAll(winningTeam);
+            PlayerRankingManager.instance.ApplyRateAllPlayers(winningTeam);
         } else {
-            Debug.LogWarning("引き分け");
-
-            // 引き分けの場合もリザルトへ送信
             SendTeamResultToAll(-1);
         }
-            GameManager.Instance.EndGame();
+
+        GameManager.Instance.EndGame();
     }
 
     /// <summary>
@@ -157,17 +166,8 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
         // 勝利判定
         if (topTeams.Count == 1) {
-            int winningTeam = topTeams[0];
-            Debug.LogWarning($"Team {winningTeam} の勝利！（スコア：{maxScore}）");
-
-            SendTeamResultToAll(winningTeam);
-        } else if (topTeams.Count > 1) {
-            Debug.LogWarning("引き分け！");
-
-            SendTeamResultToAll(-1);
+            SendTeamResultToAll(topTeams[0]);
         } else {
-            Debug.LogWarning("誰もスコアを取らずに終わりました");
-
             SendTeamResultToAll(-1);
         }
     }
@@ -213,15 +213,9 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         ResultManager.ResultData data = new ResultManager.ResultData {
             isTeamBattle = true,
             winnerName = winnerName,
-
-            // 個人スコアは ShowTeamResult() 内で追加されるため空でOK
             scores = new ResultScoreData[0],
-
             rule = currentRule,
-
-            
             teamScores = teamScoreList.ToArray(),
-
         };
 
         // ResultManager に送信
