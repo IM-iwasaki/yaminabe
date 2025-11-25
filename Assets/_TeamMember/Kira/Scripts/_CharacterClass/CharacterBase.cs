@@ -858,7 +858,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     public void OnShowCameraMenu(InputAction.CallbackContext context) {
-        if (!isLocalPlayer)
+        if (!isLocalPlayer )
             return;
         if (context.started) {
             if (HostUI.isVisibleUI) {
@@ -874,7 +874,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     /// <param name="context"></param>
     public void OnReadyPlayer(InputAction.CallbackContext context) {
-        if (!isLocalPlayer)
+        if (!isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene")
             return;
         //内部の準備状態を更新
         if (context.started) {
@@ -900,13 +900,13 @@ public abstract class CharacterBase : NetworkBehaviour {
         string sendMessage;
         switch (key) {
             case "upArrow":
-                sendMessage = "fooooooooooooooo";
+                sendMessage = "?";
                 break;
             case "leftArrow":
                 sendMessage = "ggEZ";
                 break;
             case "rightArrow":
-                sendMessage = "(^3^)";
+                sendMessage = "WTF";
                 break;
             default:
                 sendMessage = "4649";
