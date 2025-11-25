@@ -65,4 +65,13 @@ public class AppearanceChangeManager : MonoBehaviour
         player.GetComponent<CharacterBase>().anim = newAnimator;
     }
 
+    public void ChangeSkillUI(int characterCount) {
+        SkillBase skill = data.characters[characterCount].statusData.skills[0];
+        PassiveBase passive = data.characters[characterCount].statusData.passives[0];
+
+        SkillDisplayer.Instance.SetSkillUI(
+            skill.skillName, skill.skillDescription,
+            passive.PassiveName, passive.PassiveDescription
+            );
+    }
 }

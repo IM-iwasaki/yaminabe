@@ -27,6 +27,16 @@ public class GeneralCharacter : CharacterBase {
     public override void OnStartClient() {
         base.OnStartClient();
         localUI.Initialize();
+
+
+        if (!isLocalPlayer) return; // Ž©•ª‚¾‚¯•\Ž¦
+        SkillBase skill = equippedSkills[0];
+        PassiveBase passive = equippedPassives[0];
+
+        SkillDisplayer.Instance.SetSkillUI(
+        skill.skillName, skill.skillDescription,
+        passive.PassiveName, passive.PassiveDescription
+        );
     }
 
     void Update() {
@@ -100,14 +110,6 @@ public class GeneralCharacter : CharacterBase {
         var subWeapon = runtimeStatus.SubWeapon.WeaponName;
         weaponController_main.SetWeaponData(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
-
-        SkillDisplayer.Instance.SetSkillUI(
-            equippedSkills[0].skillName,
-            equippedSkills[0].skillDescription,
-            equippedPassives[0].PassiveName,
-            equippedPassives[0].PassiveDescription
-            );
-
     }
 
     protected override void StartUseSkill() {

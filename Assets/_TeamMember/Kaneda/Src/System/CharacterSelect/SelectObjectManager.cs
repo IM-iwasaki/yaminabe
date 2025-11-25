@@ -295,6 +295,7 @@ public class SelectObjectManager : NetworkBehaviour {
     /// <param name="player"></param>
     public void ConfirmPlayerChange(GameObject player) {
         CmdPlayerChange(player, localCharacterCount, localSkinCount, localCanChange);
+        AppearanceChangeManager.instance.ChangeSkillUI(localCharacterCount);
     }
 
     //  クライアントからサーバーへ送信
