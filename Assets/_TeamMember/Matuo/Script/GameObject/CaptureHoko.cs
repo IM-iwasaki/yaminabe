@@ -33,7 +33,7 @@ public class CaptureHoko : NetworkBehaviour {
     }
 
     /// <summary>
-    /// SyncVar hook：holder の変化に応じて見た目を更新
+    /// holderの変化に応じて見た目を更新
     /// </summary>
     private void OnHolderChanged(NetworkIdentity oldHolder, NetworkIdentity newHolder) {
         if (newHolder != null) {
@@ -70,7 +70,7 @@ public class CaptureHoko : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 衝突判定：プレイヤーがホコに触れたら取得
+    /// プレイヤーがホコに触れたら取得
     /// </summary>
     [Server]
     private void OnTriggerEnter(Collider other) {

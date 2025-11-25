@@ -601,6 +601,17 @@ public abstract class CharacterBase : NetworkBehaviour {
         ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<GeneralCharacter>().PlayerName + " is joined " + newTeam + " team ");
     }
 
+    /// <summary>
+    /// アニメーターのレイヤー切り替え
+    /// </summary>
+    /// <param name="_layerIndex"></param>
+    [Server]
+    public void ChangeLayerWeight(int _layerIndex) {
+        //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
+        for(int i = 1, max = anim.layerCount; i < max; i++) {
+            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
+        }
+    }
 
     #endregion
 
