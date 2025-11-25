@@ -65,6 +65,7 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerMagicAttack(direction);
                 break;
         }
+        characterBase.anim.SetBool("Shoot", true);
     }
 
     /// <summary>
@@ -217,7 +218,7 @@ public class MainWeaponController : NetworkBehaviour {
         }
 
         RpcPlayMuzzleFlash(firePoint.position, gunData.muzzleFlashType);
-        characterBase.anim.SetBool("Shoot", true);
+        
     }
 
     // --- 魔法攻撃 ---
