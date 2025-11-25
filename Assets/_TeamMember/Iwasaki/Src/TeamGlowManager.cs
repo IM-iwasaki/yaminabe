@@ -51,23 +51,21 @@ public class TeamGlowManager : MonoBehaviour {
     public void RegisterPlayer(CharacterBase player) {
         if (player == null) return;
 
-        // すでに付いていれば再利用
         var glow = player.GetComponent<TeamGlowSimple>();
         if (glow == null) {
             glow = player.gameObject.AddComponent<TeamGlowSimple>();
         }
 
-        // 光らせる Renderer をまとめて取る（必要なら手で絞る）
         if (glow.targetRenderers == null || glow.targetRenderers.Length == 0) {
             glow.targetRenderers = player.GetComponentsInChildren<Renderer>();
         }
 
-        // 共通設定を流し込む
+        // TeamID / 色 / 強さだけ共通設定から流す
         glow.redTeamId = redTeamId;
         glow.blueTeamId = blueTeamId;
         glow.redTeamColor = redTeamColor;
         glow.blueTeamColor = blueTeamColor;
         glow.emissionIntensity = emissionIntensity;
-        glow.hideSelfGlow = hideSelfGlow;
     }
 }
+
