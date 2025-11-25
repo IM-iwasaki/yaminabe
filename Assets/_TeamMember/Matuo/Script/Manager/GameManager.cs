@@ -27,7 +27,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// ゲーム開始
     /// </summary>
     /// <param name="rule">開始するルールタイプ</param>
-    /// <param name="stageData">生成するステージの晩小郷</param>
+    /// <param name="stageData">生成するステージのステージデータ</param>
     [Server]
     public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
@@ -48,6 +48,12 @@ public class GameManager : NetworkSystemObject<GameManager> {
                 RuleManager.Instance.SetInitialScore(teamId, 0f);     // 加算方式
             else
                 RuleManager.Instance.SetInitialScore(teamId, 50f);    // カウントダウン方式
+        }
+
+        // ペナルティ初期化
+        RuleManager.Instance.penaltyScores.Clear();
+        foreach (var teamId in RuleManager.Instance.teamScores.Keys) {
+            RuleManager.Instance.penaltyScores[teamId] = 0f;
         }
 
         gameTimer.OnTimerFinished += () => {

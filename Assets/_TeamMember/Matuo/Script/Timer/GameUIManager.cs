@@ -7,7 +7,7 @@ using Mirror;
 /// 残り時間とスコア(チーム別のカウント)を表示
 /// </summary>
 public class GameUIManager : MonoBehaviour {
-    public static GameUIManager Instance { get; private set; } // Singleton参照用
+    public static GameUIManager Instance { get; private set; } // シングルトン参照用
 
     [Header("UI")]
     [SerializeField] private TMP_Text timerText;          // 残り時間
@@ -89,8 +89,17 @@ public class GameUIManager : MonoBehaviour {
             float redRemaining = Mathf.Max(0f, maxScore - redScore);
             float blueRemaining = Mathf.Max(0f, maxScore - blueScore);
 
-            redTeamScoreText.text = $"RedTeam: {redRemaining:F0}";
-            blueTeamScoreText.text = $"BlueTeam: {blueRemaining:F0}";
+            string redText = $"RedTeam: {redRemaining:F0}";
+            string blueText = $"BlueTeam: {blueRemaining:F0}";
+
+            // ペナルティがある場合は "+ペナルティ" 表示
+            if (ruleManager.penaltyScores.TryGetValue(0, out float redPenalty) && redPenalty > 0f)
+                redText += $" +{redPenalty:F0}";
+            if (ruleManager.penaltyScores.TryGetValue(1, out float bluePenalty) && bluePenalty > 0f)
+                blueText += $" +{bluePenalty:F0}";
+
+            redTeamScoreText.text = redText;
+            blueTeamScoreText.text = blueText;
         } else {
             redTeamScoreText.text = $"RedTeam: {redScore:F0}";
             blueTeamScoreText.text = $"BlueTeam: {blueScore:F0}";
@@ -114,14 +123,21 @@ public class GameUIManager : MonoBehaviour {
             displayScore = Mathf.Max(0f, maxScore - score);
         }
 
+        string text = $"Team: {displayScore:F0}";
+
+        // ペナルティがある場合は "+ペナルティ" 表示
+        if (isCountDownRule && ruleManager.penaltyScores.TryGetValue(teamId, out float penalty) && penalty > 0f) {
+            text = $"Team: {displayScore:F0} +{penalty:F0}";
+        }
+
         switch (teamId) {
             case 0:
                 if (redTeamScoreText != null)
-                    redTeamScoreText.text = $"RedTeam: {displayScore:F0}";
+                    redTeamScoreText.text = text.Replace("Team", "RedTeam");
                 break;
             case 1:
                 if (blueTeamScoreText != null)
-                    blueTeamScoreText.text = $"BlueTeam: {displayScore:F0}";
+                    blueTeamScoreText.text = text.Replace("Team", "BlueTeam");
                 break;
             default:
                 Debug.Log($"対応してないteamId: {teamId}");

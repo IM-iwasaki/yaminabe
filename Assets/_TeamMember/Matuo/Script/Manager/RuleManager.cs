@@ -7,9 +7,10 @@ using System.Collections.Generic;
 /// エリア / ホコ / デスマッチのスコア管理・勝敗判定
 /// </summary>
 public class RuleManager : NetworkSystemObject<RuleManager> {
-    public Dictionary<int, float> teamScores = new();
-    public GameRuleType currentRule = GameRuleType.Area;
-    public HashSet<int> winningTeams = new();
+    public Dictionary<int, float> teamScores = new(); // チームスコア
+    public GameRuleType currentRule = GameRuleType.Area; // 現在のルール
+    public HashSet<int> winningTeams = new(); // 勝利チーム
+    public Dictionary<int, float> penaltyScores = new(); // ペナルティスコア保持用
 
     public Dictionary<GameRuleType, float> winScores = new()
     {
@@ -22,6 +23,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     public override void Initialize() {
         base.Initialize();
         teamScores.Clear();
+        penaltyScores.Clear();
     }
 
     [Server]
@@ -78,23 +80,30 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             teamScores[teamId] = winScores[rule];
 
         if (rule == GameRuleType.DeathMatch) {
+            // デスマッチは加算
             teamScores[teamId] += amount;
         } else {
+            // Area/Hokoは減算
             teamScores[teamId] -= amount;
+
+            // 相手チームにペナルティ加算
+            foreach (var kvp in teamScores) {
+                int otherTeamId = kvp.Key;
+                if (otherTeamId != teamId) {
+                    if (!penaltyScores.ContainsKey(otherTeamId))
+                        penaltyScores[otherTeamId] = 0f;
+
+                    float maxScore = winScores[rule];
+                    float penaltyAmount = (amount / maxScore) * 50f; // 自動計算比率
+                    penaltyScores[otherTeamId] += penaltyAmount;
+                }
+            }
+
             if (teamScores[teamId] < 0)
                 teamScores[teamId] = 0;
         }
 
         RpcUpdateScore(teamId, teamScores[teamId]);
-
-        // エリア・ホコルールの場合
-        if (rule == GameRuleType.Area || rule == GameRuleType.Hoko) {
-            if (teamScores[teamId] <= 0f) {
-                winningTeams.Add(teamId);
-                SendTeamResultToAll(teamId);
-                GameManager.Instance.EndGame();
-            }
-        }
     }
 
     /// <summary>
