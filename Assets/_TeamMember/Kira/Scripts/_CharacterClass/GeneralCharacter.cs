@@ -101,6 +101,13 @@ public class GeneralCharacter : CharacterBase {
         weaponController_main.SetWeaponData(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
 
+        SkillDisplayer.Instance.SetSkillUI(
+            equippedSkills[0].skillName,
+            equippedSkills[0].skillDescription,
+            equippedPassives[0].PassiveName,
+            equippedPassives[0].PassiveDescription
+            );
+
     }
 
     protected override void StartUseSkill() {
