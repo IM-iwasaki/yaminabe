@@ -49,7 +49,7 @@ public class GameUIManager : MonoBehaviour {
     }
 
     private void Update() {
-        // Mirror: クライアントのみUI更新
+        // クライアントのみUI更新
         if (!IsClientActive() || gameTimer == null || ruleManager == null)
             return;
 
@@ -70,16 +70,31 @@ public class GameUIManager : MonoBehaviour {
         int seconds = Mathf.FloorToInt(remaining % 60f);
         timerText.text = $"{minutes:00}:{seconds:00}";
 
-        // スコア表示更新
-        if (ruleManager.TryGetTeamScore(0, out float redScore))
-            redTeamScoreText.text = $"RedTeam: {redScore:F0}";
-        else
-            redTeamScoreText.text = "RedTeam: 0";
+        bool isCountDownRule =
+            ruleManager.currentRule == GameRuleType.Area ||
+            ruleManager.currentRule == GameRuleType.Hoko;
 
-        if (ruleManager.TryGetTeamScore(1, out float blueScore))
+        float redScore = 0f;
+        float blueScore = 0f;
+
+        if (!ruleManager.TryGetTeamScore(0, out redScore))
+            redScore = 0f;
+
+        if (!ruleManager.TryGetTeamScore(1, out blueScore))
+            blueScore = 0f;
+
+        if (isCountDownRule) {
+            float maxScore = ruleManager.winScores[ruleManager.currentRule];
+
+            float redRemaining = Mathf.Max(0f, maxScore - redScore);
+            float blueRemaining = Mathf.Max(0f, maxScore - blueScore);
+
+            redTeamScoreText.text = $"RedTeam: {redRemaining:F0}";
+            blueTeamScoreText.text = $"BlueTeam: {blueRemaining:F0}";
+        } else {
+            redTeamScoreText.text = $"RedTeam: {redScore:F0}";
             blueTeamScoreText.text = $"BlueTeam: {blueScore:F0}";
-        else
-            blueTeamScoreText.text = "BlueTeam: 0";
+        }
     }
 
     /// <summary>
@@ -88,14 +103,25 @@ public class GameUIManager : MonoBehaviour {
     public void UpdateTeamScore(int teamId, float score) {
         if (!IsClientActive()) return;
 
+        bool isCountDownRule =
+            ruleManager.currentRule == GameRuleType.Area ||
+            ruleManager.currentRule == GameRuleType.Hoko;
+
+        float displayScore = score;
+
+        if (isCountDownRule) {
+            float maxScore = ruleManager.winScores[ruleManager.currentRule];
+            displayScore = Mathf.Max(0f, maxScore - score);
+        }
+
         switch (teamId) {
             case 0:
                 if (redTeamScoreText != null)
-                    redTeamScoreText.text = $"RedTeam: {score:F0}";
+                    redTeamScoreText.text = $"RedTeam: {displayScore:F0}";
                 break;
             case 1:
                 if (blueTeamScoreText != null)
-                    blueTeamScoreText.text = $"BlueTeam: {score:F0}";
+                    blueTeamScoreText.text = $"BlueTeam: {displayScore:F0}";
                 break;
             default:
                 Debug.Log($"対応してないteamId: {teamId}");
