@@ -32,14 +32,18 @@ public class Skill_Chaser : SkillBase {
             IntervalTime += Time.deltaTime;
 
             //効果時間を過ぎたら効果を終了
-            if (UseTime >= EffectTime) isSkillUse = false;
+            if (UseTime >= EffectTime) {
+                isSkillUse = false;
+                //時間計測をリセット
+                UseTime = 0;
+            }
 
-            //攻撃が入力された瞬間かつインターバルが経過していたら
-            if(user.isAttackTrigger && IntervalTime >= user.weaponController_main.weaponData.cooldown) {
+            //攻撃が入力された中かつインターバルが経過していたら
+            if(user.isAttackPressed && IntervalTime >= user.weaponController_main.weaponData.cooldown / 2) {
                 //インターバルをリセット
                 IntervalTime = 0;
                 //若干の遅延を入れて追加攻撃発動
-                RequestExtraAttackWithDelay(/*user.weaponController_main.weaponData.cooldown/3*/1.0f,user);
+                RequestExtraAttackWithDelay(user.weaponController_main.weaponData.cooldown/2, user);
             }
         }
     }
@@ -52,7 +56,7 @@ public class Skill_Chaser : SkillBase {
         yield return new WaitForSeconds(delay);
 
         // ここで実行
-        //ここ通ってない
-        user.weaponController_main.CmdRequestExtraAttack(user.firePoint.rotation.eulerAngles);
+        Vector3 shootDir = user.GetShootDirection();
+        user.weaponController_main.CmdRequestExtraAttack(shootDir);        
     }
 }

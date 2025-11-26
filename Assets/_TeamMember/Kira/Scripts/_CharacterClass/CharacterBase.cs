@@ -1,6 +1,5 @@
 ﻿using Mirror;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -11,9 +10,10 @@ using static TeamData;
 [RequireComponent(typeof(Rigidbody))]
 
 /// <summary>
-/// 初期化をここで行う。
+/// 全てのキャラクターの基底
 /// </summary>
 public abstract class CharacterBase : NetworkBehaviour {
+    #region パラメータ変数
 
     [Header("基本ステータス")]
     //現在の体力
@@ -35,10 +35,16 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SyncVar] public string PlayerName = "Default";
     //受けるダメージ倍率
     [System.NonSerialized] public int DamageRatio = 100;
+    //サーバーが割り当てるプレイヤー番号（Player1～6）
+    [SyncVar] public int playerId = -1; 
+    /// <summary>
+    /// 追加:タハラ プレイヤー準備完了状態
+    /// </summary>
+    [SyncVar] public bool ready = true;
 
-    //ランキング用変数の仮定義
-    public int score = 0;
+    #endregion
 
+    #region Transform系変数
 
     //移動を要求する方向
     protected Vector2 MoveInput;
@@ -46,15 +52,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     public Vector3 moveDirection { get; private set; }
     //視点を要求する方向
     protected Vector2 lookInput { get; private set; }
-    //向いている方向
-    public Vector3 lookDirection { get; private set; }
-
-    //リスポーン地点
-    public Vector3 respownPosition { get; protected set; }
-
     //射撃位置
     public Transform firePoint;
+    //足元の確認用Transform
+    private Transform GroundCheck;
 
+    #endregion
+
+    #region bool系変数＆時間管理系変数
 
     //死亡しているか
     [SyncVar] protected bool isDead = false;
@@ -64,7 +69,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected bool isInvincible = false;
     //復活してからの経過時間
     protected float respownAfterTime { get; private set; } = 0.0f;
-
     //移動中か
     public bool isMoving { get; private set; } = false;
     //攻撃中か
@@ -72,22 +76,25 @@ public abstract class CharacterBase : NetworkBehaviour {
     //攻撃を押した瞬間か
     public bool isAttackTrigger { get; protected set; } = false;
     //攻撃開始時間
-    public float attackStartTime { get; private set; } = 0;
-    //オート攻撃タイプ (デフォルトはフルオート)
-    public bool isAutoAttackRunning { get; private set; }
-
+    public float attackStartTime { get; private set; } = 0.0f;
     //アイテムを拾える状態か
     protected bool isCanPickup = false;
     //インタラクトできる状態か
     protected bool isCanInteruct = false;
-
     //リロード中か
     [SyncVar(hook = nameof(UpdateReloadIcon))] public bool isReloading = false;
-
     //スキルを使用できるか
     public bool isCanSkill { get; protected set; } = false;
     //スキル使用後経過時間
     [System.NonSerialized] public float skillAfterTime = 0.0f;
+    //ジャンプ入力をしたか
+    private bool IsJumpPressed = false;
+    //GroundLayer
+    private LayerMask GroundLayer;    
+    //接地しているか
+    [SerializeField] private bool IsGrounded;
+
+    #endregion
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -99,27 +106,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
     public Animator anim = null;
-    private string currentAnimation;
-
-    [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
-    /// <summary>
-    /// 追加:タハラ
-    /// プレイヤー準備完了状態
-    /// </summary>
-    [SyncVar] public bool ready = true;
+    private string currentAnimation;   
 
     //武器を使用するため
     [Header("アクション用変数")]
     public MainWeaponController weaponController_main;
-    public SubWeaponController weaponController_sub;
-    //ジャンプ入力をしたか
-    private bool IsJumpPressed = false;
-    //GroundLayer
-    private LayerMask GroundLayer;
-    //足元の確認用Transform
-    private Transform GroundCheck;
-    //接地しているか
-    [SerializeField] private bool IsGrounded;
+    public SubWeaponController weaponController_sub;   
+
+    #region バフ関連変数
 
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
@@ -135,6 +129,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     private readonly int HEAL_BUFF_EFFECT = 2;
     private readonly int DEBUFF_EFFECT = 3;
 
+    #endregion
 
     #region ～初期化関係関数～
 
@@ -601,7 +596,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<GeneralCharacter>().PlayerName + " is joined " + newTeam + " team ");
     }
 
-
     #endregion
 
     #region 入力受付・入力実行・判定関数
@@ -801,18 +795,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
     /// <summary>
-    /// メイン攻撃(現在未使用)
-    /// </summary
-    public void OnAttack_Main(InputAction.CallbackContext context) {
-        HandleAttack(context, CharacterEnum.AttackType.Main);
-    }
-    /// <summary>
-    /// サブ攻撃(現在未使用)
-    /// </summary
-    public void OnAttack_Sub(InputAction.CallbackContext context) {
-        HandleAttack(context, CharacterEnum.AttackType.Sub);
-    }
-    /// <summary>
     /// スキル
     /// </summary
     public void OnUseSkill(InputAction.CallbackContext context) {
@@ -834,8 +816,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
     /// <summary>
-    /// 追加:タハラ
-    /// UI表示
+    /// 追加:タハラ UI表示
     /// </summary>
     public void OnShowHostUI(InputAction.CallbackContext context) {
         if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
@@ -858,13 +839,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
     /// <summary>
-    /// 追加:タハラ
-    /// プレイヤーの準備状態切り替え
+    /// 追加:タハラ プレイヤーの準備状態切り替え
     /// </summary>
     /// <param name="context"></param>
     public void OnReadyPlayer(InputAction.CallbackContext context) {
-        if (!isLocalPlayer)
-            return;
+        if (!isLocalPlayer) return;
         //内部の準備状態を更新
         if (context.started) {
             if (!isServer)
@@ -877,10 +856,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 追加:タハラ
-    /// チャット送信
+    /// 追加:タハラ チャット送信
     /// </summary>
-    /// <param name="context"></param>
     public void OnSendMessage(InputAction.CallbackContext context) {
         if (!isLocalPlayer)
             return;
@@ -905,13 +882,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 追加:タハラ
-    /// スタンプ送信
+    /// 追加:タハラ スタンプ送信
     /// </summary>
-    /// <param name="context"></param>
     public void OnSendStamp(InputAction.CallbackContext context) {
-        if (!isLocalPlayer)
-            return;
+        if (!isLocalPlayer) return;
         //チャット送信
         if (context.started) {
             int stampIndex = Random.Range(0, 4);
@@ -926,7 +900,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         //移動入力が行われている間は移動中フラグを立てる
         if (MoveInput != Vector2.zero) isMoving = true;
         else isMoving = false;
-
 
         //カメラの向きを取得
         Transform cameraTransform = Camera.main.transform;
@@ -1114,7 +1087,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
     /// </summary>
-    protected Vector3 GetShootDirection() {
+    public Vector3 GetShootDirection() {
         Camera cam = Camera.main;
         Vector3 screenCenter = new(Screen.width / 2f, Screen.height / 2f, 0f);
 
