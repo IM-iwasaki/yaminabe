@@ -29,7 +29,7 @@ public class WeaponItem : ItemBase {
         player.GetComponent<CharacterBase>().ResetCanPickFlag();
 
         //見た目変更
-        ChangeWeaponModel(player, weaponData.weaponModel);
+        CmdChangeWeapon(player.GetComponent<NetworkIdentity>(), weaponData.weaponModel);
         player.GetComponent<CharacterBase>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
 
         // 使用後にアイテムを削除
@@ -60,6 +60,12 @@ public class WeaponItem : ItemBase {
         };
     }
 
+    [Command]
+    private void CmdChangeWeapon(NetworkIdentity _player,GameObject _weaponModel) {
+        ChangeWeaponModel(_player.gameObject, _weaponModel);
+    }
+
+    [ClientRpc]
     private void ChangeWeaponModel(GameObject _player, GameObject _weaponModel) {
         //反映するプレイヤーの手の座標を取得
         Transform handRoot = _player.GetComponent<CharacterBase>().anim.GetBoneTransform(HumanBodyBones.RightHand);

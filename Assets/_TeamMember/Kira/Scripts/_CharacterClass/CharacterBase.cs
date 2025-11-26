@@ -605,7 +605,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// アニメーターのレイヤー切り替え
     /// </summary>
     /// <param name="_layerIndex"></param>
-    [Server]
+    [Command]
     public void ChangeLayerWeight(int _layerIndex) {
         //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
         for(int i = 1, max = anim.layerCount; i < max; i++) {
