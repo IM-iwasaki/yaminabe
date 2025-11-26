@@ -60,13 +60,30 @@ public class WeaponItem : ItemBase {
         };
     }
 
-    private void ChangeWeaponModel(GameObject _player,GameObject _weaponModel) {
+    private void ChangeWeaponModel(GameObject _player, GameObject _weaponModel) {
         //反映するプレイヤーの手の座標を取得
         Transform handRoot = _player.GetComponent<CharacterBase>().anim.GetBoneTransform(HumanBodyBones.RightHand);
+
+        //今現在持っている武器を削除
+        GameObject destroyWeapon = handRoot.GetChild(3).gameObject;
+
+        Destroy(destroyWeapon);
+
+
         //実際に生成
         GameObject currentWeapon = Instantiate(_weaponModel, handRoot);
         currentWeapon.transform.localPosition = Vector3.zero;
-        currentWeapon.transform.localRotation = Quaternion.identity;
+
+        switch (weaponData.weaponName) {
+            
+            case "Minigun":
+                currentWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+                break;
+            case "Assult":
+            case "RPG":
+                currentWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
+                break;
+        }
         
     }
 }
