@@ -69,7 +69,7 @@ MonoBehaviour:
     minDistance: 1
     maxDistance: 500
   worldSEList:
-  - name: FireBall
+  - name: Fire
     clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}
     volume: 1
     pitch: 1
@@ -81,12 +81,18 @@ MonoBehaviour:
     pitch: 1
     minDistance: 1
     maxDistance: 75
-  - name: ShootRocket
+  - name: RocketLauncher
     clip: {fileID: 8300000, guid: 20f1dc2bd918f4a41b55d6afcb19b4f6, type: 3}
     volume: 1
     pitch: 1
     minDistance: 1
-    maxDistance: 75
+    maxDistance: 25
+  - name: Gun
+    clip: {fileID: 8300000, guid: 396ed527a32610448ae0b4f14ea9a3f9, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
   uiSEList:
   - name: "\u6C7A\u5B9A"
     clip: {fileID: 8300000, guid: 72c910bb3c186904190072182620c2a6, type: 3}

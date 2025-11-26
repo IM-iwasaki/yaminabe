@@ -35,8 +35,11 @@ public class ExplosionDebugCircle : MonoBehaviour {
 #endif
 
 /// <summary>
-/// Enum宣言用
+/// 武器用　Enum宣言用
 /// </summary>
+
+//必要があれば追加すること
+
 public enum ProjectileCategory {
     Bullet,
     Grenade,
@@ -57,6 +60,14 @@ public enum EffectType {
     Lightning,
     Explosion,
     Smoke,
+}
+
+public enum SEType {
+    Gun,
+    RocketLauncher,
+    Fire,
+    Ice,
+
 }
 
 public enum WeaponType { 

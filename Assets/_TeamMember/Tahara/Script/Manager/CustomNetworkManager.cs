@@ -132,7 +132,7 @@ public class CustomNetworkManager : NetworkManager {
         if (sceneName == GameSceneManager.Instance.gameSceneName) {
             HostUI hostUi = FindObjectOfType<HostUI>();
             int stageIndex = Mathf.Abs(hostUi.stageIndex % StageManager.Instance.stages.Count);
-            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
+            GameManager.Instance.StartGameWithCountdown(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
         }
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
         foreach (var conn in serverManager.connectPlayer) {

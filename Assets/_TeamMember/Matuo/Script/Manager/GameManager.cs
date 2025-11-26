@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -62,6 +63,30 @@ public class GameManager : NetworkSystemObject<GameManager> {
         // タイマー開始
         gameTimer.StartTimer();
     }
+
+    [Server]
+    public void StartGameWithCountdown(GameRuleType rule, StageData stageData, int countdownSeconds = 3) {
+        if (isGameRunning) return;
+
+        // カウントダウン開始をクライアントに通知
+        RpcStartCountdown(countdownSeconds);
+
+        // カウントダウン終了後にゲームを開始
+        StartCoroutine(CountdownCoroutine(rule, stageData, countdownSeconds));
+    }
+
+    private IEnumerator CountdownCoroutine(GameRuleType rule, StageData stageData, int countdownSeconds) {
+        yield return new WaitForSeconds(countdownSeconds);
+        StartGame(rule, stageData);
+    }
+
+    // クライアントにカウントダウン開始を通知
+    [ClientRpc]
+    private void RpcStartCountdown(int seconds) {
+        // ここでUIに表示
+        CountdownUI.Instance.StartCountdown(seconds);
+    }
+
 
     [Server]
     public void RegisterHoko(CaptureHoko h) {

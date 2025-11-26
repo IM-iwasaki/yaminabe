@@ -217,8 +217,9 @@ public class MainWeaponController : NetworkBehaviour {
             rb.velocity = direction * gunData.projectileSpeed;
         }
 
+        //マズルフラッシュ、SE再生
         RpcPlayMuzzleFlash(firePoint.position, gunData.muzzleFlashType);
-        
+        AudioManager.Instance.CmdPlayWorldSE(weaponData.se.ToString(), transform.position);
     }
 
     // --- 魔法攻撃 ---
