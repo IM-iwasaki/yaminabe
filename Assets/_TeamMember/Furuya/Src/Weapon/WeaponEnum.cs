@@ -62,12 +62,19 @@ public enum EffectType {
     Smoke,
 }
 
-public enum SEType {
+public enum GunSEType {
     Gun,
     RocketLauncher,
+}
+
+public enum MagicSEType {
     Fire,
     Ice,
+    Lightning,
+}
 
+public enum MeleeSEType {
+    Punch,
 }
 
 public enum WeaponType { 

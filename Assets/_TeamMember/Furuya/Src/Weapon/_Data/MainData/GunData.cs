@@ -16,4 +16,7 @@ public class GunData : WeaponData {
 
     public int multiShot = 1;
     public float burstDelay;
+
+    [Header("Audio Effects")]
+    public GunSEType se;
 }

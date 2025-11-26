@@ -93,6 +93,12 @@ MonoBehaviour:
     pitch: 1
     minDistance: 1
     maxDistance: 25
+  - name: Punch
+    clip: {fileID: 8300000, guid: 7bda3da61dcc3ea4ebb9538f47646895, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
   uiSEList:
   - name: "\u6C7A\u5B9A"
     clip: {fileID: 8300000, guid: 72c910bb3c186904190072182620c2a6, type: 3}

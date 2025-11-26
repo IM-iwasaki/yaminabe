@@ -275,6 +275,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownImage: {fileID: 713220247160598457}
-  numberSprites: []
-  goSprite: {fileID: 0}
-  uiRoot: {fileID: 8037936213118745957}
+  numberSprites:
+  - {fileID: 21300000, guid: 2e8387b3f08764242a96ee3c9b38284d, type: 3}
+  - {fileID: 21300000, guid: dbc8cfcbb997ccf4bbbf81bde7f7846d, type: 3}
+  - {fileID: 21300000, guid: e3f33a1358ae7474a962c9b206feeb29, type: 3}
+  goSprite: {fileID: 21300000, guid: c68d1d2fd00698547b407684b701bc04, type: 3}
+  uiRoot: {fileID: 7389848624873788559}
