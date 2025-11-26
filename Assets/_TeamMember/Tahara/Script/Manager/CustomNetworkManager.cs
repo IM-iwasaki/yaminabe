@@ -146,8 +146,8 @@ public class CustomNetworkManager : NetworkManager {
                 //各リスポーン地点に転送
                 if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch)
                     teamID = -1;
-                var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)teamID);
-                startPos.ServerTeleport(RespawnPos[Random.Range(0, RespawnPos.Count)].position, Quaternion.identity);
+                var RespawnPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint");
+                startPos.ServerTeleport(RespawnPos[Random.Range(0, RespawnPos.Length)].transform.position, Quaternion.identity);
             }
             //ロビーシーンなら開始地点に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
