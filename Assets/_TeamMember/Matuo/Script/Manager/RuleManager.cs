@@ -8,43 +8,53 @@ using System.Collections.Generic;
 /// </summary>
 public class RuleManager : NetworkSystemObject<RuleManager> {
     public Dictionary<int, float> teamScores = new(); // チームスコア
-    public GameRuleType currentRule = GameRuleType.Area; // 現在のルール
-    public HashSet<int> winningTeams = new(); // 勝利チーム
-    public Dictionary<int, float> penaltyScores = new(); // ペナルティスコア保持用
+    public Dictionary<int, float> penaltyScores = new(); // ペナルティスコア
+    public GameRuleType currentRule = GameRuleType.Area;
+    public HashSet<int> winningTeams = new();
 
     public Dictionary<GameRuleType, float> winScores = new()
     {
-        // ゲームルール , 勝利に必要なカウント(デスマッチは最終的なキル数で決めるため0)
         { GameRuleType.Area, 50f },
         { GameRuleType.Hoko, 50f },
-        { GameRuleType.DeathMatch, 0f } // デスマッチは時間終了後に判定
+        { GameRuleType.DeathMatch, 0f }
     };
 
     public override void Initialize() {
         base.Initialize();
         teamScores.Clear();
         penaltyScores.Clear();
+
+        // 初期スコアを設定（ルールに応じて 50 または 0）
+        InitializeScores();
     }
 
+    /// <summary>
+    /// ルールに応じてチームスコアを初期化
+    /// Area/Hoko: 50スタート、DeathMatch: 0スタート
+    /// </summary>
+    [Server]
+    public void InitializeScores() {
+        float initialScore = (currentRule == GameRuleType.Area || currentRule == GameRuleType.Hoko)
+            ? winScores[currentRule]
+            : 0f;
+
+        foreach (int teamId in new int[] { 0, 1 }) {
+            SetInitialScore(teamId, initialScore);
+        }
+    }
+
+    /// <summary>
+    /// 指定チームのスコアを初期化してクライアントに通知
+    /// </summary>
     [Server]
     public void SetInitialScore(int teamId, float value) {
         teamScores[teamId] = value;
+        penaltyScores[teamId] = 0f;
         RpcUpdateScore(teamId, value);
     }
 
     /// <summary>
-    /// オブジェクトを取った時の通知
-    /// </summary>
-    /// <param name="obj">勝利オブジェクト</param>
-    /// <param name="teamId">取ったチーム</param>
-    [Server]
-    public void OnObjectCaptured(CaptureObjectBase obj, int teamId) {
-        if (currentRule != GameRuleType.DeathMatch)
-            AddScore(teamId, 1f, currentRule);
-    }
-
-    /// <summary>
-    /// カウント通知 (エリアやホコなどのカウントを使うルール用)
+    /// 進行度通知（エリア / ホコ用）
     /// </summary>
     [Server]
     public void OnCaptureProgress(int teamId, float amount) {
@@ -53,23 +63,24 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     }
 
     /// <summary>
-    /// キル通知 (デスマッチ用)
+    /// キル通知（デスマッチ用）
     /// </summary>
     [Server]
     public void OnTeamKillByTeam(int teamId) {
         if (winningTeams.Contains(teamId))
-            return; // 勝利済みならキル加算しない
+            return;
 
         if (!teamScores.ContainsKey(teamId))
             teamScores[teamId] = 0f;
 
         teamScores[teamId] += 1f;
-        // UI 更新
         RpcUpdateScore(teamId, teamScores[teamId]);
     }
 
     /// <summary>
     /// スコア加算処理
+    /// Area/Hokoは減算方式
+    /// DeathMatchは加算方式
     /// </summary>
     [Server]
     private void AddScore(int teamId, float amount, GameRuleType rule) {
@@ -77,49 +88,47 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             return;
 
         if (!teamScores.ContainsKey(teamId))
-            teamScores[teamId] = winScores[rule];
+            teamScores[teamId] = (rule == GameRuleType.DeathMatch) ? 0f : winScores[rule];
+        if (!penaltyScores.ContainsKey(teamId))
+            penaltyScores[teamId] = 0f;
 
         if (rule == GameRuleType.DeathMatch) {
-            // デスマッチは加算
             teamScores[teamId] += amount;
         } else {
-            // Area/Hokoは減算
+            // Area/Hoko の減算
             teamScores[teamId] -= amount;
-
-            // 相手チームにペナルティ加算
-            foreach (var kvp in teamScores) {
-                int otherTeamId = kvp.Key;
-                if (otherTeamId != teamId) {
-                    if (!penaltyScores.ContainsKey(otherTeamId))
-                        penaltyScores[otherTeamId] = 0f;
-
-                    float maxScore = winScores[rule];
-                    float penaltyAmount = (amount / maxScore) * 50f; // 自動計算比率
-                    penaltyScores[otherTeamId] += penaltyAmount;
-                }
-            }
-
-            if (teamScores[teamId] < 0)
-                teamScores[teamId] = 0;
+            if (teamScores[teamId] < 0f)
+                teamScores[teamId] = 0f;
         }
 
         RpcUpdateScore(teamId, teamScores[teamId]);
+
+        if (rule == GameRuleType.Area || rule == GameRuleType.Hoko) {
+            bool anyZero = false;
+            foreach (var score in teamScores.Values) {
+                if (score <= 0f) {
+                    anyZero = true;
+                    break;
+                }
+            }
+            if (anyZero) {
+                CheckWinConditionAllTeams();
+            }
+        }
     }
 
     /// <summary>
-    /// クライアント全員にスコア更新を通知
+    /// クライアントにスコア更新通知
     /// </summary>
     [ClientRpc]
     private void RpcUpdateScore(int teamId, float newScore) {
-        // ローカルにも保持しておく（UIなどが参照できるように）
         teamScores[teamId] = newScore;
-
-        // UIを更新
         GameUIManager.Instance?.UpdateTeamScore(teamId, newScore);
     }
 
     /// <summary>
-    /// 勝利条件チェック（エリアとホコ）
+    /// 勝利条件チェック（Area / Hoko 用）
+    /// 片方のチームの残りカウントが0になったら勝者判定
     /// </summary>
     [Server]
     public void CheckWinConditionAllTeams() {
@@ -128,68 +137,73 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             return;
         }
 
-        float minScore = float.MaxValue;
-        List<int> winners = new();
-
+        // 0カウントのチームを抽出
+        List<int> zeroCountTeams = new List<int>();
         foreach (var kvp in teamScores) {
-            if (kvp.Value < minScore) {
-                minScore = kvp.Value;
-                winners.Clear();
-                winners.Add(kvp.Key);
-            } else if (Mathf.Approximately(kvp.Value, minScore)) {
-                winners.Add(kvp.Key);
+            if (kvp.Value <= 0f) {
+                zeroCountTeams.Add(kvp.Key);
             }
         }
 
-        if (winners.Count == 1) {
-            int winningTeam = winners[0];
+        // まだ0になったチームがない場合は判定不要
+        if (zeroCountTeams.Count == 0) return;
 
-            SendTeamResultToAll(winningTeam);
-            PlayerRankingManager.instance.ApplyRateAllPlayers(winningTeam);
-        } else {
-            SendTeamResultToAll(-1);
+        // 勝利チームを決定（0になったチーム以外が勝者）
+        List<int> winningTeamsList = new List<int>();
+        foreach (var teamId in teamScores.Keys) {
+            if (!zeroCountTeams.Contains(teamId))
+                winningTeamsList.Add(teamId);
         }
 
+        // 勝者データ作成
+        int winnerId;
+        if (winningTeamsList.Count == 1) {
+            winnerId = winningTeamsList[0]; // 一方のチームが勝利
+        } else {
+            winnerId = -1; // 引き分け
+        }
+
+        // ResultManager へ送信
+        SendTeamResultToAll(winnerId);
+
+        // ゲーム終了
         GameManager.Instance.EndGame();
     }
 
+
     /// <summary>
-    /// デスマッチ終了時に勝利チーム判定（同点なら引き分け）
+    /// デスマッチ終了時の勝利判定
     /// </summary>
     [Server]
     public void EndDeathMatch() {
         float maxScore = -1f;
-        List<int> topTeams = new();
+        List<int> topTeams = new List<int>();
 
-        // 最高スコアを持つチームを抽出
         foreach (var kvp in teamScores) {
             if (kvp.Value > maxScore) {
                 maxScore = kvp.Value;
                 topTeams.Clear();
                 topTeams.Add(kvp.Key);
             } else if (Mathf.Approximately(kvp.Value, maxScore)) {
-                // 同点の場合もリストに追加
                 topTeams.Add(kvp.Key);
             }
         }
 
-        // 勝利判定
-        if (topTeams.Count == 1) {
+        if (topTeams.Count == 1)
             SendTeamResultToAll(topTeams[0]);
-        } else {
+        else
             SendTeamResultToAll(-1);
-        }
     }
 
     /// <summary>
-    /// チームの現在スコアを取得
+    /// 指定チームのスコア取得
     /// </summary>
     public bool TryGetTeamScore(int teamId, out float score) {
         return teamScores.TryGetValue(teamId, out score);
     }
 
     /// <summary>
-    /// チームの勝敗結果を ResultManager に送信する（ルール対応版）
+    /// チームの勝敗結果を ResultManager に送信
     /// </summary>
     [Server]
     private void SendTeamResultToAll(int winningTeamId) {
@@ -198,19 +212,13 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             return;
         }
 
-        // チーム名 0=Red, 1=Blue, それ以外は Team {id}
-        string winnerName;
-        if (winningTeamId == 0)
-            winnerName = "Red";
-        else if (winningTeamId == 1)
-            winnerName = "Blue";
-        else
-            winnerName = "Draw";
+        string winnerName = winningTeamId switch {
+            0 => "Red",
+            1 => "Blue",
+            _ => "Draw"
+        };
 
-        // チームスコアを ResultData 形式に変換
-        // 配列に変換
-        List<ResultManager.TeamScoreEntry> teamScoreList = new();
-
+        List<ResultManager.TeamScoreEntry> teamScoreList = new List<ResultManager.TeamScoreEntry>();
         foreach (var kvp in teamScores) {
             teamScoreList.Add(new ResultManager.TeamScoreEntry {
                 teamId = kvp.Key,
@@ -218,7 +226,6 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             });
         }
 
-        // ResultData を作成
         ResultManager.ResultData data = new ResultManager.ResultData {
             isTeamBattle = true,
             winnerName = winnerName,
@@ -227,7 +234,21 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             teamScores = teamScoreList.ToArray(),
         };
 
-        // ResultManager に送信
         ResultManager.Instance.ShowTeamResult(data);
+    }
+
+    /// <summary>
+    /// ルールに応じてチームスコアとペナルティを初期化
+    /// GameManager から呼ぶと安全
+    /// </summary>
+    [Server]
+    public void InitializeScoresForRule(GameRuleType rule) {
+        currentRule = rule;
+        float initial = (rule == GameRuleType.DeathMatch) ? 0f : winScores[rule];
+
+        foreach (int teamId in new int[] { 0, 1 }) {
+            SetInitialScore(teamId, initial);
+            penaltyScores[teamId] = 0f;
+        }
     }
 }

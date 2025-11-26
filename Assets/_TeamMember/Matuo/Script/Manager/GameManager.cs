@@ -20,6 +20,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
         gameTimer = GetComponent<GameTimer>();
         if (gameTimer == null)
             gameTimer = gameObject.AddComponent<GameTimer>();
+
         ruleManager = RuleManager.Instance;
     }
 
@@ -32,6 +33,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
 
+        // ステージ生成
         StageManager.Instance.SpawnStage(stageData, rule);
 
         if (rule == GameRuleType.DeathMatch)
@@ -40,22 +42,14 @@ public class GameManager : NetworkSystemObject<GameManager> {
             StageManager.Instance.SetRespawnMode(RespawnMode.Team);
 
         isGameRunning = true;
+
+        // ルール設定
         ruleManager.currentRule = rule;
 
-        // スコア初期化（TeamManager を使わず RuleManager の teamScores を利用）
-        foreach (var teamId in RuleManager.Instance.teamScores.Keys) {
-            if (rule == GameRuleType.DeathMatch)
-                RuleManager.Instance.SetInitialScore(teamId, 0f);     // 加算方式
-            else
-                RuleManager.Instance.SetInitialScore(teamId, 50f);    // カウントダウン方式
-        }
+        // チームスコアとペナルティを RuleManager 側で初期化
+        ruleManager.InitializeScoresForRule(rule);
 
-        // ペナルティ初期化
-        RuleManager.Instance.penaltyScores.Clear();
-        foreach (var teamId in RuleManager.Instance.teamScores.Keys) {
-            RuleManager.Instance.penaltyScores[teamId] = 0f;
-        }
-
+        // タイマー終了時処理
         gameTimer.OnTimerFinished += () => {
             if (rule == GameRuleType.DeathMatch)
                 ruleManager.EndDeathMatch();

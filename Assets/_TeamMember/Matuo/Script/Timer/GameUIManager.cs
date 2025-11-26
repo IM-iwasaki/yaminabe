@@ -5,6 +5,7 @@ using Mirror;
 /// <summary>
 /// ゲーム中のUI表示を管理
 /// 残り時間とスコア(チーム別のカウント)を表示
+/// ※ 内部スコアは「残りカウント (減算式)」で保持される前提
 /// </summary>
 public class GameUIManager : MonoBehaviour {
     public static GameUIManager Instance { get; private set; } // シングルトン参照用
@@ -32,7 +33,7 @@ public class GameUIManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// MirrorのisClientみたいな
+    /// MirrorのisClientみたいな（クライアントでのみUI更新したい場合）
     /// </summary>
     private bool IsClientActive() {
         return NetworkClient.active && NetworkClient.isConnected;
@@ -46,6 +47,11 @@ public class GameUIManager : MonoBehaviour {
             Debug.LogWarning("[GameUIManager] GameTimer がシーン内に見つかりません。");
         if (ruleManager == null)
             Debug.LogWarning("[GameUIManager] RuleManager がシーン内に見つかりません。");
+
+        // 初回即時更新（遅延なく表示したい場合）
+        if (IsClientActive()) {
+            UpdateUI();
+        }
     }
 
     private void Update() {
@@ -62,45 +68,56 @@ public class GameUIManager : MonoBehaviour {
 
     /// <summary>
     /// 残り時間とスコアのUIを一括更新
+    /// 内部スコアは「残りカウント（減算）」である想定なので、そのまま表示する
     /// </summary>
     private void UpdateUI() {
+        if (timerText == null || redTeamScoreText == null || blueTeamScoreText == null) {
+            // UI が割り当てられていない場合は無視
+            return;
+        }
+
         // 残り時間
-        float remaining = gameTimer.GetRemainingTime();
+        float remaining = 0f;
+        if (gameTimer != null)
+            remaining = gameTimer.GetRemainingTime();
+
         int minutes = Mathf.FloorToInt(remaining / 60f);
         int seconds = Mathf.FloorToInt(remaining % 60f);
         timerText.text = $"{minutes:00}:{seconds:00}";
 
         bool isCountDownRule =
-            ruleManager.currentRule == GameRuleType.Area ||
-            ruleManager.currentRule == GameRuleType.Hoko;
+            ruleManager != null &&
+            (ruleManager.currentRule == GameRuleType.Area ||
+             ruleManager.currentRule == GameRuleType.Hoko);
 
         float redScore = 0f;
         float blueScore = 0f;
 
-        if (!ruleManager.TryGetTeamScore(0, out redScore))
-            redScore = 0f;
-
-        if (!ruleManager.TryGetTeamScore(1, out blueScore))
-            blueScore = 0f;
+        if (ruleManager != null) {
+            ruleManager.TryGetTeamScore(0, out redScore);
+            ruleManager.TryGetTeamScore(1, out blueScore);
+        }
 
         if (isCountDownRule) {
-            float maxScore = ruleManager.winScores[ruleManager.currentRule];
-
-            float redRemaining = Mathf.Max(0f, maxScore - redScore);
-            float blueRemaining = Mathf.Max(0f, maxScore - blueScore);
+            // 内部スコアは "残りカウント" の想定 → UIにはそのまま表示する
+            float redRemaining = Mathf.Max(0f, redScore);
+            float blueRemaining = Mathf.Max(0f, blueScore);
 
             string redText = $"RedTeam: {redRemaining:F0}";
             string blueText = $"BlueTeam: {blueRemaining:F0}";
 
-            // ペナルティがある場合は "+ペナルティ" 表示
-            if (ruleManager.penaltyScores.TryGetValue(0, out float redPenalty) && redPenalty > 0f)
-                redText += $" +{redPenalty:F0}";
-            if (ruleManager.penaltyScores.TryGetValue(1, out float bluePenalty) && bluePenalty > 0f)
-                blueText += $" +{bluePenalty:F0}";
+            // ペナルティが同期されていれば表示（注意：RuleManager側で同期されていることが前提）
+            if (ruleManager != null && ruleManager.penaltyScores != null) {
+                if (ruleManager.penaltyScores.TryGetValue(0, out float redPenalty) && redPenalty > 0f)
+                    redText += $" +{redPenalty:F0}";
+                if (ruleManager.penaltyScores.TryGetValue(1, out float bluePenalty) && bluePenalty > 0f)
+                    blueText += $" +{bluePenalty:F0}";
+            }
 
             redTeamScoreText.text = redText;
             blueTeamScoreText.text = blueText;
         } else {
+            // デスマッチなどは内部スコアをそのまま表示（キル数など）
             redTeamScoreText.text = $"RedTeam: {redScore:F0}";
             blueTeamScoreText.text = $"BlueTeam: {blueScore:F0}";
         }
@@ -111,36 +128,32 @@ public class GameUIManager : MonoBehaviour {
     /// </summary>
     public void UpdateTeamScore(int teamId, float score) {
         if (!IsClientActive()) return;
+        if (redTeamScoreText == null || blueTeamScoreText == null) return;
+        if (ruleManager == null) return;
 
         bool isCountDownRule =
             ruleManager.currentRule == GameRuleType.Area ||
             ruleManager.currentRule == GameRuleType.Hoko;
 
-        float displayScore = score;
-
-        if (isCountDownRule) {
-            float maxScore = ruleManager.winScores[ruleManager.currentRule];
-            displayScore = Mathf.Max(0f, maxScore - score);
-        }
+        // 内部スコアは "残り" なので、そのまま表示（負にならないよう保護）
+        float displayScore = Mathf.Max(0f, score);
 
         string text = $"Team: {displayScore:F0}";
 
-        // ペナルティがある場合は "+ペナルティ" 表示
+        // ペナルティ表示（同様に penaltyScores がクライアントに同期されている前提）
         if (isCountDownRule && ruleManager.penaltyScores.TryGetValue(teamId, out float penalty) && penalty > 0f) {
             text = $"Team: {displayScore:F0} +{penalty:F0}";
         }
 
         switch (teamId) {
             case 0:
-                if (redTeamScoreText != null)
-                    redTeamScoreText.text = text.Replace("Team", "RedTeam");
+                redTeamScoreText.text = text.Replace("Team", "RedTeam");
                 break;
             case 1:
-                if (blueTeamScoreText != null)
-                    blueTeamScoreText.text = text.Replace("Team", "BlueTeam");
+                blueTeamScoreText.text = text.Replace("Team", "BlueTeam");
                 break;
             default:
-                Debug.Log($"対応してないteamId: {teamId}");
+                Debug.Log($"[GameUIManager] 対応してないteamId: {teamId}");
                 break;
         }
     }

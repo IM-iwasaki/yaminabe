@@ -24,13 +24,13 @@ public class ObjectManager : NetworkSystemObject<ObjectManager> {
             captureObjects.Add(obj);
     }
 
-    /// <summary>
-    /// 制圧完了通知
-    /// </summary>
-    [Server]
-    public void NotifyCaptured(CaptureObjectBase obj, int teamId) {
-        ruleManager?.OnObjectCaptured(obj, teamId);
-    }
+    ///// <summary>
+    ///// 制圧完了通知
+    ///// </summary>
+    //[Server]
+    //public void NotifyCaptured(CaptureObjectBase obj, int teamId) {
+    //    ruleManager?.OnObjectCaptured(obj, teamId);
+    //}
 
     /// <summary>
     /// カウント通知

@@ -32,14 +32,14 @@ public abstract class CaptureObjectBase : NetworkBehaviour {
         }
     }
 
-    /// <summary>
-    /// 制圧完了通知
-    /// </summary>
-    [Server]
-    protected void NotifyCaptured(int teamId) {
-        ownerTeamId = teamId;
-        objectManager?.NotifyCaptured(this, teamId);
-    }
+    ///// <summary>
+    ///// 制圧完了通知
+    ///// </summary>
+    //[Server]
+    //protected void NotifyCaptured(int teamId) {
+    //    ownerTeamId = teamId;
+    //    objectManager?.NotifyCaptured(this, teamId);
+    //}
 
     /// <summary>
     /// 現在制圧しているチーム
