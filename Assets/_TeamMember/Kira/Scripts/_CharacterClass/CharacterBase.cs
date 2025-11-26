@@ -502,7 +502,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             int currentTeamID = TeamID;
             TeamID = -1;
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-            var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint"); ;
+            var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint");
             NTH.CmdTeleport(RespownPos[Random.Range(0, RespownPos.Length)].transform.position, Quaternion.identity);
 
             TeamID = currentTeamID;

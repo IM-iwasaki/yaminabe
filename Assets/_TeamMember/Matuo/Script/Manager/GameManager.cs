@@ -43,6 +43,25 @@ public class GameManager : NetworkSystemObject<GameManager> {
         isGameRunning = true;
         ruleManager.currentRule = rule;
 
+        
+    }
+
+    [Server]
+    public void StartGameWithCountdown(GameRuleType rule, StageData stageData, int countdownSeconds = 3) {
+        if (isGameRunning) return;
+
+        StartGame(rule, stageData);
+
+        // カウントダウン開始をクライアントに通知
+        RpcStartCountdown(countdownSeconds);
+
+        // カウントダウン終了後にゲームを開始
+        StartCoroutine(CountdownCoroutine(rule, stageData, countdownSeconds));
+    }
+
+    private IEnumerator CountdownCoroutine(GameRuleType rule, StageData stageData, int countdownSeconds) {
+        yield return new WaitForSeconds(countdownSeconds);
+
         // スコア初期化（TeamManager を使わず RuleManager の teamScores を利用）
         foreach (var teamId in RuleManager.Instance.teamScores.Keys) {
             if (rule == GameRuleType.DeathMatch)
@@ -62,22 +81,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         // タイマー開始
         gameTimer.StartTimer();
-    }
-
-    [Server]
-    public void StartGameWithCountdown(GameRuleType rule, StageData stageData, int countdownSeconds = 3) {
-        if (isGameRunning) return;
-
-        // カウントダウン開始をクライアントに通知
-        RpcStartCountdown(countdownSeconds);
-
-        // カウントダウン終了後にゲームを開始
-        StartCoroutine(CountdownCoroutine(rule, stageData, countdownSeconds));
-    }
-
-    private IEnumerator CountdownCoroutine(GameRuleType rule, StageData stageData, int countdownSeconds) {
-        yield return new WaitForSeconds(countdownSeconds);
-        StartGame(rule, stageData);
     }
 
     // クライアントにカウントダウン開始を通知
