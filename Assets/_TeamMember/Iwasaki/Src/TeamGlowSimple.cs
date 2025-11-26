@@ -1,16 +1,22 @@
 using UnityEngine;
+using UnityEngine.InputSystem;   // F9トグル用（新InputSystem）
 
 /// <summary>
 /// CharacterBase.TeamID に合わせて、プレイヤーをチームカラーで発光させるコンポーネント。
 /// ・TeamID = redTeamId / blueTeamId のときだけ光る
-/// ・TeamID = -1 など、それ以外は光らない
-/// ・自分のキャラは（オプションで）光らせない
+/// ・TeamID が該当しない（例：-1）は光らない
+/// ・hideSelfGlow が true のとき、このクライアントのローカルプレイヤーは光らない
+/// ・キャラ/スキン切り替えに対応するため、Renderer を自動で取り直すオプション付き
 /// </summary>
 [RequireComponent(typeof(CharacterBase))]
 public class TeamGlowSimple : MonoBehaviour {
     [Header("光らせる Renderer 群")]
-    [Tooltip("空なら自動で子階層から Renderer を全部拾う")]
+    [Tooltip("空なら自動で子階層から Renderer を拾う")]
     public Renderer[] targetRenderers;
+
+    [Header("Renderer 自動更新")]
+    [Tooltip("true にすると毎フレーム Renderer を取り直してスキン切り替えに追従する")]
+    public bool autoRefreshRenderers = true;
 
     [Header("TeamID 設定")]
     [Tooltip("赤チームの TeamID（例：0）")]
@@ -20,10 +26,7 @@ public class TeamGlowSimple : MonoBehaviour {
     public int blueTeamId = 1;
 
     [Header("チームごとの発光色")]
-    [Tooltip("赤チーム用の発光色")]
     public Color redTeamColor = Color.red;
-
-    [Tooltip("青チーム用の発光色")]
     public Color blueTeamColor = Color.blue;
 
     [Header("発光の強さ")]
@@ -31,83 +34,100 @@ public class TeamGlowSimple : MonoBehaviour {
     public float emissionIntensity = 2.0f;
 
     [Header("オプション")]
-    [Tooltip("true にすると、自分のキャラだけ光らせない")]
+    [Tooltip("true のとき、このクライアント視点で自キャラは光らない")]
     public bool hideSelfGlow = true;
 
-    // 内部用
-    CharacterBase character;
-    int lastTeamId = int.MinValue;
+    // 内部
+    private CharacterBase character;
+    private int lastTeamId = int.MinValue;
 
     void Awake() {
-        // 対象キャラ取得
         character = GetComponent<CharacterBase>();
 
-        // 対象 Renderer 自動取得（Inspector で指定していればそちら優先）
+        // 最初の一回、Renderer を拾っておく
         if (targetRenderers == null || targetRenderers.Length == 0) {
-            targetRenderers = GetComponentsInChildren<Renderer>();
+            RefreshRenderers();
         }
     }
 
     void Start() {
-        // 初回反映
         ApplyGlow(true);
+    }
+
+    void Update() {
+        // デバッグ用：F9 で「自分も光る / 光らない」を切り替え
+        if (Keyboard.current != null && Keyboard.current.f9Key.wasPressedThisFrame) {
+            hideSelfGlow = !hideSelfGlow;
+            ApplyGlow(true);    // 即反映
+            Debug.Log($"[TeamGlowSimple] hideSelfGlow = {hideSelfGlow}");
+        }
     }
 
     void LateUpdate() {
         if (character == null) return;
 
-        // TeamID が変わったら色を更新
+        // ■ ここが重要：スキン/キャラ切り替えに追従するための更新
+        if (autoRefreshRenderers) {
+            RefreshRenderers();
+        }
+        else {
+            // キャッシュモードのとき、配列が空 or null なら保険で再取得
+            if (targetRenderers == null || targetRenderers.Length == 0) {
+                RefreshRenderers();
+            }
+        }
+
         if (character.TeamID != lastTeamId) {
             ApplyGlow(true);
         }
         else {
-            // TeamID は同じでも、「自分だけ非表示」設定は毎フレームチェックしておく
             ApplyGlow(false);
         }
     }
 
     /// <summary>
+    /// 今のキャラ階層から Renderer を取り直す
+    /// （キャラクター切り替え・スキン切り替え後も呼べば追従できる）
+    /// </summary>
+    public void RefreshRenderers() {
+        targetRenderers = GetComponentsInChildren<Renderer>();
+    }
+
+    /// <summary>
     /// 発光色と「自分だけ非表示」を反映する
     /// </summary>
-    /// <param name="updateColor">true のときは TeamID 変化も考慮して色を再計算</param>
     void ApplyGlow(bool updateColor) {
         if (targetRenderers == null || targetRenderers.Length == 0) return;
         if (character == null) return;
 
-        // 「自分のキャラを光らせない」設定
-        bool visible = !(hideSelfGlow && character.isLocalPlayer);
+        bool isSelf = character.isLocalPlayer;
 
-        // TeamID からベースカラー取得
+        // TeamID → ベース色
         Color teamColor = GetColorByTeamId(character.TeamID);
 
-        // 未所属（= Color.black） or 自分を隠す → 発光なし
+        // 未所属 or (自キャラかつ hideSelfGlow が true) → 発光なし
         Color emissionColor;
-        if (!visible || teamColor == Color.black) {
+        if (teamColor == Color.black || (isSelf && hideSelfGlow)) {
             emissionColor = Color.black;
         }
         else {
-            // 強さを乗算して発光させる
             emissionColor = teamColor * emissionIntensity;
         }
 
         lastTeamId = character.TeamID;
 
-        // 全ての Renderer に対して Emission を設定
         foreach (var r in targetRenderers) {
             if (r == null) continue;
 
-            // インスタンス側のマテリアルを取得
             var mat = r.material;
             if (mat == null) continue;
 
             mat.SetColor("_EmissionColor", emissionColor);
 
             if (emissionColor == Color.black) {
-                // 真っ黒なら発光キーワードを切っておく（完全に非発光）
                 mat.DisableKeyword("_EMISSION");
             }
             else {
-                // 光らせるときはキーワードを ON
                 mat.EnableKeyword("_EMISSION");
             }
         }
@@ -115,19 +135,10 @@ public class TeamGlowSimple : MonoBehaviour {
 
     /// <summary>
     /// TeamID → チームカラー
-    /// ・redTeamId / blueTeamId 以外は Color.black（＝光らない）
     /// </summary>
     Color GetColorByTeamId(int id) {
-        if (id == redTeamId) {
-            // 赤チーム
-            return redTeamColor;
-        }
-        if (id == blueTeamId) {
-            // 青チーム
-            return blueTeamColor;
-        }
-
-        // それ以外（-1 や未設定）は光らせない
-        return Color.black;
+        if (id == redTeamId) return redTeamColor;
+        if (id == blueTeamId) return blueTeamColor;
+        return Color.black; // 未所属は光らない
     }
 }
