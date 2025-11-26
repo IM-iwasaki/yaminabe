@@ -69,12 +69,6 @@ MonoBehaviour:
     minDistance: 1
     maxDistance: 500
   worldSEList:
-  - name: FireBall
-    clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}
-    volume: 1
-    pitch: 1
-    minDistance: 1
-    maxDistance: 25
   - name: Explode
     clip: {fileID: 8300000, guid: c3bb2d7eb7f9a554eb001ba6eef34088, type: 3}
     volume: 1
@@ -95,6 +89,18 @@ MonoBehaviour:
     maxDistance: 25
   - name: Sniper
     clip: {fileID: 8300000, guid: 87ef11dfc453fd04a9bd16cf08b59137, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Fire
+    clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}
+    volume: 1
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Punch
+    clip: {fileID: 8300000, guid: 7bda3da61dcc3ea4ebb9538f47646895, type: 3}
     volume: 1
     pitch: 1
     minDistance: 1
