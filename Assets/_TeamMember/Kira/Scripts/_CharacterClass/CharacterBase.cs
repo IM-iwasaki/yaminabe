@@ -324,7 +324,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
             }
             // キル数加算
-            PlayerListManager.Instance?.AddKill(_name);
+            if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddKill(_name);
         }
     }
 
@@ -617,14 +617,10 @@ public abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
-                HandleAttack(ctx, actionName == "Attack_Main"
-                    ? CharacterEnum.AttackType.Main
-                    : CharacterEnum.AttackType.Sub);
+                HandleAttack(ctx);
                 break;
             case "Fire_Sub":
-                HandleAttack(ctx, actionName == "Attack_Sub"
-                    ? CharacterEnum.AttackType.Main
-                    : CharacterEnum.AttackType.Sub);
+                HandleAttack(ctx);
                 break;
             case "SubWeapon":
                 weaponController_sub.TryUseSubWeapon();
@@ -655,14 +651,10 @@ public abstract class CharacterBase : NetworkBehaviour {
                 OnJump(ctx);
                 break;
             case "Fire_Main":
-                HandleAttack(ctx, actionName == "Attack_Main"
-                    ? CharacterEnum.AttackType.Main
-                    : CharacterEnum.AttackType.Sub);
+                HandleAttack(ctx);
                 break;
             case "Fire_Sub":
-                HandleAttack(ctx, actionName == "Attack_Sub"
-                    ? CharacterEnum.AttackType.Main
-                    : CharacterEnum.AttackType.Sub);
+                HandleAttack(ctx);
                 break;
             case "Skill":
                 OnUseSkill(ctx);
@@ -683,9 +675,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
             case "Fire_Main":
             case "Fire_Sub":
-                HandleAttack(ctx, actionName == "Attack_Main"
-                    ? CharacterEnum.AttackType.Main
-                    : CharacterEnum.AttackType.Sub);
+                HandleAttack(ctx);
                 break;
         }
     }
@@ -1057,7 +1047,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃入力のハンドル分岐
     /// </summary>
-    private void HandleAttack(InputAction.CallbackContext context, CharacterEnum.AttackType _type) {
+    private void HandleAttack(InputAction.CallbackContext context) {
         //死亡していたら攻撃できない
         if (isDead || !isLocalPlayer) return;
 

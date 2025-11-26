@@ -19,10 +19,10 @@ public class Skill_Chaser : SkillBase {
     private float IntervalTime = 0;
 
     public override void Activate(CharacterBase user) {
-        //既に使用中か確認
-        if (isSkillUse) return;
         //効果発動
-        else isSkillUse = true;
+        isSkillUse = true;
+        //時間計測をリセット
+        UseTime = 0;
     }
 
     public override void SkillEffectUpdate(CharacterBase user) {
@@ -34,8 +34,6 @@ public class Skill_Chaser : SkillBase {
             //効果時間を過ぎたら効果を終了
             if (UseTime >= EffectTime) {
                 isSkillUse = false;
-                //時間計測をリセット
-                UseTime = 0;
             }
 
             //攻撃が入力された中かつインターバルが経過していたら
