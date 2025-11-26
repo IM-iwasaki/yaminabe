@@ -16,10 +16,14 @@ MonoBehaviour:
   type: 1
   damage: 4
   cooldown: 0.05
+  WeaponModel: {fileID: 2196376887939949475, guid: 79cfad6d28604f54a97b32d45af9d2b2, type: 3}
   muzzleFlashType: 0
   hitEffectType: 0
+  se: 0
   maxAmmo: 150
   reloadTime: 2
   projectilePrefab: {fileID: 8584663488555818686, guid: 85a0d588d9638a04aaa3c1596a30a193, type: 3}
   projectileSpeed: 15
   explosionRange: 0
+  multiShot: 1
+  burstDelay: 0

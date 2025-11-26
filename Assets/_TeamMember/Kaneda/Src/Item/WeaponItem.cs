@@ -25,9 +25,12 @@ public class WeaponItem : ItemBase {
 
         //  持っている武器データをプレイヤーに受け渡す
         playerWeaponData.SetWeaponData(weaponData.WeaponName);
-        player.GetComponent<CharacterBase>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
         //  キャラクター側のフラグをリセットする
         player.GetComponent<CharacterBase>().ResetCanPickFlag();
+
+        //見た目変更
+        ChangeWeaponModel(player, weaponData.WeaponModel);
+        player.GetComponent<CharacterBase>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
 
         // 使用後にアイテムを削除
         if (canDestroy) CmdRequestDestroy();
@@ -55,5 +58,32 @@ public class WeaponItem : ItemBase {
             "Minigun" => 5,
             _ => -1,
         };
+    }
+
+    private void ChangeWeaponModel(GameObject _player, GameObject _weaponModel) {
+        //反映するプレイヤーの手の座標を取得
+        Transform handRoot = _player.GetComponent<CharacterBase>().anim.GetBoneTransform(HumanBodyBones.RightHand);
+
+        //今現在持っている武器を削除
+        GameObject destroyWeapon = handRoot.GetChild(3).gameObject;
+
+        Destroy(destroyWeapon);
+
+
+        //実際に生成
+        GameObject currentWeapon = Instantiate(_weaponModel, handRoot);
+        currentWeapon.transform.localPosition = Vector3.zero;
+
+        switch (weaponData.weaponName) {
+            
+            case "Minigun":
+                currentWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+                break;
+            case "Assult":
+            case "RPG":
+                currentWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
+                break;
+        }
+        
     }
 }
