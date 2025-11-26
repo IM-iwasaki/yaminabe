@@ -128,10 +128,11 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
     /// <summary>
     /// 勝利条件チェック（Area / Hoko 用）
-    /// 片方のチームの残りカウントが0になったら勝者判定
+    /// 0になったチームがいればそのチームが勝利
+    /// 時間切れの場合はスコアが最小のチームを勝利にする
     /// </summary>
     [Server]
-    public void CheckWinConditionAllTeams() {
+    public void CheckWinConditionAllTeams(bool isTimeUp = false) {
         if (currentRule == GameRuleType.DeathMatch) {
             EndDeathMatch();
             return;
@@ -140,33 +141,36 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         // 0カウントのチームを抽出
         List<int> zeroCountTeams = new List<int>();
         foreach (var kvp in teamScores) {
-            if (kvp.Value <= 0f) {
+            if (kvp.Value <= 0f)
                 zeroCountTeams.Add(kvp.Key);
+        }
+
+        int winnerId = -1;
+
+        if (zeroCountTeams.Count == 1) {
+            // 通常通り、0になったチームが勝利
+            winnerId = zeroCountTeams[0];
+        } else if (zeroCountTeams.Count > 1) {
+            // 複数チームが0になった場合は引き分け
+            winnerId = -1;
+        } else if (isTimeUp) {
+            // 時間切れ時、0になったチームがいない場合はスコア最小チームを勝者にする
+            float minScore = float.MaxValue;
+            foreach (var kvp in teamScores) {
+                if (kvp.Value < minScore) {
+                    minScore = kvp.Value;
+                    winnerId = kvp.Key;
+                } else if (Mathf.Approximately(kvp.Value, minScore)) {
+                    // 同率の場合は引き分け
+                    winnerId = -1;
+                }
             }
-        }
-
-        // まだ0になったチームがない場合は判定不要
-        if (zeroCountTeams.Count == 0) return;
-
-        // 勝利チームを決定（0になったチーム以外が勝者）
-        List<int> winningTeamsList = new List<int>();
-        foreach (var teamId in teamScores.Keys) {
-            if (!zeroCountTeams.Contains(teamId))
-                winningTeamsList.Add(teamId);
-        }
-
-        // 勝者データ作成
-        int winnerId;
-        if (winningTeamsList.Count == 1) {
-            winnerId = winningTeamsList[0]; // 一方のチームが勝利
         } else {
-            winnerId = -1; // 引き分け
+            // まだ0になったチームがいない場合、勝者判定不要
+            return;
         }
 
-        // ResultManager へ送信
         SendTeamResultToAll(winnerId);
-
-        // ゲーム終了
         GameManager.Instance.EndGame();
     }
 
