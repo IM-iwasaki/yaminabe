@@ -99,14 +99,14 @@ public class GameUIManager : MonoBehaviour {
         }
 
         if (isCountDownRule) {
-            // 内部スコアは "残りカウント" の想定 → UIにはそのまま表示する
+            // 内部スコアは "残りカウント" の想定
             float redRemaining = Mathf.Max(0f, redScore);
             float blueRemaining = Mathf.Max(0f, blueScore);
 
-            string redText = $"RedTeam: {redRemaining:F0}";
-            string blueText = $"BlueTeam: {blueRemaining:F0}";
+            string redText = $"Remaining\n{redRemaining:F0}";
+            string blueText = $"Remaining\n{blueRemaining:F0}";
 
-            // ペナルティが同期されていれば表示（注意：RuleManager側で同期されていることが前提）
+            // ペナルティがあれば追記
             if (ruleManager != null && ruleManager.penaltyScores != null) {
                 if (ruleManager.penaltyScores.TryGetValue(0, out float redPenalty) && redPenalty > 0f)
                     redText += $" +{redPenalty:F0}";
@@ -132,25 +132,31 @@ public class GameUIManager : MonoBehaviour {
         if (ruleManager == null) return;
 
         bool isCountDownRule =
-            ruleManager.currentRule == GameRuleType.Area ||
-            ruleManager.currentRule == GameRuleType.Hoko;
+    ruleManager.currentRule == GameRuleType.Area ||
+    ruleManager.currentRule == GameRuleType.Hoko;
 
-        // 内部スコアは "残り" なので、そのまま表示（負にならないよう保護）
-        float displayScore = Mathf.Max(0f, score);
+        string text;
 
-        string text = $"Team: {displayScore:F0}";
+        if (isCountDownRule) {
+            // カウントダウンルールの場合のみ "Remaining" 表示
+            float displayScore = Mathf.Max(0f, score);
+            text = $"Remaining\n{displayScore:F0}";
 
-        // ペナルティ表示（同様に penaltyScores がクライアントに同期されている前提）
-        if (isCountDownRule && ruleManager.penaltyScores.TryGetValue(teamId, out float penalty) && penalty > 0f) {
-            text = $"Team: {displayScore:F0} +{penalty:F0}";
+            // ペナルティがあれば追記
+            if (ruleManager.penaltyScores.TryGetValue(teamId, out float penalty) && penalty > 0f)
+                text += $" +{penalty:F0}";
+        } else {
+            // それ以外はチーム名付き
+            string teamName = teamId == 0 ? "RedTeam" : teamId == 1 ? "BlueTeam" : "Team";
+            text = $"{teamName}: {score:F0}";
         }
 
         switch (teamId) {
             case 0:
-                redTeamScoreText.text = text.Replace("Team", "RedTeam");
+                redTeamScoreText.text = text;
                 break;
             case 1:
-                blueTeamScoreText.text = text.Replace("Team", "BlueTeam");
+                blueTeamScoreText.text = text;
                 break;
             default:
                 Debug.Log($"[GameUIManager] 対応してないteamId: {teamId}");
