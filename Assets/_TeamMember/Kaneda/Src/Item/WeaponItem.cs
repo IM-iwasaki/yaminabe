@@ -77,8 +77,6 @@ public class WeaponItem : ItemBase {
         switch (weaponData.weaponName) {
             
             case "Minigun":
-                currentWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
-                break;
             case "Assult":
             case "RPG":
                 currentWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
