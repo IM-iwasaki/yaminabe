@@ -37,9 +37,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [System.NonSerialized] public int DamageRatio = 100;
     //サーバーが割り当てるプレイヤー番号（Player1～6）
     [SyncVar] public int playerId = -1; 
-    /// <summary>
-    /// 追加:タハラ プレイヤー準備完了状態
-    /// </summary>
+    // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
 
     #endregion
@@ -101,7 +99,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
     private string useTag;
-    [SerializeField] public PlayerUIController UI = null;
+    public PlayerUIController UI = null;
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
@@ -186,7 +184,9 @@ public abstract class CharacterBase : NetworkBehaviour {
                 option.Initialize(true);
             }
             else {
+                #if UNITY_EDITOR
                 Debug.LogWarning("PlayerSetup: No ReticleOptionUI found as child for local player.");
+                #endif                
             }
 
             //タハラ
@@ -223,7 +223,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する
     /// </summary>
     protected void DefaultStatusInport() {
+        #if UNITY_EDITOR
         Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
+        #endif
         maxHP = PlayerConst.DEFAULT_MAXHP;
         HP = maxHP;
         attack = PlayerConst.DEFAULT_ATTACK;
@@ -245,7 +247,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
+        #if UNITY_EDITOR
         Debug.Log($"[CharacterBase] 名前設定: {PlayerName}");
+        #endif
 
         // 名前が確定したタイミングで登録（サーバー側のみ）
         if (isServer && PlayerListManager.Instance != null) {
@@ -258,14 +262,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.UnregisterPlayer(this);
     }
 
-
     #endregion
 
     #region ～プレイヤー状態更新関数～
 
     /// <summary>
     /// プレイヤー状態を初期化する関数
-    /// (職業限定ステータスの初期化はoverrideを使用してください。)
     /// </summary>
     public virtual void Initalize() {
         HP = maxHP;
@@ -287,13 +289,11 @@ public abstract class CharacterBase : NetworkBehaviour {
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
     }
     /// <summary>
-    /// 追加:タハラ
-    /// クライアント用準備状態切り替え関数
+    /// 追加:タハラ クライアント用準備状態切り替え関数
     /// </summary>
     [Command]
     private void CmdChangePlayerReady() {
-        if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName)
-            return;
+        if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName) return;
         ready = !ready;
         ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
     }
@@ -313,7 +313,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //HPの減算処理
         HP -= (int)damage;
 
-        //　nameをスコア加算関数み送る
+        //　nameをスコア加算関数に送る
         if (HP <= 0) {
             HP = 0;
             //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
@@ -331,7 +331,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// PlayerLocalUIControllerの取得用ゲッター
     /// </summary>
-    /// <returns></returns>
     public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>(); }
 
     /// <summary>
@@ -340,7 +339,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     public void ChangeHP(int _, int _newValue) {
         if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
         if (UI != null) UI.ChangeHPUI(maxHP, _newValue);
-        else Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
+        else {
+            #if UNITY_EDITOR
+            Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
+            #endif
+        }
     }
     #region 禁断の死亡処理(グロ注意)
     ///--------------------変更:タハラ---------------------
@@ -359,12 +362,7 @@ public abstract class CharacterBase : NetworkBehaviour {
      */
 
     /// <summary>
-    /// 死亡時処理
-    /// サーバーで処理
-    /// </summary>
-    /// <summary>
-    /// 死亡時処理
-    /// 対象にのみ通知
+    /// 死亡時処理 サーバーで処理
     /// </summary>
     [Server]
     public void Dead(string _name) {
@@ -378,8 +376,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //バフ全解除
         RemoveBuff();
         //ホコを所持していたらドロップ
-        if (RuleManager.Instance.currentRule == GameRuleType.Hoko)
-            DropHoko();
+        if (RuleManager.Instance.currentRule == GameRuleType.Hoko) DropHoko();
         //不具合防止のためフラグをいろいろ下ろす。
         isAttackPressed = false;
         isCanInteruct = false;
@@ -393,8 +390,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //アニメーションは全員に反映
         RpcDeadAnimation();
         // スコア計算にここから行きます
-        var combat = GetComponent<PlayerCombat>();
-        if (combat != null) {
+        if (TryGetComponent<PlayerCombat>(out var combat)) {
             int victimTeam = TeamID;
             NetworkIdentity killerIdentity = null;
 
@@ -406,13 +402,16 @@ public abstract class CharacterBase : NetworkBehaviour {
                     }
                 }
             }
-
             // OnKill を呼ぶときに victimTeam を渡すように変更
             combat.OnKill(killerIdentity, victimTeam);
         }
+        else {
+            #if UNITY_EDITOR
+            Debug.LogWarning("スコア計算が正常に成功しませんでした。");
+            #endif
+        }
         // 死亡回数を増やす
-        PlayerListManager.Instance?.AddDeath(this.PlayerName);
-
+        if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeath(PlayerName);
     }
 
     /// <summary>
@@ -432,7 +431,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void DropHoko() {
         var stageManager = StageManager.Instance;
         if (stageManager == null || stageManager.currentHoko == null) {
+            #if UNITY_EDITOR
             Debug.LogWarning("StageManager か Hoko が存在しません");
+            #endif
             return;
         }
 
@@ -456,7 +457,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// ローカル上で死亡演出
     /// 可読性向上のためまとめました
     /// </summary>
-    /// <param name="_name"></param>
     [TargetRpc]
     private void LocalDeadEffect() {
         //カメラを暗くする
@@ -524,14 +524,11 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     ///--------------------------ここまで----------------------------------
 
-    //ここから古谷が追加
-    //エフェクト表示のための関数
+    //ここから古谷が追加 エフェクト表示のための関数
 
     /// <summary>
     /// クライアントエフェクト表示
     /// </summary>
-    /// <param name="pos"></param>
-    /// <param name="effectType"></param>
     [ClientRpc(includeOwner = true)]
     void RpcPlayDeathEffect() {
 
