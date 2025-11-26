@@ -11,6 +11,8 @@ public class WeaponData : ScriptableObject, IWeaponInfo {
     public int damage;
     public float cooldown;
 
+    public GameObject weaponModel;
+
     [Header("Visual Effects")]
     public EffectType muzzleFlashType = EffectType.Default;
     public EffectType hitEffectType = EffectType.Default;

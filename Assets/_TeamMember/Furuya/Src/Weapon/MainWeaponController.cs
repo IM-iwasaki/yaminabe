@@ -155,6 +155,7 @@ public class MainWeaponController : NetworkBehaviour {
             if (angle <= meleeData.meleeAngle) {
                 hp.TakeDamage(meleeData.damage, characterBase.PlayerName);
                 RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
+                AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
             }
         }
 #if UNITY_EDITOR
@@ -217,8 +218,9 @@ public class MainWeaponController : NetworkBehaviour {
             rb.velocity = direction * gunData.projectileSpeed;
         }
 
+        //マズルフラッシュ、SE再生
         RpcPlayMuzzleFlash(firePoint.position, gunData.muzzleFlashType);
-        
+        AudioManager.Instance.CmdPlayWorldSE(gunData.se.ToString(), transform.position);
     }
 
     // --- 魔法攻撃 ---
@@ -231,7 +233,6 @@ public class MainWeaponController : NetworkBehaviour {
             firePoint.position,
             Quaternion.LookRotation(direction)
         );
-        AudioManager.Instance.CmdPlayWorldSE("FireBall", transform.position);
 
         if (proj == null) return;
 
@@ -248,7 +249,9 @@ public class MainWeaponController : NetworkBehaviour {
             );
         }
 
+        //マズルフラッシュ、SE再生
         RpcPlayMuzzleFlash(firePoint.position, magicData.muzzleFlashType);
+        AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
     }
 
     // --- クライアントでヒットエフェクト再生 ---

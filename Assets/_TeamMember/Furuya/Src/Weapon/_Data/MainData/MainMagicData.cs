@@ -18,4 +18,7 @@ public class MainMagicData : WeaponData {
     [Header("Projectile Settings")]
     public ProjectileType magicType = ProjectileType.Linear;
     public float initialHeightSpeed = 5f;
+
+    [Header("Audio Effects")]
+    public MagicSEType se;
 }

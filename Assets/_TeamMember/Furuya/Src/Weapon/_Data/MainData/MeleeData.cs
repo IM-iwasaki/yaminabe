@@ -13,4 +13,6 @@ public class MeleeData : WeaponData
     public float range;
     [Tooltip("‘O•ûUŒ‚”ÍˆÍ(”¼Œa)")]
     public float meleeAngle;
+    [Tooltip("SE")]
+    public MeleeSEType se;
 }
