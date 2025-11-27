@@ -49,6 +49,28 @@ public class OptionMenu : MonoBehaviour {
     }
     #endregion
 
+    #region　キャラ選択中ブロック
+    private CharacterSelectManager cachedSelectManager;
+
+    private CharacterSelectManager CharSelect {
+        get {
+            if (cachedSelectManager == null)
+                cachedSelectManager = FindObjectOfType<CharacterSelectManager>();
+            return cachedSelectManager;
+        }
+    }
+
+    /// <summary>
+    /// キャラ選択画面が開いているため
+    /// オプションメニューを開けない状態かどうか
+    /// </summary>
+    public bool IsBlockedByCharacterSelect() {
+        if (CharSelect == null) return false;
+        return CharSelect.IsCharacterSelectActive();
+    }
+    #endregion
+
+
     private InputActionRebindingExtensions.RebindingOperation currentOp;
     public bool isOpen { get; private set; } = false;
 
@@ -127,9 +149,8 @@ public class OptionMenu : MonoBehaviour {
     public void ToggleMenu() {
 
 
-        // これから「開こうとしている」ときだけガチャ状態をチェック
-        if (!isOpen && IsBlockedByGacha()) {
-            Debug.Log("OptionMenu: ガチャ画面中のためオプションメニューを開きません。");
+        // ガチャとキャラ選択中ブロック
+        if (!isOpen && (IsBlockedByGacha() || IsBlockedByCharacterSelect())) {
             return;
         }
 
