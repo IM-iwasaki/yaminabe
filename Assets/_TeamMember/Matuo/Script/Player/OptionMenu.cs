@@ -14,6 +14,7 @@ public class OptionMenu : MonoBehaviour {
     [Header("Input")]
     public PlayerInput playerInput;
 
+    #region ガチャ中ブロック
     /// <summary>
     /// シーン内の GachaSystem をキャッシュするためのフィールド
     /// </summary>
@@ -31,6 +32,22 @@ public class OptionMenu : MonoBehaviour {
             return cachedGachaSystem;
         }
     }
+    //===========================
+    // ガチャ状態によるブロック判定
+    //===========================
+
+    /// <summary>
+    /// ガチャ画面が開かれているため
+    /// オプションメニューを開けない状態かどうか
+    /// </summary>
+    public bool IsBlockedByGacha() {
+        // シーンに GachaSystem が存在しないならブロックしない
+        if (Gacha == null) return false;
+
+        // GachaSystem 側のフラグをそのまま返す
+        return Gacha.IsGachaActive();
+    }
+    #endregion
 
     private InputActionRebindingExtensions.RebindingOperation currentOp;
     public bool isOpen { get; private set; } = false;
@@ -110,11 +127,11 @@ public class OptionMenu : MonoBehaviour {
     public void ToggleMenu() {
 
 
-        //// これから「開こうとしている」ときだけガチャ状態をチェック
-        //if (!isOpen && IsBlockedByGacha()) {
-        //    Debug.Log("OptionMenu: ガチャ画面中のためオプションメニューを開きません。");
-        //    return;
-        //}
+        // これから「開こうとしている」ときだけガチャ状態をチェック
+        if (!isOpen && IsBlockedByGacha()) {
+            Debug.Log("OptionMenu: ガチャ画面中のためオプションメニューを開きません。");
+            return;
+        }
 
 
         isOpen = !isOpen;
@@ -122,21 +139,8 @@ public class OptionMenu : MonoBehaviour {
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    //===========================
-    // ガチャ状態によるブロック判定
-    //===========================
 
-    /// <summary>
-    /// ガチャ画面が開かれているため
-    /// オプションメニューを開けない状態かどうか
-    /// </summary>
-    //public bool IsBlockedByGacha() {
-    //    // シーンに GachaSystem が存在しないならブロックしない
-    //    if (Gacha == null) return false;
-
-    //    // GachaSystem 側のフラグをそのまま返す
-    //    return Gacha.IsGachaActive();
-    //}
+   
 
 
 
