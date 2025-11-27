@@ -23,9 +23,11 @@ public class Passive_Chaser : PassiveBase {
 
     public override void PassiveReflection(CharacterBase user) {
         IntervalTime += Time.deltaTime;
+        //リロード中は発動しない
+        if (user.isReloading) return;
 
         //攻撃した瞬間にインターバルが経過していたら
-        if(user.isAttackPressed && IntervalTime >= user.weaponController_main.weaponData.cooldown) {
+        if (user.isAttackPressed && IntervalTime >= user.weaponController_main.weaponData.cooldown) {
             //チェインは最大10個まで、最大でなければチェインを蓄積
             if(Chains < 10)Chains++;
             //インターバルリセット

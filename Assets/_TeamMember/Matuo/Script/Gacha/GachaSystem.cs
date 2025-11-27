@@ -33,6 +33,11 @@ public class GachaSystem : MonoBehaviour {
     //  カーソルOnOff
     private bool isOpen;
 
+    //　ガチャ画面に入っているか
+    private bool isGacha;
+
+
+
     private void Awake() {
         gachaUI.SetActive(false);
     }
@@ -268,8 +273,15 @@ public class GachaSystem : MonoBehaviour {
 
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
     }
-
     #endregion
+
+
+ 
+
+
+
+
+
 
     #region ガチャアニメーション
     private void OnGachaAnim() {

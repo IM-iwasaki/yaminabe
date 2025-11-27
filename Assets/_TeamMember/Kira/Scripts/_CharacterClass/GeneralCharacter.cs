@@ -116,6 +116,8 @@ public class GeneralCharacter : CharacterBase {
         if (isCanSkill) {
             equippedSkills[0].Activate(this);
             isCanSkill = false;
+            //CT計測時間をリセット
+            skillAfterTime = 0;
         }       
     }
     public override void Respawn() {
@@ -139,9 +141,8 @@ public class GeneralCharacter : CharacterBase {
         var Skill = equippedSkills[0];
         if (!isCanSkill && Skill != null && skillAfterTime >= Skill.cooldown) {
             isCanSkill = true;
-            //経過時間をリセット
-            skillAfterTime = 0.0f;
-            //デバッグログを出す
+            //経過時間を固定
+            skillAfterTime = Skill.cooldown;
         }        
     }
 }
