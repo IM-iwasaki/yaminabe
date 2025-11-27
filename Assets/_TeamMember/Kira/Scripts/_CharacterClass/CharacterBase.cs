@@ -1091,11 +1091,11 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         // カメラ中心から遠方の目標点を決める（壁は無視）
         Ray camRay = cam.ScreenPointToRay(screenCenter);
-        Vector3 aimPoint = camRay.GetPoint(50f); // 50m先に仮のターゲット
+        Vector3 aimPoint = camRay.GetPoint(30f); // 30m先に仮のターゲット
 
         // firePoint から aimPoint 方向にレイを飛ばして壁判定
         Vector3 direction = (aimPoint - firePoint.position).normalized;
-        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 100f)) {
+        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 50f)) {
             // 壁や床に当たればその位置に補正
             return (hit.point - firePoint.position).normalized;
         }

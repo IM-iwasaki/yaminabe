@@ -1,6 +1,5 @@
 using Mirror;
 using UnityEngine;
-using System.Collections;
 
 public struct CountdownMessage : NetworkMessage {
     public int seconds;

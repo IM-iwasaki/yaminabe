@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +11,10 @@ public class MeleeData : WeaponData
     public float range;
     [Tooltip("‘O•ûUŒ‚”ÍˆÍ(”¼Œa)")]
     public float meleeAngle;
+    [Tooltip("ƒRƒ“ƒ{")]
+    public int combo = 1;
+    public float comboDelay;
+
     [Tooltip("SE")]
     public MeleeSEType se;
 }

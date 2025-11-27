@@ -53,7 +53,8 @@ public class MainWeaponController : NetworkBehaviour {
 
         switch (weaponData.type) {
             case WeaponType.Melee:
-                ServerMeleeAttack();
+                if (weaponData is MeleeData meleeData)
+                    ServerMeleeCombo(meleeData.combo, meleeData.comboDelay);
                 break;
             case WeaponType.Gun:
                 //弾がなかったら通過不可。かわりにリロードを要求する。
@@ -175,6 +176,19 @@ public class MainWeaponController : NetworkBehaviour {
 #if UNITY_EDITOR
                 MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
+    }
+
+    IEnumerator ServerMeleeCombo(int combo, float comboDelay) {
+        int count = Mathf.Max(1, combo);
+        float delay = comboDelay;
+
+        for (int i = 0; i < count; i++) {
+            ServerMeleeAttack();
+
+            // 最後の以外は待機
+            if (i < count - 1)
+                yield return new WaitForSeconds(delay);
+        }
     }
 
     // --- 銃撃処理（TPSレティクル方向） ---

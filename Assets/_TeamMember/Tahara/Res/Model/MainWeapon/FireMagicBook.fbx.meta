@@ -8,12 +8,12 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: blue
-    second: {fileID: 2100000, guid: c963caabf6a44bc48bead7c4900be44d, type: 2}
+    second: {fileID: 2100000, guid: a5368f521969d5c42bc4cd7555a32b01, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: emission
-    second: {fileID: 2100000, guid: f804442ba83ef6242b7d9c0f1fc0ae14, type: 2}
+    second: {fileID: 2100000, guid: 02ff941b4596c74449e158a696f9eb55, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -23,12 +23,22 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: purple-dark
-    second: {fileID: 2100000, guid: c963caabf6a44bc48bead7c4900be44d, type: 2}
+    second: {fileID: 2100000, guid: 6a1d0690702bcb34db828c2a924ef914, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: purple-light
     second: {fileID: 2100000, guid: c963caabf6a44bc48bead7c4900be44d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: yellow
+    second: {fileID: 2100000, guid: a5368f521969d5c42bc4cd7555a32b01, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: yellow-dark
+    second: {fileID: 2100000, guid: a5368f521969d5c42bc4cd7555a32b01, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
