@@ -152,6 +152,99 @@ public class GachaSystem : MonoBehaviour {
 
     #endregion
 
+    #region ガチャ画面モード
+
+    /// <summary>
+    /// ガチャ選択画面開始
+    /// </summary>
+    public void StartGachaSelect(GameObject player) {
+        if (currentPlayer != null) return;
+        currentPlayer = player;
+
+        if (gachaUI != null) gachaUI.SetActive(false);
+
+        if (cameraManager != null && cameraTargetPoint != null) {
+            cameraManager.MoveCamera(player, cameraTargetPoint.position, cameraTargetPoint.rotation);
+        }
+
+        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        if (skin != null) skin.gameObject.SetActive(false);
+
+        isOpen = true;
+        ChangeCursorView();
+
+        if (gachaUI != null)
+            StartCoroutine(ShowUIAfterDelay(cameraManager));
+    }
+
+    /// <summary>
+    /// ガチャ選択画面終了
+    /// </summary>
+    public void EndGachaSelect() {
+        if (currentPlayer == null) return;
+
+        OffGachaAnim();
+
+        if (gachaUI != null) {
+            gachaUI.SetActive(false);
+            if (currentPlayer.GetComponent<NetworkIdentity>().isLocalPlayer) {
+                var playerUI = currentPlayer.GetComponent<CharacterBase>().UI;
+                playerUI.gameObject.SetActive(true);
+            }
+        }
+
+        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        if (skin != null) skin.gameObject.SetActive(true);
+
+        if (cameraManager != null) cameraManager.ReturnCamera();
+
+        isOpen = false;
+        ChangeCursorView();
+
+        currentPlayer = null;
+    }
+
+    private IEnumerator ShowUIAfterDelay(CameraChangeController camController) {
+        float duration = camController != null ? camController.moveDuration : 1.5f;
+        yield return new WaitForSeconds(duration);
+
+        if (gachaUI != null)
+            gachaUI.SetActive(true);
+    }
+
+    private Transform FindChildWithTag(Transform parent, string tag) {
+        foreach (Transform child in parent) {
+            if (child.CompareTag(tag)) return child;
+
+            Transform found = FindChildWithTag(child, tag);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    #endregion
+
+    #region カーソル制御
+
+    private void ChangeCursorView() {
+        Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    #endregion
+
+    #region ガチャアニメーション
+
+    private void OnGachaAnim() => gachaAnim.SetBool("Open", true);
+    private void OffGachaAnim() => gachaAnim.SetBool("Open", false);
+
+    private IEnumerator PlayGachaAnimation() {
+        OffGachaAnim();
+        yield return null;
+        OnGachaAnim();
+    }
+
+    #endregion
+
     #region 結果表示
 
     /// <summary>
@@ -280,96 +373,4 @@ public class GachaSystem : MonoBehaviour {
 
     #endregion
 
-    #region キャラクター選択モード
-
-    /// <summary>
-    /// ガチャ選択画面開始
-    /// </summary>
-    public void StartGachaSelect(GameObject player) {
-        if (currentPlayer != null) return;
-        currentPlayer = player;
-
-        if (gachaUI != null) gachaUI.SetActive(false);
-
-        if (cameraManager != null && cameraTargetPoint != null) {
-            cameraManager.MoveCamera(player, cameraTargetPoint.position, cameraTargetPoint.rotation);
-        }
-
-        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
-        if (skin != null) skin.gameObject.SetActive(false);
-
-        isOpen = true;
-        ChangeCursorView();
-
-        if (gachaUI != null)
-            StartCoroutine(ShowUIAfterDelay(cameraManager));
-    }
-
-    /// <summary>
-    /// ガチャ選択画面終了
-    /// </summary>
-    public void EndGachaSelect() {
-        if (currentPlayer == null) return;
-
-        OffGachaAnim();
-
-        if (gachaUI != null) {
-            gachaUI.SetActive(false);
-            if (currentPlayer.GetComponent<NetworkIdentity>().isLocalPlayer) {
-                var playerUI = currentPlayer.GetComponent<CharacterBase>().UI;
-                playerUI.gameObject.SetActive(true);
-            }
-        }
-
-        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
-        if (skin != null) skin.gameObject.SetActive(true);
-
-        if (cameraManager != null) cameraManager.ReturnCamera();
-
-        isOpen = false;
-        ChangeCursorView();
-
-        currentPlayer = null;
-    }
-
-    private IEnumerator ShowUIAfterDelay(CameraChangeController camController) {
-        float duration = camController != null ? camController.moveDuration : 1.5f;
-        yield return new WaitForSeconds(duration);
-
-        if (gachaUI != null)
-            gachaUI.SetActive(true);
-    }
-
-    private Transform FindChildWithTag(Transform parent, string tag) {
-        foreach (Transform child in parent) {
-            if (child.CompareTag(tag)) return child;
-
-            Transform found = FindChildWithTag(child, tag);
-            if (found != null) return found;
-        }
-        return null;
-    }
-
-    #endregion
-
-    #region カーソル制御
-
-    private void ChangeCursorView() {
-        Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
-    }
-
-    #endregion
-
-    #region ガチャアニメーション
-
-    private void OnGachaAnim() => gachaAnim.SetBool("Open", true);
-    private void OffGachaAnim() => gachaAnim.SetBool("Open", false);
-
-    private IEnumerator PlayGachaAnimation() {
-        OffGachaAnim();
-        yield return null;
-        OnGachaAnim();
-    }
-
-    #endregion
 }
