@@ -29,18 +29,23 @@ MonoBehaviour:
   - characterName: Chicken
     itemName: Default
     rate: 10
+    resultPrefab: {fileID: 3548868566056176881, guid: 98d6a2fbec6271046aea2df749876bb7, type: 3}
   - characterName: Alien
     itemName: Another
     rate: 10
+    resultPrefab: {fileID: 3108797039877070855, guid: 9147bb052d83cb748a579c1a6451d39e, type: 3}
   rareItems:
   - characterName: Alien
     itemName: Gold
     rate: 10
+    resultPrefab: {fileID: 3108797039877070855, guid: ea8ee7ded32385c48a0ec769b5ee454f, type: 3}
   epicItems:
   - characterName: Chicken
     itemName: Crazy
     rate: 9
+    resultPrefab: {fileID: 3548868566056176881, guid: 80df7670b3ce0484e934d23878f7de37, type: 3}
   legendaryItems:
   - characterName: Chicken
     itemName: Gold
     rate: 10
+    resultPrefab: {fileID: 3548868566056176881, guid: 15fa7e1f49cf3284ba1465b20791ea8b, type: 3}
