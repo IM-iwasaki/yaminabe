@@ -607,8 +607,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_layerIndex"></param>
     [Command]
     public void ChangeLayerWeight(int _layerIndex) {
-        //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for(int i = 1, max = anim.layerCount; i < max; i++) {
+        //ベースのレイヤーと最上位レイヤーを飛ばし、引数と一致したレイヤーを使うようにする
+        for(int i = 1, max = anim.layerCount - 1; i < max; i++) {
             anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
     }
