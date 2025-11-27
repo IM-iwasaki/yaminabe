@@ -62,7 +62,7 @@ public class AppearanceChangeManager : MonoBehaviour
         //　追加タハラ:アニメーターを再度保存
         Animator newAnimator = newSkin.GetComponent<Animator>();
         player.GetComponent<NetworkAnimator>().animator = newAnimator;
-        player.GetComponent<CharacterBase>().networkAnim.animator = newAnimator;
+        player.GetComponent<CharacterBase>().netwowkAnim.animator = newAnimator;
     }
 
     public void ChangeSkillUI(int characterCount) {
