@@ -32,6 +32,13 @@ public class GachaSystem : MonoBehaviour {
     private GameObject currentPlayer; // 現在選択中のプレイヤー
     public bool isOpen;               // ガチャ画面の開閉状態およびカーソル状態
 
+  
+    /// <summary>
+    /// ガチャ画面中かどうかのフラグ
+    /// </summary>
+    private bool isGacha = false;
+
+
     // 結果表示用
     private Canvas resultCanvas;      // 結果UIを配置するCanvas
     private Camera resultCamera;      // 結果を描画するためのカメラ
@@ -152,14 +159,72 @@ public class GachaSystem : MonoBehaviour {
 
     #endregion
 
+
+
+    #region オプション中ブロック
+    /// <summary>
+    /// シーン内の OptionMenu をキャッシュするためのフィールド
+    /// インスペクタからは設定しない
+    /// </summary>
+    private OptionMenu cachedOptionMenu;
+
+    /// <summary>
+    /// シーン内から OptionMenu を自動で探してくるゲッター
+    /// 初回だけ FindObjectOfType し、その後はキャッシュを使う
+    /// </summary>
+    private OptionMenu Option {
+        get {
+            if (cachedOptionMenu == null) {
+                cachedOptionMenu = FindObjectOfType<OptionMenu>();
+            }
+            return cachedOptionMenu;
+        }
+    }
+
+    /// <summary>
+    /// オプションメニューが開いているため
+    /// ガチャを開けない状態かどうか
+    /// </summary>
+    public bool IsBlockedByOptionMenu() {
+        // OptionMenu が無いならブロックしない
+        if (Option == null) return false;
+
+        // OptionMenu 側でメニューが開いているならブロック
+        return Option.isOpen;
+    }
+    /// <summary>
+    /// ガチャ状態をまとめて切り替える
+    /// </summary>
+    private void SetGachaState(bool open) {
+        isGacha = open;
+    }
+
+
+    // ガチャの状態を返す
+    public bool IsGachaActive() {
+        return isGacha;
+    }
+
+    #endregion
+
     #region ガチャ画面モード
 
     /// <summary>
     /// ガチャ選択画面開始
     /// </summary>
     public void StartGachaSelect(GameObject player) {
+
+        // OptionMenu が開いているならガチャを開かない
+        if (IsBlockedByOptionMenu()) {
+            Debug.Log("GachaSystem: オプションメニュー中のためガチャを開きません。");
+            return;
+        }
+
         if (currentPlayer != null) return;
         currentPlayer = player;
+
+        SetGachaState(true);
+
 
         if (gachaUI != null) gachaUI.SetActive(false);
 
@@ -200,6 +265,8 @@ public class GachaSystem : MonoBehaviour {
 
         isOpen = false;
         ChangeCursorView();
+
+        SetGachaState(false);
 
         currentPlayer = null;
     }
