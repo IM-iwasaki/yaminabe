@@ -14,6 +14,24 @@ public class OptionMenu : MonoBehaviour {
     [Header("Input")]
     public PlayerInput playerInput;
 
+    /// <summary>
+    /// シーン内の GachaSystem をキャッシュするためのフィールド
+    /// </summary>
+    private GachaSystem cachedGachaSystem;
+
+    /// <summary>
+    /// シーン内から GachaSystem を自動で探してくるゲッター
+    /// 初回だけ FindObjectOfType し、その後はキャッシュを使う
+    /// </summary>
+    private GachaSystem Gacha {
+        get {
+            if (cachedGachaSystem == null) {
+                cachedGachaSystem = FindObjectOfType<GachaSystem>();
+            }
+            return cachedGachaSystem;
+        }
+    }
+
     private InputActionRebindingExtensions.RebindingOperation currentOp;
     public bool isOpen { get; private set; } = false;
 
@@ -90,10 +108,38 @@ public class OptionMenu : MonoBehaviour {
     /// オプションメニューの開閉を切り替える
     /// </summary>
     public void ToggleMenu() {
+
+
+        //// これから「開こうとしている」ときだけガチャ状態をチェック
+        //if (!isOpen && IsBlockedByGacha()) {
+        //    Debug.Log("OptionMenu: ガチャ画面中のためオプションメニューを開きません。");
+        //    return;
+        //}
+
+
         isOpen = !isOpen;
         optionCanvas.enabled = isOpen;
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
     }
+
+    //===========================
+    // ガチャ状態によるブロック判定
+    //===========================
+
+    /// <summary>
+    /// ガチャ画面が開かれているため
+    /// オプションメニューを開けない状態かどうか
+    /// </summary>
+    //public bool IsBlockedByGacha() {
+    //    // シーンに GachaSystem が存在しないならブロックしない
+    //    if (Gacha == null) return false;
+
+    //    // GachaSystem 側のフラグをそのまま返す
+    //    return Gacha.IsGachaActive();
+    //}
+
+
+
 
     /// <summary>
     /// 感度スライダーの値変更時
