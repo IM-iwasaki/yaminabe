@@ -11,11 +11,11 @@ public class Passive_Soldier : PassiveBase {
 
     public override void PassiveReflection(CharacterBase user) {
         //移動中か検証、移動中であれば発動。
-        if (user.isMoving) IsPassiveActive = true;
-        else IsPassiveActive = false;
+        if (user.isMoving) isPassiveActive = true;
+        else isPassiveActive = false;
 
         //効果中はダメージを軽減。
-        if (IsPassiveActive) user.DamageRatio = 80;
+        if (isPassiveActive) user.DamageRatio = 80;
         else user.DamageRatio = 100;        
     }
 }

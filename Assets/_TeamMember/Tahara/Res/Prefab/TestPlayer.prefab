@@ -442,19 +442,18 @@ MonoBehaviour:
   moveSpeed: 5
   TeamID: -1
   PlayerName: Default
-  score: 0
+  playerId: -1
+  ready: 0
   firePoint: {fileID: 878125566127400802}
   isReloading: 0
+  IsGrounded: 0
   UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   localUI: {fileID: 8966501722716295590}
   CameraMenu: {fileID: 7834819685942672659}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
   anim: {fileID: 321994967542534653}
-  playerId: -1
-  ready: 0
   weaponController_main: {fileID: 0}
   weaponController_sub: {fileID: 0}
-  IsGrounded: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
   inputStatus: {fileID: 11400000, guid: 2b2b23650934ee54687ca8d729b424b1, type: 2}
 --- !u!114 &372889221504933099
@@ -507,6 +506,7 @@ MonoBehaviour:
   - {fileID: 547743339750226419}
   - {fileID: 4180901003423180416}
   passive_State: {fileID: 2354609807238841131}
+  passiveChains: {fileID: 6842970181027047320}
   player: {fileID: 5429557689299820045}
 --- !u!114 &6333738302978058651
 MonoBehaviour:
@@ -554,7 +554,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.4, z: 0.5}
-  m_LocalScale: {x: 0.20000002, y: 0.20000002, z: 1.8}
+  m_LocalScale: {x: 0.20000002, y: 0.20000002, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 878125566127400802}
@@ -1222,6 +1222,17 @@ RectTransform:
 --- !u!114 &6500871602390130844 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2194688925000729217, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 4918675937597612573}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6842970181027047320 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1924647463460881797, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
   m_PrefabInstance: {fileID: 4918675937597612573}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

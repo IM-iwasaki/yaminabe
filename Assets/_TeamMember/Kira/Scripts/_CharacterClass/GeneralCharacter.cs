@@ -69,8 +69,8 @@ public class GeneralCharacter : CharacterBase {
         if (weaponController_main.weaponData.maxAmmo != 0)
             weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
         //PassiveŠÖ˜A‚Ì‰Šú‰»
-        equippedPassives[0].CoolTime = 0;
-        equippedPassives[0].IsPassiveActive = false;
+        equippedPassives[0].coolTime = 0;
+        equippedPassives[0].isPassiveActive = false;
         //SkillŠÖ˜A‚Ì‰Šú‰»
         equippedSkills[0].isSkillUse = false;
     }
