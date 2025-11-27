@@ -54,7 +54,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
             if (rule == GameRuleType.DeathMatch)
                 ruleManager.EndDeathMatch();
             else
-                ruleManager.CheckWinConditionAllTeams();
+                ruleManager.CheckWinConditionAllTeams(true);
 
             EndGame();
         };
