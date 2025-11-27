@@ -216,7 +216,6 @@ public class GachaSystem : MonoBehaviour {
 
         // OptionMenu が開いているならガチャを開かない
         if (IsBlockedByOptionMenu()) {
-            Debug.Log("GachaSystem: オプションメニュー中のためガチャを開きません。");
             return;
         }
 

@@ -57,8 +57,15 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// <param name="player">操作中のプレイヤー</param>
     public void StartCharacterSelect(GameObject player) {
 
+        // OptionMenu が開いているならキャラ選択を開かない
+        if (IsBlockedByOptionMenu()) {
+            return;
+        }
         if (currentPlayer != null) return;
         currentPlayer = player;
+
+
+        SetCharacterSelectState(true);
 
         // UIを非表示（移動開始前）
         if (selectUI != null)
@@ -116,6 +123,7 @@ public class CharacterSelectManager : NetworkBehaviour {
         //  カーソルをOffにする
         ChangeCursorView();
 
+        SetCharacterSelectState(false);
         currentPlayer = null;
     }
 
@@ -169,5 +177,66 @@ public class CharacterSelectManager : NetworkBehaviour {
     }
 
     #endregion
+
+    #region キャラ選択中ブロック
+    /// <summary>
+    /// キャラ選択画面中かどうか
+    /// true: キャラ選択モード / false: 通常
+    /// </summary>
+    private bool isCharacterSelect = false;
+
+    /// <summary>
+    /// キャラ選択状態をまとめて切り替える
+    /// </summary>
+    /// <param name="active">true なら選択画面中</param>
+    private void SetCharacterSelectState(bool active) {
+        isCharacterSelect = active;
+
+        // 将来「キャラ選択中だけ有効にしたい処理」が増えたら
+        // ここにまとめて書けば OK
+    }
+
+    /// <summary>
+    /// 現在キャラ選択画面中かどうかを外から確認する用
+    /// </summary>
+    public bool IsCharacterSelectActive() {
+        return isCharacterSelect;
+    }
+    #endregion
+
+    #region オプション中ブロック
+    /// <summary>
+    /// シーン内の OptionMenu をキャッシュするためのフィールド
+    /// インスペクタからは設定しない
+    /// </summary>
+    private OptionMenu cachedOptionMenu;
+
+    /// <summary>
+    /// シーン内から OptionMenu を自動で探してくるゲッター
+    /// 初回だけ FindObjectOfType し、その後はキャッシュを使う
+    /// </summary>
+    private OptionMenu Option {
+        get {
+            if (cachedOptionMenu == null) {
+                cachedOptionMenu = FindObjectOfType<OptionMenu>();
+            }
+            return cachedOptionMenu;
+        }
+    }
+
+    /// <summary>
+    /// オプションメニューが開いているため
+    /// ガチャを開けない状態かどうか
+    /// </summary>
+    public bool IsBlockedByOptionMenu() {
+        // OptionMenu が無いならブロックしない
+        if (Option == null) return false;
+
+        // OptionMenu 側でメニューが開いているならブロック
+        return Option.isOpen;
+    }
+    #endregion
+
+
 
 }
