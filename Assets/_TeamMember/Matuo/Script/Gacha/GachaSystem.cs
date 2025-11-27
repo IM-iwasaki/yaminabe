@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// ガチャシステム
+/// 単発ガチャ・10連ガチャの抽選処理と結果表示を担当
 /// </summary>
 public class GachaSystem : MonoBehaviour {
-
-    private readonly string SKIN_TAG = "Skin";
+    private readonly string SKIN_TAG = "Skin"; // プレイヤーのスキンオブジェクトを判定するタグ
 
     [Header("ガチャ設定")]
     public GachaData data;
@@ -19,78 +20,78 @@ public class GachaSystem : MonoBehaviour {
     public int gachaCost = 100;
 
     [Header("カメラ制御")]
-    [SerializeField] private CameraChangeController cameraManager;  // カメラ移動用Controller
+    [SerializeField] private CameraChangeController cameraManager; // 選択画面用カメラ移動
     [SerializeField] private Transform cameraTargetPoint;           // 選択画面カメラ位置
 
     [Header("UI")]
-    [SerializeField] private GameObject gachaUI;                  // 選択画面UI
+    [SerializeField] private GameObject gachaUI;                  // ガチャ選択画面UI
 
     [Header("ガチャアニメーション")]
-    [SerializeField] private Animator gachaAnim;
+    [SerializeField] private Animator gachaAnim;                  // ガチャ演出用アニメーター
 
     private GameObject currentPlayer; // 現在選択中のプレイヤー
+    public bool isOpen;               // ガチャ画面の開閉状態およびカーソル状態
 
-    //  カーソルOnOff
-    private bool isOpen;
-
-    //　ガチャ画面に入っているか
-    private bool isGacha;
-
-
+    // 結果表示用
+    private Canvas resultCanvas;      // 結果UIを配置するCanvas
+    private Camera resultCamera;      // 結果を描画するためのカメラ
 
     private void Awake() {
+        // 最初はガチャUIを非表示
         gachaUI.SetActive(false);
     }
 
-    /// <summary>
-    /// ガチャ結果通知イベント
-    /// </summary>
-    public event Action<GachaItem> OnItemPulled;
+    private void Update() {
+        // ガチャ画面が閉じられた場合、結果Canvasを自動で破棄
+        if (!isOpen && resultCanvas != null) {
+            Destroy(resultCanvas.gameObject);
+            resultCanvas = null;
+        }
+    }
+
+    public event Action<GachaItem> OnItemPulled; // ガチャ抽選結果通知イベント
+
+    #region ガチャ抽選
 
     /// <summary>
     /// 単発ガチャを引く
     /// </summary>
-    /// <returns>貧乏ならnull</returns>
     public GachaItem PullSingle() {
-        // 所持金チェック
         if (PlayerWallet.Instance == null) return null;
-        // 支払い処理
+
+        // 所持金チェックと支払い
         if (!PlayerWallet.Instance.SpendMoney(gachaCost)) {
             Debug.Log("貧乏過ぎて引けないよん");
             return null;
         }
 
-        //  ガチャアニメーション再生
+        // ガチャ演出
         StartCoroutine(PlayGachaAnimation());
 
         // 抽選処理
         var item = PullSingleInternal();
-        if (item != null)
-            PlayerItemManager.Instance.UnlockGachaItem(item);
+        if (item != null) {
+            PlayerItemManager.Instance.UnlockGachaItem(item); // アイテム解放
+            StartCoroutine(ShowSingleResult(item));           // 結果表示
+        }
 
-        OnItemPulled?.Invoke(item);
-
+        OnItemPulled?.Invoke(item); // イベント通知
         return item;
     }
 
     /// <summary>
-    /// 複数回ガチャを引く
+    /// 複数回（10連など）ガチャを引く
     /// </summary>
-    /// <param name="count">引く回数</param>
-    /// <returns>貧乏なら空</returns>
     public List<GachaItem> PullMultiple(int count) {
-
         List<GachaItem> results = new();
         if (PlayerWallet.Instance == null || count <= 0) return results;
 
         int totalCost = gachaCost * count;
-        // 支払い処理
         if (!PlayerWallet.Instance.SpendMoney(totalCost)) {
             Debug.Log("貧乏過ぎて引けないよん");
             return results;
         }
 
-        //  ガチャアニメーション再生
         StartCoroutine(PlayGachaAnimation());
 
         // 指定回数分抽選
@@ -99,14 +100,18 @@ public class GachaSystem : MonoBehaviour {
             if (item != null) {
                 results.Add(item);
                 PlayerItemManager.Instance.UnlockGachaItem(item);
-                OnItemPulled?.Invoke(item);
             }
         }
+
+        // 結果表示
+        StartCoroutine(ShowMultipleResults(results));
+
         return results;
     }
 
     /// <summary>
-    /// ガチャ抽選処理
+    /// ガチャ抽選の内部処理
+    /// レアリティ→アイテムの順でランダム抽選
     /// </summary>
     private GachaItem PullSingleInternal() {
         if (data == null) return null;
@@ -124,11 +129,11 @@ public class GachaSystem : MonoBehaviour {
             }
         }
 
-        // アイテム抽選
+        // レアリティに応じたアイテムプール取得
         var pool = data.GetItemsByRarity(selectedRarity);
         if (pool == null || pool.Count == 0) return null;
 
-        // 各アイテムの rate に応じた抽選
+        // アイテムの個別出現率に応じた抽選
         int totalRate = 0;
         foreach (var item in pool) totalRate += item.rate;
         if (totalRate <= 0) return null;
@@ -138,100 +143,196 @@ public class GachaSystem : MonoBehaviour {
         foreach (var item in pool) {
             currentWeight += item.rate;
             if (randomValue < currentWeight) {
-#if UNITY_EDITOR
-                Debug.Log($"ガチャ結果: {item.itemName} ({selectedRarity})");
-#endif
                 return item;
             }
         }
 
-        // 万一の保険
         return null;
     }
 
-    #region キャラクター選択時のUI表示非表示、カメラの挙動
-    /// <summary>
-    /// キャラクター選択モードを開始
-    /// </summary>
-    /// <param name="player">操作中のプレイヤー</param>
-    public void StartGachaSelect(GameObject player) {
+    #endregion
 
+    #region 結果表示
+
+    /// <summary>
+    /// 単発ガチャ結果のRawImage表示
+    /// </summary>
+    private IEnumerator ShowSingleResult(GachaItem item) {
+        if (item == null || item.resultPrefab == null) yield break;
+
+        float iconSize = 256f;
+
+        // Canvas生成
+        if (resultCanvas == null) {
+            GameObject canvasObj = new GameObject("ResultCanvas");
+            resultCanvas = canvasObj.AddComponent<Canvas>();
+            resultCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasObj.AddComponent<CanvasScaler>();
+            canvasObj.AddComponent<GraphicRaycaster>();
+        }
+
+        // RawImage生成
+        GameObject iconObj = new GameObject(item.itemName);
+        iconObj.transform.SetParent(resultCanvas.transform, false);
+        RawImage img = iconObj.AddComponent<RawImage>();
+        RectTransform rt = iconObj.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(iconSize, iconSize);
+        rt.anchoredPosition = Vector2.zero;
+
+        // プレハブを一時生成してRenderTextureに描画
+        GameObject temp = Instantiate(item.resultPrefab, Vector3.zero, Quaternion.identity);
+        temp.SetActive(true);
+
+        RenderTexture rtTex = new RenderTexture((int)iconSize, (int)iconSize, 16);
+        if (resultCamera == null) {
+            GameObject camObj = new GameObject("ResultCamera");
+            resultCamera = camObj.AddComponent<Camera>();
+            resultCamera.clearFlags = CameraClearFlags.SolidColor;
+            resultCamera.backgroundColor = Color.black;
+            resultCamera.enabled = false;
+        }
+        resultCamera.targetTexture = rtTex;
+
+        // カメラ配置（正面から）
+        Vector3 offset = temp.transform.forward * 2f + Vector3.up * 1f;
+        resultCamera.transform.position = temp.transform.position + offset;
+        resultCamera.transform.LookAt(temp.transform.position + Vector3.up * 1f);
+
+        resultCamera.Render();
+
+        img.texture = rtTex;
+        resultCamera.targetTexture = null;
+
+        Destroy(temp);
+
+        yield return null;
+    }
+
+    /// <summary>
+    /// 10連など複数ガチャ結果のGridLayout表示
+    /// </summary>
+    private IEnumerator ShowMultipleResults(List<GachaItem> items) {
+        if (items == null || items.Count == 0) yield break;
+
+        float iconSize = 256f;
+        float spacing = 10f;
+
+        // Canvas生成
+        if (resultCanvas == null) {
+            GameObject canvasObj = new GameObject("ResultCanvas");
+            resultCanvas = canvasObj.AddComponent<Canvas>();
+            resultCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasObj.AddComponent<CanvasScaler>();
+            canvasObj.AddComponent<GraphicRaycaster>();
+        }
+
+        // GridParent生成
+        GameObject gridParent = new GameObject("GachaResultGrid");
+        gridParent.transform.SetParent(resultCanvas.transform, false);
+        RectTransform rt = gridParent.AddComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(5 * iconSize + 4 * spacing, 2 * iconSize + spacing);
+        rt.anchoredPosition = Vector2.zero;
+
+        GridLayoutGroup grid = gridParent.AddComponent<GridLayoutGroup>();
+        grid.cellSize = new Vector2(iconSize, iconSize);
+        grid.spacing = new Vector2(spacing, spacing);
+        grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        grid.constraintCount = 5;
+
+        // カメラ生成
+        if (resultCamera == null) {
+            GameObject camObj = new GameObject("ResultCamera");
+            resultCamera = camObj.AddComponent<Camera>();
+            resultCamera.clearFlags = CameraClearFlags.SolidColor;
+            resultCamera.backgroundColor = Color.black;
+            resultCamera.enabled = false;
+        }
+
+        // 各アイテムをRawImageに描画
+        foreach (var item in items) {
+            if (item.resultPrefab == null) continue;
+
+            GameObject iconObj = new GameObject(item.itemName);
+            iconObj.transform.SetParent(gridParent.transform, false);
+            RawImage img = iconObj.AddComponent<RawImage>();
+
+            GameObject temp = Instantiate(item.resultPrefab, Vector3.zero, Quaternion.identity);
+            temp.SetActive(true);
+
+            RenderTexture rtTex = new RenderTexture((int)iconSize, (int)iconSize, 16);
+            resultCamera.targetTexture = rtTex;
+
+            Vector3 offset = temp.transform.forward * 2f + Vector3.up * 1f;
+            resultCamera.transform.position = temp.transform.position + offset;
+            resultCamera.transform.LookAt(temp.transform.position + Vector3.up * 1f);
+
+            resultCamera.Render();
+
+            img.texture = rtTex;
+            resultCamera.targetTexture = null;
+
+            Destroy(temp);
+
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    #endregion
+
+    #region キャラクター選択モード
+
+    /// <summary>
+    /// ガチャ選択画面開始
+    /// </summary>
+    public void StartGachaSelect(GameObject player) {
         if (currentPlayer != null) return;
         currentPlayer = player;
 
-        // プレイヤー操作停止
-        //  後で入れ込む
+        if (gachaUI != null) gachaUI.SetActive(false);
 
-        // UIを非表示（移動開始前）
-        if (gachaUI != null)
-            gachaUI.SetActive(false);
-
-        // カメラ移動開始
         if (cameraManager != null && cameraTargetPoint != null) {
-            cameraManager.MoveCamera(
-                player,
-                cameraTargetPoint.position,
-                cameraTargetPoint.rotation
-            );
+            cameraManager.MoveCamera(player, cameraTargetPoint.position, cameraTargetPoint.rotation);
         }
 
-        //  プレイヤーの見た目非表示
-        Transform parent = currentPlayer.transform;
-        Transform skin = FindChildWithTag(parent, SKIN_TAG);
-        skin.gameObject.SetActive(false);
+        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        if (skin != null) skin.gameObject.SetActive(false);
 
-        //  カーソルOn
+        isOpen = true;
         ChangeCursorView();
 
-        // 移動完了後にUIを表示する場合は、
-        // CameraChangeControllerのコルーチンが終わったタイミングで呼ぶか
-        // ここで遅延コルーチンを追加しても良い
         if (gachaUI != null)
             StartCoroutine(ShowUIAfterDelay(cameraManager));
     }
 
     /// <summary>
-    /// キャラクター選択モードを終了
+    /// ガチャ選択画面終了
     /// </summary>
     public void EndGachaSelect() {
-
         if (currentPlayer == null) return;
 
-        //  アニメーションをOffにする
         OffGachaAnim();
 
-        // UIを非表示（戻る操作開始時）
         if (gachaUI != null) {
             gachaUI.SetActive(false);
-            //プレイヤーUIの表示を戻す
             if (currentPlayer.GetComponent<NetworkIdentity>().isLocalPlayer) {
                 var playerUI = currentPlayer.GetComponent<CharacterBase>().UI;
                 playerUI.gameObject.SetActive(true);
             }
-
         }
 
+        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        if (skin != null) skin.gameObject.SetActive(true);
 
-        //  プレイヤーの見た目非表示
-        Transform parent = currentPlayer.transform;
-        Transform skin = FindChildWithTag(parent, SKIN_TAG);
-        skin.gameObject.SetActive(true);
+        if (cameraManager != null) cameraManager.ReturnCamera();
 
-        // カメラを戻す
-        if (cameraManager != null)
-            cameraManager.ReturnCamera();
-
-        //  カーソルOff
+        isOpen = false;
         ChangeCursorView();
 
         currentPlayer = null;
     }
 
-    /// <summary>
-    /// 遅延してUIを表示（カメラ移動完了後にUIを表示する補助）
-    /// </summary>
-    private System.Collections.IEnumerator ShowUIAfterDelay(CameraChangeController camController) {
-        // CameraChangeController の移動時間と同じだけ待つ
+    private IEnumerator ShowUIAfterDelay(CameraChangeController camController) {
         float duration = camController != null ? camController.moveDuration : 1.5f;
         yield return new WaitForSeconds(duration);
 
@@ -239,60 +340,30 @@ public class GachaSystem : MonoBehaviour {
             gachaUI.SetActive(true);
     }
 
-    /// <summary>
-    /// 指定した親以下から特定のタグを持つ全ての子オブジェクトをリストで取得
-    /// </summary>
-    /// <param name="parent"></param>
-    /// <param name="tag"></param>
-    /// <returns></returns>
     private Transform FindChildWithTag(Transform parent, string tag) {
-
-        // まず直接の子を確認
         foreach (Transform child in parent) {
-            if (child.CompareTag(tag))
-                return child;
+            if (child.CompareTag(tag)) return child;
 
-            // 子の中も再帰的に探索
             Transform found = FindChildWithTag(child, tag);
-            if (found != null)
-                return found;
+            if (found != null) return found;
         }
-
-        // 見つからなかった場合
         return null;
     }
+
     #endregion
 
-    #region カーソルONOFF
+    #region カーソル制御
 
-    /// <summary>
-    /// カーソルをOnOffする
-    /// </summary>
     private void ChangeCursorView() {
-        isOpen = !isOpen;
-
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
     }
+
     #endregion
 
-
- 
-
-
-
-
-
-
     #region ガチャアニメーション
-    private void OnGachaAnim() {
-        //  アニメーション追加
-        gachaAnim.SetBool("Open", true);
-    }
 
-    private void OffGachaAnim() {
-        //  アニメーション追加
-        gachaAnim.SetBool("Open", false);
-    }
+    private void OnGachaAnim() => gachaAnim.SetBool("Open", true);
+    private void OffGachaAnim() => gachaAnim.SetBool("Open", false);
 
     private IEnumerator PlayGachaAnimation() {
         OffGachaAnim();
@@ -301,5 +372,4 @@ public class GachaSystem : MonoBehaviour {
     }
 
     #endregion
-
 }
