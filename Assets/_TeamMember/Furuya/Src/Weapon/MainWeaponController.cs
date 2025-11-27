@@ -65,7 +65,6 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerMagicAttack(direction);
                 break;
         }
-        characterBase.anim.SetBool("Shoot", true);
     }
 
     /// <summary>
@@ -308,7 +307,7 @@ public class MainWeaponController : NetworkBehaviour {
     void Reload() {
         ammo = weaponData.maxAmmo;
         characterBase.isReloading = false;
-    }
+    } 
 }
 
 

@@ -98,7 +98,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
-    public Animator anim = null;
+    public NetworkAnimator networkAnim = null;
     private string currentAnimation;
 
     [SyncVar] public int playerId = -1;  //  サーバーが割り当てるプレイヤー番号（Player1〜6）
@@ -475,7 +475,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [ClientRpc]
     private void RpcDeadAnimation() {
-        anim.SetTrigger("Dead");
+        networkAnim.SetTrigger("Dead");
     }
 
     [Server]
@@ -602,15 +602,48 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 追加:タハラ
     /// アニメーターのレイヤー切り替え
     /// </summary>
     /// <param name="_layerIndex"></param>
     [Command]
     public void ChangeLayerWeight(int _layerIndex) {
         //ベースのレイヤーと最上位レイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for(int i = 1, max = anim.layerCount - 1; i < max; i++) {
-            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
+        for(int i = 1, max = networkAnim.animator.layerCount - 1; i < max; i++) {
+            networkAnim.animator.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
+    }
+
+    /// <summary>
+    /// 追加:タハラ
+    /// アイテムを取ったクライアントの武器の見た目変更
+    /// </summary>
+    /// <param name="_player"></param>
+    /// <param name="_ID"></param>
+    [Command]
+    public void CmdChangeWeapon(int _ID) {
+        RpcChangeWeapon( _ID);
+    }
+
+    /// <summary>
+    /// 追加:タハラ
+    /// 全クライアントに見た目変更を指令
+    /// </summary>
+    /// <param name="_playerID"></param>
+    /// <param name="_ID"></param>
+    [ClientRpc]
+    private void RpcChangeWeapon(int _ID) {
+        Transform handRoot = this.GetComponent<CharacterBase>().networkAnim.animator.GetBoneTransform(HumanBodyBones.RightHand);
+
+        //今現在持っている武器に新たなメッシュを反映
+        GameObject currentWeapon = handRoot.GetChild(3).gameObject;
+        Destroy(currentWeapon);
+
+        //新たに武器を生成
+        WeaponModelList modelList = FindAnyObjectByType<WeaponModelList>();
+        GameObject newWeapon = Instantiate(modelList.weaponModelList[_ID], handRoot);
+        newWeapon.transform.localPosition = Vector3.zero;
+        newWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
     }
 
     #endregion
@@ -808,7 +841,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
             bool isJumping = !IsGrounded;
-            anim.SetBool("Jump", isJumping);
+            networkAnim.animator.SetBool("Jump", isJumping);
         }
     }
     /// <summary>
@@ -983,15 +1016,15 @@ public abstract class CharacterBase : NetworkBehaviour {
         ResetRunAnimation();
         //斜め入力の場合
         if (_x != 0 && _z != 0) {
-            anim.SetBool("RunL", false);
-            anim.SetBool("RunR", false);
+            networkAnim.animator.SetBool("RunL", false);
+            networkAnim.animator.SetBool("RunR", false);
             if (_z > 0) {
                 currentAnimation = "RunF";
             }
             if (_z < 0) {
                 currentAnimation = "RunB";
             }
-            anim.SetBool(currentAnimation, true);
+            networkAnim.animator.SetBool(currentAnimation, true);
             return;
 
         }
@@ -1008,17 +1041,17 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (_x == 0 && _z < 0) {
             currentAnimation = "RunB";
         }
-        anim.SetBool(currentAnimation, true);
+        networkAnim.animator.SetBool(currentAnimation, true);
     }
 
     /// <summary>
     /// 移動アニメーションのリセット
     /// </summary>
     private void ResetRunAnimation() {
-        anim.SetBool("RunF", false);
-        anim.SetBool("RunR", false);
-        anim.SetBool("RunL", false);
-        anim.SetBool("RunB", false);
+        networkAnim.animator.SetBool("RunF", false);
+        networkAnim.animator.SetBool("RunR", false);
+        networkAnim.animator.SetBool("RunL", false);
+        networkAnim.animator.SetBool("RunB", false);
 
         currentAnimation = null;
     }
@@ -1052,7 +1085,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         else if (rigidbody.velocity.y < 0) {
             //追加の重力補正を掛ける
             rigidbody.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
-            anim.SetBool("Jump", false);
+            networkAnim.animator.SetBool("Jump", false);
         }
 
 
@@ -1096,12 +1129,13 @@ public abstract class CharacterBase : NetworkBehaviour {
             //押した瞬間から
             case InputActionPhase.Started:
                 isAttackPressed = true;
+                networkAnim.animator.SetBool("Shoot", true);
                 break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
                 isAttackPressed = false;
                 //アニメーション終了
-                anim.SetBool("Shoot", false);
+                networkAnim.animator.SetBool("Shoot", false);
                 break;
             //押した瞬間
             case InputActionPhase.Performed:
