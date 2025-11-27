@@ -22,7 +22,7 @@ public class WeaponItem : ItemBase {
             Debug.LogWarning("プレイヤーの中にNetworkWeaponが見つかりませんでした");
             return;
         }
-
+        
         //  持っている武器データをプレイヤーに受け渡す
         playerWeaponData.SetWeaponData(weaponData.WeaponName);
         //  キャラクター側のフラグをリセットする
