@@ -133,7 +133,8 @@ public class CustomNetworkManager : NetworkManager {
             HostUI hostUi = FindObjectOfType<HostUI>();
             int stageIndex = Mathf.Abs(hostUi.stageIndex % StageManager.Instance.stages.Count);
             GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
-            CountdownManager.Instance.StartCountdownForAll(3);
+            // 全クライアントに送る
+            CountdownManager.Instance.SendCountdown(3);
         }
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
         foreach (var conn in serverManager.connectPlayer) {

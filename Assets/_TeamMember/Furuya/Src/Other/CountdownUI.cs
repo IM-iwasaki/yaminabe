@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +19,16 @@ public class CountdownUI : MonoBehaviour {
         Instance = this;
         DontDestroyOnLoad(gameObject);
         uiRoot.SetActive(false);
+    }
+
+    void Start() {
+        // メッセージ受信登録（クライアント）
+        NetworkClient.RegisterHandler<CountdownMessage>(OnCountdownMessage);
+    }
+
+    void OnCountdownMessage(CountdownMessage msg) {
+        Debug.Log("[Client] Countdown received: " + msg.seconds);
+        StartCoroutine(CountdownCoroutine(msg.seconds));
     }
 
     public IEnumerator CountdownCoroutine(int seconds) {
