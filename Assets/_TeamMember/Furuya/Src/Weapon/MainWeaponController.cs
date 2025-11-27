@@ -17,6 +17,12 @@ public class MainWeaponController : NetworkBehaviour {
     private CharacterBase characterBase; // 名前を取得するため
     private PlayerLocalUIController playerUI;
 
+    //弾薬やMPを消費するか判別する列挙体
+    public enum ConsumptionType {
+        Consume = 0,
+        NotConsumed,
+    }
+
     public void Awake() {
         characterBase = GetComponent<CharacterBase>();
         playerUI = characterBase.GetPlayerLocalUI();
@@ -50,7 +56,7 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerMeleeAttack();
                 break;
             case WeaponType.Gun:
-                //使用武器が銃でかつ弾がなかったら通過不可。かわりにリロードを要求する。
+                //弾がなかったら通過不可。かわりにリロードを要求する。
                 if (ammo == 0) {
                     ReloadRequest();
                     return;
@@ -69,7 +75,7 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 追加攻撃用(こちらの処理は弾やMPなどを消費しません。)
+    /// 追加攻撃用(こちらは攻撃間隔を無視して攻撃を呼び出せます)
     /// </summary>
     /// <param name="direction"></param>
     [Command]
@@ -81,6 +87,14 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerMeleeAttack();
                 break;
             case WeaponType.Gun:
+                //弾がなかったら通過不可。かわりにリロードを要求する。
+                if (ammo == 0) {
+                    ReloadRequest();
+                    return;
+                } 
+                //その他リロード中は射撃できなくする。
+                else if (characterBase.isReloading) return;
+
                 ServerGunAttack(direction);
                 break;
             case WeaponType.Magic:
@@ -181,7 +195,7 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not GunData gunData || gunData.projectilePrefab == null)
             return;
 
-        //  追加：キラ   弾薬が残っていれば銃の弾薬を消費して通過
+        //  追加：キラ  弾薬が必要な場合、弾薬が残っていれば銃の弾薬を消費して通過
         if (ammo > 0) ammo--;
         else return;
 
@@ -227,6 +241,8 @@ public class MainWeaponController : NetworkBehaviour {
     void ServerMagicAttack(Vector3 direction) {
         if (weaponData is not MainMagicData magicData || magicData.projectilePrefab == null)
             return;
+
+        //TODO:ここにMPの消費処理を書く。
 
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(
             magicData.projectilePrefab.name,
