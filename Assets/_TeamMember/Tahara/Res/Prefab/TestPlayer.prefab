@@ -451,7 +451,7 @@ MonoBehaviour:
   localUI: {fileID: 8966501722716295590}
   CameraMenu: {fileID: 7834819685942672659}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
-  anim: {fileID: 321994967542534653}
+  netwowkAnim: {fileID: 6333738302978058651}
   weaponController_main: {fileID: 0}
   weaponController_sub: {fileID: 0}
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
@@ -1276,6 +1276,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 814855317494604763, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
+      propertyPath: _assetId
+      value: 3733754541
+      objectReference: {fileID: 0}
     - target: {fileID: 955283497829924664, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -1326,7 +1330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3304873767501614563, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3440791790003186689, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
       propertyPath: m_Layer
@@ -1904,7 +1908,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 814855317494604763, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
     m_RemovedGameObjects:
     - {fileID: 7494932528641429630, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
     - {fileID: 2223597922339706440, guid: a2836f0676e46dc4685632e429aadbc8, type: 3}
