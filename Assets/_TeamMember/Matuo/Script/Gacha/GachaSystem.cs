@@ -32,7 +32,7 @@ public class GachaSystem : MonoBehaviour {
     private GameObject currentPlayer; // 現在選択中のプレイヤー
     public bool isOpen;               // ガチャ画面の開閉状態およびカーソル状態
 
-  
+
     /// <summary>
     /// ガチャ画面中かどうかのフラグ
     /// </summary>
@@ -67,10 +67,7 @@ public class GachaSystem : MonoBehaviour {
         if (PlayerWallet.Instance == null) return null;
 
         // 所持金チェックと支払い
-        if (!PlayerWallet.Instance.SpendMoney(gachaCost)) {
-            Debug.Log("貧乏過ぎて引けないよん");
-            return null;
-        }
+        if (!PlayerWallet.Instance.SpendMoney(gachaCost)) return null;
 
         // ガチャ演出
         StartCoroutine(PlayGachaAnimation());
@@ -94,10 +91,8 @@ public class GachaSystem : MonoBehaviour {
         if (PlayerWallet.Instance == null || count <= 0) return results;
 
         int totalCost = gachaCost * count;
-        if (!PlayerWallet.Instance.SpendMoney(totalCost)) {
-            Debug.Log("貧乏過ぎて引けないよん");
+        if (!PlayerWallet.Instance.SpendMoney(totalCost))
             return results;
-        }
 
         StartCoroutine(PlayGachaAnimation());
 
