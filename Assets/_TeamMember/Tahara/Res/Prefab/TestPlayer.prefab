@@ -506,6 +506,7 @@ MonoBehaviour:
   - {fileID: 547743339750226419}
   - {fileID: 4180901003423180416}
   passive_State: {fileID: 2354609807238841131}
+  passiveChains: {fileID: 2981553596113782189}
   player: {fileID: 5429557689299820045}
   interactUI: {fileID: 3135024973118951676}
 --- !u!114 &6333738302978058651
@@ -1124,6 +1125,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2981553596113782189 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7863916647388735408, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 4918675937597612573}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3135024973118951676 stripped
