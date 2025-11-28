@@ -724,18 +724,20 @@ public abstract class CharacterBase : NetworkBehaviour {
                 // フラグを立てる
                 isCanPickup = true;
                 useCollider = _collider;
-
+                localUI.OnChangeInteractUI();
                 break;
             case "SelectCharacterObject":
                 // フラグを立てる
                 isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "SelectCharacterObject";
+                localUI.OnChangeInteractUI();
                 break;
             case "Gacha":
                 isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "Gacha";
+                localUI.OnChangeInteractUI();
                 break;
             case "RedTeam":
                 CmdJoinTeam(netIdentity, TeamColor.Red);
@@ -761,17 +763,20 @@ public abstract class CharacterBase : NetworkBehaviour {
                 // フラグを下ろす
                 isCanPickup = false;
                 useCollider = null;
+                localUI.OffChangeInteractUI();
                 break;
             case "SelectCharacterObject":
                 // フラグを下ろす
                 isCanInteruct = false;
                 useCollider = null;
                 useTag = null;
+                localUI.OffChangeInteractUI();
                 break;
             case "Gacha":
                 isCanInteruct = false;
                 useCollider = null;
                 useTag = null;
+                localUI.OffChangeInteractUI();
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
@@ -793,6 +798,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // フラグを下ろす
         isCanPickup = false;
         useCollider = null;
+        localUI.OffChangeInteractUI();
     }
 
     /// <summary>
