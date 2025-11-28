@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Mirror;
-using Mirror.BouncyCastle.Asn1.Pkcs;
 using System.Collections;
 
 /// <summary>
@@ -11,6 +10,8 @@ public class MainWeaponController : NetworkBehaviour {
     public Transform firePoint;
     private float lastAttackTime;
     [SyncVar, System.NonSerialized] public int ammo;
+
+    private GameObject activeChargeFx;
 
     private CharacterEnum.CharaterType charaterType;
 
@@ -77,12 +78,18 @@ public class MainWeaponController : NetworkBehaviour {
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                 break;
             case WeaponType.Magic:
-                ServerMagicAttack(direction);
+                if (weaponData is MainMagicData magicdata)
+                    if (magicdata.chargeTime > 0)
+                        ServerStartMagicCast(direction);
+                    else
+                        ServerMagicAttack(direction);
                 break;
         }
         //アニメーション開始
         characterBase.anim.SetBool("Shoot", true);
     }
+
+
 
     /// <summary>
     /// 追加攻撃用(こちらは攻撃間隔を無視して攻撃を呼び出せます)
@@ -324,6 +331,44 @@ public class MainWeaponController : NetworkBehaviour {
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
     }
 
+    /// <summary>
+    /// 詠唱開始
+    /// </summary>
+    /// <param name="direction"></param>
+    [Server]
+    public void ServerStartMagicCast(Vector3 direction) {
+        if (weaponData is not MainMagicData magicData) return;
+
+        //クライアント側にチャージエフェクトを出させる
+        RpcPlayChargeEffect(firePoint.position, magicData.chargeEffectType);
+        StartCoroutine(CastAfterDelay(direction, magicData));
+    }
+
+    [Server]
+    private IEnumerator CastAfterDelay(Vector3 direction, MainMagicData magicData) {
+        yield return new WaitForSeconds(magicData.chargeTime);
+
+        RpcStopChargeEffect();
+        ServerMagicAttack(direction);
+    }
+
+    // --- チャージエフェクト再生 ---
+    [ClientRpc]
+    void RpcPlayChargeEffect(Vector3 pos, EffectType type) {
+        GameObject prefab = EffectPoolRegistry.Instance.GetChargeEffect(type);
+        if (prefab != null) {
+            activeChargeFx = EffectPool.Instance.GetFromPool(prefab, pos, transform.rotation);
+        }
+    }
+
+    // --- チャージエフェクト停止 ---
+    [ClientRpc]
+    void RpcStopChargeEffect() {
+        if (activeChargeFx != null) {
+            EffectPool.Instance.ReturnToPool(activeChargeFx, 1.5f);
+            activeChargeFx = null;
+        }
+    }
     // --- クライアントでヒットエフェクト再生 ---
     [ClientRpc]
     void RpcSpawnHitEffect(Vector3 pos, EffectType type) {

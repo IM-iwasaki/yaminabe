@@ -12,8 +12,9 @@ public class MainMagicData : WeaponData {
     public float projectileSpeed;
 
     [Header("Magic Settings")]
-    public ParticleSystem chargeEffect;
-    public float chargeTime = 1.0f;
+    public int MP;
+    public EffectType chargeEffectType;
+    public float chargeTime = 0f;
 
     [Header("Projectile Settings")]
     public ProjectileType magicType = ProjectileType.Linear;
