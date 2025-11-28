@@ -79,10 +79,10 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Magic:
                 if (weaponData is MainMagicData magicdata)
-                    if (magicdata.chargeTime > 0)
+                    if (magicdata.chargeTime > 0) {
                         ServerStartMagicCast(direction);
-                    else
-                        ServerMagicAttack(direction);
+                    }
+                    else ServerMagicAttack(direction);
                 break;
         }
         //アニメーション開始
@@ -304,6 +304,9 @@ public class MainWeaponController : NetworkBehaviour {
             return;
 
         //TODO:ここにMPの消費処理を書く。
+        if (characterBase.MP < magicData.MPCost) return;
+
+        characterBase.MP -= magicData.MPCost;
 
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(
             magicData.projectilePrefab.name,
