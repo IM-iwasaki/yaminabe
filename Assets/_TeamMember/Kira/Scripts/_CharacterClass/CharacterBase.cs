@@ -199,10 +199,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     public override void OnStartClient() {
         if (isLocalPlayer) {
             base.OnStartClient();
-            GameObject GameUIRoot = GameObject.Find("GameUI");
-            var playerUI = Instantiate(UI, GameUIRoot.transform);
-            UI = playerUI.GetComponent<PlayerUIController>();
-            UI.Initialize(HP);
+            //GameObject GameUIRoot = GameObject.Find("GameUI");
+            //var playerUI = Instantiate(UI, GameUIRoot.transform);
+            //UI = playerUI.GetComponent<PlayerUIController>();
+            //UI.Initialize(HP);
         }
 
         // ここを追加：クライアント側で TeamGlowManager に登録
