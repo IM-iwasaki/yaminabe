@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b57f1631f241f3c48a205884bc2b4846, type: 3}
+  m_Name: Gunman
+  m_EditorClassIdentifier: 
+  baseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
+  displayName: "\u30AC\u30F3\u30DE\u30F3"
+  skills:
+  - {fileID: 11400000, guid: b7fb170811577bd4794e5a9ed9e30d8a, type: 2}
+  passives:
+  - {fileID: 11400000, guid: f6a40f75a3c202b4bae07a7eebf11c80, type: 2}
+  MainWeapon: {fileID: 11400000, guid: 81dc79bc3dd45e8478435cd0c00aa928, type: 2}
+  SubWeapon: {fileID: 11400000, guid: 540c6cc0a970ca846a8652f19432467f, type: 2}
+  chatacterType: 2
+  maxHPCorrection: 0
+  speedCorrection: 2
+  attack: 0
+  maxMP: 10
