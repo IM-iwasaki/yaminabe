@@ -22,6 +22,12 @@ public class GeneralCharacter : CharacterBase {
         base.Awake();
         StatusInport(inputStatus);
         Initalize();
+
+        InvokeRepeating(nameof(MPRegeneration), 0.0f,0.5f);
+    }
+
+    void MPRegeneration() {
+        if (MP < maxMP) MP++;
     }
 
     public override void OnStartClient() {
@@ -64,7 +70,7 @@ public class GeneralCharacter : CharacterBase {
         //HPやフラグ関連などの基礎的な初期化
         base.Initalize();
         //MaxMPが0でなければ最大値で初期化
-        if (maxMP != 0) MP = maxMP; 
+        //if (maxMP != 0) MP = maxMP; 
         //弾倉が0でなければ最大値で初期化
         if (weaponController_main.weaponData.maxAmmo != 0)
             weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
@@ -84,6 +90,8 @@ public class GeneralCharacter : CharacterBase {
         runtimeStatus = _inport;
         maxHP = runtimeStatus.maxHP;
         HP = maxHP;
+        maxMP = runtimeStatus.maxMP;
+        MP = maxMP;
         attack = runtimeStatus.attack;
         moveSpeed = runtimeStatus.moveSpeed;
         equippedSkills = runtimeStatus.skills;

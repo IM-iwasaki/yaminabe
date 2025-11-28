@@ -97,6 +97,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             case WeaponType.Magic:
                 break;
         }
+        mpText.text = player.MP.ToString();
 
         //サブウェポンの現在所持数を更新
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();

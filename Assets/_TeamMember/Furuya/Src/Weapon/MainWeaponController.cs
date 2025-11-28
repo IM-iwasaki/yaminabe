@@ -77,6 +77,10 @@ public class MainWeaponController : NetworkBehaviour {
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                 break;
             case WeaponType.Magic:
+                //
+                if (characterBase.MP < 5) return;
+
+                characterBase.MP -= 5;
                 ServerMagicAttack(direction);
                 break;
         }

@@ -25,7 +25,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //移動速度
     [SyncVar] public int moveSpeed = 5;
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
-    public int MP { get; protected set; }
+    [SyncVar (hook = nameof(ChangeMP))]public int MP;
     public int maxMP { get; protected set; }
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
@@ -338,6 +338,15 @@ public abstract class CharacterBase : NetworkBehaviour {
         else {
             #if UNITY_EDITOR
             Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
+            #endif
+        }
+    }
+    public void ChangeMP(int _, int _newValue) {
+        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
+        if (localUI != null) localUI.ChangeMPUI(maxMP, _newValue);
+        else {
+            #if UNITY_EDITOR
+            Debug.LogWarning("UIが存在しないため、MP更新処理をスキップしました。");
             #endif
         }
     }
