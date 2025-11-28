@@ -30157,6 +30157,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: vfx_Rain_02
       objectReference: {fileID: 0}
+    - target: {fileID: 8330877085987332212, guid: 6c064513aa7cae142b65066943c8fdbd, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8377680040844940510, guid: 6c064513aa7cae142b65066943c8fdbd, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -53845,7 +53849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8153473706748213704, guid: 86600c3444298794d8c3ef6312f4c8d5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8153473706748213704, guid: 86600c3444298794d8c3ef6312f4c8d5, type: 3}
       propertyPath: m_LocalPosition.z
