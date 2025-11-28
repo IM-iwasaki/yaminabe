@@ -6327,6 +6327,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5734441864367687079, guid: dea1774eb4bc0ac459e0311cc488e74c, type: 3}
+      propertyPath: gachaCost
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 6263295262480811746, guid: dea1774eb4bc0ac459e0311cc488e74c, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1
@@ -6340,7 +6344,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5835149676159758116, guid: dea1774eb4bc0ac459e0311cc488e74c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 6556814808744638276, guid: dea1774eb4bc0ac459e0311cc488e74c, type: 3}
       insertIndex: -1
