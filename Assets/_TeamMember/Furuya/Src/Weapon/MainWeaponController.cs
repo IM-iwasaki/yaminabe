@@ -11,7 +11,7 @@ public class MainWeaponController : NetworkBehaviour {
     public Transform firePoint;
     private float lastAttackTime;
     [SyncVar, System.NonSerialized] public int ammo;
-    
+
     private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
@@ -22,14 +22,22 @@ public class MainWeaponController : NetworkBehaviour {
         Consume = 0,
         NotConsumed,
     }
-
-    public void Awake() {
+    private void Awake() {
+        base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
         playerUI = characterBase.GetPlayerLocalUI();
-        // 追加：キラ   弾薬数を最大にする。
-        weaponData.AmmoReset();
-        ammo = weaponData.maxAmmo;
     }
+
+    public override void OnStartLocalPlayer() {
+       
+        // 追加：キラ   弾薬数を最大にする。
+        if (weaponData.type == WeaponType.Gun) {
+            weaponData.AmmoReset();
+            ammo = weaponData.maxAmmo;
+        }
+    }
+
+
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
         charaterType = type;
@@ -61,7 +69,7 @@ public class MainWeaponController : NetworkBehaviour {
                 if (ammo == 0) {
                     ReloadRequest();
                     return;
-                } 
+                }
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.isReloading) return;
 
@@ -93,7 +101,7 @@ public class MainWeaponController : NetworkBehaviour {
                 if (ammo == 0) {
                     ReloadRequest();
                     return;
-                } 
+                }
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.isReloading) return;
 
@@ -115,11 +123,29 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 初期化のタイミングの武器セット
+    /// </summary>
+    /// <param name="name"></param>
+    public void SetWeaponDataInit(string name) {
+        var data = WeaponDataRegistry.GetWeapon(name);
+
+        if (!CanUseWeapon(charaterType, data.type)) {
+            Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
+            return;
+        }
+
+        weaponData = data;
+        ammo = weaponData.ammo;
+        playerUI.LocalUIChanged();
+        Debug.LogWarning($"'{data.weaponName}' を使用します");
+    }
+
+    /// <summary>
     /// 武器データセット
     /// </summary>
     /// <param name="name"></param>
     [Command]
-    public void SetWeaponData(string name) {
+    public void CmdSetWeaponData(string name) {
         var data = WeaponDataRegistry.GetWeapon(name);
 
         if (!CanUseWeapon(charaterType, data.type)) {
@@ -176,7 +202,7 @@ public class MainWeaponController : NetworkBehaviour {
 
             // 追加：キラ 射程の30％以内なら攻撃有効範囲を広げる
             if (dist < meleeData.range * 0.3f) {
-                    allowedAngle *= 1.5f;  // 今回の処理では判定が50％甘くなる
+                allowedAngle *= 1.5f;  // 今回の処理では判定が50％甘くなる
             }
             // 追加：キラ 射程の20％以内なら強制的に当たった扱いにする
             // 変更：キラ meleeData.meleeAngle→allowedAngle
@@ -185,10 +211,10 @@ public class MainWeaponController : NetworkBehaviour {
                 RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
                 AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
             }
-            
+
         }
 #if UNITY_EDITOR
-                MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
+        MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
     }
 
@@ -352,7 +378,7 @@ public class MainWeaponController : NetworkBehaviour {
     void Reload() {
         ammo = weaponData.maxAmmo;
         characterBase.isReloading = false;
-    } 
+    }
 }
 
 

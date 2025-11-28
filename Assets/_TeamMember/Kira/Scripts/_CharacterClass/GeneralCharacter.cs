@@ -12,7 +12,7 @@ public class GeneralCharacter : CharacterBase {
     [Header("インポートするステータス")]
     [SerializeField]GeneralCharacterStatus inputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
-    private GeneralCharacterStatus runtimeStatus;
+    GeneralCharacterStatus runtimeStatus;
     public SkillBase[] equippedSkills{ get; private set; }
     public PassiveBase[] equippedPassives{ get; private set; }
 
@@ -108,7 +108,7 @@ public class GeneralCharacter : CharacterBase {
         //初期武器の設定
         var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
         var subWeapon = runtimeStatus.SubWeapon.WeaponName;
-        weaponController_main.SetWeaponData(mainWeapon);
+        weaponController_main.SetWeaponDataInit(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
     }
 
