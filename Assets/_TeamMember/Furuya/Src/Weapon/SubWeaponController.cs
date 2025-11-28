@@ -169,6 +169,6 @@ public class SubWeaponController : NetworkBehaviour {
 
     [ClientRpc]
     private void ThrowAnimation() {
-        characterBase.netwowkAnim.SetTrigger("Throw");
+        characterBase.anim.SetTrigger("Throw");
     }
 }
