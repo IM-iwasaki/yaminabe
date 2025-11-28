@@ -53,15 +53,17 @@ public class PlayerWallet : MonoBehaviour {
     /// <param name="amount">x•¥‚¤‹àŠz</param>
     /// <returns>¬Œ÷‚µ‚½‚çtrue</returns>
     public bool SpendMoney(int amount) {
-        // ‹àŠz‚ª–³Œø‚Èê‡(ƒ}ƒCƒiƒX‚È‚Ç)
         if (amount <= 0) return false;
-        // ‚¨‹à‚ª‘«‚è‚È‚¢ê‡
         if (currentMoney < amount) return false;
 
         currentMoney -= amount;
+        if (currentMoney < 0) currentMoney = 0;
+
         OnMoneyChanged?.Invoke(currentMoney);
-        SaveMoney();
-        Debug.Log($"{amount} ‰~x•¥‚Á‚½, c‚: {currentMoney}");
+
+        // PlayerItemManager ‚É•Û‘¶‚ğ”C‚¹‚é
+        PlayerItemManager.Instance?.UpdateMoney(currentMoney);
+
         return true;
     }
 
@@ -89,7 +91,7 @@ public class PlayerWallet : MonoBehaviour {
     /// </summary>
     private void LoadMoney() {
         var data = PlayerSaveData.Load();
-        currentMoney = data.currentMoney > 0 ? data.currentMoney : startMoney;
+        currentMoney = data.currentMoney;
         OnMoneyChanged?.Invoke(currentMoney);
     }
 }
