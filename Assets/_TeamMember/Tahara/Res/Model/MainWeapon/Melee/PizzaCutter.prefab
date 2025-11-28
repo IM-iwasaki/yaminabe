@@ -1065,6 +1065,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2786028181340473369}
   - component: {fileID: 6469216977223367784}
+  - component: {fileID: -923487908132794059}
+  - component: {fileID: -3469848046327478814}
   m_Layer: 7
   m_Name: PizzaCutter
   m_TagString: Untagged
@@ -1115,6 +1117,48 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!135 &-923487908132794059
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5023171486721049170}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-3469848046327478814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5023171486721049170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed0b112ba535525468e07c6828516b66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  itemName: 
+  description: 
+  icon: {fileID: 0}
+  canDestroy: 1
+  weaponType: 0
+  weaponData: {fileID: 0}
 --- !u!1 &5384930902518121464
 GameObject:
   m_ObjectHideFlags: 0
