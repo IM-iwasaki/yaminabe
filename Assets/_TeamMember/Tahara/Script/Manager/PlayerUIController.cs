@@ -9,25 +9,7 @@ using UnityEngine.UI;
 /// 各ローカルプレイヤーに複製してもらうので別に子オブジェクトとかにしなくていい
 /// </summary>
 public class PlayerUIController : NetworkBehaviour {
-    /// <summary>
-    /// インスタンス
-    /// </summary>
-    public static PlayerUIController instance = null;
-    /// <summary>
-    /// UIの親オブジェクト(主に戦闘用か非戦闘用かを管理)
-    /// </summary>
-    [SerializeField]
-    private List<Transform> UIRoots = null;
-    /// <summary>
-    /// 親オブジェクトのタイプ
-    /// </summary>
-    public enum UIRootType {
-        Invalid = -1,
-        BattleUIRoot,
-        NonBattleUIRoot,
-
-        UIMax,
-    }
+   
     #region 戦闘用UI
     /// <summary>
     /// バー補正用定数
@@ -61,13 +43,8 @@ public class PlayerUIController : NetworkBehaviour {
     private GameObject teammateUI = null;
 
     #endregion
-    [Server]
     private void Awake() {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(gameObject);
-
+        
         hpBar.interactable = false;
         magazineBar.interactable = false;
         mpBar.interactable = false;
@@ -139,40 +116,6 @@ public class PlayerUIController : NetworkBehaviour {
             mpBarImage.gameObject.SetActive(true);
     }
     #endregion
-
-    /// <summary>
-    /// 特定の"UI群"を表示する
-    /// </summary>
-    /// <param name="_index"></param>
-    public void ShowUIRoot(UIRootType _index) {
-        UIRoots[(int)_index].gameObject.SetActive(true);
-    }
-    /// <summary>
-    /// 特定のUI群を非表示にする
-    /// </summary>
-    /// <param name="_index"></param>
-    public void HideUIRoot(UIRootType _index) {
-        UIRoots[(int)_index].gameObject.SetActive(false);
-    }
-
-    /// <summary>
-    /// 特定の"UI"を表示させる
-    /// </summary>
-    /// <param name="_uiName"></param>
-    public void ShowUI(GameObject _UI) {
-        _UI.SetActive(true);
-    }
-
-    /// <summary>
-    /// 特定の"UI"を非表示させる
-    /// </summary>
-    /// <param name="_uiName"></param>
-    public void HideUI(GameObject _UI) {
-        _UI.SetActive(false);
-    }
-
-
-
     /// <summary>
     /// チームメイトが誰なのかを表示するUIを作り出す
     /// </summary>

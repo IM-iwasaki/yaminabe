@@ -58,7 +58,6 @@ public class ServerManager : NetworkBehaviour {
                         notInTeamPlayer.Add(resetTeam.teamPlayerList[i]);
                     }
                     resetTeam.teamPlayerList.Clear();
-                    PlayerUIController.instance.ResetTeammateUI();
                 }
             }
             teams = new List<TeamData>(TEAMMATE_MAX);
