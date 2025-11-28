@@ -25,15 +25,15 @@ public class Passive_Chaser : PassiveBase {
 
         //攻撃した瞬間にインターバルが経過していたら
         if (user.isAttackPressed && intervalTime >= user.weaponController_main.weaponData.cooldown) {
-            //チェインは最大10個まで、最大でなければチェインを蓄積
-            if(passiveChains < 10){
+            //チェインは最大99個まで、最大でなければチェインを蓄積
+            if(passiveChains < 50){
                 passiveChains++;
             }
             //インターバルリセット
             intervalTime = 0;
 
             //チェインの多さに応じてスキルCTを短縮
-            user.skillAfterTime += (0.06f * passiveChains);
+            user.skillAfterTime += (0.01f * passiveChains);
             //スキルCTが最大だったら補正
             float skillCooldown = user.GetComponent<GeneralCharacter>().equippedSkills[0].cooldown;
             if(user.skillAfterTime >= skillCooldown) {
