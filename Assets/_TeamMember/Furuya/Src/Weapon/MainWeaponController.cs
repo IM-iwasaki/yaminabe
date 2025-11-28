@@ -72,6 +72,8 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerMagicAttack(direction);
                 break;
         }
+        //アニメーション開始
+        characterBase.anim.SetBool("Shoot", true);
     }
 
     /// <summary>
