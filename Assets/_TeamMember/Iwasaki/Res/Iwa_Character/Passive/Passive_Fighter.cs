@@ -14,7 +14,7 @@ public class Passive_Fighter : PassiveBase {
         if (!isPassiveActive) {
             coolTime += Time.deltaTime;
             //クールタイムがクールダウン以上になったら発動中にする
-            if (coolTime >= Cooldown) {
+            if (coolTime >= cooldown) {
                 isPassiveActive = true;
                 //クールタイム計測をリセット
                 coolTime = 0;
@@ -22,7 +22,7 @@ public class Passive_Fighter : PassiveBase {
                
             }
             // 10秒で元に戻るはず
-            else if (coolTime >=Cooldown/3) {
+            else if (coolTime >=cooldown /3) {
                 user.DamageRatio = 100;
             }
 
