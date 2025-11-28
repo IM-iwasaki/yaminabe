@@ -12,7 +12,7 @@ public class MainMagicData : WeaponData {
     public float projectileSpeed;
 
     [Header("Magic Settings")]
-    public int MP;
+    public int MPCost;
     public EffectType chargeEffectType;
     public float chargeTime = 0f;
 

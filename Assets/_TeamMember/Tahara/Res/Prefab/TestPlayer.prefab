@@ -440,6 +440,7 @@ MonoBehaviour:
   HP: 0
   attack: 0
   moveSpeed: 5
+  MP: 0
   TeamID: -1
   PlayerName: Default
   playerId: -1
@@ -447,7 +448,6 @@ MonoBehaviour:
   firePoint: {fileID: 878125566127400802}
   isReloading: 0
   IsGrounded: 0
-  UI: {fileID: 4163481750336168349, guid: 303f799d9e12a0444a5123c144f427d7, type: 3}
   localUI: {fileID: 8966501722716295590}
   CameraMenu: {fileID: 7834819685942672659}
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}

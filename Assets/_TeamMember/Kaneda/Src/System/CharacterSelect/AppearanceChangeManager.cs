@@ -71,7 +71,7 @@ public class AppearanceChangeManager : MonoBehaviour
 
         SkillDisplayer.Instance.SetSkillUI(
             skill.skillName, skill.skillDescription,
-            passive.PassiveName, passive.PassiveDescription
+            passive.passiveName, passive.passiveDescription
             );
     }
 }

@@ -41,7 +41,7 @@ public class GeneralCharacter : CharacterBase {
 
         SkillDisplayer.Instance.SetSkillUI(
         skill.skillName, skill.skillDescription,
-        passive.PassiveName, passive.PassiveDescription
+        passive.passiveName, passive.passiveDescription
         );
     }
 
@@ -99,7 +99,7 @@ public class GeneralCharacter : CharacterBase {
         /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */        
         Debug.Log("ステータス、パッシブ、スキルのインポートを行いました。\n" +
             "インポートしたステータス... キャラクター:" + runtimeStatus.displayName + "　maxHP:" + maxHP + "　attack:" + attack + "　moveSpeed:" + moveSpeed + "\n" +
-            "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.PassiveName)) +
+            "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.passiveName)) +
             "　：　インポートしたスキル..." + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.skillName)));
         // パッシブの初期セットアップ
         equippedPassives[0].PassiveSetting(this);

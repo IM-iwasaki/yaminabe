@@ -24,7 +24,7 @@ public class Passive_Assault : PassiveBase {
         if (!isPassiveActive) {
             coolTime += Time.deltaTime;
             //クールタイムがクールダウン以上になったら発動中にする
-            if(coolTime >= Cooldown) {
+            if(coolTime >= cooldown) {
                 isPassiveActive = true;
                 //クールタイム計測をリセット
                 coolTime = 0;

@@ -12,30 +12,30 @@ public class Passive_Gunman : PassiveBase {
 
     public override void PassiveSetting(CharacterBase user) {
         //発動中でなかったら発動中の状態にする
-        if (!IsPassiveActive) {
-            IsPassiveActive = true;
+        if (!isPassiveActive) {
+            isPassiveActive = true;
             //クールタイム計測をリセット
-            CoolTime = 0;
+            coolTime = 0;
         }
     }
 
     public override void PassiveReflection(CharacterBase user) {
         //発動中でなかったらクールタイムを計測
-        if (!IsPassiveActive) {
-            CoolTime += Time.deltaTime;
+        if (!isPassiveActive) {
+            coolTime += Time.deltaTime;
             //クールタイムがクールダウン以上になったら発動中にする
-            if (CoolTime >= Cooldown) {
-                IsPassiveActive = true;
+            if (coolTime >= cooldown) {
+                isPassiveActive = true;
                 //クールタイム計測をリセット
-                CoolTime = 0;
+                coolTime = 0;
             }
         }
 
         //発動中にHPが条件を満たしたら発動。
-        if (IsPassiveActive && user.HP <= user.maxHP / 5) {
+        if (isPassiveActive && user.HP <= user.maxHP / 5) {
             user.MoveSpeedBuff(0.3f, 10.0f);
             //発動状態を解除
-            IsPassiveActive = false;
+            isPassiveActive = false;
         }
     }
 }
