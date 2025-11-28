@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b5be3bd76781547928aa5b51e65379, type: 3}
   m_Name: Skill_Soldier
   m_EditorClassIdentifier: 
-  skillName: "\u5B9F\u6226\u6295\u5165"
-  skillDescription: "10\u79D2\u9593\u3001\u653B\u6483\u529B\u304C30\uFF05\u4E0A\u6607\u3059\u308B\u3002\n(CT\uFF1A20\u79D2)"
+  skillName: "\u5168\u529B\u7A81\u6483"
+  skillDescription: "\u524D\u65B9\u306B\u7A81\u9032\u3057\u306A\u304C\u3089\u6012\u6D9B\u306E\u9023\u7D9A\u653B\u6483\u3092\u884C\u3046\u3002\n(CT\uFF1A16\u79D2)"
   skillIcon: {fileID: 21300000, guid: ae072ca225976404099c5bae316336e4, type: 3}
-  cooldown: 20
-  isSkillUse: 0
+  cooldown: 16

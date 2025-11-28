@@ -17,16 +17,16 @@ public abstract class PassiveBase : ScriptableObject {
     [Header("[任意]クールダウンを設定できます。\n(必要に応じて入力してください。)")]
     public float Cooldown;
     //パッシブクールタダウン計測用
-    [System.NonSerialized]public float CoolTime;
+    [System.NonSerialized]public float coolTime;
     //パッシブが発動中か
-    public bool IsPassiveActive;
+    [System.NonSerialized]public bool isPassiveActive;
+    //パッシブの蓄積数(必要に応じて使用してください。)
+    [System.NonSerialized]public int passiveChains;
 
     /// <summary>
     /// Virtual : パッシブのセッティング用関数。(必要に応じて定義してください。)
     /// </summary>
-    public virtual void PassiveSetting(CharacterBase user) { 
-        
-    }
+    public virtual void PassiveSetting(CharacterBase user) { }
 
     /// <summary>
     /// Abstruct : パッシブ固有の動作(引数はパッシブの発動者) 毎フレーム呼ばれます。

@@ -103,7 +103,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
-    public NetworkAnimator netwowkAnim = null;
+    public Animator anim = null;
     private string currentAnimation;   
 
     //武器を使用するため
@@ -470,7 +470,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [ClientRpc]
     private void RpcDeadAnimation() {
-        netwowkAnim.SetTrigger("Dead");
+        anim.SetTrigger("Dead");
     }
 
     [Server]
@@ -599,8 +599,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     public void ChangeLayerWeight(int _layerIndex) {
         //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for(int i = 1, max = netwowkAnim.animator.layerCount; i < max; i++) {
-            netwowkAnim.animator.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
+        for(int i = 1, max = anim.layerCount - 1; i < max; i++) {
+            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
     }
 
@@ -623,7 +623,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_ID"></param>
     [ClientRpc]
     private void RpcChangeWeapon(int _ID) {
-        Transform handRoot = GetComponent<CharacterBase>().netwowkAnim.animator.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform handRoot = GetComponent<CharacterBase>().anim.GetBoneTransform(HumanBodyBones.RightHand);
 
         //今現在持っている武器に新たなメッシュを反映
         GameObject currentWeapon = handRoot.GetChild(3).gameObject;
@@ -724,18 +724,20 @@ public abstract class CharacterBase : NetworkBehaviour {
                 // フラグを立てる
                 isCanPickup = true;
                 useCollider = _collider;
-
+                localUI.OnChangeInteractUI();
                 break;
             case "SelectCharacterObject":
                 // フラグを立てる
                 isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "SelectCharacterObject";
+                localUI.OnChangeInteractUI();
                 break;
             case "Gacha":
                 isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "Gacha";
+                localUI.OnChangeInteractUI();
                 break;
             case "RedTeam":
                 CmdJoinTeam(netIdentity, TeamColor.Red);
@@ -761,17 +763,20 @@ public abstract class CharacterBase : NetworkBehaviour {
                 // フラグを下ろす
                 isCanPickup = false;
                 useCollider = null;
+                localUI.OffChangeInteractUI();
                 break;
             case "SelectCharacterObject":
                 // フラグを下ろす
                 isCanInteruct = false;
                 useCollider = null;
                 useTag = null;
+                localUI.OffChangeInteractUI();
                 break;
             case "Gacha":
                 isCanInteruct = false;
                 useCollider = null;
                 useTag = null;
+                localUI.OffChangeInteractUI();
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
@@ -793,6 +798,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // フラグを下ろす
         isCanPickup = false;
         useCollider = null;
+        localUI.OffChangeInteractUI();
     }
 
     /// <summary>
@@ -820,7 +826,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
             bool isJumping = !IsGrounded;
-            netwowkAnim.animator.SetBool("Jump", isJumping);
+            anim.SetBool("Jump", isJumping);
         }
     }
     /// <summary>
@@ -974,15 +980,15 @@ public abstract class CharacterBase : NetworkBehaviour {
         ResetRunAnimation();
         //斜め入力の場合
         if (_x != 0 && _z != 0) {
-            netwowkAnim.animator.SetBool("RunL", false);
-            netwowkAnim.animator.SetBool("RunR", false);
+            anim.SetBool("RunL", false);
+            anim.SetBool("RunR", false);
             if (_z > 0) {
                 currentAnimation = "RunF";
             }
             if (_z < 0) {
                 currentAnimation = "RunB";
             }
-            netwowkAnim.animator.SetBool(currentAnimation, true);
+            anim.SetBool(currentAnimation, true);
             return;
 
         }
@@ -999,17 +1005,17 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (_x == 0 && _z < 0) {
             currentAnimation = "RunB";
         }
-        netwowkAnim.animator.SetBool(currentAnimation, true);
+        anim.SetBool(currentAnimation, true);
     }
 
     /// <summary>
     /// 移動アニメーションのリセット
     /// </summary>
     private void ResetRunAnimation() {
-        netwowkAnim.animator.SetBool("RunF", false);
-        netwowkAnim.animator.SetBool("RunR", false);
-        netwowkAnim.animator.SetBool("RunL", false);
-        netwowkAnim.animator.SetBool("RunB", false);
+        anim.SetBool("RunF", false);
+        anim.SetBool("RunR", false);
+        anim.SetBool("RunL", false);
+        anim.SetBool("RunB", false);
 
         currentAnimation = null;
     }
@@ -1043,7 +1049,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         else if (rigidbody.velocity.y < 0) {
             //追加の重力補正を掛ける
             rigidbody.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
-            netwowkAnim.animator.SetBool("Jump", false);
+            anim.SetBool("Jump", false);
         }
 
 
@@ -1087,14 +1093,11 @@ public abstract class CharacterBase : NetworkBehaviour {
             //押した瞬間から
             case InputActionPhase.Started:
                 isAttackPressed = true;
-                //アニメーション開始
-                netwowkAnim.animator.SetBool("Shoot", true);
                 break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
                 isAttackPressed = false;
-                //アニメーション終了
-                netwowkAnim.animator.SetBool("Shoot", false);
+                StopShootAnim();
                 break;
             //押した瞬間
             case InputActionPhase.Performed:
@@ -1113,7 +1116,16 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
-        weaponController_main.CmdRequestAttack(shootDir);        
+        weaponController_main.CmdRequestAttack(shootDir);
+    }
+
+    /// <summary>
+    /// 追加:タハラ　入力がなくなったらショットアニメーション終了
+    /// </summary>
+    [Command]
+    private void StopShootAnim() {
+        //アニメーション終了
+        anim.SetBool("Shoot", false);
     }
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
