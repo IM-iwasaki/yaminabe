@@ -10,17 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ce6e5dcda118c9409df034ee11d7d7f, type: 3}
-  m_Name: Nife
+  m_Name: Knife
   m_EditorClassIdentifier: 
-  weaponName: 
+  weaponName: Knife
   type: 0
-  damage: 0
-  cooldown: 0
-  weaponModel: {fileID: 0}
+  damage: 25
+  cooldown: 0.2
+  ID: 0
   muzzleFlashType: 0
   hitEffectType: 0
   maxAmmo: 0
   reloadTime: 0
-  range: 0
-  meleeAngle: 0
+  range: 2.5
+  meleeAngle: 10
+  combo: 1
+  comboDelay: 0
   se: 0
