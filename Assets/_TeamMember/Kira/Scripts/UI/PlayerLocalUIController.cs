@@ -29,6 +29,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SyncVar] float skillStateProgress = 0.0f;
     [SyncVar] float passiveStateProgress = 0.0f;
 
+    [SerializeField] GameObject interactUI;
+
     public void Initialize() {
         if (!isLocalPlayer) {
             var LocalUI = GetComponentInChildren<Canvas>();
@@ -36,6 +38,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             return;
         }
         mainWeaponReloadIcon.enabled = false;
+        interactUI.SetActive(false);
         LocalUIChanged();
     }
 
@@ -120,4 +123,12 @@ public class PlayerLocalUIController : NetworkBehaviour {
         reloadIconRotating = false;
         mainWeaponReloadIcon.enabled = false;
     }
+
+    public void OnChangeInteractUI() {
+        interactUI.SetActive(true);
+    }
+    public void OffChangeInteractUI() {
+        interactUI.SetActive(false);
+    }
+
 }
