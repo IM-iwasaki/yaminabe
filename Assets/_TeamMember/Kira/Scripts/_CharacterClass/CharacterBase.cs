@@ -99,7 +99,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
     private string useTag;
-    public PlayerUIController UI = null;
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
@@ -199,10 +198,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public override void OnStartClient() {
         if (isLocalPlayer) {
             base.OnStartClient();
-            //GameObject GameUIRoot = GameObject.Find("GameUI");
-            //var playerUI = Instantiate(UI, GameUIRoot.transform);
-            //UI = playerUI.GetComponent<PlayerUIController>();
-            //UI.Initialize(HP);
+            
         }
 
         // ここを追加：クライアント側で TeamGlowManager に登録
@@ -338,7 +334,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void ChangeHP(int _, int _newValue) {
         if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
-        if (UI != null) UI.ChangeHPUI(maxHP, _newValue);
+        if (localUI != null) localUI.ChangeHPUI(maxHP, _newValue);
         else {
             #if UNITY_EDITOR
             Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
@@ -1170,7 +1166,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             if (useTag == "Gacha") {
                 GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
                 gacha.StartGachaSelect(gameObject);
-                UI.gameObject.SetActive(false);
+                localUI.gameObject.SetActive(false);
                 return;
             }
 
