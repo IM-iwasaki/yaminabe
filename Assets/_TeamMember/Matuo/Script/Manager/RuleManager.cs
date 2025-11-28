@@ -216,10 +216,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         if (hasDistributedRewards) return; // © “ñd”z•z–h~
         hasDistributedRewards = true;
 
-        if (ResultManager.Instance == null) {
-            Debug.LogError("[RuleManager] ResultManager ‚ª‘¶İ‚µ‚Ü‚¹‚ñI");
-            return;
-        }
+        if (ResultManager.Instance == null) return;
 
         foreach (var conn in NetworkServer.connections) {
             NetworkConnectionToClient client = conn.Value;
@@ -268,7 +265,6 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     [TargetRpc]
     private void TargetRewardMoney(NetworkConnection target, int reward) {
         PlayerWallet.Instance?.AddMoney(reward);
-        Debug.Log($"•ñV {reward} ‰~‚ğó‚¯æ‚è‚Ü‚µ‚½");
     }
 
     /// <summary>

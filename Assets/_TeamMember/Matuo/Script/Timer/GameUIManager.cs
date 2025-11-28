@@ -53,11 +53,6 @@ public class GameUIManager : MonoBehaviour {
         gameTimer = GameTimer.Instance;
         ruleManager = RuleManager.Instance;
 
-        if (gameTimer == null)
-            Debug.LogWarning("[GameUIManager] GameTimer が見つかりません。");
-        if (ruleManager == null)
-            Debug.LogWarning("[GameUIManager] RuleManager が見つかりません。");
-
         // 初回のみ即時UI更新
         if (IsClientActive())
             UpdateUI();
@@ -168,7 +163,6 @@ public class GameUIManager : MonoBehaviour {
                 blueTeamScoreText.text = text;
                 break;
             default:
-                Debug.Log($"[GameUIManager] 未対応 teamId: {teamId}");
                 return;
         }
 
