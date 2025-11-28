@@ -5,7 +5,7 @@ public class Passive_Soldier : PassiveBase {
 
     //
     // パッシブ名　：実戦投入
-    // タイプ      ：常時発動型
+    // タイプ      ：HP発動型
     // 効果        ：移動中は受けるダメージを軽減。
     //
 
