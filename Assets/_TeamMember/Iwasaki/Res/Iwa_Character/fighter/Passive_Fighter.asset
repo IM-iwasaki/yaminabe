@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 897cff462e4ddfa4885c225d3b0785df, type: 3}
+  m_Name: Passive_Fighter
+  m_EditorClassIdentifier: 
+  PassiveName: "\u6839\u6027"
+  PassiveDescription: "HP\u304C\u4E00\u5B9A\u4EE5\u4E0B\u306B\u306F\u53D7\u3051\u308B\u30C0\u30E1\u30FC\u30B8\u3092\u8EFD\u6E1B\u3002"
+  passiveIcon: {fileID: 0}
+  Cooldown: 30

@@ -328,10 +328,6 @@ public class MainWeaponController : NetworkBehaviour {
                 direction
             );
         }
-
-        //マズルフラッシュ、SE再生
-        RpcPlayMuzzleFlash(firePoint.position, magicData.muzzleFlashType);
-        AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
     }
 
     /// <summary>
@@ -351,8 +347,19 @@ public class MainWeaponController : NetworkBehaviour {
     private IEnumerator CastAfterDelay(Vector3 direction, MainMagicData magicData) {
         yield return new WaitForSeconds(magicData.chargeTime);
 
-        RpcStopChargeEffect();
+        // 発射エフェクト (チャージ停止＆マズルフラッシュ)
+        RpcCastMagic(firePoint.position, magicData.muzzleFlashType);
+
+        // 弾の生成
         ServerMagicAttack(direction);
+
+        // SE はここでサーバー再生
+        AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
+
+        //シュートポイントに追従
+        activeChargeFx.transform.SetParent(firePoint);
+        activeChargeFx.transform.localPosition = Vector3.zero;
+        activeChargeFx.transform.localRotation = Quaternion.identity;
     }
 
     // --- チャージエフェクト再生 ---
@@ -364,14 +371,22 @@ public class MainWeaponController : NetworkBehaviour {
         }
     }
 
-    // --- チャージエフェクト停止 ---
     [ClientRpc]
-    void RpcStopChargeEffect() {
+    void RpcCastMagic(Vector3 pos, EffectType muzzleFlashType) {
+        // チャージ停止
         if (activeChargeFx != null) {
-            EffectPool.Instance.ReturnToPool(activeChargeFx, 1.5f);
+            EffectPool.Instance.ReturnToPool(activeChargeFx, 0.01f);
             activeChargeFx = null;
         }
+
+        // マズルフラッシュ
+        GameObject prefab = EffectPoolRegistry.Instance.GetMuzzleFlash(muzzleFlashType);
+        if (prefab != null) {
+            var fx = EffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            EffectPool.Instance.ReturnToPool(fx, 0.8f);
+        }
     }
+
     // --- クライアントでヒットエフェクト再生 ---
     [ClientRpc]
     void RpcSpawnHitEffect(Vector3 pos, EffectType type) {
