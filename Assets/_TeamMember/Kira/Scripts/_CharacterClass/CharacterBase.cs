@@ -25,7 +25,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //移動速度
     [SyncVar] public int moveSpeed = 5;
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
-    [SyncVar (hook = nameof(ChangeMP))]public int MP;
+    [SyncVar(hook = nameof(ChangeMP))] public int MP;
     public int maxMP { get; protected set; }
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
@@ -36,7 +36,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //受けるダメージ倍率
     [System.NonSerialized] public int DamageRatio = 100;
     //サーバーが割り当てるプレイヤー番号（Player1～6）
-    [SyncVar] public int playerId = -1; 
+    [SyncVar] public int playerId = -1;
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
 
@@ -88,7 +88,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //ジャンプ入力をしたか
     private bool IsJumpPressed = false;
     //GroundLayer
-    private LayerMask GroundLayer;    
+    private LayerMask GroundLayer;
     //接地しているか
     [SerializeField] private bool IsGrounded;
 
@@ -103,12 +103,12 @@ public abstract class CharacterBase : NetworkBehaviour {
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
     public Animator anim = null;
-    private string currentAnimation;   
+    private string currentAnimation;
 
     //武器を使用するため
     [Header("アクション用変数")]
     public MainWeaponController weaponController_main;
-    public SubWeaponController weaponController_sub;   
+    public SubWeaponController weaponController_sub;
 
     #region バフ関連変数
 
@@ -183,9 +183,9 @@ public abstract class CharacterBase : NetworkBehaviour {
                 option.Initialize(true);
             }
             else {
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 Debug.LogWarning("PlayerSetup: No ReticleOptionUI found as child for local player.");
-                #endif                
+#endif
             }
 
             //タハラ
@@ -198,7 +198,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public override void OnStartClient() {
         if (isLocalPlayer) {
             base.OnStartClient();
-            
+
         }
 
         // ここを追加：クライアント側で TeamGlowManager に登録
@@ -219,9 +219,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する
     /// </summary>
     protected void DefaultStatusInport() {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
-        #endif
+#endif
         maxHP = PlayerConst.DEFAULT_MAXHP;
         HP = maxHP;
         attack = PlayerConst.DEFAULT_ATTACK;
@@ -243,9 +243,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         Debug.Log($"[CharacterBase] 名前設定: {PlayerName}");
-        #endif
+#endif
 
         // 名前が確定したタイミングで登録（サーバー側のみ）
         if (isServer && PlayerListManager.Instance != null) {
@@ -336,18 +336,18 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
         if (localUI != null) localUI.ChangeHPUI(maxHP, _newValue);
         else {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
-            #endif
+#endif
         }
     }
     public void ChangeMP(int _, int _newValue) {
         if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
         if (localUI != null) localUI.ChangeMPUI(maxMP, _newValue);
         else {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.LogWarning("UIが存在しないため、MP更新処理をスキップしました。");
-            #endif
+#endif
         }
     }
     #region 禁断の死亡処理(グロ注意)
@@ -411,9 +411,9 @@ public abstract class CharacterBase : NetworkBehaviour {
             combat.OnKill(killerIdentity, victimTeam);
         }
         else {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.LogWarning("スコア計算が正常に成功しませんでした。");
-            #endif
+#endif
         }
         // 死亡回数を増やす
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeath(PlayerName);
@@ -436,9 +436,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void DropHoko() {
         var stageManager = StageManager.Instance;
         if (stageManager == null || stageManager.currentHoko == null) {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.LogWarning("StageManager か Hoko が存在しません");
-            #endif
+#endif
             return;
         }
 
@@ -604,7 +604,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     public void ChangeLayerWeight(int _layerIndex) {
         //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for(int i = 1, max = anim.layerCount - 1; i < max; i++) {
+        for (int i = 1, max = anim.layerCount - 1; i < max; i++) {
             anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
     }
@@ -868,7 +868,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     public void OnShowCameraMenu(InputAction.CallbackContext context) {
-        if (!isLocalPlayer )
+        if (!isLocalPlayer)
             return;
         if (context.started) {
             if (HostUI.isVisibleUI) {
