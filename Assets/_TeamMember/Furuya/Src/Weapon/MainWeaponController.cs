@@ -63,7 +63,7 @@ public class MainWeaponController : NetworkBehaviour {
         switch (weaponData.type) {
             case WeaponType.Melee:
                 if (weaponData is MeleeData meleeData)
-                    ServerMeleeCombo(meleeData.combo, meleeData.comboDelay);
+                    StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
                 break;
             case WeaponType.Gun:
                 //弾がなかったら通過不可。かわりにリロードを要求する。
