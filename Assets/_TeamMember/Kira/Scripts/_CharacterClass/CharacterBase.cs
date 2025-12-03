@@ -96,7 +96,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
-    public Rigidbody rb;
+    [System.NonSerialized]public Rigidbody rb;
     protected Collider useCollider;
     private string useTag;
     public PlayerLocalUIController localUI = null;

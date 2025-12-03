@@ -197,7 +197,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     public void ChangeMPUI(int _maxMP, int _mp) {
         mpText.text = _mp.ToString();
         mpBar.value = (float)_mp / _maxMP * FIXED_RATIO;
-        if (_mp < 1)
+        if (_mp <= 0)
             mpBarImage.gameObject.SetActive(false);
         else
             mpBarImage.gameObject.SetActive(true);
