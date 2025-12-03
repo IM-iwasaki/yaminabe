@@ -25,7 +25,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //移動速度
     [SyncVar] public int moveSpeed = 5;
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
-    public int MP { get; protected set; }
+    [SyncVar(hook = nameof(ChangeMP))] public int MP;
     public int maxMP { get; protected set; }
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
@@ -36,7 +36,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //受けるダメージ倍率
     [System.NonSerialized] public int DamageRatio = 100;
     //サーバーが割り当てるプレイヤー番号（Player1～6）
-    [SyncVar] public int playerId = -1; 
+    [SyncVar] public int playerId = -1;
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
 
@@ -88,7 +88,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     //ジャンプ入力をしたか
     private bool IsJumpPressed = false;
     //GroundLayer
-    private LayerMask GroundLayer;    
+    private LayerMask GroundLayer;
     //接地しているか
     [SerializeField] private bool IsGrounded;
 
@@ -99,17 +99,16 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected new Rigidbody rigidbody;
     protected Collider useCollider;
     private string useTag;
-    public PlayerUIController UI = null;
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
     [SerializeField] private InputActionAsset inputActions;
-    public NetworkAnimator netwowkAnim = null;
-    private string currentAnimation;   
+    public Animator anim = null;
+    private string currentAnimation;
 
     //武器を使用するため
     [Header("アクション用変数")]
     public MainWeaponController weaponController_main;
-    public SubWeaponController weaponController_sub;   
+    public SubWeaponController weaponController_sub;
 
     #region バフ関連変数
 
@@ -184,9 +183,9 @@ public abstract class CharacterBase : NetworkBehaviour {
                 option.Initialize(true);
             }
             else {
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 Debug.LogWarning("PlayerSetup: No ReticleOptionUI found as child for local player.");
-                #endif                
+#endif
             }
 
             //タハラ
@@ -199,10 +198,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public override void OnStartClient() {
         if (isLocalPlayer) {
             base.OnStartClient();
-            GameObject GameUIRoot = GameObject.Find("GameUI");
-            var playerUI = Instantiate(UI, GameUIRoot.transform);
-            UI = playerUI.GetComponent<PlayerUIController>();
-            UI.Initialize(HP);
+
         }
 
         // ここを追加：クライアント側で TeamGlowManager に登録
@@ -223,9 +219,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する
     /// </summary>
     protected void DefaultStatusInport() {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
-        #endif
+#endif
         maxHP = PlayerConst.DEFAULT_MAXHP;
         HP = maxHP;
         attack = PlayerConst.DEFAULT_ATTACK;
@@ -247,9 +243,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     public void CmdSetPlayerName(string name) {
         PlayerName = name;
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         Debug.Log($"[CharacterBase] 名前設定: {PlayerName}");
-        #endif
+#endif
 
         // 名前が確定したタイミングで登録（サーバー側のみ）
         if (isServer && PlayerListManager.Instance != null) {
@@ -338,11 +334,20 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void ChangeHP(int _, int _newValue) {
         if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
-        if (UI != null) UI.ChangeHPUI(maxHP, _newValue);
+        if (localUI != null) localUI.ChangeHPUI(maxHP, _newValue);
         else {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
-            #endif
+#endif
+        }
+    }
+    public void ChangeMP(int _, int _newValue) {
+        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
+        if (localUI != null) localUI.ChangeMPUI(maxMP, _newValue);
+        else {
+#if UNITY_EDITOR
+            Debug.LogWarning("UIが存在しないため、MP更新処理をスキップしました。");
+#endif
         }
     }
     #region 禁断の死亡処理(グロ注意)
@@ -406,9 +411,9 @@ public abstract class CharacterBase : NetworkBehaviour {
             combat.OnKill(killerIdentity, victimTeam);
         }
         else {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.LogWarning("スコア計算が正常に成功しませんでした。");
-            #endif
+#endif
         }
         // 死亡回数を増やす
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeath(PlayerName);
@@ -431,9 +436,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void DropHoko() {
         var stageManager = StageManager.Instance;
         if (stageManager == null || stageManager.currentHoko == null) {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.LogWarning("StageManager か Hoko が存在しません");
-            #endif
+#endif
             return;
         }
 
@@ -470,7 +475,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [ClientRpc]
     private void RpcDeadAnimation() {
-        netwowkAnim.SetTrigger("Dead");
+        anim.SetTrigger("Dead");
     }
 
     [Server]
@@ -599,8 +604,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     public void ChangeLayerWeight(int _layerIndex) {
         //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for(int i = 1, max = netwowkAnim.animator.layerCount; i < max; i++) {
-            netwowkAnim.animator.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
+        for (int i = 1, max = anim.layerCount - 1; i < max; i++) {
+            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
     }
 
@@ -623,7 +628,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_ID"></param>
     [ClientRpc]
     private void RpcChangeWeapon(int _ID) {
-        Transform handRoot = GetComponent<CharacterBase>().netwowkAnim.animator.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform handRoot = GetComponent<CharacterBase>().anim.GetBoneTransform(HumanBodyBones.RightHand);
 
         //今現在持っている武器に新たなメッシュを反映
         GameObject currentWeapon = handRoot.GetChild(3).gameObject;
@@ -826,7 +831,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
             bool isJumping = !IsGrounded;
-            netwowkAnim.animator.SetBool("Jump", isJumping);
+            anim.SetBool("Jump", isJumping);
         }
     }
     /// <summary>
@@ -863,7 +868,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     public void OnShowCameraMenu(InputAction.CallbackContext context) {
-        if (!isLocalPlayer )
+        if (!isLocalPlayer)
             return;
         if (context.started) {
             if (HostUI.isVisibleUI) {
@@ -980,15 +985,15 @@ public abstract class CharacterBase : NetworkBehaviour {
         ResetRunAnimation();
         //斜め入力の場合
         if (_x != 0 && _z != 0) {
-            netwowkAnim.animator.SetBool("RunL", false);
-            netwowkAnim.animator.SetBool("RunR", false);
+            anim.SetBool("RunL", false);
+            anim.SetBool("RunR", false);
             if (_z > 0) {
                 currentAnimation = "RunF";
             }
             if (_z < 0) {
                 currentAnimation = "RunB";
             }
-            netwowkAnim.animator.SetBool(currentAnimation, true);
+            anim.SetBool(currentAnimation, true);
             return;
 
         }
@@ -1005,17 +1010,17 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (_x == 0 && _z < 0) {
             currentAnimation = "RunB";
         }
-        netwowkAnim.animator.SetBool(currentAnimation, true);
+        anim.SetBool(currentAnimation, true);
     }
 
     /// <summary>
     /// 移動アニメーションのリセット
     /// </summary>
     private void ResetRunAnimation() {
-        netwowkAnim.animator.SetBool("RunF", false);
-        netwowkAnim.animator.SetBool("RunR", false);
-        netwowkAnim.animator.SetBool("RunL", false);
-        netwowkAnim.animator.SetBool("RunB", false);
+        anim.SetBool("RunF", false);
+        anim.SetBool("RunR", false);
+        anim.SetBool("RunL", false);
+        anim.SetBool("RunB", false);
 
         currentAnimation = null;
     }
@@ -1049,7 +1054,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         else if (rigidbody.velocity.y < 0) {
             //追加の重力補正を掛ける
             rigidbody.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
-            netwowkAnim.animator.SetBool("Jump", false);
+            anim.SetBool("Jump", false);
         }
 
 
@@ -1093,14 +1098,11 @@ public abstract class CharacterBase : NetworkBehaviour {
             //押した瞬間から
             case InputActionPhase.Started:
                 isAttackPressed = true;
-                //アニメーション開始
-                netwowkAnim.animator.SetBool("Shoot", true);
                 break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
                 isAttackPressed = false;
-                //アニメーション終了
-                netwowkAnim.animator.SetBool("Shoot", false);
+                StopShootAnim();
                 break;
             //押した瞬間
             case InputActionPhase.Performed:
@@ -1119,7 +1121,16 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
-        weaponController_main.CmdRequestAttack(shootDir);        
+        weaponController_main.CmdRequestAttack(shootDir);
+    }
+
+    /// <summary>
+    /// 追加:タハラ　入力がなくなったらショットアニメーション終了
+    /// </summary>
+    [Command]
+    private void StopShootAnim() {
+        //アニメーション終了
+        anim.SetBool("Shoot", false);
     }
     /// <summary>
     /// 攻撃に使用する向いている方向を取得する関数
@@ -1164,7 +1175,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             if (useTag == "Gacha") {
                 GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
                 gacha.StartGachaSelect(gameObject);
-                UI.gameObject.SetActive(false);
+                localUI.gameObject.SetActive(false);
                 return;
             }
 

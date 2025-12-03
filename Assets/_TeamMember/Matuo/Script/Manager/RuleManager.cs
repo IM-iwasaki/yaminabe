@@ -19,6 +19,9 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         { GameRuleType.DeathMatch, 0f }
     };
 
+    // 報酬配布の二重防止フラグ
+    private bool hasDistributedRewards = false;
+
     public override void Initialize() {
         base.Initialize();
         teamScores.Clear();
@@ -174,7 +177,6 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         GameManager.Instance.EndGame();
     }
 
-
     /// <summary>
     /// デスマッチ終了時の勝利判定
     /// </summary>
@@ -211,11 +213,27 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// </summary>
     [Server]
     private void SendTeamResultToAll(int winningTeamId) {
-        if (ResultManager.Instance == null) {
-            Debug.LogError("[RuleManager] ResultManager が存在しません！");
-            return;
+        if (hasDistributedRewards) return; // ← 二重配布防止
+        hasDistributedRewards = true;
+
+        if (ResultManager.Instance == null) return;
+
+        foreach (var conn in NetworkServer.connections) {
+            NetworkConnectionToClient client = conn.Value;
+            if (client.identity == null)
+                continue;
+
+            var player = client.identity.GetComponent<CharacterBase>();
+            if (player == null)
+                continue;
+
+            int myTeam = player.TeamID;
+
+            int reward = (winningTeamId == -1) ? 50 : (myTeam == winningTeamId ? 100 : 50);
+            TargetRewardMoney(client, reward);
         }
 
+        // 勝利結果表示
         string winnerName = winningTeamId switch {
             0 => "Red",
             1 => "Blue",
@@ -239,6 +257,14 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         };
 
         ResultManager.Instance.ShowTeamResult(data);
+    }
+
+    /// <summary>
+    /// クライアント側で報酬を付与する
+    /// </summary>
+    [TargetRpc]
+    private void TargetRewardMoney(NetworkConnection target, int reward) {
+        PlayerWallet.Instance?.AddMoney(reward);
     }
 
     /// <summary>

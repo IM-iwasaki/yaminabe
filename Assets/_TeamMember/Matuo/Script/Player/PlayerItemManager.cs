@@ -81,6 +81,16 @@ public class PlayerItemManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 所持金更新用
+    /// </summary>
+    /// <param name="money"></param>
+    public void UpdateMoney(int money) {
+        if (playerData == null) return;
+        playerData.currentMoney = money;
+        SavePlayerData(); // アイテム情報と一緒に保存
+    }
+
+    /// <summary>
     /// 取得済みアイテムリストをコピーで取得
     /// </summary>
     public List<string> GetOwnedItems() => new(playerData.items);

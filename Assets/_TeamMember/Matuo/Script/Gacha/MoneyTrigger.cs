@@ -17,7 +17,6 @@ public class MoneyTrigger : MonoBehaviour {
         // PlayerWallet ‚ª‘¶İ‚·‚ê‚Î‚¨‹à‚ğ’Ç‰Á
         if (PlayerWallet.Instance != null) {
             PlayerWallet.Instance.AddMoney(addAmount);
-            Debug.Log($"{addAmount} ‰~Šl“¾I c‚: {PlayerWallet.Instance.GetMoney()}");
         }
     }
 }

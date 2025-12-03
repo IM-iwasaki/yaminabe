@@ -48,8 +48,6 @@ public class PlayerNameInputUI : MonoBehaviour {
                 character.PlayerName = newName;
         }
 
-        Debug.Log($"名前を変更しました: {newName}");
-
         // UI更新
         currentNameText.text = $"Name: {newName}";
         inputField.text = "";

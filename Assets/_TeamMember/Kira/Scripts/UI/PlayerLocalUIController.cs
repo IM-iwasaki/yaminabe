@@ -21,6 +21,23 @@ public class PlayerLocalUIController : NetworkBehaviour {
     private bool reloadIconRotating = false;
     [SerializeField] TextMeshProUGUI[] subWeaponText;
 
+    /// <summary>
+    /// バー補正用定数
+    /// </summary>
+    private const int FIXED_RATIO = 100;
+    [SerializeField]
+    private TextMeshProUGUI hpText = null;
+    [SerializeField]
+    private TextMeshProUGUI mpText = null;
+    [SerializeField]
+    private Slider hpBar = null;
+    [SerializeField]
+    private Slider mpBar = null;
+    [SerializeField]
+    private Image hpBarImage = null;
+    [SerializeField]
+    private Image mpBarImage = null;
+
     [SerializeField] Image[] skill_Icon;
     [SerializeField] Image skill_State;
     [SerializeField] Image[] passive_Icon;
@@ -30,9 +47,14 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SyncVar] float skillStateProgress = 0.0f;
     [SyncVar] float passiveStateProgress = 0.0f;
 
+
+
     [SerializeField] GameObject interactUI;
 
     public void Initialize() {
+        hpBar.interactable = false;
+        mpBar.interactable = false;
+
         if (!isLocalPlayer) {
             var LocalUI = GetComponentInChildren<Canvas>();
             LocalUI.gameObject.SetActive(false);
@@ -64,7 +86,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         }
 
         //現在使用している武器タイプで分岐
-        switch(player.weaponController_main.weaponData.type) {
+        switch (player.weaponController_main.weaponData.type) {
             case WeaponType.Melee:
                 mainWeaponText[(int)TextIndex.Current].text = "∞";
                 break;
@@ -74,19 +96,27 @@ public class PlayerLocalUIController : NetworkBehaviour {
                 break;
             case WeaponType.Magic:
                 break;
-        }        
-        
+        }
+        mpText.text = player.MP.ToString();
+
         //サブウェポンの現在所持数を更新
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
 
         //パッシブの蓄積数が0だったら空欄にする
-        if(player.equippedPassives[0].passiveChains == 0) passiveChains.text = "";
+        if (player.equippedPassives[0].passiveChains == 0) passiveChains.text = "";
     }
 
     /// <summary>
     /// スキルとパッシブのアイコン、武器の情報の反映
     /// </summary>
     public void LocalUIChanged() {
+        //ステータス系の初期化
+        hpText.text = player.HP.ToString();
+        ChangeHPUI(player.maxHP, player.HP);
+        mpText.text = player.MP.ToString();
+        ChangeMPUI(player.maxMP, player.MP);
+
+
         for (int i = 0; i < skill_Icon.Length; i++) {
             skill_Icon[i].sprite = player.equippedSkills[0].skillIcon;
         }
@@ -99,7 +129,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         if (player.weaponController_main.weaponData.type == WeaponType.Gun) {
             mainWeaponText[(int)TextIndex.Partition].text = "/";
             mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
-            mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();            
+            mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
         }
         else {
             mainWeaponText[(int)TextIndex.Partition].text = "";
@@ -117,10 +147,53 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// player.isReloadingがtrueで自動発火
     /// </summary>
     public void StartRotateReloadIcon() {
-        if(!reloadIconRotating)
+        if (!reloadIconRotating)
             StartCoroutine(RotateReloadIcon(player.weaponController_main.weaponData.reloadTime));
     }
 
+    /// <summary>
+    /// 体力のUI更新
+    /// </summary>
+    /// <param name="_maxHP"></param>
+    /// <param name="_hp"></param>
+    public void ChangeHPUI(int _maxHP, int _hp) {
+        hpText.text = _hp.ToString();
+        hpBar.value = (float)_hp / _maxHP * FIXED_RATIO;
+        //死亡時
+        if (hpBar.value < 1)
+            hpBarImage.gameObject.SetActive(false);
+        //2割以下
+        else if (hpBar.value <= _maxHP / 5 && hpBar.value >= 1) {
+            hpBarImage.color = Color.red;
+            hpText.color = Color.red;
+        }
+        //5割以下
+        else if (hpBar.value <= _maxHP / 2) {
+            hpBarImage.color = Color.yellow;
+            hpText.color = Color.yellow;
+        }
+        //それ以外
+        else {
+            hpBarImage.gameObject.SetActive(true);
+            hpBarImage.color = Color.green;
+            hpText.color = Color.green;
+        }
+
+    }
+
+    /// <summary>
+    /// MPのUI更新
+    /// </summary>
+    /// <param name="_maxMP"></param>
+    /// <param name="_mp"></param>
+    public void ChangeMPUI(int _maxMP, int _mp) {
+        mpText.text = _mp.ToString();
+        mpBar.value = (float)_mp / _maxMP * FIXED_RATIO;
+        if (_mp < 1)
+            mpBarImage.gameObject.SetActive(false);
+        else
+            mpBarImage.gameObject.SetActive(true);
+    }
 
     /// <summary>
     /// リロードアイコンを1回転させる ( float _duration = 1回転するまでにかかる時間 )

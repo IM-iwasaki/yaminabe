@@ -12,7 +12,7 @@ public class GeneralCharacter : CharacterBase {
     [Header("インポートするステータス")]
     [SerializeField]GeneralCharacterStatus inputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
-    private GeneralCharacterStatus runtimeStatus;
+    GeneralCharacterStatus runtimeStatus;
     public SkillBase[] equippedSkills{ get; private set; }
     public PassiveBase[] equippedPassives{ get; private set; }
 
@@ -22,6 +22,12 @@ public class GeneralCharacter : CharacterBase {
         base.Awake();
         StatusInport(inputStatus);
         Initalize();
+
+        InvokeRepeating(nameof(MPRegeneration), 0.0f,0.5f);
+    }
+
+    void MPRegeneration() {
+        if (MP < maxMP) MP++;
     }
 
     public override void OnStartClient() {
@@ -35,7 +41,7 @@ public class GeneralCharacter : CharacterBase {
 
         SkillDisplayer.Instance.SetSkillUI(
         skill.skillName, skill.skillDescription,
-        passive.PassiveName, passive.PassiveDescription
+        passive.passiveName, passive.passiveDescription
         );
     }
 
@@ -64,7 +70,7 @@ public class GeneralCharacter : CharacterBase {
         //HPやフラグ関連などの基礎的な初期化
         base.Initalize();
         //MaxMPが0でなければ最大値で初期化
-        if (maxMP != 0) MP = maxMP; 
+        //if (maxMP != 0) MP = maxMP; 
         //弾倉が0でなければ最大値で初期化
         if (weaponController_main.weaponData.maxAmmo != 0)
             weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
@@ -84,6 +90,8 @@ public class GeneralCharacter : CharacterBase {
         runtimeStatus = _inport;
         maxHP = runtimeStatus.maxHP;
         HP = maxHP;
+        maxMP = runtimeStatus.maxMP;
+        MP = maxMP;
         attack = runtimeStatus.attack;
         moveSpeed = runtimeStatus.moveSpeed;
         equippedSkills = runtimeStatus.skills;
@@ -91,7 +99,7 @@ public class GeneralCharacter : CharacterBase {
         /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */        
         Debug.Log("ステータス、パッシブ、スキルのインポートを行いました。\n" +
             "インポートしたステータス... キャラクター:" + runtimeStatus.displayName + "　maxHP:" + maxHP + "　attack:" + attack + "　moveSpeed:" + moveSpeed + "\n" +
-            "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.PassiveName)) +
+            "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.passiveName)) +
             "　：　インポートしたスキル..." + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.skillName)));
         // パッシブの初期セットアップ
         equippedPassives[0].PassiveSetting(this);
@@ -108,7 +116,7 @@ public class GeneralCharacter : CharacterBase {
         //初期武器の設定
         var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
         var subWeapon = runtimeStatus.SubWeapon.WeaponName;
-        weaponController_main.SetWeaponData(mainWeapon);
+        weaponController_main.SetWeaponDataInit(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
     }
 

@@ -16,14 +16,15 @@ MonoBehaviour:
   type: 2
   damage: 30
   cooldown: 0.3
-  weaponModelMesh: {fileID: 4300000, guid: deca1cea2f326d9408b02b3fa5f2f361, type: 3}
+  ID: 0
   muzzleFlashType: 2
   hitEffectType: 2
   maxAmmo: 0
   reloadTime: 0
   projectilePrefab: {fileID: 107947191535415832, guid: 9d6d589d52f084b4dbe99003aa8603a3, type: 3}
   projectileSpeed: 8
-  chargeEffect: {fileID: 6362172144898402256, guid: 74b43d611dce21b4fa2b321a5bada19d, type: 3}
+  MPCost: 0
+  chargeEffectType: 0
   chargeTime: 3
   magicType: 0
   initialHeightSpeed: 0

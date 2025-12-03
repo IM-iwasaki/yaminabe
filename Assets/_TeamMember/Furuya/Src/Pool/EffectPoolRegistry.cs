@@ -12,6 +12,7 @@ public class EffectPoolRegistry : MonoBehaviour {
     public EffectMapping[] hitEffects;
     public EffectMapping[] muzzleFlashes;
     public EffectMapping[] deathEffects;
+    public EffectMapping[] chargeEffects;
 
     void Awake() { Instance = this; }
 
@@ -36,6 +37,14 @@ public class EffectPoolRegistry : MonoBehaviour {
     /// </summary>
     public GameObject GetDeathEffect(EffectType type) {
         foreach (var e in deathEffects) if (e.type == type) return e.prefab;
+        return null;
+    }
+
+    /// <summary>
+    /// チャージエフェクトを返す
+    /// </summary>
+    public GameObject GetChargeEffect(EffectType type) {
+        foreach (var e in chargeEffects) if (e.type == type) return e.prefab;
         return null;
     }
 }

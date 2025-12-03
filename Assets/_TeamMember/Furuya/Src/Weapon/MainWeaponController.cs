@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Mirror;
-using Mirror.BouncyCastle.Asn1.Pkcs;
 using System.Collections;
 
 /// <summary>
@@ -11,7 +10,9 @@ public class MainWeaponController : NetworkBehaviour {
     public Transform firePoint;
     private float lastAttackTime;
     [SyncVar, System.NonSerialized] public int ammo;
-    
+
+    private GameObject activeChargeFx;
+
     private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
@@ -22,14 +23,22 @@ public class MainWeaponController : NetworkBehaviour {
         Consume = 0,
         NotConsumed,
     }
-
-    public void Awake() {
+    private void Awake() {
+        base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
         playerUI = characterBase.GetPlayerLocalUI();
-        // 追加：キラ   弾薬数を最大にする。
-        weaponData.AmmoReset();
-        ammo = weaponData.maxAmmo;
     }
+
+    public override void OnStartLocalPlayer() {
+       
+        // 追加：キラ   弾薬数を最大にする。
+        if (weaponData.type == WeaponType.Gun) {
+            weaponData.AmmoReset();
+            ammo = weaponData.maxAmmo;
+        }
+    }
+
+
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
         charaterType = type;
@@ -54,14 +63,14 @@ public class MainWeaponController : NetworkBehaviour {
         switch (weaponData.type) {
             case WeaponType.Melee:
                 if (weaponData is MeleeData meleeData)
-                    ServerMeleeCombo(meleeData.combo, meleeData.comboDelay);
+                    StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
                 break;
             case WeaponType.Gun:
                 //弾がなかったら通過不可。かわりにリロードを要求する。
                 if (ammo == 0) {
                     ReloadRequest();
                     return;
-                } 
+                }
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.isReloading) return;
 
@@ -69,10 +78,18 @@ public class MainWeaponController : NetworkBehaviour {
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                 break;
             case WeaponType.Magic:
-                ServerMagicAttack(direction);
+                if (weaponData is MainMagicData magicdata)
+                    if (magicdata.chargeTime > 0) {
+                        ServerStartMagicCast(direction);
+                    }
+                    else ServerMagicAttack(direction);
                 break;
         }
+        //アニメーション開始
+        characterBase.anim.SetBool("Shoot", true);
     }
+
+
 
     /// <summary>
     /// 追加攻撃用(こちらは攻撃間隔を無視して攻撃を呼び出せます)
@@ -91,7 +108,7 @@ public class MainWeaponController : NetworkBehaviour {
                 if (ammo == 0) {
                     ReloadRequest();
                     return;
-                } 
+                }
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.isReloading) return;
 
@@ -113,11 +130,29 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 初期化のタイミングの武器セット
+    /// </summary>
+    /// <param name="name"></param>
+    public void SetWeaponDataInit(string name) {
+        var data = WeaponDataRegistry.GetWeapon(name);
+
+        if (!CanUseWeapon(charaterType, data.type)) {
+            Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
+            return;
+        }
+
+        weaponData = data;
+        ammo = weaponData.ammo;
+        playerUI.LocalUIChanged();
+        Debug.LogWarning($"'{data.weaponName}' を使用します");
+    }
+
+    /// <summary>
     /// 武器データセット
     /// </summary>
     /// <param name="name"></param>
     [Command]
-    public void SetWeaponData(string name) {
+    public void CmdSetWeaponData(string name) {
         var data = WeaponDataRegistry.GetWeapon(name);
 
         if (!CanUseWeapon(charaterType, data.type)) {
@@ -174,7 +209,7 @@ public class MainWeaponController : NetworkBehaviour {
 
             // 追加：キラ 射程の30％以内なら攻撃有効範囲を広げる
             if (dist < meleeData.range * 0.3f) {
-                    allowedAngle *= 1.5f;  // 今回の処理では判定が50％甘くなる
+                allowedAngle *= 1.5f;  // 今回の処理では判定が50％甘くなる
             }
             // 追加：キラ 射程の20％以内なら強制的に当たった扱いにする
             // 変更：キラ meleeData.meleeAngle→allowedAngle
@@ -183,10 +218,10 @@ public class MainWeaponController : NetworkBehaviour {
                 RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
                 AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
             }
-            
+
         }
 #if UNITY_EDITOR
-                MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
+        MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
     }
 
@@ -269,6 +304,9 @@ public class MainWeaponController : NetworkBehaviour {
             return;
 
         //TODO:ここにMPの消費処理を書く。
+        if (characterBase.MP < magicData.MPCost) return;
+
+        characterBase.MP -= magicData.MPCost;
 
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(
             magicData.projectilePrefab.name,
@@ -290,10 +328,63 @@ public class MainWeaponController : NetworkBehaviour {
                 direction
             );
         }
+    }
 
-        //マズルフラッシュ、SE再生
-        RpcPlayMuzzleFlash(firePoint.position, magicData.muzzleFlashType);
+    /// <summary>
+    /// 詠唱開始
+    /// </summary>
+    /// <param name="direction"></param>
+    [Server]
+    public void ServerStartMagicCast(Vector3 direction) {
+        if (weaponData is not MainMagicData magicData) return;
+
+        //クライアント側にチャージエフェクトを出させる
+        RpcPlayChargeEffect(firePoint.position, magicData.chargeEffectType);
+        StartCoroutine(CastAfterDelay(direction, magicData));
+    }
+
+    [Server]
+    private IEnumerator CastAfterDelay(Vector3 direction, MainMagicData magicData) {
+        yield return new WaitForSeconds(magicData.chargeTime);
+
+        // 発射エフェクト (チャージ停止＆マズルフラッシュ)
+        RpcCastMagic(firePoint.position, magicData.muzzleFlashType);
+
+        // 弾の生成
+        ServerMagicAttack(direction);
+
+        // SE はここでサーバー再生
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
+
+        //シュートポイントに追従
+        activeChargeFx.transform.SetParent(firePoint);
+        activeChargeFx.transform.localPosition = Vector3.zero;
+        activeChargeFx.transform.localRotation = Quaternion.identity;
+    }
+
+    // --- チャージエフェクト再生 ---
+    [ClientRpc]
+    void RpcPlayChargeEffect(Vector3 pos, EffectType type) {
+        GameObject prefab = EffectPoolRegistry.Instance.GetChargeEffect(type);
+        if (prefab != null) {
+            activeChargeFx = EffectPool.Instance.GetFromPool(prefab, pos, transform.rotation);
+        }
+    }
+
+    [ClientRpc]
+    void RpcCastMagic(Vector3 pos, EffectType muzzleFlashType) {
+        // チャージ停止
+        if (activeChargeFx != null) {
+            EffectPool.Instance.ReturnToPool(activeChargeFx, 0.01f);
+            activeChargeFx = null;
+        }
+
+        // マズルフラッシュ
+        GameObject prefab = EffectPoolRegistry.Instance.GetMuzzleFlash(muzzleFlashType);
+        if (prefab != null) {
+            var fx = EffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            EffectPool.Instance.ReturnToPool(fx, 0.8f);
+        }
     }
 
     // --- クライアントでヒットエフェクト再生 ---
@@ -350,7 +441,7 @@ public class MainWeaponController : NetworkBehaviour {
     void Reload() {
         ammo = weaponData.maxAmmo;
         characterBase.isReloading = false;
-    } 
+    }
 }
 
 

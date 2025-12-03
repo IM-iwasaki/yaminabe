@@ -34,6 +34,9 @@ public class ChatManager : NetworkBehaviour {
     [Header("スタンプ一覧データ")]
     [SerializeField] private StampData stampData;
 
+    //  フェード処理をそれぞれが持っておく
+    private readonly Dictionary<GameObject, Coroutine> fadeRoutines = new();
+
     private void Awake() {
         instance = this;
     }
@@ -90,7 +93,8 @@ public class ChatManager : NetworkBehaviour {
         CheckHeightLimit();
 
         //  フェードアウト処理
-        StartCoroutine(FadeAndDestroy(stampObj));
+        var routine = StartCoroutine(FadeAndDestroy(stampObj));
+        fadeRoutines[stampObj] = routine;
     }
 
     /// <summary>
@@ -163,7 +167,8 @@ public class ChatManager : NetworkBehaviour {
         CheckHeightLimit();
 
         //  フェードアウト処理
-        StartCoroutine(FadeAndDestroy(textObj));
+        var routine = StartCoroutine(FadeAndDestroy(textObj));
+        fadeRoutines[textObj] = routine;
     }
     #endregion
 
@@ -186,6 +191,11 @@ public class ChatManager : NetworkBehaviour {
             if (oldest != null) {
                 // 削除前に高さを取得
                 float h = oldest.rect.height;
+                //  ここでコルーチンを削除
+                if (fadeRoutines.TryGetValue(oldest.gameObject, out var routine)) {
+                    StopCoroutine(routine);
+                    fadeRoutines.Remove(oldest.gameObject);
+                }
                 Destroy(oldest.gameObject);
                 // 高さを減算
                 rootHeight -= h;
@@ -212,6 +222,10 @@ public class ChatManager : NetworkBehaviour {
             timer += Time.deltaTime;
             groupe.alpha = Mathf.Lerp(1f, 0f, timer / fadeTime);
             yield return null;
+        }
+        //  ここでコルーチンを削除
+        if (fadeRoutines.ContainsKey(obj)) {
+            fadeRoutines.Remove(obj);
         }
         //  削除する
         Destroy(obj);
