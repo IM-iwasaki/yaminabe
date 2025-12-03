@@ -22,12 +22,15 @@ public class GeneralCharacter : CharacterBase {
         base.Awake();
         StatusInport(inputStatus);
         Initalize();
-
+        //ˆê’èŠÔŠu‚ÅMP‚ð‰ñ•œ‚·‚é
         InvokeRepeating(nameof(MPRegeneration), 0.0f,0.5f);
     }
 
-    void MPRegeneration() {
-        if (MP < maxMP) MP++;
+    /// <summary>
+    /// MP‚ð‰ñ•œ‚·‚é
+    /// </summary>
+    void MPRegeneration(int _value = 1) {
+        if (MP < maxMP) MP += _value;
     }
 
     public override void OnStartClient() {
@@ -46,9 +49,7 @@ public class GeneralCharacter : CharacterBase {
     }
 
     void Update() {
-        if(!isLocalPlayer) return;          
-        
-        //TODO: MPŠÇ—Œn‚Ìˆ—‚ª‚È‚¢B
+        if(!isLocalPlayer) return;  //Ž©•ª‚¾‚¯ˆ—‚·‚é
 
         //RespawnControl();    
                

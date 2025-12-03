@@ -12,16 +12,12 @@ public class Skill_Soldier : SkillBase {
     //　CT      ：20秒
     //
 
-    public override void Activate(CharacterBase user) {
-        //前方に力を加える
-        user.MoveSpeedBuff(1.5f,1.0f);
-        //TODO:マジックナンバー
-        //user.GetComponent<Rigidbody>().velocity = user.transform.forward * 100 + Vector3.up * 10;
-        Vector3 dashDir = ((user.transform.forward * 80) + user.transform.up * 4).normalized;
-        //user.GetComponent<Rigidbody>().AddForce(dashDir, ForceMode.VelocityChange);        
+    readonly float forwardPower = 30.0f;
+    readonly float upPower = 4.0f;
 
+    public override void Activate(CharacterBase user) {       
         Vector3 attackDir = user.GetShootDirection();
-        StartExtraAttackDelay(user, 0.03f, 36, attackDir);
+        StartExtraAttackDelay(user, 0.02f, 24, attackDir);
     }
 
     public void StartExtraAttackDelay(CharacterBase user,float delay, int repeatCount, Vector3 dir) {
@@ -31,6 +27,9 @@ public class Skill_Soldier : SkillBase {
     private IEnumerator ExtraAttackRoutine(CharacterBase user, float delay, int repeatCount, Vector3 dir) {
         for (int i = 0; i < repeatCount; i++) {
             yield return new WaitForSeconds(delay);
+            //前方に力を加える
+            user.rb.velocity = user.transform.forward * forwardPower + user.transform.up * upPower;
+            //攻撃する
             ExtraAttack(dir,user);
         }
     }

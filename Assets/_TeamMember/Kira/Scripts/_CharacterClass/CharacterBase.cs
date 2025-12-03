@@ -96,7 +96,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
-    protected new Rigidbody rigidbody;
+    public Rigidbody rb;
     protected Collider useCollider;
     private string useTag;
     public PlayerLocalUIController localUI = null;
@@ -146,7 +146,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
         map.Enable();
 
-        rigidbody = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
 
         // "Ground" という名前のレイヤーを取得してマスク化
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
@@ -962,16 +962,16 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
 
         // 空中か地上で挙動を分ける
-        Vector3 velocity = rigidbody.velocity;
+        Vector3 velocity = rb.velocity;
         Vector3 targetVelocity = new(moveDirection.x * moveSpeed, velocity.y, moveDirection.z * moveSpeed);
 
         //地面に立っていたら通常通り
         if (IsGrounded) {
-            rigidbody.velocity = targetVelocity;
+            rb.velocity = targetVelocity;
         }
         else {
             // 空中では地上速度に向けてゆるやかに補間（慣性を残す）
-            rigidbody.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
+            rb.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
         }
     }
 
@@ -1037,23 +1037,23 @@ public abstract class CharacterBase : NetworkBehaviour {
         // ジャンプ判定
         if (IsJumpPressed && IsGrounded) {
             // 現在の速度をリセットしてから上方向に力を加える
-            Vector3 velocity = rigidbody.velocity;
+            Vector3 velocity = rb.velocity;
             velocity.y = 0f;
-            rigidbody.velocity = velocity;
+            rb.velocity = velocity;
 
-            rigidbody.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
             IsJumpPressed = false; // 連打防止
         }
 
         //ベクトルが上方向に働いている時
-        if (rigidbody.velocity.y > 0) {
+        if (rb.velocity.y > 0) {
             //追加の重力補正を掛ける
-            rigidbody.velocity += (PlayerConst.JUMP_UPFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
+            rb.velocity += (PlayerConst.JUMP_UPFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
         }
         // ベクトルが下方向に働いている時
-        else if (rigidbody.velocity.y < 0) {
+        else if (rb.velocity.y < 0) {
             //追加の重力補正を掛ける
-            rigidbody.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
+            rb.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
             anim.SetBool("Jump", false);
         }
 
