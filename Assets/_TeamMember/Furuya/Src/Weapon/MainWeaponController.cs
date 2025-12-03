@@ -18,27 +18,19 @@ public class MainWeaponController : NetworkBehaviour {
     private CharacterBase characterBase; // 名前を取得するため
     private PlayerLocalUIController playerUI;
 
-    //弾薬やMPを消費するか判別する列挙体
-    public enum ConsumptionType {
-        Consume = 0,
-        NotConsumed,
-    }
     private void Awake() {
         base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
-    public override void OnStartLocalPlayer() {
-       
+    public override void OnStartLocalPlayer() {       
         // 追加：キラ   弾薬数を最大にする。
         if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
             ammo = weaponData.maxAmmo;
         }
     }
-
-
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
         charaterType = type;
@@ -303,9 +295,8 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not MainMagicData magicData || magicData.projectilePrefab == null)
             return;
 
-        //TODO:ここにMPの消費処理を書く。
+        //MPが不足していたら帰る
         if (characterBase.MP < magicData.MPCost) return;
-
         characterBase.MP -= magicData.MPCost;
 
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(

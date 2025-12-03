@@ -23,14 +23,34 @@ public class GeneralCharacter : CharacterBase {
         StatusInport(inputStatus);
         Initalize();
         //一定間隔でMPを回復する
-        InvokeRepeating(nameof(MPRegeneration), 0.0f,0.5f);
+        InvokeRepeating(nameof(MPRegeneration), 0.0f,0.1f);
     }
 
     /// <summary>
     /// MPを回復する
     /// </summary>
-    void MPRegeneration(int _value = 1) {
-        if (MP < maxMP) MP += _value;
+    void MPRegeneration() {  
+        //攻撃してから短い間を置く。
+        if (Time.time <= attackStartTime + 0.2f) return;
+        //止まっているときは回復速度が早くなる。
+        if(MoveInput == Vector2.zero)InvokeRepeating(nameof(MPExtraRegeneration), 0.5f,0.4f);
+        else CancelInvoke(nameof(MPExtraRegeneration));
+
+        MP++;
+        //最大値を超えたら補正する
+        if (MP > maxMP) MP = maxMP;
+    }
+
+    /// <summary>
+    /// MPを回復する(追加効果による回復用)
+    /// </summary>
+    void MPExtraRegeneration() {
+        //攻撃してから短い間を置く。
+        if (Time.time <= attackStartTime + 0.2f) return;
+
+        MP++;
+        //最大値を超えたら補正する
+        if (MP > maxMP) MP = maxMP;
     }
 
     public override void OnStartClient() {
@@ -49,7 +69,7 @@ public class GeneralCharacter : CharacterBase {
     }
 
     void Update() {
-        if(!isLocalPlayer) return;  //自分だけ処理する
+        if(!isLocalPlayer) return;  //自分だけ処理する         
 
         //RespawnControl();    
                

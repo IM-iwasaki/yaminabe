@@ -16,7 +16,7 @@ public class GeneralCharacterStatus : CharacterStatus {
     [Header("攻撃力補正値。\n[attack]の値になります。")]
     [Range(0, 50)] public int attack = 0;
     [Header("魔力値。\n[maxMP] の値になります。")]
-    [Range(10, 100)] public int maxMP = 10;
+    [Range(0, 100)] public int maxMP = 0;
 
     public override int maxHP => baseStatus.maxHP + maxHPCorrection;
     public override int moveSpeed => baseStatus.moveSpeed + speedCorrection;

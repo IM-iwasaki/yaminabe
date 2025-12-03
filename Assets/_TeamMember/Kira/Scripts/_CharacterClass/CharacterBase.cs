@@ -1118,7 +1118,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (weaponController_main == null) return;
 
         if (HostUI.isVisibleUI == true) return;
-
+        
+        //最後に攻撃した時間を記録
+        attackStartTime = Time.time;
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);

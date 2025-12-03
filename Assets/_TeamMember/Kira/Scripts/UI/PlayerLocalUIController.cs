@@ -95,6 +95,14 @@ public class PlayerLocalUIController : NetworkBehaviour {
                 mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
                 break;
             case WeaponType.Magic:
+                //所持している武器が魔法であるか確認。
+                if (player.weaponController_main.weaponData is not MainMagicData magicData) {
+                    #if UNITY_EDITOR
+                    Debug.LogError("所持している魔法の詳細情報を正常に取得できませんでした。");
+                    #endif
+                    return;
+                }
+                mainWeaponText[(int)TextIndex.Partition].text = "Cost : " + magicData.MPCost.ToString();
                 break;
         }
         mpText.text = player.MP.ToString();
