@@ -45,7 +45,7 @@ public class PlayerNameInputUI : MonoBehaviour {
             if (character.isLocalPlayer)
                 character.CmdSetPlayerName(newName);
             else
-                character.PlayerName = newName;
+                character.paramater.PlayerName = newName;
         }
 
         // UIçXêV

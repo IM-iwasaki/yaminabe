@@ -87,18 +87,18 @@ public class SubWeaponController : NetworkBehaviour {
             Quaternion.identity
         );
 
-        int teamID = characterBase?.TeamID ?? 0;
+        int teamID = characterBase?.paramater.TeamID ?? 0;
         Vector3 throwDirection = transform.forward;
 
         // SmokeGrenade ÇÃèÍçá
         if (subWeaponData is SmokeData smokeData && grenadeObj.TryGetComponent(out SmokeGrenade smokeGrenade)) {
-            smokeGrenade.Init(smokeData, teamID, characterBase.PlayerName, throwDirection);
+            smokeGrenade.Init(smokeData, teamID, characterBase.paramater.PlayerName, throwDirection);
         }
         // í èÌÇÃ Grenade ÇÃèÍçá
         else if (subWeaponData is GrenadeData grenadeData && grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
             grenade.Init(
                 teamID,
-                characterBase.PlayerName,
+                characterBase.paramater.PlayerName,
                 throwDirection,
                 grenadeData.throwForce,
                 grenadeData.projectileSpeed,
@@ -131,7 +131,7 @@ public class SubWeaponController : NetworkBehaviour {
             );
 
             if (trapObj.TryGetComponent(out LandMine mine)) {
-                int teamID = characterBase?.TeamID ?? 0;
+                int teamID = characterBase?.paramater.TeamID ?? 0;
                 LandMineData landMineData = subWeaponData as LandMineData;
                 if (landMineData == null) return;
 

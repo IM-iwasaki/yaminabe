@@ -32,7 +32,7 @@ public class Passive_Gunman : PassiveBase {
         }
 
         //”­“®’†‚ÉHP‚ªğŒ‚ğ–‚½‚µ‚½‚ç”­“®B
-        if (isPassiveActive && user.HP <= user.maxHP / 5) {
+        if (isPassiveActive && user.paramater.HP <= user.paramater.maxHP / 5) {
             user.MoveSpeedBuff(0.3f, 10.0f);
             //”­“®ó‘Ô‚ğ‰ğœ
             isPassiveActive = false;

@@ -23,16 +23,16 @@ public class Passive_Fighter : PassiveBase {
             }
             // 10•b‚ÅŒ³‚É–ß‚é‚Í‚¸
             else if (coolTime >=cooldown /3) {
-                user.DamageRatio = 100;
+                user.paramater.DamageRatio = 100;
             }
 
         }
 
 
         //”­“®’†‚ÉHP‚ªğŒ‚ğ–‚½‚µ‚½‚ç”­“®B
-        if (isPassiveActive && user.HP <= user.maxHP / 4) {
+        if (isPassiveActive && user.paramater.HP <= user.paramater.maxHP / 4) {
             isPassiveActive=false;
-            user.DamageRatio = 50;
+            user.paramater.DamageRatio = 50;
         }
        
     }

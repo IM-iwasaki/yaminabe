@@ -34,12 +34,12 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 return;
             }
             //€”õ–¢Š®—¹‚È‚ç
-            if (!readyPlayer.ready) {
-                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().PlayerName + " is not ready");
+            if (!readyPlayer.paramater.ready) {
+                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().paramater.PlayerName + " is not ready");
                 return;
             }
             else {
-                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().PlayerName + " is ready!!");
+                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().paramater.PlayerName + " is ready!!");
             }
         }
         //ƒ`[ƒ€Œˆ‚ß

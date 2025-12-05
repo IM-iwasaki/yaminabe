@@ -140,7 +140,7 @@ public class CustomNetworkManager : NetworkManager {
         foreach (var conn in serverManager.connectPlayer) {
             //必要な変数をキャッシュ
             GeneralCharacter character = conn.GetComponent<GeneralCharacter>();
-            int teamID = character.TeamID;
+            int teamID = character.paramater.TeamID;
             NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
             if (sceneName == GameSceneManager.Instance.gameSceneName) {
@@ -158,7 +158,7 @@ public class CustomNetworkManager : NetworkManager {
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
             }
             //初期化
-            character.Initalize();
+            character.paramater.StateInitalize();
 
         }
         FadeManager.Instance.StartFadeIn(0.5f);

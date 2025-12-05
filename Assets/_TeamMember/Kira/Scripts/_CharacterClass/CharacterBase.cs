@@ -1,5 +1,6 @@
 ﻿using Mirror;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -13,84 +14,15 @@ using static TeamData;
 /// 全てのキャラクターの基底
 /// </summary>
 public abstract class CharacterBase : NetworkBehaviour {
-    #region パラメータ変数
-
-    [Header("基本ステータス")]
-    //現在の体力
-    [SyncVar(hook = nameof(ChangeHP))] public int HP;
-    //最大の体力
-    public int maxHP { get; protected set; }
-    //基礎攻撃力
-    [SyncVar] public int attack;
-    //移動速度
-    [SyncVar] public int moveSpeed = 5;
-    //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
-    [SyncVar(hook = nameof(ChangeMP))] public int MP;
-    public int maxMP { get; protected set; }
-    //持っている武器の文字列
-    public string currentWeapon { get; protected set; }
-    //所属チームの番号(-1は未所属。0、1はチーム所属。)
-    [SyncVar] public int TeamID = -1;
-    //プレイヤーの名前
-    [SyncVar] public string PlayerName = "Default";
-    //受けるダメージ倍率
-    [System.NonSerialized] public int DamageRatio = 100;
-    //サーバーが割り当てるプレイヤー番号（Player1～6）
-    [SyncVar] public int playerId = -1;
-    // 追加:タハラ プレイヤー準備完了状態
-    [SyncVar] public bool ready = true;
-
-    #endregion
-
     #region Transform系変数
-
-    //移動を要求する方向
-    protected Vector2 MoveInput;
     //実際に移動する方向
-    public Vector3 moveDirection { get; private set; }
-    //視点を要求する方向
-    protected Vector2 lookInput { get; private set; }
+    public Vector3 moveDirection { get ; private set; }
     //射撃位置
     public Transform firePoint;
     //足元の確認用Transform
     private Transform GroundCheck;
-
-    #endregion
-
-    #region bool系変数＆時間管理系変数
-
-    //死亡しているか
-    [SyncVar] protected bool isDead = false;
-    //死亡した瞬間か
-    public bool isDeadTrigger { get; protected set; } = false;
-    //復活後の無敵時間中であるか
-    protected bool isInvincible = false;
-    //復活してからの経過時間
-    protected float respownAfterTime { get; private set; } = 0.0f;
-    //移動中か
-    public bool isMoving { get; private set; } = false;
-    //攻撃中か
-    public bool isAttackPressed { get; private set; } = false;
-    //攻撃を押した瞬間か
-    public bool isAttackTrigger { get; protected set; } = false;
-    //攻撃開始時間
-    public float attackStartTime { get; private set; } = 0.0f;
-    //アイテムを拾える状態か
-    protected bool isCanPickup = false;
-    //インタラクトできる状態か
-    protected bool isCanInteruct = false;
-    //リロード中か
-    [SyncVar(hook = nameof(UpdateReloadIcon))] public bool isReloading = false;
-    //スキルを使用できるか
-    public bool isCanSkill { get; protected set; } = false;
-    //スキル使用後経過時間
-    [System.NonSerialized] public float skillAfterTime = 0.0f;
-    //ジャンプ入力をしたか
-    private bool IsJumpPressed = false;
     //GroundLayer
     private LayerMask GroundLayer;
-    //接地しているか
-    [SerializeField] private bool IsGrounded;
 
     #endregion
 
@@ -100,23 +32,16 @@ public abstract class CharacterBase : NetworkBehaviour {
     protected Collider useCollider;
     private string useTag;
     public PlayerLocalUIController localUI = null;
-    [SerializeField] private OptionMenu CameraMenu;
-    [SerializeField] private InputActionAsset inputActions;
+    public OptionMenu CameraMenu;
     public Animator anim = null;
     private string currentAnimation;
-
-    //武器を使用するため
-    [Header("アクション用変数")]
-    public MainWeaponController weaponController_main;
-    public SubWeaponController weaponController_sub;
-
     #region バフ関連変数
 
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
     private Coroutine attackCoroutine;
-    private int defaultMoveSpeed;
-    private int defaultAttack;
+    public int defaultMoveSpeed;
+    public int defaultAttack;
     [Header("バフに使用するエフェクトデータ")]
     [SerializeField] private EffectData buffEffect;
 
@@ -128,6 +53,9 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #endregion
 
+    public CharacterInput input { get; private set; }
+    public CharacterParamater paramater { get; private set; }
+
     #region ～初期化関係関数～
 
     /// <summary>
@@ -137,14 +65,13 @@ public abstract class CharacterBase : NetworkBehaviour {
         //シーン変わったりしても消えないようにする
         DontDestroyOnLoad(gameObject);
 
-        //コンテキストの登録
-        var map = inputActions.FindActionMap("Player");
-        foreach (var action in map.actions) {
-            action.started += ctx => OnInputStarted(action.name, ctx);
-            action.performed += ctx => OnInputPerformed(action.name, ctx);
-            action.canceled += ctx => OnInputCanceled(action.name, ctx);
-        }
-        map.Enable();
+        //参照を取得
+        input = GetComponent<CharacterInput>();
+        paramater = GetComponent<CharacterParamater>();
+
+        // 必要なら基底に初期化合図を送る
+        input.Initialize(this);
+        paramater.Initialize(this);
 
         rb = GetComponent<Rigidbody>();
 
@@ -156,8 +83,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         GroundCheck = transform.Find("FootRoot");
 
         // デフォルト値保存
-        defaultMoveSpeed = moveSpeed;
-        defaultAttack = attack;
+        defaultMoveSpeed = paramater.moveSpeed;
+        defaultAttack = paramater.attack;
     }
 
     /// <summary>
@@ -192,7 +119,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             //準備状態を明示的に初期化
             //ホストでなければ非準備状態
             if (isLocalPlayer && !isServer)
-                ready = false;
+                paramater.ready = false;
         }
     }
     public override void OnStartClient() {
@@ -205,36 +132,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (TeamGlowManager.Instance != null) {
             TeamGlowManager.Instance.RegisterPlayer(this);
         }
-
-
-
-    }
-
-    /// <summary>
-    /// ステータスのインポート
-    /// </summary>
-    public abstract void StatusInport(GeneralCharacterStatus _inport = null);
-
-    /// <summary>
-    /// StatusInportでnullが発生した時にデフォルトの値で初期化する
-    /// </summary>
-    protected void DefaultStatusInport() {
-#if UNITY_EDITOR
-        Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
-#endif
-        maxHP = PlayerConst.DEFAULT_MAXHP;
-        HP = maxHP;
-        attack = PlayerConst.DEFAULT_ATTACK;
-        moveSpeed = PlayerConst.DEFAULT_MOVESPEED;
-    }
-
-    /// <summary>
-    /// 初期値を保存する
-    /// </summary>
-    protected void InDefaultStatus() {
-        defaultAttack = attack;
-        defaultMoveSpeed = moveSpeed;
-    }
+    }  
 
     /// <summary>
     /// プレイヤー名用セッター
@@ -242,9 +140,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     public void CmdSetPlayerName(string name) {
-        PlayerName = name;
+        paramater.PlayerName = name;
 #if UNITY_EDITOR
-        Debug.Log($"[CharacterBase] 名前設定: {PlayerName}");
+        Debug.Log($"[CharacterBase] 名前設定: {paramater.PlayerName}");
 #endif
 
         // 名前が確定したタイミングで登録（サーバー側のみ）
@@ -263,35 +161,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     #region ～プレイヤー状態更新関数～
 
     /// <summary>
-    /// プレイヤー状態を初期化する関数
-    /// </summary>
-    public virtual void Initalize() {
-        HP = maxHP;
-
-        isDead = false;
-        isInvincible = false;
-        isMoving = false;
-        isAttackPressed = false;
-        isAttackTrigger = false;
-        isCanPickup = false;
-        isCanInteruct = false;
-        isCanSkill = false;
-
-        respownAfterTime = 0;
-        attackStartTime = 0;
-        skillAfterTime = 0;
-
-        //デスカメラのリセット(保険。要らないかも)
-        gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
-    }
-    /// <summary>
     /// 追加:タハラ クライアント用準備状態切り替え関数
     /// </summary>
     [Command]
-    private void CmdChangePlayerReady() {
+    public void CmdChangePlayerReady() {
         if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName) return;
-        ready = !ready;
-        ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+        paramater.ready = !paramater.ready;
+        ChatManager.instance.CmdSendSystemMessage(paramater.PlayerName + " ready :  " + paramater.ready);
     }
 
     /// <summary>
@@ -300,20 +176,21 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     public void TakeDamage(int _damage, string _name) {
         //既に死亡状態かロビー内なら帰る
-        if (isDead || !GameManager.Instance.IsGameRunning()) return;
+        if (paramater.isDead || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
-        float damage = _damage * ((float)DamageRatio / 100);
+        float damage = _damage * ((float)paramater.DamageRatio / 100);
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理
-        HP -= (int)damage;
+        paramater.HP -= (int)damage;
 
         //　nameをスコア加算関数に送る
-        if (HP <= 0) {
-            HP = 0;
+        if (paramater.HP <= 0) {
+            paramater.HP = 0;
             //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
-            KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
+            KillLogManager.instance.CmdSendKillLog(4, _name, paramater.PlayerName);
+            KillLogManager.instance.CmdSendKillLog(4, _name, paramater.PlayerName);
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 // スコア加算
@@ -329,27 +206,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>(); }
 
-    /// <summary>
-    /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
-    /// </summary>
-    public void ChangeHP(int _, int _newValue) {
-        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
-        if (localUI != null) localUI.ChangeHPUI(maxHP, _newValue);
-        else {
-#if UNITY_EDITOR
-            Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
-#endif
-        }
-    }
-    public void ChangeMP(int _, int _newValue) {
-        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
-        if (localUI != null) localUI.ChangeMPUI(maxMP, _newValue);
-        else {
-#if UNITY_EDITOR
-            Debug.LogWarning("UIが存在しないため、MP更新処理をスキップしました。");
-#endif
-        }
-    }
     #region 禁断の死亡処理(グロ注意)
     ///--------------------変更:タハラ---------------------
 
@@ -371,24 +227,17 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Server]
     public void Dead(string _name) {
-        if (isDead) return;
+        if (paramater.isDead) return;
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
         //死亡フラグをたててHPを0にしておく
-        isDead = true;
+        paramater.isDead = true;
         ChatManager.instance.CmdSendSystemMessage(_name + " is Dead!!");
         //死亡トリガーを発火
-        isDeadTrigger = true;
+        paramater.isDeadTrigger = true;
         //バフ全解除
         RemoveBuff();
         //ホコを所持していたらドロップ
         if (RuleManager.Instance.currentRule == GameRuleType.Hoko) DropHoko();
-        //不具合防止のためフラグをいろいろ下ろす。
-        isAttackPressed = false;
-        isCanInteruct = false;
-        isCanPickup = false;
-        isCanSkill = false;
-        IsJumpPressed = false;
-        isMoving = false;
         //ローカルで死亡演出
         LocalDeadEffect();
         RespawnDelay();
@@ -396,12 +245,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         RpcDeadAnimation();
         // スコア計算にここから行きます
         if (TryGetComponent<PlayerCombat>(out var combat)) {
-            int victimTeam = TeamID;
+            int victimTeam = paramater.TeamID;
             NetworkIdentity killerIdentity = null;
 
-            if (!string.IsNullOrEmpty(_name) && _name != PlayerName) {
+            if (!string.IsNullOrEmpty(_name) && _name != paramater.PlayerName) {
                 foreach (var p in FindObjectsOfType<CharacterBase>()) {
-                    if (p.PlayerName == _name) {
+                    if (p.paramater.PlayerName == _name) {
                         killerIdentity = p.GetComponent<NetworkIdentity>();
                         break;
                     }
@@ -416,7 +265,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 #endif
         }
         // 死亡回数を増やす
-        if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeath(PlayerName);
+        if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeath(paramater.PlayerName);
     }
 
     /// <summary>
@@ -481,8 +330,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     private void ResetHealth() {
         //ここで体力と死亡状態を戻す
-        HP = maxHP;
-        isDead = false;
+        paramater.HP = paramater.maxHP;
+        paramater.isDead = false;
     }
 
     /// <summary>
@@ -490,28 +339,31 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 死亡した対象にのみ通知
     /// </summary>
     [TargetRpc]
-    virtual public void Respawn() {
+    public void Respawn() {
         //死んでいなかったら即抜け
-        if (!isDead) return;
+        if (!paramater.isDead) return;
 
-        ChatManager.instance.CmdSendSystemMessage("isDead : " + isDead);
+        //パッシブのセットアップ
+        paramater.equippedPassives[0].PassiveSetting(this);
+
+        ChatManager.instance.CmdSendSystemMessage("isDead : " + paramater.isDead);
         //保険で明示的に処理
-        ChangeHP(maxHP, HP);
+        paramater.ChangeHP(paramater.maxHP, paramater.HP);
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
-            int currentTeamID = TeamID;
-            TeamID = -1;
+            int currentTeamID = paramater.TeamID;
+            paramater.TeamID = -1;
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
             var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint"); ;
             NTH.CmdTeleport(RespownPos[Random.Range(0, RespownPos.Length)].transform.position, Quaternion.identity);
 
-            TeamID = currentTeamID;
+            paramater.TeamID = currentTeamID;
         }
 
         //リスポーン後の無敵時間にする
-        isInvincible = true;
+        paramater.isInvincible = true;
         //経過時間をリセット
-        respownAfterTime = 0;
+        paramater.respownAfterTime = 0;
 
         LoaclRespawnEffect();
     }
@@ -546,31 +398,13 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     #endregion
-    /// <summary>
-    /// トリガー変数のリセット
-    /// </summary>
-    protected void ResetTrigger() {
-        isAttackTrigger = false;
-        isDeadTrigger = false;
-    }
-
-    /// <summary>
-    /// リロードアイコンの処理を発火
-    /// hook関数で呼び出す
-    /// </summary>
-    /// <param name="_">無名変数</param>
-    /// <param name="_new">新たに変更された値(今回でいうとisReloading)</param>
-    private void UpdateReloadIcon(bool _, bool _new) {
-        if (_new)
-            localUI.StartRotateReloadIcon();
-    }
 
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
     [Command]
     public void CmdJoinTeam(NetworkIdentity _player, TeamColor _color) {
-        GeneralCharacter player = _player.GetComponent<GeneralCharacter>();
+        CharacterParamater player = _player.GetComponent<GeneralCharacter>().paramater;
         int currentTeam = player.TeamID;
         int newTeam = (int)_color;
 
@@ -595,7 +429,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.TeamID = newTeam;
         //ログを表示
-        ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<GeneralCharacter>().PlayerName + " is joined " + newTeam + " team ");
+        ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<GeneralCharacter>().paramater.PlayerName + " is joined " + newTeam + " team ");
     }
 
     /// <summary>
@@ -644,77 +478,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region 入力受付・入力実行・判定関数
 
-    /// <summary>
-    /// 入力の共通ハンドラ
-    /// </summary>
-    private void OnInputStarted(string actionName, InputAction.CallbackContext ctx) {
-        switch (actionName) {
-            case "Jump":
-                OnJump(ctx);
-                break;
-            case "Fire_Main":
-                HandleAttack(ctx);
-                break;
-            case "Fire_Sub":
-                HandleAttack(ctx);
-                break;
-            case "SubWeapon":
-                weaponController_sub.TryUseSubWeapon();
-                break;
-            case "ShowHostUI":
-                OnShowHostUI(ctx);
-                break;
-            case "CameraMenu":
-                OnShowCameraMenu(ctx);
-                break;
-            case "Ready":
-                OnReadyPlayer(ctx);
-                break;
-            case "SendMessage":
-                OnSendMessage(ctx);
-                break;
-            case "SendStamp":
-                OnSendStamp(ctx);
-                break;
-        }
-    }
-    private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
-        switch (actionName) {
-            case "Move":
-                OnMove(ctx);
-                break;
-            case "Jump":
-                OnJump(ctx);
-                break;
-            case "Fire_Main":
-                HandleAttack(ctx);
-                break;
-            case "Fire_Sub":
-                HandleAttack(ctx);
-                break;
-            case "Skill":
-                OnUseSkill(ctx);
-                break;
-            case "Interact":
-                OnInteract(ctx);
-                break;
-            case "Reload":
-                OnReload(ctx);
-                break;
-        }
-    }
-    private void OnInputCanceled(string actionName, InputAction.CallbackContext ctx) {
-        switch (actionName) {
-            case "Move":
-                MoveInput = Vector2.zero;
-                CmdResetAnimation();
-                break;
-            case "Fire_Main":
-            case "Fire_Sub":
-                HandleAttack(ctx);
-                break;
-        }
-    }
+    
 
     /// <summary>
     /// 当たり判定の中に入った瞬間に発動
@@ -727,19 +491,19 @@ public abstract class CharacterBase : NetworkBehaviour {
         switch (_collider.tag) {
             case "Item":
                 // フラグを立てる
-                isCanPickup = true;
+                paramater.isCanPickup = true;
                 useCollider = _collider;
                 localUI.OnChangeInteractUI();
                 break;
             case "SelectCharacterObject":
                 // フラグを立てる
-                isCanInteruct = true;
+                paramater.isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "SelectCharacterObject";
                 localUI.OnChangeInteractUI();
                 break;
             case "Gacha":
-                isCanInteruct = true;
+                paramater.isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "Gacha";
                 localUI.OnChangeInteractUI();
@@ -766,19 +530,19 @@ public abstract class CharacterBase : NetworkBehaviour {
         switch (_collider.tag) {
             case "Item":
                 // フラグを下ろす
-                isCanPickup = false;
+                paramater.isCanPickup = false;
                 useCollider = null;
                 localUI.OffChangeInteractUI();
                 break;
             case "SelectCharacterObject":
                 // フラグを下ろす
-                isCanInteruct = false;
+                paramater.isCanInteruct = false;
                 useCollider = null;
                 useTag = null;
                 localUI.OffChangeInteractUI();
                 break;
             case "Gacha":
-                isCanInteruct = false;
+                paramater.isCanInteruct = false;
                 useCollider = null;
                 useTag = null;
                 localUI.OffChangeInteractUI();
@@ -801,136 +565,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public void ResetCanPickFlag() {
         // フラグを下ろす
-        isCanPickup = false;
+        paramater.isCanPickup = false;
         useCollider = null;
         localUI.OffChangeInteractUI();
-    }
-
-    /// <summary>
-    /// 移動
-    /// </summary>
-    public void OnMove(InputAction.CallbackContext context) {
-        MoveInput = context.ReadValue<Vector2>();
-        float moveX = MoveInput.x;
-        float moveZ = MoveInput.y;
-        //アニメーション管理
-        ControllMoveAnimation(moveX, moveZ);
-
-    }
-    /// <summary>
-    /// 視点(現在未使用)
-    /// </summary>
-    public void OnLook(InputAction.CallbackContext context) {
-        lookInput = context.ReadValue<Vector2>();
-    }
-    /// <summary>
-    /// ジャンプ
-    /// </summary>
-    public void OnJump(InputAction.CallbackContext context) {
-        // ボタンが押された瞬間だけ反応させる
-        if (context.performed && IsGrounded) {
-            IsJumpPressed = true;
-            bool isJumping = !IsGrounded;
-            anim.SetBool("Jump", isJumping);
-        }
-    }
-    /// <summary>
-    /// スキル
-    /// </summary
-    public void OnUseSkill(InputAction.CallbackContext context) {
-        if (context.performed)
-            StartUseSkill();
-    }
-    /// <summary>
-    /// インタラクト
-    /// </summary>
-    public void OnInteract(InputAction.CallbackContext context) {
-        if (context.performed) Interact();
-    }
-    /// <summary>
-    /// リロード
-    /// </summary>
-    public void OnReload(InputAction.CallbackContext context) {
-        if (context.performed && weaponController_main.ammo < weaponController_main.weaponData.maxAmmo) {
-            weaponController_main.CmdReloadRequest();
-        }
-    }
-    /// <summary>
-    /// 追加:タハラ UI表示
-    /// </summary>
-    public void OnShowHostUI(InputAction.CallbackContext context) {
-        if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
-        if (context.started) {
-            if (CameraMenu.isOpen)
-                CameraMenu.ToggleMenu();
-            HostUI.ShowOrHideUI();
-        }
-    }
-
-    public void OnShowCameraMenu(InputAction.CallbackContext context) {
-        if (!isLocalPlayer)
-            return;
-        if (context.started) {
-            if (HostUI.isVisibleUI) {
-                HostUI.ShowOrHideUI();
-            }
-
-            CameraMenu.ToggleMenu();
-        }
-    }
-    /// <summary>
-    /// 追加:タハラ プレイヤーの準備状態切り替え
-    /// </summary>
-    /// <param name="context"></param>
-    public void OnReadyPlayer(InputAction.CallbackContext context) {
-        if (!isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
-        //内部の準備状態を更新
-        if (context.started) {
-            if (!isServer)
-                CmdChangePlayerReady();
-            else {
-                ready = !ready;
-                ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
-            }
-        }
-    }
-
-    /// <summary>
-    /// 追加:タハラ チャット送信
-    /// </summary>
-    public void OnSendMessage(InputAction.CallbackContext context) {
-        if (!isLocalPlayer)
-            return;
-        //チャット送信
-        var key = context.control.name;
-        string sendMessage;
-        switch (key) {
-            case "upArrow":
-                sendMessage = "?";
-                break;
-            case "leftArrow":
-                sendMessage = "ggEZ";
-                break;
-            case "rightArrow":
-                sendMessage = "WTF";
-                break;
-            default:
-                sendMessage = "4649";
-                break;
-        }
-        ChatManager.instance.CmdSendSystemMessage(PlayerName + ":" + sendMessage);
-    }
-
-    /// <summary>
-    /// 追加:タハラ スタンプ送信
-    /// </summary>
-    public void OnSendStamp(InputAction.CallbackContext context) {
-        if (!isLocalPlayer) return;
-        //チャット送信
-        if (context.started) {
-            int stampIndex = Random.Range(0, 4);
-            ChatManager.instance.CmdSendStamp(stampIndex, PlayerName);
-        }
     }
 
     /// <summary>
@@ -938,8 +575,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void MoveControl() {
         //移動入力が行われている間は移動中フラグを立てる
-        if (MoveInput != Vector2.zero) isMoving = true;
-        else isMoving = false;
+        if (input.MoveInput != Vector2.zero) paramater.isMoving = true;
+        else paramater.isMoving = false;
 
         //カメラの向きを取得
         Transform cameraTransform = Camera.main.transform;
@@ -952,7 +589,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         right.y = 0f;
         right.Normalize();
         //2つのベクトルを合成
-        moveDirection = forward * MoveInput.y + right * MoveInput.x;
+        moveDirection = forward * input.MoveInput.y + right * input.MoveInput.x;
 
         // カメラの向いている方向をプレイヤーの正面に
         Vector3 aimForward = forward; // 水平面だけを考慮
@@ -963,10 +600,10 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         // 空中か地上で挙動を分ける
         Vector3 velocity = rb.velocity;
-        Vector3 targetVelocity = new(moveDirection.x * moveSpeed, velocity.y, moveDirection.z * moveSpeed);
+        Vector3 targetVelocity = new(moveDirection.x * paramater.moveSpeed, velocity.y, moveDirection.z * paramater.moveSpeed);
 
         //地面に立っていたら通常通り
-        if (IsGrounded) {
+        if (paramater.IsGrounded) {
             rb.velocity = targetVelocity;
         }
         else {
@@ -981,7 +618,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_x"></param>
     /// <param name="_z"></param>
     [Command]
-    private void ControllMoveAnimation(float _x, float _z) {
+    public void ControllMoveAnimation(float _x, float _z) {
         ResetRunAnimation();
         //斜め入力の場合
         if (_x != 0 && _z != 0) {
@@ -1026,7 +663,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     [Command]
-    private void CmdResetAnimation() {
+    public void CmdResetAnimation() {
         ResetRunAnimation();
     }
 
@@ -1035,14 +672,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void JumpControl() {
         // ジャンプ判定
-        if (IsJumpPressed && IsGrounded) {
+        if (paramater.IsJumpPressed && paramater.IsGrounded) {
             // 現在の速度をリセットしてから上方向に力を加える
             Vector3 velocity = rb.velocity;
             velocity.y = 0f;
             rb.velocity = velocity;
 
             rb.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
-            IsJumpPressed = false; // 連打防止
+            paramater.IsJumpPressed = false; // 連打防止
         }
 
         //ベクトルが上方向に働いている時
@@ -1059,7 +696,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
 
         // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
-        IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, GroundLayer);
+        paramater.IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }
 
     /// <summary>
@@ -1067,46 +704,41 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     virtual protected void RespawnControl() {
         //死亡した瞬間の処理
-        if (isDeadTrigger) {
+        if (paramater.isDeadTrigger) {
             Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
         }
         //復活後であるときの処理
-        if (isInvincible) {
+        if (paramater.isInvincible) {
             //復活してからの時間を加算
-            respownAfterTime += Time.deltaTime;
+            paramater.respownAfterTime += Time.deltaTime;
             //規定時間経過後無敵状態を解除
-            if (respownAfterTime >= PlayerConst.RESPAWN_INVINCIBLE_TIME) {
-                isInvincible = false;
+            if (paramater.respownAfterTime >= PlayerConst.RESPAWN_INVINCIBLE_TIME) {
+                paramater.isInvincible = false;
             }
         }
     }
 
     /// <summary>
-    /// Abstruct : スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
-    /// </summary>
-    abstract protected void AbilityControl();
-
-    /// <summary>
     /// 攻撃入力のハンドル分岐
     /// </summary>
-    private void HandleAttack(InputAction.CallbackContext context) {
+    public void HandleAttack(InputAction.CallbackContext context) {
         //死亡していたら攻撃できない
-        if (isDead || !isLocalPlayer) return;
+        if (paramater.isDead || !isLocalPlayer) return;
 
         //入力タイプで分岐
         switch (context.phase) {
             //押した瞬間から
             case InputActionPhase.Started:
-                isAttackPressed = true;
+                paramater.isAttackPressed = true;
                 break;
             //離した瞬間まで
             case InputActionPhase.Canceled:
-                isAttackPressed = false;
+                paramater.isAttackPressed = false;
                 StopShootAnim();
                 break;
             //押した瞬間
             case InputActionPhase.Performed:
-                isAttackTrigger = true;
+                paramater.isAttackTrigger = true;
                 break;
         }
 
@@ -1115,15 +747,15 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 攻撃関数
     /// </summary>
     virtual public void StartAttack() {
-        if (weaponController_main == null) return;
+        if (paramater.weaponController_main == null) return;
 
         if (HostUI.isVisibleUI == true) return;
         
         //最後に攻撃した時間を記録
-        attackStartTime = Time.time;
+        paramater.attackStartTime = Time.time;
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
-        weaponController_main.CmdRequestAttack(shootDir);
+        paramater.weaponController_main.CmdRequestAttack(shootDir);
     }
 
     /// <summary>
@@ -1158,17 +790,17 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// スキル呼び出し関数
     /// </summary>
-    abstract protected void StartUseSkill();
+    /// 
     /// <summary>
     /// インタラクト関数
     /// </summary>
-    protected void Interact() {
-        if (isCanPickup) {
+    public void Interact() {
+        if (paramater.isCanPickup) {
             ItemBase item = useCollider.GetComponent<ItemBase>();
             item.Use(gameObject);
             return;
         }
-        if (isCanInteruct) {
+        if (paramater.isCanInteruct) {
             if (useTag == "SelectCharacterObject") {
                 CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
                 select.StartCharacterSelect(gameObject);
@@ -1198,7 +830,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         PlayEffect(HEAL_BUFF_EFFECT);
 
         // 総回復量を maxHP の割合で計算（例：_value=0.2 → 20％回復）
-        float totalHeal = maxHP * _value;
+        float totalHeal = paramater.maxHP * _value;
         //  回復実行（コルーチンで回す）
         healCoroutine = StartCoroutine(HealOverTime(totalHeal, _usingTime));
     }
@@ -1212,12 +844,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         float healBuffer = 0f; //   小数の回復を蓄積
 
         while (elapsed < _duration) {
-            if (isDead) yield break; // 死亡時は即終了
+            if (paramater.isDead) yield break; // 死亡時は即終了
 
             healBuffer += healPerSec * Time.deltaTime; // 累積
             if (healBuffer >= 1f) {
                 int healInt = Mathf.FloorToInt(healBuffer); // 整数分だけ反映
-                HP = Mathf.Min(HP + healInt, maxHP);
+                paramater.HP = Mathf.Min(paramater.HP + healInt, paramater.maxHP);
                 healBuffer -= healInt; // 余りを保持
             }
 
@@ -1245,9 +877,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///  時間まで攻撃力を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator AttackBuffRoutine(float _value, float _duration) {
-        attack = Mathf.RoundToInt(defaultAttack * _value);
+        paramater.attack = Mathf.RoundToInt(defaultAttack * _value);
         yield return new WaitForSeconds(_duration);
-        attack = defaultAttack;
+        paramater.attack = defaultAttack;
         DestroyChildrenWithTag(EFFECT_TAG);
         attackCoroutine = null;
     }
@@ -1268,9 +900,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///  時間まで移動速度を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator SpeedBuffRoutine(float _value, float _duration) {
-        moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * _value);
+        paramater.moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * _value);
         yield return new WaitForSeconds(_duration);
-        moveSpeed = defaultMoveSpeed;
+        paramater.moveSpeed = defaultMoveSpeed;
         DestroyChildrenWithTag(EFFECT_TAG);
         speedCoroutine = null;
     }
@@ -1282,8 +914,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     public void RemoveBuff() {
         StopAllCoroutines();
         DestroyChildrenWithTag(EFFECT_TAG);
-        moveSpeed = defaultMoveSpeed;
-        attack = defaultAttack;
+        paramater.moveSpeed = defaultMoveSpeed;
+        paramater.attack = defaultAttack;
         healCoroutine = speedCoroutine = attackCoroutine = null;
     }
 

@@ -64,7 +64,7 @@ public class MainWeaponController : NetworkBehaviour {
                     return;
                 }
                 //その他リロード中は射撃できなくする。
-                else if (characterBase.isReloading) return;
+                else if (characterBase.paramater.isReloading) return;
 
                 if (weaponData is GunData gunData)
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
@@ -102,7 +102,7 @@ public class MainWeaponController : NetworkBehaviour {
                     return;
                 }
                 //その他リロード中は射撃できなくする。
-                else if (characterBase.isReloading) return;
+                else if (characterBase.paramater.isReloading) return;
 
                 ServerGunAttack(direction);
                 break;
@@ -206,7 +206,7 @@ public class MainWeaponController : NetworkBehaviour {
             // 追加：キラ 射程の20％以内なら強制的に当たった扱いにする
             // 変更：キラ meleeData.meleeAngle→allowedAngle
             if (angle <= allowedAngle || dist < 0.2f) {
-                hp.TakeDamage(meleeData.damage, characterBase.PlayerName);
+                hp.TakeDamage(meleeData.damage, characterBase.paramater.PlayerName);
                 RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
                 AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
             }
@@ -264,7 +264,7 @@ public class MainWeaponController : NetworkBehaviour {
         if (proj.TryGetComponent(out Projectile projScript)) {
             projScript.Init(
                 gameObject,
-                characterBase.PlayerName,
+                characterBase.paramater.PlayerName,
                 gunData.hitEffectType,
                 gunData.projectileSpeed,
                 gunData.damage
@@ -273,7 +273,7 @@ public class MainWeaponController : NetworkBehaviour {
         else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
             ExpProjScript.Init(
                 gameObject,
-                characterBase.PlayerName,
+                characterBase.paramater.PlayerName,
                 gunData.hitEffectType,
                 gunData.projectileSpeed,
                 gunData.damage,
@@ -296,8 +296,8 @@ public class MainWeaponController : NetworkBehaviour {
             return;
 
         //MPが不足していたら帰る
-        if (characterBase.MP < magicData.MPCost) return;
-        characterBase.MP -= magicData.MPCost;
+        if (characterBase.paramater.MP < magicData.MPCost) return;
+        characterBase.paramater.MP -= magicData.MPCost;
 
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(
             magicData.projectilePrefab.name,
@@ -310,7 +310,7 @@ public class MainWeaponController : NetworkBehaviour {
         if (proj.TryGetComponent(out MagicProjectile projScript)) {
             projScript.Init(
                 gameObject,
-                characterBase.PlayerName,
+                characterBase.paramater.PlayerName,
                 magicData.magicType,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,
@@ -416,12 +416,12 @@ public class MainWeaponController : NetworkBehaviour {
     [Server]
     public void ReloadRequest() {
         //射撃中やリロード中ならやめる
-        if (characterBase.isAttackPressed && characterBase.isReloading) return;
+        if (characterBase.paramater.isAttackPressed && characterBase.paramater.isReloading) return;
         //使っている武器が銃でなければやめる
         if (weaponData.type != WeaponType.Gun) return;
 
         //リロード中にする
-        characterBase.isReloading = true;
+        characterBase.paramater.isReloading = true;
         //リロードを行う
         Invoke(nameof(Reload), weaponData.reloadTime);
     }
@@ -431,7 +431,7 @@ public class MainWeaponController : NetworkBehaviour {
     [Server]
     void Reload() {
         ammo = weaponData.maxAmmo;
-        characterBase.isReloading = false;
+        characterBase.paramater.isReloading = false;
     }
 }
 
