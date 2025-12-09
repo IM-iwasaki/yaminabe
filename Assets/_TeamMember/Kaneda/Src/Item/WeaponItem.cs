@@ -28,9 +28,7 @@ public class WeaponItem : ItemBase {
         //  キャラクター側のフラグをリセットする
         player.GetComponent<CharacterBase>().ResetCanPickFlag();
 
-        //見た目変更
-        player.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
-        player.GetComponent<CharacterBase>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
+        
 
         // 使用後にアイテムを削除
         if (canDestroy) CmdRequestDestroy();
@@ -42,21 +40,5 @@ public class WeaponItem : ItemBase {
     [Command(requiresAuthority = false)]
     public override void CmdRequestDestroy() {
         NetworkServer.Destroy(gameObject);
-    }
-
-    /// <summary>
-    /// 各役職共通でレイヤーのインデックスを返す
-    /// </summary>
-    /// <param name="_weaponName"></param>
-    /// <returns></returns>
-    public int GenerateWeaponIndex(string _weaponName) {
-        return _weaponName switch {
-            "HandGun" or "Punch" or "FireMagic" => 1,
-            "Assult" or "BurstAssult" or "Spear" or "IceMagic" => 2,
-            "RPG" => 3,
-            "Sniper" => 4,
-            "Minigun" => 5,
-            _ => -1,
-        };
     }
 }

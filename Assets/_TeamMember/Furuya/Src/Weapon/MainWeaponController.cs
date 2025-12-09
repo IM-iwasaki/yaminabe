@@ -155,6 +155,9 @@ public class MainWeaponController : NetworkBehaviour {
         weaponData = data;
         ammo = weaponData.ammo;
         playerUI.LocalUIChanged();
+        characterBase.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
+        //見た目変更
+        characterBase.GetComponent<CharacterBase>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 
@@ -432,6 +435,22 @@ public class MainWeaponController : NetworkBehaviour {
     void Reload() {
         ammo = weaponData.maxAmmo;
         characterBase.isReloading = false;
+    }
+
+    /// <summary>
+    /// 各役職共通でレイヤーのインデックスを返す
+    /// </summary>
+    /// <param name="_weaponName"></param>
+    /// <returns></returns>
+    public int GenerateWeaponIndex(string _weaponName) {
+        return _weaponName switch {
+            "HandGun" or "Punch" or "FireMagic" => 1,
+            "Assult" or "BurstAssult" or "Spear" or "IceMagic" => 2,
+            "RPG" => 3,
+            "Sniper" => 4,
+            "Minigun" => 5,
+            _ => -1,
+        };
     }
 }
 

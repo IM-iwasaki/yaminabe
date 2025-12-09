@@ -76,6 +76,8 @@ public class PlayerRankingManager : NetworkBehaviour {
         List<NetworkConnectionToClient> playerConn = new List<NetworkConnectionToClient>();
         foreach (var addConn in ServerManager.instance.connectPlayer) {
             if (addConn == null || addConn.connectionToClient == null) continue;
+            //ホスト分もスキップ
+            if (addConn.connectionToClient.connectionId == 0) continue;
 
             playerConn.Add(addConn.connectionToClient);
         }
@@ -83,8 +85,6 @@ public class PlayerRankingManager : NetworkBehaviour {
         foreach (var player in playerConn) {
             int addRate = CalculatePersonalRate(player,_winnerTeamID);
             AddAndSaveRate(player, addRate);
-            //テスト
-            Debug.Log($" Rate : { playerData.currentRate}" );
         }
     }
 
@@ -103,7 +103,9 @@ public class PlayerRankingManager : NetworkBehaviour {
     /// <param name="_addRate">加える値</param>
     [TargetRpc]
     private void AddAndSaveRate(NetworkConnectionToClient _winnerConn, int _addRate) {
-        playerData.currentRate += _addRate;
-        SavePlayerData(playerData.currentRate);
+        SavePlayerData(playerData.currentRate + _addRate);
+        //テスト
+        ChatManager.instance.CmdSendSystemMessage($"{playerData.playerName}'s Rate : {playerData.currentRate}");
+        
     }
 }
