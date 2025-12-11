@@ -13,86 +13,6 @@ using static TeamData;
 /// 全てのキャラクターの基底
 /// </summary>
 public abstract class CharacterBase : NetworkBehaviour {
-    #region パラメータ変数
-
-    [Header("基本ステータス")]
-    //現在の体力
-    [SyncVar(hook = nameof(ChangeHP))] public int HP;
-    //最大の体力
-    public int maxHP { get; protected set; }
-    //基礎攻撃力
-    [SyncVar] public int attack;
-    //移動速度
-    [SyncVar] public int moveSpeed = 5;
-    //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
-    [SyncVar(hook = nameof(ChangeMP))] public int MP;
-    public int maxMP { get; protected set; }
-    //持っている武器の文字列
-    public string currentWeapon { get; protected set; }
-    //所属チームの番号(-1は未所属。0、1はチーム所属。)
-    [SyncVar] public int TeamID = -1;
-    //プレイヤーの名前
-    [SyncVar] public string PlayerName = "Default";
-    //受けるダメージ倍率
-    [System.NonSerialized] public int DamageRatio = 100;
-    //サーバーが割り当てるプレイヤー番号（Player1～6）
-    [SyncVar] public int playerId = -1;
-    // 追加:タハラ プレイヤー準備完了状態
-    [SyncVar] public bool ready = true;
-
-    #endregion
-
-    #region Transform系変数
-
-    //移動を要求する方向
-    protected Vector2 MoveInput;
-    //実際に移動する方向
-    public Vector3 moveDirection { get; private set; }
-    //視点を要求する方向
-    protected Vector2 lookInput { get; private set; }
-    //射撃位置
-    public Transform firePoint;
-    //足元の確認用Transform
-    private Transform GroundCheck;
-
-    #endregion
-
-    #region bool系変数＆時間管理系変数
-
-    //死亡しているか
-    [SyncVar] protected bool isDead = false;
-    //死亡した瞬間か
-    public bool isDeadTrigger { get; protected set; } = false;
-    //復活後の無敵時間中であるか
-    protected bool isInvincible = false;
-    //復活してからの経過時間
-    protected float respownAfterTime { get; private set; } = 0.0f;
-    //移動中か
-    public bool isMoving { get; private set; } = false;
-    //攻撃中か
-    public bool isAttackPressed { get; private set; } = false;
-    //攻撃を押した瞬間か
-    public bool isAttackTrigger { get; protected set; } = false;
-    //攻撃開始時間
-    public float attackStartTime { get; private set; } = 0.0f;
-    //アイテムを拾える状態か
-    protected bool isCanPickup = false;
-    //インタラクトできる状態か
-    protected bool isCanInteruct = false;
-    //リロード中か
-    [SyncVar(hook = nameof(UpdateReloadIcon))] public bool isReloading = false;
-    //スキルを使用できるか
-    public bool isCanSkill { get; protected set; } = false;
-    //スキル使用後経過時間
-    [System.NonSerialized] public float skillAfterTime = 0.0f;
-    //ジャンプ入力をしたか
-    private bool IsJumpPressed = false;
-    //GroundLayer
-    private LayerMask GroundLayer;
-    //接地しているか
-    [SerializeField] private bool IsGrounded;
-
-    #endregion
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -105,28 +25,18 @@ public abstract class CharacterBase : NetworkBehaviour {
     public Animator anim = null;
     private string currentAnimation;
 
+    //GroundLayer
+    private LayerMask GroundLayer;
+    //足元の確認用Transform
+    public Transform GroundCheck { get; private set; }
+
     //武器を使用するため
     [Header("アクション用変数")]
     public MainWeaponController weaponController_main;
     public SubWeaponController weaponController_sub;
 
-    #region バフ関連変数
-
-    private Coroutine healCoroutine;
-    private Coroutine speedCoroutine;
-    private Coroutine attackCoroutine;
-    private int defaultMoveSpeed;
-    private int defaultAttack;
-    [Header("バフに使用するエフェクトデータ")]
-    [SerializeField] private EffectData buffEffect;
-
-    private readonly string EFFECT_TAG = "Effect";
-    private readonly int ATTACK_BUFF_EFFECT = 0;
-    private readonly int SPEED_BUFF_EFFECT = 1;
-    private readonly int HEAL_BUFF_EFFECT = 2;
-    private readonly int DEBUFF_EFFECT = 3;
-
-    #endregion
+    public CharacterInput input { get ; private set; }
+    public CharacterParameter parameter { get ; private set; }
 
     #region ～初期化関係関数～
 
@@ -155,9 +65,10 @@ public abstract class CharacterBase : NetworkBehaviour {
         //GroundCheck変数をアタッチする。
         GroundCheck = transform.Find("FootRoot");
 
-        // デフォルト値保存
-        defaultMoveSpeed = moveSpeed;
-        defaultAttack = attack;
+        input = GetComponent<CharacterInput>();
+        parameter = GetComponent<CharacterParameter>();
+        input.Initialize(this);
+        parameter.Initialize(this);
     }
 
     /// <summary>
@@ -189,25 +100,17 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
 
             //タハラ
-            //準備状態を明示的に初期化
-            //ホストでなければ非準備状態
-            if (isLocalPlayer && !isServer)
-                ready = false;
+            //準備状態を明示的に初期化。ホストでなければ非準備状態
+            if (isLocalPlayer && !isServer) ready = false;
         }
     }
     public override void OnStartClient() {
-        if (isLocalPlayer) {
-            base.OnStartClient();
-
-        }
+        if (isLocalPlayer) base.OnStartClient();
 
         // ここを追加：クライアント側で TeamGlowManager に登録
         if (TeamGlowManager.Instance != null) {
             TeamGlowManager.Instance.RegisterPlayer(this);
         }
-
-
-
     }
 
     /// <summary>
@@ -329,27 +232,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>(); }
 
-    /// <summary>
-    /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
-    /// </summary>
-    public void ChangeHP(int _, int _newValue) {
-        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
-        if (localUI != null) localUI.ChangeHPUI(maxHP, _newValue);
-        else {
-#if UNITY_EDITOR
-            Debug.LogWarning("UIが存在しないため、HP更新処理をスキップしました。");
-#endif
-        }
-    }
-    public void ChangeMP(int _, int _newValue) {
-        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
-        if (localUI != null) localUI.ChangeMPUI(maxMP, _newValue);
-        else {
-#if UNITY_EDITOR
-            Debug.LogWarning("UIが存在しないため、MP更新処理をスキップしました。");
-#endif
-        }
-    }
     #region 禁断の死亡処理(グロ注意)
     ///--------------------変更:タハラ---------------------
 
@@ -554,16 +436,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         isDeadTrigger = false;
     }
 
-    /// <summary>
-    /// リロードアイコンの処理を発火
-    /// hook関数で呼び出す
-    /// </summary>
-    /// <param name="_">無名変数</param>
-    /// <param name="_new">新たに変更された値(今回でいうとisReloading)</param>
-    private void UpdateReloadIcon(bool _, bool _new) {
-        if (_new)
-            localUI.StartRotateReloadIcon();
-    }
 
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
@@ -936,7 +808,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 移動関数(死亡中は呼ばないでください。)
     /// </summary>
-    protected void MoveControl() {
+    /*protected void MoveControl() {
         //移動入力が行われている間は移動中フラグを立てる
         if (MoveInput != Vector2.zero) isMoving = true;
         else isMoving = false;
@@ -974,6 +846,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             rb.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
         }
     }
+    */
 
     /// <summary>
     /// 移動アニメーションの管理
@@ -1033,7 +906,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// ジャンプ管理関数(死亡中は呼ばないでください。)
     /// </summary>
-    protected void JumpControl() {
+    /*protected void JumpControl() {
         // ジャンプ判定
         if (IsJumpPressed && IsGrounded) {
             // 現在の速度をリセットしてから上方向に力を加える
@@ -1061,6 +934,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
         IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }
+    */
 
     /// <summary>
     /// リスポーン管理関数(死亡中も呼んでください。)
