@@ -2,6 +2,7 @@ using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms;
 
@@ -9,6 +10,17 @@ using UnityEngine.SocialPlatforms;
 /// Characterの変数管理
 /// </summary>
 public class CharacterParameter : NetworkBehaviour{
+    #region ～キャラクターデータ管理変数～
+
+    [Header("インポートするステータス")]
+    [SerializeField]GeneralCharacterStatus inputStatus;
+    //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
+    GeneralCharacterStatus runtimeStatus;
+    public SkillBase[] equippedSkills{ get; private set; }
+    public PassiveBase[] equippedPassives{ get; private set; }
+
+    #endregion
+
     #region パラメータ変数
 
     //[Header("基本ステータス")]    
@@ -110,6 +122,69 @@ public class CharacterParameter : NetworkBehaviour{
         defaultMoveSpeed = moveSpeed;
         defaultAttack = attack;
         defaultAttack = attack;
+    }
+
+    /// <summary>
+    /// ステータスのインポート
+    /// </summary>
+    public void StatusInport(GeneralCharacterStatus _inport = null) {
+        if (_inport == null) {
+            DefaultStatusInport();
+            return;
+        }
+
+        runtimeStatus = _inport;
+        maxHP = runtimeStatus.maxHP;
+        HP = maxHP;
+        maxMP = runtimeStatus.maxMP;
+        MP = maxMP;
+        attack = runtimeStatus.attack;
+        moveSpeed = runtimeStatus.moveSpeed;
+        equippedSkills = runtimeStatus.skills;
+        equippedPassives = runtimeStatus.passives;
+        /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */        
+        Debug.Log("ステータス、パッシブ、スキルのインポートを行いました。\n" +
+            "インポートしたステータス... キャラクター:" + runtimeStatus.displayName + "　maxHP:" + maxHP + "　attack:" + attack + "　moveSpeed:" + moveSpeed + "\n" +
+            "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.passiveName)) +
+            "　：　インポートしたスキル..." + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.skillName)));
+        // パッシブの初期セットアップ
+        equippedPassives[0].PassiveSetting(this);
+        // デフォルトステータスを代入
+        InDefaultStatus();
+
+        // メインウェポンとサブウェポンの参照を取得
+        weaponController_main = GetComponent<MainWeaponController>();
+        weaponController_sub = GetComponent<SubWeaponController>();
+
+        //キャラクターの職業設定
+        weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
+
+        //初期武器の設定
+        var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
+        var subWeapon = runtimeStatus.SubWeapon.WeaponName;
+        weaponController_main.SetWeaponDataInit(mainWeapon);
+        weaponController_sub.SetWeaponData(subWeapon);
+    }
+
+    /// <summary>
+    /// StatusInportでnullが発生した時にデフォルトの値で初期化する
+    /// </summary>
+    private void DefaultStatusInport() {
+#if UNITY_EDITOR
+        Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
+#endif
+        maxHP = PlayerConst.DEFAULT_MAXHP;
+        HP = maxHP;
+        attack = PlayerConst.DEFAULT_ATTACK;
+        moveSpeed = PlayerConst.DEFAULT_MOVESPEED;
+    }
+
+    /// <summary>
+    /// 初期値を保存する
+    /// </summary>
+    private void InDefaultStatus() {
+        defaultAttack = attack;
+        defaultMoveSpeed = moveSpeed;
     }
 
     /// <summary>

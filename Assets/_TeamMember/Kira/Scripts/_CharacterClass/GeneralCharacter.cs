@@ -7,20 +7,8 @@ using Mirror;
 //
 public class GeneralCharacter : CharacterBase {
 
-    #region ～キャラクターデータ管理変数～
-
-    [Header("インポートするステータス")]
-    [SerializeField]GeneralCharacterStatus inputStatus;
-    //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
-    GeneralCharacterStatus runtimeStatus;
-    public SkillBase[] equippedSkills{ get; private set; }
-    public PassiveBase[] equippedPassives{ get; private set; }
-
-    #endregion
-
     protected new void Awake() {
         base.Awake();
-        StatusInport(inputStatus);
         Initalize();
         //一定間隔でMPを回復する
         InvokeRepeating(nameof(MPRegeneration), 0.0f,0.1f);
@@ -102,44 +90,7 @@ public class GeneralCharacter : CharacterBase {
         equippedSkills[0].isSkillUse = false;
     }
 
-    public override void StatusInport(GeneralCharacterStatus _inport = null) {
-        if (_inport == null) {
-            DefaultStatusInport();
-            return;
-        }
-
-        runtimeStatus = _inport;
-        maxHP = runtimeStatus.maxHP;
-        HP = maxHP;
-        maxMP = runtimeStatus.maxMP;
-        MP = maxMP;
-        attack = runtimeStatus.attack;
-        moveSpeed = runtimeStatus.moveSpeed;
-        equippedSkills = runtimeStatus.skills;
-        equippedPassives = runtimeStatus.passives;
-        /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */        
-        Debug.Log("ステータス、パッシブ、スキルのインポートを行いました。\n" +
-            "インポートしたステータス... キャラクター:" + runtimeStatus.displayName + "　maxHP:" + maxHP + "　attack:" + attack + "　moveSpeed:" + moveSpeed + "\n" +
-            "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.passiveName)) +
-            "　：　インポートしたスキル..." + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.skillName)));
-        // パッシブの初期セットアップ
-        equippedPassives[0].PassiveSetting(this);
-        // デフォルトステータスを代入
-        InDefaultStatus();
-
-        // メインウェポンとサブウェポンの参照を取得
-        weaponController_main = GetComponent<MainWeaponController>();
-        weaponController_sub = GetComponent<SubWeaponController>();
-
-        //キャラクターの職業設定
-        weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
-
-        //初期武器の設定
-        var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
-        var subWeapon = runtimeStatus.SubWeapon.WeaponName;
-        weaponController_main.SetWeaponDataInit(mainWeapon);
-        weaponController_sub.SetWeaponData(subWeapon);
-    }
+    
 
     protected override void StartUseSkill() {
         if (isCanSkill) {
@@ -153,25 +104,5 @@ public class GeneralCharacter : CharacterBase {
         base.Respawn();
         //パッシブのセットアップ
         equippedPassives[0].PassiveSetting(this);
-    }
-
-    protected override void AbilityControl() {
-        //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)
-        equippedPassives[0].PassiveReflection(this);
-        //スキル更新関数を呼ぶ(中身を未定義の場合は何もしない)
-        equippedSkills[0].SkillEffectUpdate(this);
-
-        //スキル使用不可中、スキルクールタイム中かつスキルがインポートされていれば時間を計測
-        if (!isCanSkill && skillAfterTime <= equippedSkills[0].cooldown && equippedSkills[0] != null)
-            skillAfterTime += Time.deltaTime;
-        //スキルクールタイムを過ぎていたら丁度になるよう補正
-        else if (skillAfterTime > equippedSkills[0].cooldown) skillAfterTime = equippedSkills[0].cooldown;
-        //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
-        var Skill = equippedSkills[0];
-        if (!isCanSkill && Skill != null && skillAfterTime >= Skill.cooldown) {
-            isCanSkill = true;
-            //経過時間を固定
-            skillAfterTime = Skill.cooldown;
-        }        
     }
 }

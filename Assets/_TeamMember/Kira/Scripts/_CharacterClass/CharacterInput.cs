@@ -9,8 +9,10 @@ public class CharacterInput : NetworkBehaviour {
     public bool JumpPressed { get; private set; }
     public bool AttackPressed { get; private set; }
     public bool AttackReleased { get; private set; }
-    public bool SkillTriggered { get; private set; }
-    public bool InteractTriggered { get; private set; }
+
+    public bool SkillTriggered;
+
+    public bool InteractTriggered;
 
     public void Initialize(CharacterBase core) {
         this.core = core;

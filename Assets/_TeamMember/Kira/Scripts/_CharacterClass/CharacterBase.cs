@@ -111,33 +111,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (TeamGlowManager.Instance != null) {
             TeamGlowManager.Instance.RegisterPlayer(this);
         }
-    }
-
-    /// <summary>
-    /// ステータスのインポート
-    /// </summary>
-    public abstract void StatusInport(GeneralCharacterStatus _inport = null);
-
-    /// <summary>
-    /// StatusInportでnullが発生した時にデフォルトの値で初期化する
-    /// </summary>
-    protected void DefaultStatusInport() {
-#if UNITY_EDITOR
-        Debug.LogWarning("InputStatusに値が入っていなかったため、デフォルト値で初期化を行いました。");
-#endif
-        maxHP = PlayerConst.DEFAULT_MAXHP;
-        HP = maxHP;
-        attack = PlayerConst.DEFAULT_ATTACK;
-        moveSpeed = PlayerConst.DEFAULT_MOVESPEED;
-    }
-
-    /// <summary>
-    /// 初期値を保存する
-    /// </summary>
-    protected void InDefaultStatus() {
-        defaultAttack = attack;
-        defaultMoveSpeed = moveSpeed;
-    }
+    }   
 
     /// <summary>
     /// プレイヤー名用セッター
@@ -958,7 +932,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// Abstruct : スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
     /// </summary>
-    abstract protected void AbilityControl();
+    //abstract protected void AbilityControl();
 
     /// <summary>
     /// 攻撃入力のハンドル分岐

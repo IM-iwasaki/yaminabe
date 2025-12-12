@@ -2,8 +2,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.EventSystems;
 
-public class CharacterActions : NetworkBehaviour
-{
+public class CharacterActions : NetworkBehaviour {
     private CharacterBase core;
     private CharacterParameter param;
     private CharacterInput input;
@@ -96,7 +95,7 @@ public class CharacterActions : NetworkBehaviour
     [Command]
     private void Cmd_DoAttack()
     {
-        if (param.IsDead) return;
+        if (param.isDead) return;
         Debug.Log("Attack performed");
     }
 
@@ -120,5 +119,28 @@ public class CharacterActions : NetworkBehaviour
         input.InteractTriggered = false;
 
         Debug.Log("Interact event");
+    }
+
+    /// <summary>
+    /// Abstruct : スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
+    /// </summary>
+    private void AbilityControl() {
+        //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)
+        param.equippedPassives[0].PassiveReflection(core);
+        //スキル更新関数を呼ぶ(中身を未定義の場合は何もしない)
+        param.equippedSkills[0].SkillEffectUpdate(core);
+
+        //スキル使用不可中、スキルクールタイム中かつスキルがインポートされていれば時間を計測
+        if (!param.isCanSkill && param.skillAfterTime <= param.equippedSkills[0].cooldown && param.equippedSkills[0] != null)
+            param.skillAfterTime += Time.deltaTime;
+        //スキルクールタイムを過ぎていたら丁度になるよう補正
+        else if (param.skillAfterTime > param.equippedSkills[0].cooldown) param.skillAfterTime = param.equippedSkills[0].cooldown;
+        //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
+        var Skill = param.equippedSkills[0];
+        if (!param.isCanSkill && Skill != null && param.skillAfterTime >= Skill.cooldown) {
+            param.isCanSkill = true;
+            //経過時間を固定
+            param.skillAfterTime = Skill.cooldown;
+        }        
     }
 }
