@@ -25,7 +25,10 @@ public class CharacterActions : NetworkBehaviour {
 
     public void TickUpdate() {
         JumpControl();
-        HandleAttack();
+
+        //UŒ‚“ü—Í‚ª‚ ‚éŠÔUŒ‚ŠÖ”‚ğŒÄ‚Ô(ŠÔŠu‚Ì§Œä‚ÍMainWeaponController‚Éˆê”C)
+        if (input.AttackPressed) StartAttack();
+
         HandleSkill();
         HandleInteract();
     }
@@ -84,12 +87,19 @@ public class CharacterActions : NetworkBehaviour {
         rb.AddForce(Vector3.up * 12f, ForceMode.Impulse);
     }
 
-    private void HandleAttack()
-    {
-        if (input.AttackPressed)
-        {
-            Cmd_DoAttack();
-        }
+    /// <summary>
+    /// UŒ‚ŠÖ”
+    /// </summary>
+    virtual public void StartAttack() {
+        if (core.weaponController_main == null) return;
+
+        if (HostUI.isVisibleUI == true) return;
+        
+        //ÅŒã‚ÉUŒ‚‚µ‚½ŠÔ‚ğ‹L˜^
+        param.AttackStartTimeRecord();
+        // •Ší‚ªUŒ‚‰Â”\‚©ƒ`ƒFƒbƒN‚µ‚ÄƒT[ƒo[–½—ß‚ğ‘—‚é(CmdRequestAttack•Šíí‚²‚Æ‚Ì•ªŠò‚à‘¤‚Å)
+        Vector3 shootDir = core.parameter.GetShootDirection();
+        core.weaponController_main.CmdRequestAttack(shootDir);
     }
 
     [Command]

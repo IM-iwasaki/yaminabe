@@ -5,6 +5,8 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms;
+using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
+using UnityEngine.Windows;
 
 /// <summary>
 /// Characterの変数管理
@@ -83,7 +85,7 @@ public class CharacterParameter : NetworkBehaviour{
     //インタラクトできる状態か
     protected bool isCanInteruct = false;   
     //スキルを使用できるか
-    public bool isCanSkill { get; protected set; } = false;
+    public bool isCanSkill = false;
     //スキル使用後経過時間
     [System.NonSerialized] public float skillAfterTime = 0.0f;
     //ジャンプ入力をしたか
@@ -94,6 +96,8 @@ public class CharacterParameter : NetworkBehaviour{
 
     //LocalUIの参照だけ持つ
     PlayerLocalUIController localUI;
+    MainWeaponController weaponController_main;
+    SubWeaponController weaponController_sub;
 
     #endregion
 
@@ -118,10 +122,37 @@ public class CharacterParameter : NetworkBehaviour{
     public void Initialize(CharacterBase core) {
         localUI = core.GetComponent<PlayerLocalUIController>();
 
+        HP = maxHP;
+
+        isDead = false;
+        isInvincible = false;
+        //isAttackPressed = false;
+        //isAttackTrigger = false;
+        isCanPickup = false;
+        isCanInteruct = false;
+        isCanSkill = false;
+
+        respownAfterTime = 0;
+        attackStartTime = 0;
+        skillAfterTime = 0;
+
+        //デスカメラのリセット(保険。要らないかも)
+        gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
+
+        //Passive関連の初期化
+        equippedPassives[0].coolTime = 0;
+        equippedPassives[0].isPassiveActive = false;
+        //Skill関連の初期化
+        equippedSkills[0].isSkillUse = false;
+
         // デフォルト値保存
         defaultMoveSpeed = moveSpeed;
         defaultAttack = attack;
         defaultAttack = attack;
+
+        //一定間隔でMPを回復する
+        InvokeRepeating(nameof(MPRegeneration), 0.0f,0.1f);
+        //TODO:魔法職から変更した時、または魔法職にした時
     }
 
     /// <summary>
@@ -148,7 +179,7 @@ public class CharacterParameter : NetworkBehaviour{
             "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.passiveName)) +
             "　：　インポートしたスキル..." + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.skillName)));
         // パッシブの初期セットアップ
-        equippedPassives[0].PassiveSetting(this);
+        equippedPassives[0].PassiveSetting();
         // デフォルトステータスを代入
         InDefaultStatus();
 
@@ -226,5 +257,58 @@ public class CharacterParameter : NetworkBehaviour{
     private void UpdateReloadIcon(bool _, bool _new) {
         if (_new)
             localUI.StartRotateReloadIcon();
+    }
+
+    /// <summary>
+    /// MPを回復する
+    /// </summary>
+    void MPRegeneration() {
+        //攻撃してから短い間を置く。
+        if (Time.time <= attackStartTime + 0.2f) return;
+        //止まっているときは回復速度が早くなる。
+        if(input.MoveInput == Vector2.zero)InvokeRepeating(nameof(MPExtraRegeneration), 0.5f,0.4f);
+        else CancelInvoke(nameof(MPExtraRegeneration));
+
+        MP++;
+        //最大値を超えたら補正する
+        if (MP > maxMP) MP = maxMP;
+    }
+
+    /// <summary>
+    /// MPを回復する(追加効果による回復用)
+    /// </summary>
+    void MPExtraRegeneration() {
+        //攻撃してから短い間を置く。
+        if (Time.time <= attackStartTime + 0.2f) return;
+
+        MP++;
+        //最大値を超えたら補正する
+        if (MP > maxMP) MP = maxMP;
+    }
+
+    public void AttackStartTimeRecord() {
+        if (!isLocalPlayer) return;
+        attackStartTime = Time.time;
+    }
+
+    /// <summary>
+    /// 攻撃に使用する向いている方向を取得する関数
+    /// </summary>
+    public Vector3 GetShootDirection() {
+        Camera cam = Camera.main;
+        Vector3 screenCenter = new(Screen.width / 2f, Screen.height / 2f, 0f);
+
+        // カメラ中心から遠方の目標点を決める（壁は無視）
+        Ray camRay = cam.ScreenPointToRay(screenCenter);
+        Vector3 aimPoint = camRay.GetPoint(30f); // 30m先に仮のターゲット
+
+        // firePoint から aimPoint 方向にレイを飛ばして壁判定
+        Vector3 direction = (aimPoint - firePoint.position).normalized;
+        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 50f)) {
+            // 壁や床に当たればその位置に補正
+            return (hit.point - firePoint.position).normalized;
+        }
+        // 当たらなければそのままaimPoint方向
+        return direction;
     }
 }

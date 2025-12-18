@@ -26,7 +26,7 @@ public abstract class PassiveBase : ScriptableObject {
     /// <summary>
     /// Virtual : パッシブのセッティング用関数。(必要に応じて定義してください。)
     /// </summary>
-    public virtual void PassiveSetting(CharacterBase user) { }
+    public virtual void PassiveSetting() { }
 
     /// <summary>
     /// Abstruct : パッシブ固有の動作(引数はパッシブの発動者) 毎フレーム呼ばれます。

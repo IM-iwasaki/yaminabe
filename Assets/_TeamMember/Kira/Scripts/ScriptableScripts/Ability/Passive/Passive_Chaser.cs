@@ -13,7 +13,7 @@ public class Passive_Chaser : PassiveBase {
     //攻撃のインターバルを計測
     private float intervalTime = 0;
 
-    public override void PassiveSetting(CharacterBase user) {
+    public override void PassiveSetting() {
         passiveChains = 0;
         intervalTime = 0;
     }
@@ -22,7 +22,7 @@ public class Passive_Chaser : PassiveBase {
         intervalTime += Time.deltaTime;
 
         //攻撃した瞬間にインターバルが経過していたら
-        if (user.isAttackPressed && intervalTime >= user.weaponController_main.weaponData.cooldown) {
+        if (user.parameter.isAttackPressed && intervalTime >= user.weaponController_main.weaponData.cooldown) {
             //チェインは最大50個まで、最大でなければチェインを蓄積
             if(passiveChains < 50){
                 passiveChains++;
@@ -31,11 +31,11 @@ public class Passive_Chaser : PassiveBase {
             intervalTime = 0;
 
             //チェインの多さに応じてスキルCTを短縮
-            user.skillAfterTime += (0.01f * passiveChains);
+            user.parameter.skillAfterTime += (0.01f * passiveChains);
             //スキルCTが最大だったら補正
-            float skillCooldown = user.GetComponent<GeneralCharacter>().equippedSkills[0].cooldown;
-            if(user.skillAfterTime >= skillCooldown) {
-                user.skillAfterTime = skillCooldown;
+            float skillCooldown = user.GetComponent<GeneralCharacter>().parameter.equippedSkills[0].cooldown;
+            if(user.parameter.skillAfterTime >= skillCooldown) {
+                user.parameter.skillAfterTime = skillCooldown;
             }
         }
     }

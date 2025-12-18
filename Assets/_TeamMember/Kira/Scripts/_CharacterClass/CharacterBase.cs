@@ -101,7 +101,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
             //タハラ
             //準備状態を明示的に初期化。ホストでなければ非準備状態
-            if (isLocalPlayer && !isServer) ready = false;
+            if (isLocalPlayer && !isServer) parameter.ready = false;
         }
     }
     public override void OnStartClient() {
@@ -119,9 +119,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     public void CmdSetPlayerName(string name) {
-        PlayerName = name;
+        parameter.PlayerName = name;
 #if UNITY_EDITOR
-        Debug.Log($"[CharacterBase] 名前設定: {PlayerName}");
+        Debug.Log($"[CharacterBase] 名前設定: {parameter.PlayerName}");
 #endif
 
         // 名前が確定したタイミングで登録（サーバー側のみ）
@@ -143,23 +143,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// プレイヤー状態を初期化する関数
     /// </summary>
     public virtual void Initalize() {
-        HP = maxHP;
-
-        isDead = false;
-        isInvincible = false;
-        isMoving = false;
-        isAttackPressed = false;
-        isAttackTrigger = false;
-        isCanPickup = false;
-        isCanInteruct = false;
-        isCanSkill = false;
-
-        respownAfterTime = 0;
-        attackStartTime = 0;
-        skillAfterTime = 0;
-
-        //デスカメラのリセット(保険。要らないかも)
-        gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
+        
     }
     /// <summary>
     /// 追加:タハラ クライアント用準備状態切り替え関数
@@ -167,8 +151,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     private void CmdChangePlayerReady() {
         if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName) return;
-        ready = !ready;
-        ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+        parameter.ready = !parameter.ready;
+        ChatManager.instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
     }
 
     /// <summary>
@@ -177,20 +161,20 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     public void TakeDamage(int _damage, string _name) {
         //既に死亡状態かロビー内なら帰る
-        if (isDead || !GameManager.Instance.IsGameRunning()) return;
+        if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
-        float damage = _damage * ((float)DamageRatio / 100);
+        float damage = _damage * ((float)parameter.DamageRatio / 100);
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理
-        HP -= (int)damage;
+        parameter.HP -= (int)damage;
 
         //　nameをスコア加算関数に送る
-        if (HP <= 0) {
-            HP = 0;
+        if (parameter.HP <= 0) {
+            parameter.HP = 0;
             //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
-            KillLogManager.instance.CmdSendKillLog(4, _name, PlayerName);
+            KillLogManager.instance.CmdSendKillLog(4, _name, parameter.PlayerName);
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 // スコア加算
@@ -255,9 +239,9 @@ public abstract class CharacterBase : NetworkBehaviour {
             int victimTeam = TeamID;
             NetworkIdentity killerIdentity = null;
 
-            if (!string.IsNullOrEmpty(_name) && _name != PlayerName) {
+            if (!string.IsNullOrEmpty(_name) && _name != parameter.PlayerName) {
                 foreach (var p in FindObjectsOfType<CharacterBase>()) {
-                    if (p.PlayerName == _name) {
+                    if (p.parameter.PlayerName == _name) {
                         killerIdentity = p.GetComponent<NetworkIdentity>();
                         break;
                     }
@@ -272,7 +256,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 #endif
         }
         // 死亡回数を増やす
-        if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeath(PlayerName);
+        if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeath(parameter.PlayerName);
     }
 
     /// <summary>
@@ -337,8 +321,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Server]
     private void ResetHealth() {
         //ここで体力と死亡状態を戻す
-        HP = maxHP;
-        isDead = false;
+        parameter.HP = parameter.maxHP;
+        parameter.isDead = false;
     }
 
     /// <summary>
@@ -348,20 +332,20 @@ public abstract class CharacterBase : NetworkBehaviour {
     [TargetRpc]
     virtual public void Respawn() {
         //死んでいなかったら即抜け
-        if (!isDead) return;
+        if (!parameter.isDead) return;
 
-        ChatManager.instance.CmdSendSystemMessage("isDead : " + isDead);
+        ChatManager.instance.CmdSendSystemMessage("isDead : " + parameter.isDead);
         //保険で明示的に処理
-        ChangeHP(maxHP, HP);
+        ChangeHP(parameter.maxHP, parameter.HP);
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
-            int currentTeamID = TeamID;
-            TeamID = -1;
+            int currentTeamID = parameter.TeamID;
+            parameter.TeamID = -1;
             NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
             var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint"); ;
             NTH.CmdTeleport(RespownPos[Random.Range(0, RespownPos.Length)].transform.position, Quaternion.identity);
 
-            TeamID = currentTeamID;
+            parameter.TeamID = currentTeamID;
         }
 
         //リスポーン後の無敵時間にする
@@ -402,13 +386,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     #endregion
+
     /// <summary>
     /// トリガー変数のリセット
     /// </summary>
-    protected void ResetTrigger() {
+    /*protected void ResetTrigger() {
         isAttackTrigger = false;
         isDeadTrigger = false;
-    }
+    }*/
 
 
     /// <summary>
@@ -417,7 +402,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     [Command]
     public void CmdJoinTeam(NetworkIdentity _player, TeamColor _color) {
         GeneralCharacter player = _player.GetComponent<GeneralCharacter>();
-        int currentTeam = player.TeamID;
+        int currentTeam = player.parameter.TeamID;
         int newTeam = (int)_color;
 
         //加入しようとしてるチームが埋まっていたら
@@ -432,16 +417,16 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
         //新たなチームに加入する時
         //今加入しているチームから抜けてIDをリセット
-        if (player.TeamID != -1) {
-            ServerManager.instance.teams[player.TeamID].teamPlayerList.Remove(_player);
-            player.TeamID = -1;
+        if (player.parameter.TeamID != -1) {
+            ServerManager.instance.teams[player.parameter.TeamID].teamPlayerList.Remove(_player);
+            player.parameter.TeamID = -1;
         }
 
         //新しいチームに加入
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
-        player.TeamID = newTeam;
+        player.parameter.TeamID = newTeam;
         //ログを表示
-        ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<GeneralCharacter>().PlayerName + " is joined " + newTeam + " team ");
+        ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
     }
 
     /// <summary>
@@ -655,20 +640,19 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 移動
     /// </summary>
-    public void OnMove(InputAction.CallbackContext context) {
+    /*public void OnMove(InputAction.CallbackContext context) {
         MoveInput = context.ReadValue<Vector2>();
         float moveX = MoveInput.x;
         float moveZ = MoveInput.y;
         //アニメーション管理
         ControllMoveAnimation(moveX, moveZ);
-
-    }
+    }*/
     /// <summary>
     /// 視点(現在未使用)
     /// </summary>
-    public void OnLook(InputAction.CallbackContext context) {
+    /*public void OnLook(InputAction.CallbackContext context) {
         lookInput = context.ReadValue<Vector2>();
-    }
+    }*/
     /// <summary>
     /// ジャンプ
     /// </summary>
@@ -735,8 +719,8 @@ public abstract class CharacterBase : NetworkBehaviour {
             if (!isServer)
                 CmdChangePlayerReady();
             else {
-                ready = !ready;
-                ChatManager.instance.CmdSendSystemMessage(PlayerName + " ready :  " + ready);
+                parameter.ready = !parameter.ready;
+                ChatManager.instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
             }
         }
     }
@@ -764,7 +748,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 sendMessage = "4649";
                 break;
         }
-        ChatManager.instance.CmdSendSystemMessage(PlayerName + ":" + sendMessage);
+        ChatManager.instance.CmdSendSystemMessage(parameter.PlayerName + ":" + sendMessage);
     }
 
     /// <summary>
@@ -775,7 +759,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //チャット送信
         if (context.started) {
             int stampIndex = Random.Range(0, 4);
-            ChatManager.instance.CmdSendStamp(stampIndex, PlayerName);
+            ChatManager.instance.CmdSendStamp(stampIndex, parameter.PlayerName);
         }
     }
 
@@ -913,7 +897,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リスポーン管理関数(死亡中も呼んでください。)
     /// </summary>
-    virtual protected void RespawnControl() {
+    /*virtual protected void RespawnControl() {
         //死亡した瞬間の処理
         if (isDeadTrigger) {
             Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
@@ -927,7 +911,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 isInvincible = false;
             }
         }
-    }
+    }*/
 
     /// <summary>
     /// Abstruct : スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
@@ -937,7 +921,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// 攻撃入力のハンドル分岐
     /// </summary>
-    private void HandleAttack(InputAction.CallbackContext context) {
+    /*private void HandleAttack(InputAction.CallbackContext context) {
         //死亡していたら攻撃できない
         if (isDead || !isLocalPlayer) return;
 
@@ -958,11 +942,11 @@ public abstract class CharacterBase : NetworkBehaviour {
                 break;
         }
 
-    }
+    }*/
     /// <summary>
     /// 攻撃関数
     /// </summary>
-    virtual public void StartAttack() {
+    /*virtual public void StartAttack() {
         if (weaponController_main == null) return;
 
         if (HostUI.isVisibleUI == true) return;
@@ -972,7 +956,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
-    }
+    }*/
 
     /// <summary>
     /// 追加:タハラ　入力がなくなったらショットアニメーション終了
@@ -982,31 +966,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         //アニメーション終了
         anim.SetBool("Shoot", false);
     }
-    /// <summary>
-    /// 攻撃に使用する向いている方向を取得する関数
-    /// </summary>
-    public Vector3 GetShootDirection() {
-        Camera cam = Camera.main;
-        Vector3 screenCenter = new(Screen.width / 2f, Screen.height / 2f, 0f);
 
-        // カメラ中心から遠方の目標点を決める（壁は無視）
-        Ray camRay = cam.ScreenPointToRay(screenCenter);
-        Vector3 aimPoint = camRay.GetPoint(30f); // 30m先に仮のターゲット
-
-        // firePoint から aimPoint 方向にレイを飛ばして壁判定
-        Vector3 direction = (aimPoint - firePoint.position).normalized;
-        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 50f)) {
-            // 壁や床に当たればその位置に補正
-            return (hit.point - firePoint.position).normalized;
-        }
-
-        // 当たらなければそのままaimPoint方向
-        return direction;
-    }
     /// <summary>
     /// スキル呼び出し関数
     /// </summary>
     abstract protected void StartUseSkill();
+
     /// <summary>
     /// インタラクト関数
     /// </summary>
