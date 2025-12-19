@@ -211,24 +211,19 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Server]
     public void Dead(string _name) {
-        if (isDead) return;
+        if (parameter.isDead) return;
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
         //死亡フラグをたててHPを0にしておく
-        isDead = true;
+        parameter.isDead = true;
         ChatManager.instance.CmdSendSystemMessage(_name + " is Dead!!");
         //死亡トリガーを発火
-        isDeadTrigger = true;
+        parameter.isDeadTrigger = true;
         //バフ全解除
         RemoveBuff();
         //ホコを所持していたらドロップ
         if (RuleManager.Instance.currentRule == GameRuleType.Hoko) DropHoko();
         //不具合防止のためフラグをいろいろ下ろす。
-        isAttackPressed = false;
-        isCanInteruct = false;
-        isCanPickup = false;
-        isCanSkill = false;
-        IsJumpPressed = false;
-        isMoving = false;
+
         //ローカルで死亡演出
         LocalDeadEffect();
         RespawnDelay();
@@ -236,7 +231,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         RpcDeadAnimation();
         // スコア計算にここから行きます
         if (TryGetComponent<PlayerCombat>(out var combat)) {
-            int victimTeam = TeamID;
+            int victimTeam = parameter.TeamID;
             NetworkIdentity killerIdentity = null;
 
             if (!string.IsNullOrEmpty(_name) && _name != parameter.PlayerName) {
@@ -336,7 +331,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         ChatManager.instance.CmdSendSystemMessage("isDead : " + parameter.isDead);
         //保険で明示的に処理
-        ChangeHP(parameter.maxHP, parameter.HP);
+        parameter.ChangeHP(parameter.maxHP, parameter.HP);
         //リスポーン地点に移動させる
         if (GameManager.Instance.IsGameRunning()) {
             int currentTeamID = parameter.TeamID;
@@ -349,9 +344,9 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
 
         //リスポーン後の無敵時間にする
-        isInvincible = true;
+        parameter.isInvincible = true;
         //経過時間をリセット
-        respownAfterTime = 0;
+        parameter.respownAfterTime = 0;
 
         LoaclRespawnEffect();
     }
@@ -547,95 +542,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
 
-    /// <summary>
-    /// 当たり判定の中に入った瞬間に発動
-    /// </summary>
-    protected void OnTriggerEnter(Collider _collider) {
-        //早期return
-        if (!isLocalPlayer) return;
-
-        //switchで分岐。ここに順次追加していく。
-        switch (_collider.tag) {
-            case "Item":
-                // フラグを立てる
-                isCanPickup = true;
-                useCollider = _collider;
-                localUI.OnChangeInteractUI();
-                break;
-            case "SelectCharacterObject":
-                // フラグを立てる
-                isCanInteruct = true;
-                useCollider = _collider;
-                useTag = "SelectCharacterObject";
-                localUI.OnChangeInteractUI();
-                break;
-            case "Gacha":
-                isCanInteruct = true;
-                useCollider = _collider;
-                useTag = "Gacha";
-                localUI.OnChangeInteractUI();
-                break;
-            case "RedTeam":
-                CmdJoinTeam(netIdentity, TeamColor.Red);
-                break;
-            case "BlueTeam":
-                CmdJoinTeam(netIdentity, TeamColor.Blue);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /// <summary>
-    /// 当たり判定から抜けた瞬間に発動
-    /// </summary>
-    protected void OnTriggerExit(Collider _collider) {
-        //早期return
-        if (!isLocalPlayer) return;
-
-        //switchで分岐。ここに順次追加していく。
-        switch (_collider.tag) {
-            case "Item":
-                // フラグを下ろす
-                isCanPickup = false;
-                useCollider = null;
-                localUI.OffChangeInteractUI();
-                break;
-            case "SelectCharacterObject":
-                // フラグを下ろす
-                isCanInteruct = false;
-                useCollider = null;
-                useTag = null;
-                localUI.OffChangeInteractUI();
-                break;
-            case "Gacha":
-                isCanInteruct = false;
-                useCollider = null;
-                useTag = null;
-                localUI.OffChangeInteractUI();
-                break;
-            case "RedTeam":
-                //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(netIdentity, TeamColor.Red);
-                break;
-            case "BlueTeam":
-                //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(netIdentity, TeamColor.Blue);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /// <summary>
-    /// アイテム取得関連のフラグをリセットする
-    /// </summary>
-    public void ResetCanPickFlag() {
-        // フラグを下ろす
-        isCanPickup = false;
-        useCollider = null;
-        localUI.OffChangeInteractUI();
-    }
+    
 
     /// <summary>
     /// 移動
@@ -656,14 +563,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// ジャンプ
     /// </summary>
-    public void OnJump(InputAction.CallbackContext context) {
+    /*public void OnJump(InputAction.CallbackContext context) {
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && IsGrounded) {
             IsJumpPressed = true;
             bool isJumping = !IsGrounded;
             anim.SetBool("Jump", isJumping);
         }
-    }
+    }*/
     /// <summary>
     /// スキル
     /// </summary
@@ -804,62 +711,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             rb.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
         }
     }
-    */
-
-    /// <summary>
-    /// 移動アニメーションの管理
-    /// </summary>
-    /// <param name="_x"></param>
-    /// <param name="_z"></param>
-    [Command]
-    private void ControllMoveAnimation(float _x, float _z) {
-        ResetRunAnimation();
-        //斜め入力の場合
-        if (_x != 0 && _z != 0) {
-            anim.SetBool("RunL", false);
-            anim.SetBool("RunR", false);
-            if (_z > 0) {
-                currentAnimation = "RunF";
-            }
-            if (_z < 0) {
-                currentAnimation = "RunB";
-            }
-            anim.SetBool(currentAnimation, true);
-            return;
-
-        }
-
-        if (_x > 0 && _z == 0) {
-            currentAnimation = "RunR";
-        }
-        if (_x < 0 && _z == 0) {
-            currentAnimation = "RunL";
-        }
-        if (_x == 0 && _z > 0) {
-            currentAnimation = "RunF";
-        }
-        if (_x == 0 && _z < 0) {
-            currentAnimation = "RunB";
-        }
-        anim.SetBool(currentAnimation, true);
-    }
-
-    /// <summary>
-    /// 移動アニメーションのリセット
-    /// </summary>
-    private void ResetRunAnimation() {
-        anim.SetBool("RunF", false);
-        anim.SetBool("RunR", false);
-        anim.SetBool("RunL", false);
-        anim.SetBool("RunB", false);
-
-        currentAnimation = null;
-    }
-
-    [Command]
-    private void CmdResetAnimation() {
-        ResetRunAnimation();
-    }
+    */   
 
     /// <summary>
     /// ジャンプ管理関数(死亡中は呼ばないでください。)
@@ -958,14 +810,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         weaponController_main.CmdRequestAttack(shootDir);
     }*/
 
-    /// <summary>
-    /// 追加:タハラ　入力がなくなったらショットアニメーション終了
-    /// </summary>
-    [Command]
-    private void StopShootAnim() {
-        //アニメーション終了
-        anim.SetBool("Shoot", false);
-    }
+    
 
     /// <summary>
     /// スキル呼び出し関数
@@ -997,7 +842,95 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
 
+    #endregion      
+
+    #region おれのじゃないやつ
+
+    #region アニメーション関連
+
+    /// <summary>
+    /// 移動アニメーションの管理
+    /// </summary>
+    /// <param name="_x"></param>
+    /// <param name="_z"></param>
+    [Command]
+    private void ControllMoveAnimation(float _x, float _z) {
+        ResetRunAnimation();
+        //斜め入力の場合
+        if (_x != 0 && _z != 0) {
+            anim.SetBool("RunL", false);
+            anim.SetBool("RunR", false);
+            if (_z > 0) {
+                currentAnimation = "RunF";
+            }
+            if (_z < 0) {
+                currentAnimation = "RunB";
+            }
+            anim.SetBool(currentAnimation, true);
+            return;
+
+        }
+
+        if (_x > 0 && _z == 0) {
+            currentAnimation = "RunR";
+        }
+        if (_x < 0 && _z == 0) {
+            currentAnimation = "RunL";
+        }
+        if (_x == 0 && _z > 0) {
+            currentAnimation = "RunF";
+        }
+        if (_x == 0 && _z < 0) {
+            currentAnimation = "RunB";
+        }
+        anim.SetBool(currentAnimation, true);
+    }
+
+    /// <summary>
+    /// 移動アニメーションのリセット
+    /// </summary>
+    private void ResetRunAnimation() {
+        anim.SetBool("RunF", false);
+        anim.SetBool("RunR", false);
+        anim.SetBool("RunL", false);
+        anim.SetBool("RunB", false);
+
+        currentAnimation = null;
+    }
+
+    [Command]
+    private void CmdResetAnimation() {
+        ResetRunAnimation();
+    }
+
+    /// <summary>
+    /// 追加:タハラ　入力がなくなったらショットアニメーション終了
+    /// </summary>
+    [Command]
+   public void StopShootAnim() {
+        //アニメーション終了
+        anim.SetBool("Shoot", false);
+    }
+
     #endregion
+
+    #region バフ関連変数
+
+    private Coroutine healCoroutine;
+    private Coroutine speedCoroutine;
+    private Coroutine attackCoroutine;
+    private int defaultMoveSpeed;
+    private int defaultAttack;
+    [Header("バフに使用するエフェクトデータ")]
+    [SerializeField] private EffectData buffEffect;
+
+    private readonly string EFFECT_TAG = "Effect";
+    private readonly int ATTACK_BUFF_EFFECT = 0;
+    private readonly int SPEED_BUFF_EFFECT = 1;
+    private readonly int HEAL_BUFF_EFFECT = 2;
+    private readonly int DEBUFF_EFFECT = 3;
+
+    #endregion  
 
     #region ～バフ・ステータス操作系～
     /// <summary>
@@ -1011,7 +944,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         PlayEffect(HEAL_BUFF_EFFECT);
 
         // 総回復量を maxHP の割合で計算（例：_value=0.2 → 20％回復）
-        float totalHeal = maxHP * _value;
+        float totalHeal = parameter.maxHP * _value;
         //  回復実行（コルーチンで回す）
         healCoroutine = StartCoroutine(HealOverTime(totalHeal, _usingTime));
     }
@@ -1025,12 +958,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         float healBuffer = 0f; //   小数の回復を蓄積
 
         while (elapsed < _duration) {
-            if (isDead) yield break; // 死亡時は即終了
+            if (parameter.isDead) yield break; // 死亡時は即終了
 
             healBuffer += healPerSec * Time.deltaTime; // 累積
             if (healBuffer >= 1f) {
                 int healInt = Mathf.FloorToInt(healBuffer); // 整数分だけ反映
-                HP = Mathf.Min(HP + healInt, maxHP);
+                parameter.HP = Mathf.Min(parameter.HP + healInt, parameter.maxHP);
                 healBuffer -= healInt; // 余りを保持
             }
 
@@ -1058,9 +991,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///  時間まで攻撃力を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator AttackBuffRoutine(float _value, float _duration) {
-        attack = Mathf.RoundToInt(defaultAttack * _value);
+        parameter.attack = Mathf.RoundToInt(defaultAttack * _value);
         yield return new WaitForSeconds(_duration);
-        attack = defaultAttack;
+        parameter.attack = defaultAttack;
         DestroyChildrenWithTag(EFFECT_TAG);
         attackCoroutine = null;
     }
@@ -1081,9 +1014,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///  時間まで移動速度を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator SpeedBuffRoutine(float _value, float _duration) {
-        moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * _value);
+        parameter.moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * _value);
         yield return new WaitForSeconds(_duration);
-        moveSpeed = defaultMoveSpeed;
+        parameter.moveSpeed = defaultMoveSpeed;
         DestroyChildrenWithTag(EFFECT_TAG);
         speedCoroutine = null;
     }
@@ -1095,8 +1028,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     public void RemoveBuff() {
         StopAllCoroutines();
         DestroyChildrenWithTag(EFFECT_TAG);
-        moveSpeed = defaultMoveSpeed;
-        attack = defaultAttack;
+        parameter.moveSpeed = defaultMoveSpeed;
+        parameter.attack = defaultAttack;
         healCoroutine = speedCoroutine = attackCoroutine = null;
     }
 
@@ -1153,6 +1086,8 @@ public abstract class CharacterBase : NetworkBehaviour {
             }
         }
     }
+
+    #endregion
 
     #endregion
 

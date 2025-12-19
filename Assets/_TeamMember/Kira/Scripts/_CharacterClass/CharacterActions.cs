@@ -1,6 +1,8 @@
 using UnityEngine;
 using Mirror;
 using UnityEngine.EventSystems;
+using static TeamData;
+using UnityEngine.SocialPlatforms;
 
 public class CharacterActions : NetworkBehaviour {
     private CharacterBase core;
@@ -78,7 +80,7 @@ public class CharacterActions : NetworkBehaviour {
     }    
 
     private void JumpControl() {
-        if (!input.JumpPressed || !param.IsGrounded) return;
+        if (!input.isJumpPressed || !param.IsGrounded) return;
 
         Vector3 vel = rb.velocity;
         vel.y = 0;
@@ -152,5 +154,95 @@ public class CharacterActions : NetworkBehaviour {
             //経過時間を固定
             param.skillAfterTime = Skill.cooldown;
         }        
+    }
+
+    /// <summary>
+    /// 当たり判定の中に入った瞬間に発動
+    /// </summary>
+    protected void OnTriggerEnter(Collider _collider) {
+        //早期return
+        if (!isLocalPlayer) return;
+
+        //switchで分岐。ここに順次追加していく。
+        switch (_collider.tag) {
+            case "Item":
+                // フラグを立てる
+                isCanPickup = true;
+                useCollider = _collider;
+                localUI.OnChangeInteractUI();
+                break;
+            case "SelectCharacterObject":
+                // フラグを立てる
+                isCanInteruct = true;
+                useCollider = _collider;
+                useTag = "SelectCharacterObject";
+                localUI.OnChangeInteractUI();
+                break;
+            case "Gacha":
+                isCanInteruct = true;
+                useCollider = _collider;
+                useTag = "Gacha";
+                localUI.OnChangeInteractUI();
+                break;
+            case "RedTeam":
+                CmdJoinTeam(netIdentity, TeamColor.Red);
+                break;
+            case "BlueTeam":
+                CmdJoinTeam(netIdentity, TeamColor.Blue);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 当たり判定から抜けた瞬間に発動
+    /// </summary>
+    protected void OnTriggerExit(Collider _collider) {
+        //早期return
+        if (!isLocalPlayer) return;
+
+        //switchで分岐。ここに順次追加していく。
+        switch (_collider.tag) {
+            case "Item":
+                // フラグを下ろす
+                isCanPickup = false;
+                useCollider = null;
+                localUI.OffChangeInteractUI();
+                break;
+            case "SelectCharacterObject":
+                // フラグを下ろす
+                isCanInteruct = false;
+                useCollider = null;
+                useTag = null;
+                localUI.OffChangeInteractUI();
+                break;
+            case "Gacha":
+                isCanInteruct = false;
+                useCollider = null;
+                useTag = null;
+                localUI.OffChangeInteractUI();
+                break;
+            case "RedTeam":
+                //抜けたときは処理しない。何か処理があったら追加。
+                CmdJoinTeam(netIdentity, TeamColor.Red);
+                break;
+            case "BlueTeam":
+                //抜けたときは処理しない。何か処理があったら追加。
+                CmdJoinTeam(netIdentity, TeamColor.Blue);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// アイテム取得関連のフラグをリセットする
+    /// </summary>
+    public void ResetCanPickFlag() {
+        // フラグを下ろす
+        isCanPickup = false;
+        useCollider = null;
+        localUI.OffChangeInteractUI();
     }
 }

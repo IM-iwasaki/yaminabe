@@ -6,7 +6,7 @@ public class CharacterInput : NetworkBehaviour {
     private CharacterBase core;
 
     public Vector2 MoveInput { get; private set; }
-    public bool JumpPressed { get; private set; }
+    public bool isJumpPressed { get; private set; }
     public bool AttackPressed { get; private set; }
     public bool AttackReleased { get; private set; }
     public bool AttackTriggered { get; private set; }
@@ -24,7 +24,7 @@ public class CharacterInput : NetworkBehaviour {
         AttackTriggered = false;
         SkillTriggered = false;
         InteractTriggered = false;
-        JumpPressed = false;
+        isJumpPressed = false;
     }
 
     /// <summary>
@@ -41,8 +41,13 @@ public class CharacterInput : NetworkBehaviour {
     /// <summary>
     /// ÉWÉÉÉìÉv
     /// </summary>
-    public void OnJump(InputAction.CallbackContext ctx) {
-        if (ctx.performed) JumpPressed = true;
+    public void OnJump(InputAction.CallbackContext context) {
+        // É{É^ÉìÇ™âüÇ≥ÇÍÇΩèuä‘ÇæÇØîΩâûÇ≥ÇπÇÈ
+        if (context.performed && core.parameter.IsGrounded) {
+            isJumpPressed = true;
+            bool isJumping = !core.parameter.IsGrounded;
+            core.anim.SetBool("Jump", isJumping);
+        }
     }
 
     public void OnAttack(InputAction.CallbackContext ctx) {
@@ -58,7 +63,7 @@ public class CharacterInput : NetworkBehaviour {
             //ó£ÇµÇΩèuä‘Ç‹Ç≈
             case InputActionPhase.Canceled:
                 AttackPressed = false;
-                StopShootAnim();
+                core.StopShootAnim();
                 break;
             //âüÇµÇΩèuä‘
             case InputActionPhase.Performed:

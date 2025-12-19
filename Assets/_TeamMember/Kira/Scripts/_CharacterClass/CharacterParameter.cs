@@ -88,11 +88,11 @@ public class CharacterParameter : NetworkBehaviour{
     public bool isCanSkill = false;
     //スキル使用後経過時間
     [System.NonSerialized] public float skillAfterTime = 0.0f;
-    //ジャンプ入力をしたか
-    private bool IsJumpPressed = false;
     
     //接地しているか
     public bool IsGrounded{ get; private set; }
+    //移動中か
+    public bool isInvincible { get; private set; }
 
     //LocalUIの参照だけ持つ
     PlayerLocalUIController localUI;
@@ -101,23 +101,7 @@ public class CharacterParameter : NetworkBehaviour{
 
     #endregion
 
-    #region バフ関連変数
-
-    private Coroutine healCoroutine;
-    private Coroutine speedCoroutine;
-    private Coroutine attackCoroutine;
-    private int defaultMoveSpeed;
-    private int defaultAttack;
-    [Header("バフに使用するエフェクトデータ")]
-    [SerializeField] private EffectData buffEffect;
-
-    private readonly string EFFECT_TAG = "Effect";
-    private readonly int ATTACK_BUFF_EFFECT = 0;
-    private readonly int SPEED_BUFF_EFFECT = 1;
-    private readonly int HEAL_BUFF_EFFECT = 2;
-    private readonly int DEBUFF_EFFECT = 3;
-
-    #endregion
+    
 
     public void Initialize(CharacterBase core) {
         localUI = core.GetComponent<PlayerLocalUIController>();
@@ -126,8 +110,6 @@ public class CharacterParameter : NetworkBehaviour{
 
         isDead = false;
         isInvincible = false;
-        //isAttackPressed = false;
-        //isAttackTrigger = false;
         isCanPickup = false;
         isCanInteruct = false;
         isCanSkill = false;
@@ -152,7 +134,6 @@ public class CharacterParameter : NetworkBehaviour{
 
         //一定間隔でMPを回復する
         InvokeRepeating(nameof(MPRegeneration), 0.0f,0.1f);
-        //TODO:魔法職から変更した時、または魔法職にした時
     }
 
     /// <summary>
@@ -229,7 +210,7 @@ public class CharacterParameter : NetworkBehaviour{
     /// <summary>
     /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
     /// </summary>
-    private void ChangeHP(int _, int _newValue) {
+    public void ChangeHP(int _, int _newValue) {
         if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
         if (localUI != null) localUI.ChangeHPUI(maxHP, _newValue);
         else {
@@ -238,7 +219,7 @@ public class CharacterParameter : NetworkBehaviour{
 #endif
         }
     }
-    private void ChangeMP(int _, int _newValue) {
+    public void ChangeMP(int _, int _newValue) {
         if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
         if (localUI != null) localUI.ChangeMPUI(maxMP, _newValue);
         else {
@@ -263,21 +244,6 @@ public class CharacterParameter : NetworkBehaviour{
     /// MPを回復する
     /// </summary>
     void MPRegeneration() {
-        //攻撃してから短い間を置く。
-        if (Time.time <= attackStartTime + 0.2f) return;
-        //止まっているときは回復速度が早くなる。
-        if(input.MoveInput == Vector2.zero)InvokeRepeating(nameof(MPExtraRegeneration), 0.5f,0.4f);
-        else CancelInvoke(nameof(MPExtraRegeneration));
-
-        MP++;
-        //最大値を超えたら補正する
-        if (MP > maxMP) MP = maxMP;
-    }
-
-    /// <summary>
-    /// MPを回復する(追加効果による回復用)
-    /// </summary>
-    void MPExtraRegeneration() {
         //攻撃してから短い間を置く。
         if (Time.time <= attackStartTime + 0.2f) return;
 
