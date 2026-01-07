@@ -1,18 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ShieldData : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+/// <summary>
+/// シールドアイテムデータ
+/// </summary>
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Item/Shield")]
+public class ShieldData : ItemData {
+    [Header("Shield (Barricade)")]
+    public GameObject barricadePrefab;
+    public float duration = 5f;
+    public float distanceFromPlayer = 1.5f;
 }

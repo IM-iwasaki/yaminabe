@@ -4,6 +4,5 @@ using UnityEngine;
 
 
 [CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/MagicData")]
-public class MagicData : SubWeaponData {
-
+public class SubMagicData : SubWeaponData {
 }

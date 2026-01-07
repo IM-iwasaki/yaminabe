@@ -1,18 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class SpeedBoostData : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+/// <summary>
+/// スピードブーストアイテムデータ
+/// </summary>
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Item/SpeedBoost")]
+public class SpeedBoostData : ItemData {
+    public float speedMultiplier = 1.5f;
+    public float duration;
 }

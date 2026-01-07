@@ -50,7 +50,7 @@ public class SubWeaponController : NetworkBehaviour {
                 SpawnTrap();
                 break;
             case SubWeaponType.Item:
-                // アイテム処理（未実装）
+                UseItem();
                 break;
             case SubWeaponType.Magic:
                 // 魔法処理（未実装）
@@ -154,6 +154,43 @@ public class SubWeaponController : NetworkBehaviour {
         }
     }
 
+    [Server]
+    private void UseItem() {
+        if (subWeaponData is not ItemData itemData) return;
+
+        // 回復アイテムの場合
+        if (itemData.itemType == ItemType.HealthPack) {
+            //回復処理をここに追加
+        }
+        // その他のアイテムタイプの処理はここに追加
+    }
+
+    /// <summary>
+    /// バリケード生成
+    /// </summary>
+    /// <param name="data"></param>
+    [Server]
+    private void SpawnShieldBarricade(ShieldData data) {
+        if (data.barricadePrefab == null) return;
+
+        Vector3 spawnPos =
+            transform.position +
+            transform.forward * data.distanceFromPlayer;
+
+        Quaternion rot = Quaternion.LookRotation(transform.forward);
+
+        GameObject obj = Instantiate(
+            data.barricadePrefab,
+            spawnPos,
+            rot
+        );
+
+        NetworkServer.Spawn(obj);
+
+        // 一定時間後に消す
+        StartCoroutine(DestroyAfterTime(obj, data.duration));
+    }
+
     /// <summary>
     /// リチャージ
     /// </summary>
@@ -165,6 +202,12 @@ public class SubWeaponController : NetworkBehaviour {
             currentUses++;
         }
         isRecharging = false;
+    }
+
+    private IEnumerator DestroyAfterTime(GameObject obj, float time) {
+        yield return new WaitForSeconds(time);
+        if (obj != null)
+            NetworkServer.Destroy(obj);
     }
 
     [ClientRpc]

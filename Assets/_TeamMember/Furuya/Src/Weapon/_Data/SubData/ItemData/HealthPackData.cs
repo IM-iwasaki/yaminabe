@@ -1,18 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthPackData : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+/// <summary>
+/// 回復アイテムデータ
+/// </summary>
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+[CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Item/HealthPack")]
+public class HealthPackData : ItemData {
+    public int healAmount;
 }
