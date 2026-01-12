@@ -17,11 +17,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     //コンポーネント情報
     [Header("コンポーネント情報")]
     [System.NonSerialized]public Rigidbody rb;
-    protected Collider useCollider;
-    private string useTag;
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
-    [SerializeField] private InputActionAsset inputActions;
     public Animator anim = null;
     private string currentAnimation;
 
@@ -36,6 +33,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public SubWeaponController weaponController_sub;
 
     public CharacterInput input { get ; private set; }
+    public CharacterActions action { get ; private set; }
     public CharacterParameter parameter { get ; private set; }
 
     #region ～初期化関係関数～
@@ -45,16 +43,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void Awake() {
         //シーン変わったりしても消えないようにする
-        DontDestroyOnLoad(gameObject);
-
-        //コンテキストの登録
-        var map = inputActions.FindActionMap("Player");
-        foreach (var action in map.actions) {
-            action.started += ctx => OnInputStarted(action.name, ctx);
-            action.performed += ctx => OnInputPerformed(action.name, ctx);
-            action.canceled += ctx => OnInputCanceled(action.name, ctx);
-        }
-        map.Enable();
+        DontDestroyOnLoad(gameObject);        
 
         rb = GetComponent<Rigidbody>();
 
@@ -66,6 +55,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         GroundCheck = transform.Find("FootRoot");
 
         input = GetComponent<CharacterInput>();
+        action = GetComponent<CharacterActions>();
         parameter = GetComponent<CharacterParameter>();
         input.Initialize(this);
         parameter.Initialize(this);
@@ -424,16 +414,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
     }
 
-    /// <summary>
-    /// アニメーターのレイヤー切り替え
-    /// </summary>
-    [Server]
-    public void ChangeLayerWeight(int _layerIndex) {
-        //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for (int i = 1, max = anim.layerCount - 1; i < max; i++) {
-            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
-        }
-    }
+    
 
     /// <summary>
     /// 追加:タハラ
@@ -470,79 +451,77 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region 入力受付・入力実行・判定関数
 
-    /// <summary>
-    /// 入力の共通ハンドラ
-    /// </summary>
-    private void OnInputStarted(string actionName, InputAction.CallbackContext ctx) {
-        switch (actionName) {
-            case "Jump":
-                OnJump(ctx);
-                break;
-            case "Fire_Main":
-                HandleAttack(ctx);
-                break;
-            case "Fire_Sub":
-                HandleAttack(ctx);
-                break;
-            case "SubWeapon":
-                weaponController_sub.TryUseSubWeapon();
-                break;
-            case "ShowHostUI":
-                OnShowHostUI(ctx);
-                break;
-            case "CameraMenu":
-                OnShowCameraMenu(ctx);
-                break;
-            case "Ready":
-                OnReadyPlayer(ctx);
-                break;
-            case "SendMessage":
-                OnSendMessage(ctx);
-                break;
-            case "SendStamp":
-                OnSendStamp(ctx);
-                break;
-        }
-    }
-    private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
-        switch (actionName) {
-            case "Move":
-                OnMove(ctx);
-                break;
-            case "Jump":
-                OnJump(ctx);
-                break;
-            case "Fire_Main":
-                HandleAttack(ctx);
-                break;
-            case "Fire_Sub":
-                HandleAttack(ctx);
-                break;
-            case "Skill":
-                OnUseSkill(ctx);
-                break;
-            case "Interact":
-                OnInteract(ctx);
-                break;
-            case "Reload":
-                OnReload(ctx);
-                break;
-        }
-    }
-    private void OnInputCanceled(string actionName, InputAction.CallbackContext ctx) {
-        switch (actionName) {
-            case "Move":
-                MoveInput = Vector2.zero;
-                CmdResetAnimation();
-                break;
-            case "Fire_Main":
-            case "Fire_Sub":
-                HandleAttack(ctx);
-                break;
-        }
-    }
-
-    
+    ///// <summary>
+    ///// 入力の共通ハンドラ
+    ///// </summary>
+    //private void OnInputStarted(string actionName, InputAction.CallbackContext ctx) {
+    //    switch (actionName) {
+    //        case "Jump":
+    //            OnJump(ctx);
+    //            break;
+    //        case "Fire_Main":
+    //            HandleAttack(ctx);
+    //            break;
+    //        case "Fire_Sub":
+    //            HandleAttack(ctx);
+    //            break;
+    //        case "SubWeapon":
+    //            weaponController_sub.TryUseSubWeapon();
+    //            break;
+    //        case "ShowHostUI":
+    //            OnShowHostUI(ctx);
+    //            break;
+    //        case "CameraMenu":
+    //            OnShowCameraMenu(ctx);
+    //            break;
+    //        case "Ready":
+    //            OnReadyPlayer(ctx);
+    //            break;
+    //        case "SendMessage":
+    //            OnSendMessage(ctx);
+    //            break;
+    //        case "SendStamp":
+    //            OnSendStamp(ctx);
+    //            break;
+    //    }
+    //}
+    //private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
+    //    switch (actionName) {
+    //        case "Move":
+    //            OnMove(ctx);
+    //            break;
+    //        case "Jump":
+    //            OnJump(ctx);
+    //            break;
+    //        case "Fire_Main":
+    //            HandleAttack(ctx);
+    //            break;
+    //        case "Fire_Sub":
+    //            HandleAttack(ctx);
+    //            break;
+    //        case "Skill":
+    //            OnUseSkill(ctx);
+    //            break;
+    //        case "Interact":
+    //            OnInteract(ctx);
+    //            break;
+    //        case "Reload":
+    //            OnReload(ctx);
+    //            break;
+    //    }
+    //}
+    //private void OnInputCanceled(string actionName, InputAction.CallbackContext ctx) {
+    //    switch (actionName) {
+    //        case "Move":
+    //            MoveInput = Vector2.zero;
+    //            CmdResetAnimation();
+    //            break;
+    //        case "Fire_Main":
+    //        case "Fire_Sub":
+    //            HandleAttack(ctx);
+    //            break;
+    //    }
+    //}    
 
     /// <summary>
     /// 移動
@@ -571,6 +550,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             anim.SetBool("Jump", isJumping);
         }
     }*/
+
     /// <summary>
     /// スキル
     /// </summary
@@ -581,9 +561,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// インタラクト
     /// </summary>
-    public void OnInteract(InputAction.CallbackContext context) {
-        if (context.performed) Interact();
-    }
+    //public void OnInteract(InputAction.CallbackContext context) {
+    //    if (context.performed) Interact();
+    //}
+
     /// <summary>
     /// リロード
     /// </summary>
@@ -808,45 +789,61 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
-    }*/
-
-    
+    }*/    
 
     /// <summary>
     /// スキル呼び出し関数
     /// </summary>
-    abstract protected void StartUseSkill();
+    //protected void StartUseSkill() {
+    //    if (isCanSkill) {
+    //        equippedSkills[0].Activate(this);
+    //        isCanSkill = false;
+    //        //CT計測時間をリセット
+    //        skillAfterTime = 0;
+    //    }
+    //}
 
     /// <summary>
     /// インタラクト関数
     /// </summary>
-    protected void Interact() {
-        if (isCanPickup) {
-            ItemBase item = useCollider.GetComponent<ItemBase>();
-            item.Use(gameObject);
-            return;
-        }
-        if (isCanInteruct) {
-            if (useTag == "SelectCharacterObject") {
-                CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
-                select.StartCharacterSelect(gameObject);
-                return;
-            }
-            if (useTag == "Gacha") {
-                GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
-                gacha.StartGachaSelect(gameObject);
-                localUI.gameObject.SetActive(false);
-                return;
-            }
-
-        }
-    }
+    //protected void Interact() {
+    //    if (isCanPickup) {
+    //        ItemBase item = useCollider.GetComponent<ItemBase>();
+    //        item.Use(gameObject);
+    //        return;
+    //    }
+    //    if (isCanInteruct) {
+    //        if (useTag == "SelectCharacterObject") {
+    //            CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
+    //            select.StartCharacterSelect(gameObject);
+    //            return;
+    //        }
+    //        if (useTag == "Gacha") {
+    //            GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
+    //            gacha.StartGachaSelect(gameObject);
+    //            localUI.gameObject.SetActive(false);
+    //            return;
+    //        }
+    //
+    //    }
+    //}
 
     #endregion      
 
     #region おれのじゃないやつ
 
     #region アニメーション関連
+
+    /// <summary>
+    /// アニメーターのレイヤー切り替え
+    /// </summary>
+    [Server]
+    public void ChangeLayerWeight(int _layerIndex) {
+        //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
+        for (int i = 1, max = anim.layerCount - 1; i < max; i++) {
+            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
+        }
+    }
 
     /// <summary>
     /// 移動アニメーションの管理

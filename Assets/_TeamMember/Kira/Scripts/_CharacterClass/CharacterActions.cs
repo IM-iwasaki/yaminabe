@@ -9,6 +9,8 @@ public class CharacterActions : NetworkBehaviour {
     private CharacterParameter param;
     private CharacterInput input;
     private Rigidbody rb;
+    private Collider useCollider;
+    private string useTag;
 
     //移動中か
     public bool isMoving { get; private set; } = false;
@@ -17,12 +19,22 @@ public class CharacterActions : NetworkBehaviour {
     //実際に移動する方向
     public Vector3 moveDirection { get; private set; }
 
-    public void Initialize(CharacterBase core)
-    {
+    //アイテムを拾える状態か
+    public bool isCanPickup { get; private set; }
+    //インタラクトできる状態か
+    public bool isCanInteruct { get; private set; }   
+    //スキルを使用できるか
+    public bool isCanSkill { get; private set; }
+
+    public void Initialize(CharacterBase core) {
         this.core = core;
         param = core.parameter;
         input = core.input;
         rb = core.GetComponent<Rigidbody>();
+
+        isCanPickup = false;
+        isCanInteruct = false;
+        isCanSkill = false;
     }
 
     public void TickUpdate() {
@@ -116,21 +128,41 @@ public class CharacterActions : NetworkBehaviour {
         if (!input.SkillTriggered) return;
         input.SkillTriggered = false;
 
-        Cmd_DoSkill();
+        StartUseSkill();
     }
 
-    [Command]
-    private void Cmd_DoSkill()
-    {
-        Debug.Log("Skill activated");
+    protected void StartUseSkill() {
+        if (isCanSkill) {
+            param.equippedSkills[0].Activate(core);
+            isCanSkill = false;
+            //CT計測時間をリセット
+            param.skillAfterTime = 0;
+        }
     }
 
-    private void HandleInteract()
-    {
+    private void HandleInteract() {
         if (!input.InteractTriggered) return;
         input.InteractTriggered = false;
 
-        Debug.Log("Interact event");
+        if (isCanPickup) {
+            ItemBase item = useCollider.GetComponent<ItemBase>();
+            item.Use(gameObject);
+            return;
+        }
+        if (isCanInteruct) {
+            if (useTag == "SelectCharacterObject") {
+                CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
+                select.StartCharacterSelect(gameObject);
+                return;
+            }
+            if (useTag == "Gacha") {
+                GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
+                gacha.StartGachaSelect(gameObject);
+                core.localUI.gameObject.SetActive(false);
+                return;
+            }
+
+        }
     }
 
     /// <summary>
@@ -143,14 +175,14 @@ public class CharacterActions : NetworkBehaviour {
         param.equippedSkills[0].SkillEffectUpdate(core);
 
         //スキル使用不可中、スキルクールタイム中かつスキルがインポートされていれば時間を計測
-        if (!param.isCanSkill && param.skillAfterTime <= param.equippedSkills[0].cooldown && param.equippedSkills[0] != null)
+        if (!isCanSkill && param.skillAfterTime <= param.equippedSkills[0].cooldown && param.equippedSkills[0] != null)
             param.skillAfterTime += Time.deltaTime;
         //スキルクールタイムを過ぎていたら丁度になるよう補正
         else if (param.skillAfterTime > param.equippedSkills[0].cooldown) param.skillAfterTime = param.equippedSkills[0].cooldown;
         //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
         var Skill = param.equippedSkills[0];
-        if (!param.isCanSkill && Skill != null && param.skillAfterTime >= Skill.cooldown) {
-            param.isCanSkill = true;
+        if (!isCanSkill && Skill != null && param.skillAfterTime >= Skill.cooldown) {
+            isCanSkill = true;
             //経過時間を固定
             param.skillAfterTime = Skill.cooldown;
         }        
@@ -169,26 +201,26 @@ public class CharacterActions : NetworkBehaviour {
                 // フラグを立てる
                 isCanPickup = true;
                 useCollider = _collider;
-                localUI.OnChangeInteractUI();
+                core.localUI.OnChangeInteractUI();
                 break;
             case "SelectCharacterObject":
                 // フラグを立てる
                 isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "SelectCharacterObject";
-                localUI.OnChangeInteractUI();
+                core.localUI.OnChangeInteractUI();
                 break;
             case "Gacha":
                 isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "Gacha";
-                localUI.OnChangeInteractUI();
+                core.localUI.OnChangeInteractUI();
                 break;
             case "RedTeam":
-                CmdJoinTeam(netIdentity, TeamColor.Red);
+                core.CmdJoinTeam(netIdentity, TeamColor.Red);
                 break;
             case "BlueTeam":
-                CmdJoinTeam(netIdentity, TeamColor.Blue);
+                core.CmdJoinTeam(netIdentity, TeamColor.Blue);
                 break;
             default:
                 break;
@@ -208,28 +240,28 @@ public class CharacterActions : NetworkBehaviour {
                 // フラグを下ろす
                 isCanPickup = false;
                 useCollider = null;
-                localUI.OffChangeInteractUI();
+                core.localUI.OffChangeInteractUI();
                 break;
             case "SelectCharacterObject":
                 // フラグを下ろす
                 isCanInteruct = false;
                 useCollider = null;
                 useTag = null;
-                localUI.OffChangeInteractUI();
+                core.localUI.OffChangeInteractUI();
                 break;
             case "Gacha":
                 isCanInteruct = false;
                 useCollider = null;
                 useTag = null;
-                localUI.OffChangeInteractUI();
+                core.localUI.OffChangeInteractUI();
                 break;
             case "RedTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(netIdentity, TeamColor.Red);
+                //core.CmdJoinTeam(netIdentity, TeamColor.Red);
                 break;
             case "BlueTeam":
                 //抜けたときは処理しない。何か処理があったら追加。
-                CmdJoinTeam(netIdentity, TeamColor.Blue);
+                //core.CmdJoinTeam(netIdentity, TeamColor.Blue);
                 break;
             default:
                 break;
@@ -243,6 +275,6 @@ public class CharacterActions : NetworkBehaviour {
         // フラグを下ろす
         isCanPickup = false;
         useCollider = null;
-        localUI.OffChangeInteractUI();
+        core.localUI.OffChangeInteractUI();
     }
 }

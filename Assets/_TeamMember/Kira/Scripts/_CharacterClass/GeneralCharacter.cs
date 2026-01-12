@@ -18,8 +18,8 @@ public class GeneralCharacter : CharacterBase {
 
 
         if (!isLocalPlayer) return; // 自分だけ表示
-        SkillBase skill = equippedSkills[0];
-        PassiveBase passive = equippedPassives[0];
+        SkillBase skill = parameter.equippedSkills[0];
+        PassiveBase passive = parameter.equippedPassives[0];
 
         SkillDisplayer.Instance.SetSkillUI(
         skill.skillName, skill.skillDescription,
@@ -33,11 +33,11 @@ public class GeneralCharacter : CharacterBase {
         //RespawnControl();    
                
         //死んでいたら以降の処理は行わない。
-        if (isDead) return;
+        //if (isDead) return;
 
-        MoveControl();
-        JumpControl();       
-        AbilityControl();
+        //MoveControl();
+        //JumpControl();       
+        //AbilityControl();
     }
 
     public override void Initalize() {
@@ -50,17 +50,9 @@ public class GeneralCharacter : CharacterBase {
             weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
     }   
 
-    protected override void StartUseSkill() {
-        if (isCanSkill) {
-            equippedSkills[0].Activate(this);
-            isCanSkill = false;
-            //CT計測時間をリセット
-            skillAfterTime = 0;
-        }       
-    }
     public override void Respawn() {
         base.Respawn();
         //パッシブのセットアップ
-        equippedPassives[0].PassiveSetting(this);
+        parameter.equippedPassives[0].PassiveSetting();
     }
 }

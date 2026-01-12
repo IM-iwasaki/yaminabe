@@ -16,7 +16,7 @@ public class Skill_Soldier : SkillBase {
     readonly float upPower = 4.0f;
 
     public override void Activate(CharacterBase user) {       
-        Vector3 attackDir = user.GetShootDirection();
+        Vector3 attackDir = user.parameter.GetShootDirection();
         StartExtraAttackDelay(user, 0.02f, 24, attackDir);
     }
 

@@ -52,6 +52,9 @@ public class CharacterParameter : NetworkBehaviour{
     [SyncVar] public int playerId = -1;
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
+    
+    private int defaultAttack;
+    private int defaultMoveSpeed;
 
     #endregion
 
@@ -80,19 +83,14 @@ public class CharacterParameter : NetworkBehaviour{
     public bool isAttackTrigger { get; protected set; } = false;
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0.0f;
-    //アイテムを拾える状態か
-    protected bool isCanPickup = false;
-    //インタラクトできる状態か
-    protected bool isCanInteruct = false;   
-    //スキルを使用できるか
-    public bool isCanSkill = false;
+    
     //スキル使用後経過時間
     [System.NonSerialized] public float skillAfterTime = 0.0f;
     
     //接地しているか
     public bool IsGrounded{ get; private set; }
     //移動中か
-    public bool isInvincible { get; private set; }
+    //public bool ismoving { get; private set; }
 
     //LocalUIの参照だけ持つ
     PlayerLocalUIController localUI;
@@ -109,10 +107,7 @@ public class CharacterParameter : NetworkBehaviour{
         HP = maxHP;
 
         isDead = false;
-        isInvincible = false;
-        isCanPickup = false;
-        isCanInteruct = false;
-        isCanSkill = false;
+        isInvincible = false;        
 
         respownAfterTime = 0;
         attackStartTime = 0;
