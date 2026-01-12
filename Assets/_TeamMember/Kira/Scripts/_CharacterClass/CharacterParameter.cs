@@ -99,9 +99,9 @@ public class CharacterParameter : NetworkBehaviour{
 
     #endregion
 
-    
-
     public void Initialize(CharacterBase core) {
+        StatusInport(inputStatus);
+
         localUI = core.GetComponent<PlayerLocalUIController>();
 
         HP = maxHP;
@@ -271,5 +271,22 @@ public class CharacterParameter : NetworkBehaviour{
         }
         // 当たらなければそのままaimPoint方向
         return direction;
+    }
+
+    /// <summary>
+    /// 死亡トリガーを発火する
+    /// </summary>
+    public void StartDeadTrigger() {
+        isDeadTrigger = true;
+    }
+
+    /// <summary>
+    /// 復活時の無敵状態の初期化
+    /// </summary>
+    public void StartInvincible() {
+        //リスポーン後の無敵時間にする
+        isInvincible = true;
+        //経過時間をリセット
+        respownAfterTime = 0;
     }
 }

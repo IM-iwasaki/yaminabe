@@ -53,7 +53,7 @@ public class PlayerListManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void RegisterPlayer(CharacterBase player) {
-        if (players.Exists(p => p.name == player.PlayerName)) return;
+        if (players.Exists(p => p.name == player.parameter.PlayerName)) return;
 
         // 空いているIDを探す（0〜5まで）
         int assignedId = -1;
@@ -69,10 +69,10 @@ public class PlayerListManager : NetworkBehaviour {
             return;
         }
 
-        players.Add(new PlayerInfo(assignedId, player.PlayerName));
-        player.playerId = assignedId;
+        players.Add(new PlayerInfo(assignedId, player.parameter.PlayerName));
+        player.parameter.playerId = assignedId;
 
-        Debug.Log($"[PlayerListManager] 登録: {player.PlayerName} → Player{assignedId + 1}");
+        Debug.Log($"[PlayerListManager] 登録: {player.parameter.PlayerName} → Player{assignedId + 1}");
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public class PlayerListManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void UnregisterPlayer(CharacterBase player) {
-        var target = players.Find(p => p.id == player.playerId);
+        var target = players.Find(p => p.id == player.parameter.playerId);
         if (target != null) {
             Debug.Log($"[PlayerListManager] 退室: {target.name} (Player{target.id + 1})");
             players.Remove(target);
@@ -128,7 +128,7 @@ public class PlayerListManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void ResetScore(CharacterBase player) {
-        var target = players.Find(p => p.id == player.playerId);
+        var target = players.Find(p => p.id == player.parameter.playerId);
         if (target != null) {
             target.score = 0;
             Debug.Log($"[PlayerListManager] {target.name} のスコアをリセット");
@@ -178,11 +178,11 @@ public class PlayerListManager : NetworkBehaviour {
 
             // CharacterBaseから teamId を取る
             var chara = FindObjectsOfType<CharacterBase>()
-                .FirstOrDefault(c => c.PlayerName == p.name);
+                .FirstOrDefault(c => c.parameter.PlayerName == p.name);
 
             int team = 0;
             if (chara != null)
-                team = chara.TeamID;
+                team = chara.parameter.TeamID;
 
             list.Add(new ResultScoreData {
                 PlayerName = p.name,

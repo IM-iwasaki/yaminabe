@@ -77,7 +77,7 @@ public class TeamGlowSimple : MonoBehaviour {
             }
         }
 
-        if (character.TeamID != lastTeamId) {
+        if (character.parameter.TeamID != lastTeamId) {
             ApplyGlow(true);
         }
         else {
@@ -103,7 +103,7 @@ public class TeamGlowSimple : MonoBehaviour {
         bool isSelf = character.isLocalPlayer;
 
         // TeamID → ベース色
-        Color teamColor = GetColorByTeamId(character.TeamID);
+        Color teamColor = GetColorByTeamId(character.parameter.TeamID);
 
         // 未所属 or (自キャラかつ hideSelfGlow が true) → 発光なし
         Color emissionColor;
@@ -114,7 +114,7 @@ public class TeamGlowSimple : MonoBehaviour {
             emissionColor = teamColor * emissionIntensity;
         }
 
-        lastTeamId = character.TeamID;
+        lastTeamId = character.parameter.TeamID;
 
         foreach (var r in targetRenderers) {
             if (r == null) continue;

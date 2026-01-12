@@ -35,7 +35,7 @@ public class LandMine : TrapBase {
     private void OnTriggerEnter(Collider other) {
         if (!isActivated || hasTriggered) return;
         if (other.TryGetComponent(out CharacterBase target)) {
-            if (!canDamageAllies && target.TeamID == ownerTeamID) return;
+            if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) return;
             Explode();
         }
     }
@@ -62,7 +62,7 @@ public class LandMine : TrapBase {
         foreach (var c in hits) {
             var target = c.GetComponent<CharacterBase>();
             if (target == null) continue;
-            if (!canDamageAllies && target.TeamID == ownerTeamID) continue;
+            if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) continue;
             target.TakeDamage(damage, ownerName);
         }
 

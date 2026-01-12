@@ -43,7 +43,7 @@ public class ServerManager : NetworkBehaviour {
         //チームに所属していない人を抜き出す
         List<NetworkIdentity> notInTeamPlayer = new List<NetworkIdentity>();
         foreach (var player in connectPlayer) {
-            if (player.GetComponent<GeneralCharacter>().TeamID != -1)
+            if (player.GetComponent<GeneralCharacter>().parameter.TeamID != -1)
                 continue;
             notInTeamPlayer.Add(player);
         }
@@ -54,7 +54,7 @@ public class ServerManager : NetworkBehaviour {
                 //まずはチームを全てリセット
                 foreach (var resetTeam in teams) {
                     for (int i = 0, max = resetTeam.teamPlayerList.Count; i < max; i++) {
-                        resetTeam.teamPlayerList[i].GetComponent<GeneralCharacter>().TeamID = -1;
+                        resetTeam.teamPlayerList[i].GetComponent<GeneralCharacter>().parameter.TeamID = -1;
                         notInTeamPlayer.Add(resetTeam.teamPlayerList[i]);
                     }
                     resetTeam.teamPlayerList.Clear();
@@ -80,8 +80,8 @@ public class ServerManager : NetworkBehaviour {
                 teams[teamIndex].teamPlayerList.Add(player);
             }
             //プレイヤーのチームIDを設定
-            player.GetComponent<GeneralCharacter>().TeamID = teamIndex;
-            ChatManager.instance.CmdSendSystemMessage(player.GetComponent<GeneralCharacter>().PlayerName + " is " + teamIndex + "Team");
+            player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
+            ChatManager.instance.CmdSendSystemMessage(player.GetComponent<GeneralCharacter>().parameter.PlayerName + " is " + teamIndex + "Team");
         }
 
     }

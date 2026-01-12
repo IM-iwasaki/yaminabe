@@ -43,7 +43,7 @@ public class CaptureArea : NetworkBehaviour {
         // 全員同じチームかチェック
         int teamId = -1;
         foreach (var p in playersInArea) {
-            teamId = p.TeamID;
+            teamId = p.parameter.TeamID;
             break; // 最初の要素のチームIDを取得したら抜ける
         }
 

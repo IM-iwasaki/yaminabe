@@ -58,6 +58,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         action = GetComponent<CharacterActions>();
         parameter = GetComponent<CharacterParameter>();
         input.Initialize(this);
+        action.Initialize(this);
         parameter.Initialize(this);
     }
 
@@ -207,7 +208,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         parameter.isDead = true;
         ChatManager.instance.CmdSendSystemMessage(_name + " is Dead!!");
         //死亡トリガーを発火
-        parameter.isDeadTrigger = true;
+        parameter.StartDeadTrigger();
         //バフ全解除
         RemoveBuff();
         //ホコを所持していたらドロップ
@@ -332,12 +333,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
             parameter.TeamID = currentTeamID;
         }
-
-        //リスポーン後の無敵時間にする
-        parameter.isInvincible = true;
-        //経過時間をリセット
-        parameter.respownAfterTime = 0;
-
+        parameter.StartInvincible();
         LoaclRespawnEffect();
     }
 
@@ -554,10 +550,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// スキル
     /// </summary
-    public void OnUseSkill(InputAction.CallbackContext context) {
-        if (context.performed)
-            StartUseSkill();
-    }
+    //public void OnUseSkill(InputAction.CallbackContext context) {
+    //    if (context.performed)
+    //        StartUseSkill();
+    //}
+
     /// <summary>
     /// インタラクト
     /// </summary>
@@ -568,11 +565,12 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// リロード
     /// </summary>
-    public void OnReload(InputAction.CallbackContext context) {
-        if (context.performed && weaponController_main.ammo < weaponController_main.weaponData.maxAmmo) {
-            weaponController_main.CmdReloadRequest();
-        }
-    }
+    //public void OnReload(InputAction.CallbackContext context) {
+    //    if (context.performed && weaponController_main.ammo < weaponController_main.weaponData.maxAmmo) {
+    //        weaponController_main.CmdReloadRequest();
+    //    }
+    //}
+
     /// <summary>
     /// 追加:タハラ UI表示
     /// </summary>

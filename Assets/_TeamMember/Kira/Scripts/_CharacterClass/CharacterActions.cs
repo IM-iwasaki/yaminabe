@@ -26,6 +26,21 @@ public class CharacterActions : NetworkBehaviour {
     //ƒXƒLƒ‹‚ğg—p‚Å‚«‚é‚©
     public bool isCanSkill { get; private set; }
 
+    private void Update() {
+        JumpControl();
+
+        //UŒ‚“ü—Í‚ª‚ ‚éŠÔUŒ‚ŠÖ”‚ğŒÄ‚Ô(ŠÔŠu‚Ì§Œä‚ÍMainWeaponController‚Éˆê”C)
+        if (input.AttackPressed) StartAttack();
+
+        HandleSkill();
+        HandleInteract();
+
+        MoveControl();
+        param.GroundCheck(core.transform.position);
+        
+        AbilityControl();
+    }
+
     public void Initialize(CharacterBase core) {
         this.core = core;
         param = core.parameter;
@@ -35,21 +50,6 @@ public class CharacterActions : NetworkBehaviour {
         isCanPickup = false;
         isCanInteruct = false;
         isCanSkill = false;
-    }
-
-    public void TickUpdate() {
-        JumpControl();
-
-        //UŒ‚“ü—Í‚ª‚ ‚éŠÔUŒ‚ŠÖ”‚ğŒÄ‚Ô(ŠÔŠu‚Ì§Œä‚ÍMainWeaponController‚Éˆê”C)
-        if (input.AttackPressed) StartAttack();
-
-        HandleSkill();
-        HandleInteract();
-    }
-
-    public void TickFixedUpdate() {
-        MoveControl();
-        param.GroundCheck(core.transform.position);
     }
 
     private void MoveControl() {
@@ -114,13 +114,6 @@ public class CharacterActions : NetworkBehaviour {
         // •Ší‚ªUŒ‚‰Â”\‚©ƒ`ƒFƒbƒN‚µ‚ÄƒT[ƒo[–½—ß‚ğ‘—‚é(CmdRequestAttack•Šíí‚²‚Æ‚Ì•ªŠò‚à‘¤‚Å)
         Vector3 shootDir = core.parameter.GetShootDirection();
         core.weaponController_main.CmdRequestAttack(shootDir);
-    }
-
-    [Command]
-    private void Cmd_DoAttack()
-    {
-        if (param.isDead) return;
-        Debug.Log("Attack performed");
     }
 
     private void HandleSkill()

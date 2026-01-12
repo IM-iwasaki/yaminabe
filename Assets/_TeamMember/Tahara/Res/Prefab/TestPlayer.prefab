@@ -81,6 +81,9 @@ GameObject:
   - component: {fileID: 2825701905452532873}
   - component: {fileID: -140839760005440579}
   - component: {fileID: 5429557689299820045}
+  - component: {fileID: 949359640894618383}
+  - component: {fileID: 8981440706054749680}
+  - component: {fileID: 8330008703597617217}
   - component: {fileID: 372889221504933099}
   - component: {fileID: 8966501722716295590}
   - component: {fileID: 6333738302978058651}
@@ -437,25 +440,72 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  localUI: {fileID: 8966501722716295590}
+  CameraMenu: {fileID: 7834819685942672659}
+  anim: {fileID: 321994967542534653}
+  weaponController_main: {fileID: 2825701905452532873}
+  weaponController_sub: {fileID: -140839760005440579}
+  buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
+--- !u!114 &949359640894618383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5478059386412428429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e77b71b0af3088341b76939d68010aea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
+  SkillTriggered: 0
+  InteractTriggered: 0
+--- !u!114 &8981440706054749680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5478059386412428429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44d768c1c480dc743b468f7fb06f8608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+--- !u!114 &8330008703597617217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5478059386412428429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02ce65d86440bee40a41394c54689d48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  inputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
   HP: 0
+  MP: 0
+  isReloading: 0
   attack: 0
   moveSpeed: 5
-  MP: 0
   TeamID: -1
   PlayerName: Default
   playerId: -1
-  ready: 0
-  firePoint: {fileID: 878125566127400802}
-  isReloading: 0
-  IsGrounded: 0
-  localUI: {fileID: 8966501722716295590}
-  CameraMenu: {fileID: 7834819685942672659}
-  inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
-  anim: {fileID: 321994967542534653}
-  weaponController_main: {fileID: 0}
-  weaponController_sub: {fileID: 0}
-  buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
-  inputStatus: {fileID: 11400000, guid: 2b2b23650934ee54687ca8d729b424b1, type: 2}
+  ready: 1
+  firePoint: {fileID: 0}
+  isDead: 0
 --- !u!114 &372889221504933099
 MonoBehaviour:
   m_ObjectHideFlags: 0

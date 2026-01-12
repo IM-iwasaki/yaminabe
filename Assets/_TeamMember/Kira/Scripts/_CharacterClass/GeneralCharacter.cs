@@ -1,6 +1,7 @@
-using UnityEngine;
-using System.Linq;
 using Mirror;
+using System.Linq;
+using UnityEngine;
+using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
 
 //
 //  @file   Second_CharacterClass
@@ -9,7 +10,7 @@ public class GeneralCharacter : CharacterBase {
 
     protected new void Awake() {
         base.Awake();
-        Initalize();        
+        //Initalize();        
     }   
 
     public override void OnStartClient() {
@@ -44,7 +45,7 @@ public class GeneralCharacter : CharacterBase {
         //HPやフラグ関連などの基礎的な初期化
         base.Initalize();
         //MaxMPが0でなければ最大値で初期化
-        //if (maxMP != 0) MP = maxMP; 
+        if (parameter.maxMP != 0) parameter.MP = parameter.maxMP; 
         //弾倉が0でなければ最大値で初期化
         if (weaponController_main.weaponData.maxAmmo != 0)
             weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;

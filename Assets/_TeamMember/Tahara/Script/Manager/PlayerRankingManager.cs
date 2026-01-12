@@ -53,7 +53,7 @@ public class PlayerRankingManager : NetworkBehaviour {
         //ƒvƒŒƒCƒ„[‚ğæ“¾
         var playerObj = _conn.identity;
         int addRate;
-        int teamID = playerObj.gameObject.GetComponent<CharacterBase>().TeamID;
+        int teamID = playerObj.gameObject.GetComponent<CharacterBase>().parameter.TeamID;
         switch (teamID == _winnerTeamID) {
             case true:
                 addRate = 10;

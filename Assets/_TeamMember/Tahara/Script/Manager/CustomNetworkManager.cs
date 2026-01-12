@@ -140,7 +140,7 @@ public class CustomNetworkManager : NetworkManager {
         foreach (var conn in serverManager.connectPlayer) {
             //必要な変数をキャッシュ
             GeneralCharacter character = conn.GetComponent<GeneralCharacter>();
-            int teamID = character.TeamID;
+            int teamID = character.parameter.TeamID;
             NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
             if (sceneName == GameSceneManager.Instance.gameSceneName) {
