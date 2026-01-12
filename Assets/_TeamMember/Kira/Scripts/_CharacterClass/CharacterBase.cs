@@ -23,7 +23,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     private string currentAnimation;
 
     //GroundLayer
-    private LayerMask GroundLayer;
+    public LayerMask GroundLayer { get; private set; }
     //足元の確認用Transform
     public Transform GroundCheck { get; private set; }
 
@@ -914,8 +914,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
     private Coroutine attackCoroutine;
-    private int defaultMoveSpeed;
-    private int defaultAttack;
     [Header("バフに使用するエフェクトデータ")]
     [SerializeField] private EffectData buffEffect;
 
@@ -986,9 +984,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///  時間まで攻撃力を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator AttackBuffRoutine(float _value, float _duration) {
-        parameter.attack = Mathf.RoundToInt(defaultAttack * _value);
+        parameter.attack = Mathf.RoundToInt(parameter.defaultAttack * _value);
         yield return new WaitForSeconds(_duration);
-        parameter.attack = defaultAttack;
+        parameter.attack = parameter.defaultAttack;
         DestroyChildrenWithTag(EFFECT_TAG);
         attackCoroutine = null;
     }
@@ -1009,9 +1007,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///  時間まで移動速度を上げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator SpeedBuffRoutine(float _value, float _duration) {
-        parameter.moveSpeed = Mathf.RoundToInt(defaultMoveSpeed * _value);
+        parameter.moveSpeed = Mathf.RoundToInt(parameter.defaultMoveSpeed * _value);
         yield return new WaitForSeconds(_duration);
-        parameter.moveSpeed = defaultMoveSpeed;
+        parameter.moveSpeed = parameter.defaultMoveSpeed;
         DestroyChildrenWithTag(EFFECT_TAG);
         speedCoroutine = null;
     }
@@ -1023,8 +1021,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     public void RemoveBuff() {
         StopAllCoroutines();
         DestroyChildrenWithTag(EFFECT_TAG);
-        parameter.moveSpeed = defaultMoveSpeed;
-        parameter.attack = defaultAttack;
+        parameter.moveSpeed = parameter.defaultMoveSpeed;
+        parameter.attack = parameter.defaultAttack;
         healCoroutine = speedCoroutine = attackCoroutine = null;
     }
 

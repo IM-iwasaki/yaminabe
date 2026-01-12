@@ -92,13 +92,29 @@ public class CharacterActions : NetworkBehaviour {
     }    
 
     private void JumpControl() {
-        if (!input.isJumpPressed || !param.IsGrounded) return;
+        // ジャンプ判定
+        if (input.isJumpPressed && param.IsGrounded) {
+            // 現在の速度をリセットしてから上方向に力を加える
+            Vector3 velocity = rb.velocity;
+            velocity.y = 0f;
+            rb.velocity = velocity;
+            rb.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
+        }
 
-        Vector3 vel = rb.velocity;
-        vel.y = 0;
-        rb.velocity = vel;
+        //ベクトルが上方向に働いている時
+        if (rb.velocity.y > 0) {
+            //追加の重力補正を掛ける
+            rb.velocity += (PlayerConst.JUMP_UPFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
+        }
+        // ベクトルが下方向に働いている時
+        else if (rb.velocity.y < 0) {
+            //追加の重力補正を掛ける
+            rb.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
+            //anim.SetBool("Jump", false);
+        }
 
-        rb.AddForce(Vector3.up * 12f, ForceMode.Impulse);
+        // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
+        //IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, core.GroundLayer);
     }
 
     /// <summary>

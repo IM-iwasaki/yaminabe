@@ -53,8 +53,8 @@ public class CharacterParameter : NetworkBehaviour{
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
     
-    private int defaultAttack;
-    private int defaultMoveSpeed;
+    public int defaultAttack { get; protected set; }
+    public int defaultMoveSpeed { get; protected set; }
 
     #endregion
 
@@ -122,11 +122,6 @@ public class CharacterParameter : NetworkBehaviour{
         //Skill関連の初期化
         equippedSkills[0].isSkillUse = false;
 
-        // デフォルト値保存
-        defaultMoveSpeed = moveSpeed;
-        defaultAttack = attack;
-        defaultAttack = attack;
-
         //一定間隔でMPを回復する
         InvokeRepeating(nameof(MPRegeneration), 0.0f,0.1f);
     }
@@ -192,6 +187,14 @@ public class CharacterParameter : NetworkBehaviour{
     private void InDefaultStatus() {
         defaultAttack = attack;
         defaultMoveSpeed = moveSpeed;
+    }
+
+    private void OutDefaultStatus_Attack() {
+        attack = defaultAttack;
+    }
+
+    private void OutDefaultStatus_MoveSpeed() {
+        moveSpeed = defaultMoveSpeed;
     }
 
     /// <summary>
