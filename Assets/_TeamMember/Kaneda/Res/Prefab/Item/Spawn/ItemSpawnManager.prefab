@@ -62,11 +62,9 @@ MonoBehaviour:
   consumableCategory:
     items:
     - prefab: {fileID: 5141172646852832494, guid: 70db3d2a271e49e41ae4f05d1d2f55f4, type: 3}
-      spawnChancePercent: 40
-    - prefab: {fileID: 5141172646852832494, guid: 8a2d4c1e194b38e418983356e6874884, type: 3}
-      spawnChancePercent: 30
+      spawnChancePercent: 60
     - prefab: {fileID: 5141172646852832494, guid: 00ed781235c86f04c9f46d3242f9f8b1, type: 3}
-      spawnChancePercent: 30
+      spawnChancePercent: 40
     spawnProbabilityPercent: 90
   weaponSpawnRatio: 0.4
   respawnInterval: 30

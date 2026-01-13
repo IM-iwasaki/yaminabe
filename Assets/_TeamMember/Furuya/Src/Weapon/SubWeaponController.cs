@@ -15,10 +15,12 @@ public class SubWeaponController : NetworkBehaviour {
     private bool isRecharging;
 
     private CharacterBase characterBase; // É`Å[ÉÄIDÇ»Ç«ÇéÊìæÇ∑ÇÈÇΩÇﬂ
+    private CharacterAnimationController characterAnimationController;
     private PlayerLocalUIController playerUI;
 
     public void Awake() {
         characterBase = GetComponent<CharacterBase>();
+        characterAnimationController = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
 
         if (subWeaponData != null)
@@ -212,6 +214,6 @@ public class SubWeaponController : NetworkBehaviour {
 
     [ClientRpc]
     private void ThrowAnimation() {
-        characterBase.anim.SetTrigger("Throw");
+        characterAnimationController.anim.SetTrigger("Throw");
     }
 }

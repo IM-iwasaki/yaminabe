@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,10 +32,12 @@ public class GachaSystem : MonoBehaviour {
     private GameObject currentPlayer; // 現在選択中のプレイヤー
     public bool isOpen;               // ガチャ画面の開閉状態およびカーソル状態
 
+
     /// <summary>
     /// ガチャ画面中かどうかのフラグ
     /// </summary>
     private bool isGacha = false;
+
 
     // 結果表示用
     private Canvas resultCanvas;      // 結果UIを配置するCanvas
@@ -151,8 +154,9 @@ public class GachaSystem : MonoBehaviour {
 
     #endregion
 
-    #region オプション中ブロック
 
+
+    #region オプション中ブロック
     /// <summary>
     /// シーン内の OptionMenu をキャッシュするためのフィールド
     /// インスペクタからは設定しない
@@ -183,13 +187,13 @@ public class GachaSystem : MonoBehaviour {
         // OptionMenu 側でメニューが開いているならブロック
         return Option.isOpen;
     }
-
     /// <summary>
     /// ガチャ状態をまとめて切り替える
     /// </summary>
     private void SetGachaState(bool open) {
         isGacha = open;
     }
+
 
     // ガチャの状態を返す
     public bool IsGachaActive() {
@@ -215,19 +219,22 @@ public class GachaSystem : MonoBehaviour {
 
         SetGachaState(true);
 
-        // ガチャ開始時に所持金UIを表示
-        PlayerWallet.Instance?.ShowMoneyUI();
+        // UIを非表示（移動開始前）
+        if (gachaUI != null) 
+            gachaUI.SetActive(false);
 
-        if (gachaUI != null) gachaUI.SetActive(false);
-
+        // カメラ移動開始
         if (cameraManager != null && cameraTargetPoint != null) {
             cameraManager.MoveCamera(player, cameraTargetPoint.position, cameraTargetPoint.rotation);
         }
 
-        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        //  プレイヤーの見た目非表示
+        Transform parent = player.transform;
+        Transform skin = FindChildWithTag(parent, SKIN_TAG);
         if (skin != null) skin.gameObject.SetActive(false);
 
         isOpen = true;
+        //  カーソルをOnにする
         ChangeCursorView();
 
         if (gachaUI != null)
@@ -240,19 +247,28 @@ public class GachaSystem : MonoBehaviour {
     public void EndGachaSelect() {
         if (currentPlayer == null) return;
 
-        // ガチャ終了時に所持金UIを非表示
-        PlayerWallet.Instance?.HideMoneyUI();
-
         OffGachaAnim();
 
         if (gachaUI != null) {
             gachaUI.SetActive(false);
+            if (currentPlayer.GetComponent<NetworkIdentity>().isLocalPlayer) {
+                //var playerUI = currentPlayer.GetComponent<CharacterBase>().localUI;
+                //playerUI.gameObject.SetActive(true);
+            }
         }
 
-        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        //  カメラを戻す
+        if (cameraManager != null) cameraManager.ReturnCamera();
+
+        //  プレイヤーの見た目表示
+        Transform parent = currentPlayer.transform;
+        Transform skin = FindChildWithTag(parent, SKIN_TAG);
         if (skin != null) skin.gameObject.SetActive(true);
 
-        if (cameraManager != null) cameraManager.ReturnCamera();
+        //  プレイヤー側のローカルUIを表示させる
+        if (currentPlayer.GetComponent<PlayerLocalUIController>()) {
+            currentPlayer.GetComponent<PlayerLocalUIController>().OnLocalUIObject();
+        }
 
         isOpen = false;
         ChangeCursorView();
@@ -430,4 +446,5 @@ public class GachaSystem : MonoBehaviour {
     }
 
     #endregion
+
 }
