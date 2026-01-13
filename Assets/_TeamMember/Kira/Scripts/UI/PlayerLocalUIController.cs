@@ -9,6 +9,9 @@ using UnityEngine.UI;
 /// </summary>
 public class PlayerLocalUIController : NetworkBehaviour {
 
+    /// <summary>
+    /// 可読性向上のためのTextの配列の列挙体
+    /// </summary>
     enum TextIndex {
         Current = 0,
         Max,
@@ -20,6 +23,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField] Image mainWeaponReloadIcon;
     private bool reloadIconRotating = false;
     [SerializeField] TextMeshProUGUI[] subWeaponText;
+    //表示・非表示状態切り替え用
     [SerializeField] GameObject mpBar;
 
     /// <summary>
@@ -46,15 +50,16 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField] TextMeshProUGUI passiveChains;
     [SerializeField] GeneralCharacter player;
     [SyncVar] float skillStateProgress = 0.0f;
-    [SyncVar] float passiveStateProgress = 0.0f;
-
-
+    //[SyncVar] float passiveStateProgress = 0.0f;
 
     [SerializeField] GameObject interactUI;
 
     //  ローカルUIの本体を取得
     [SerializeField] GameObject localUIObject;
 
+    /// <summary>
+    /// ローカルUI全体の初期化
+    /// </summary>
     public void Initialize() {
         hpBar_slider.interactable = false;
         mpBar_slider.interactable = false;
@@ -174,8 +179,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// <summary>
     /// 体力のUI更新
     /// </summary>
-    /// <param name="_maxHP"></param>
-    /// <param name="_hp"></param>
     public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar_slider.value = (float)_hp / _maxHP * FIXED_RATIO;
@@ -204,8 +207,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// <summary>
     /// MPのUI更新
     /// </summary>
-    /// <param name="_maxMP"></param>
-    /// <param name="_mp"></param>
     public void ChangeMPUI(int _maxMP, int _mp) {
         mpText.text = _mp.ToString();
         mpBar_slider.value = (float)_mp / _maxMP * FIXED_RATIO;
