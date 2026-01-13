@@ -125,6 +125,9 @@ GameObject:
   - component: {fileID: 6621664334883643172}
   - component: {fileID: 205382949362171920}
   - component: {fileID: 4002470521652151712}
+  - component: {fileID: -3297767670412554955}
+  - component: {fileID: 7720380049160173364}
+  - component: {fileID: -5686997786179355792}
   - component: {fileID: 8790688429599344454}
   - component: {fileID: 53306003606112779}
   - component: {fileID: 3114236005330367030}
@@ -396,7 +399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 3733754541
+  _assetId: 3457343696
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -481,25 +484,72 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  localUI: {fileID: 53306003606112779}
+  CameraMenu: {fileID: 1182430980143703742}
+  anim: {fileID: 8693632831192975952}
+  weaponController_main: {fileID: 6621664334883643172}
+  weaponController_sub: {fileID: 205382949362171920}
+  buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
+--- !u!114 &-3297767670412554955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3519547391971899168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02ce65d86440bee40a41394c54689d48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  inputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
   HP: 0
+  MP: 0
+  isReloading: 0
   attack: 0
   moveSpeed: 5
-  MP: 0
   TeamID: -1
   PlayerName: Default
   playerId: -1
-  ready: 0
+  ready: 1
   firePoint: {fileID: 8141860258521693391}
-  isReloading: 0
-  IsGrounded: 0
-  localUI: {fileID: 53306003606112779}
-  CameraMenu: {fileID: 1182430980143703742}
+  isDead: 0
+--- !u!114 &7720380049160173364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3519547391971899168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e77b71b0af3088341b76939d68010aea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
-  anim: {fileID: 8693632831192975952}
-  weaponController_main: {fileID: 0}
-  weaponController_sub: {fileID: 0}
-  buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
-  inputStatus: {fileID: 11400000, guid: 2b2b23650934ee54687ca8d729b424b1, type: 2}
+  SkillTriggered: 0
+  InteractTriggered: 0
+--- !u!114 &-5686997786179355792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3519547391971899168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44d768c1c480dc743b468f7fb06f8608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!114 &8790688429599344454
 MonoBehaviour:
   m_ObjectHideFlags: 0
