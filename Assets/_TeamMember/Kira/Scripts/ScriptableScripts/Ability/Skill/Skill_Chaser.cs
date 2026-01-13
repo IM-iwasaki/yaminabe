@@ -37,7 +37,7 @@ public class Skill_Chaser : SkillBase {
             }
 
             //攻撃が入力された中かつインターバルが経過していたら
-            if(user.isAttackPressed && IntervalTime >= user.weaponController_main.weaponData.cooldown / 2) {
+            if(user.parameter.isAttackPressed && IntervalTime >= user.weaponController_main.weaponData.cooldown / 2) {
                 //インターバルをリセット
                 IntervalTime = 0;
                 //若干の遅延を入れて追加攻撃発動
@@ -54,7 +54,7 @@ public class Skill_Chaser : SkillBase {
         yield return new WaitForSeconds(delay);
 
         // ここで実行
-        Vector3 shootDir = user.GetShootDirection();
+        Vector3 shootDir = user.parameter.GetShootDirection();
         user.weaponController_main.CmdRequestExtraAttack(shootDir);        
     }
 }

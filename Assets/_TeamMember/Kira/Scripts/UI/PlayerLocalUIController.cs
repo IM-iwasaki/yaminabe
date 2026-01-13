@@ -67,18 +67,18 @@ public class PlayerLocalUIController : NetworkBehaviour {
 
     void Update() {
         //スキルの表示状態管理
-        if (player.isCanSkill) {
+        if (player.action.isCanSkill) {
             skill_State.fillAmount = 1.0f;
             skill_State.color = Color.yellow;
         }
         else {
-            skillStateProgress = player.skillAfterTime / player.equippedSkills[0].cooldown;
+            skillStateProgress = player.parameter.skillAfterTime / player.parameter.equippedSkills[0].cooldown;
             skill_State.fillAmount = skillStateProgress;
             skill_State.color = Color.white;
         }
         //パッシブの表示状態管理
-        if (player.equippedPassives[0].isPassiveActive || player.equippedPassives[0].passiveChains >= 1) {
-            passiveChains.text = player.equippedPassives[0].passiveChains.ToString();
+        if (player.parameter.equippedPassives[0].isPassiveActive || player.parameter.equippedPassives[0].passiveChains >= 1) {
+            passiveChains.text = player.parameter.equippedPassives[0].passiveChains.ToString();
             passive_State.color = Color.yellow;
         }
         else {
@@ -105,13 +105,13 @@ public class PlayerLocalUIController : NetworkBehaviour {
                 mainWeaponText[(int)TextIndex.Partition].text = "Cost : " + magicData.MPCost.ToString();
                 break;
         }
-        mpText.text = player.MP.ToString();
+        mpText.text = player.parameter.MP.ToString();
 
         //サブウェポンの現在所持数を更新
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
 
         //パッシブの蓄積数が0だったら空欄にする
-        if (player.equippedPassives[0].passiveChains == 0) passiveChains.text = "";
+        if (player.parameter.equippedPassives[0].passiveChains == 0) passiveChains.text = "";
     }
 
     /// <summary>
@@ -119,17 +119,17 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// </summary>
     public void LocalUIChanged() {
         //ステータス系の初期化
-        hpText.text = player.HP.ToString();
-        ChangeHPUI(player.maxHP, player.HP);
-        mpText.text = player.MP.ToString();
-        ChangeMPUI(player.maxMP, player.MP);
+        hpText.text = player.parameter.HP.ToString();
+        ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
+        mpText.text = player.parameter.MP.ToString();
+        ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
 
 
         for (int i = 0; i < skill_Icon.Length; i++) {
-            skill_Icon[i].sprite = player.equippedSkills[0].skillIcon;
+            skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
         }
         for (int i = 0; i < passive_Icon.Length; i++) {
-            passive_Icon[i].sprite = player.equippedPassives[0].passiveIcon;
+            passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
         }
 
         mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;

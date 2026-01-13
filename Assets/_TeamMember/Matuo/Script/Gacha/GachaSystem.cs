@@ -247,8 +247,8 @@ public class GachaSystem : MonoBehaviour {
         if (gachaUI != null) {
             gachaUI.SetActive(false);
             if (currentPlayer.GetComponent<NetworkIdentity>().isLocalPlayer) {
-                var playerUI = currentPlayer.GetComponent<CharacterBase>().localUI;
-                playerUI.gameObject.SetActive(true);
+                //var playerUI = currentPlayer.GetComponent<CharacterBase>().localUI;
+                //playerUI.gameObject.SetActive(true);
             }
         }
 

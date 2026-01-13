@@ -1,57 +1,17 @@
-using UnityEngine;
-using System.Linq;
 using Mirror;
+using System.Linq;
+using UnityEngine;
+using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
 
 //
 //  @file   Second_CharacterClass
 //
 public class GeneralCharacter : CharacterBase {
 
-    #region ～キャラクターデータ管理変数～
-
-    [Header("インポートするステータス")]
-    [SerializeField]GeneralCharacterStatus inputStatus;
-    //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
-    GeneralCharacterStatus runtimeStatus;
-    public SkillBase[] equippedSkills{ get; private set; }
-    public PassiveBase[] equippedPassives{ get; private set; }
-
-    #endregion
-
     protected new void Awake() {
         base.Awake();
-        StatusInport(inputStatus);
-        Initalize();
-        //一定間隔でMPを回復する
-        InvokeRepeating(nameof(MPRegeneration), 0.0f,0.1f);
-    }
-
-    /// <summary>
-    /// MPを回復する
-    /// </summary>
-    void MPRegeneration() {  
-        //攻撃してから短い間を置く。
-        if (Time.time <= attackStartTime + 0.2f) return;
-        //止まっているときは回復速度が早くなる。
-        if(MoveInput == Vector2.zero)InvokeRepeating(nameof(MPExtraRegeneration), 0.5f,0.4f);
-        else CancelInvoke(nameof(MPExtraRegeneration));
-
-        MP++;
-        //最大値を超えたら補正する
-        if (MP > maxMP) MP = maxMP;
-    }
-
-    /// <summary>
-    /// MPを回復する(追加効果による回復用)
-    /// </summary>
-    void MPExtraRegeneration() {
-        //攻撃してから短い間を置く。
-        if (Time.time <= attackStartTime + 0.2f) return;
-
-        MP++;
-        //最大値を超えたら補正する
-        if (MP > maxMP) MP = maxMP;
-    }
+        //Initalize();        
+    }   
 
     public override void OnStartClient() {
         base.OnStartClient();
@@ -59,8 +19,8 @@ public class GeneralCharacter : CharacterBase {
 
 
         if (!isLocalPlayer) return; // 自分だけ表示
-        SkillBase skill = equippedSkills[0];
-        PassiveBase passive = equippedPassives[0];
+        SkillBase skill = parameter.equippedSkills[0];
+        PassiveBase passive = parameter.equippedPassives[0];
 
         SkillDisplayer.Instance.SetSkillUI(
         skill.skillName, skill.skillDescription,
@@ -74,104 +34,26 @@ public class GeneralCharacter : CharacterBase {
         //RespawnControl();    
                
         //死んでいたら以降の処理は行わない。
-        if (isDead) return;
+        //if (isDead) return;
 
-        //攻撃入力がある間攻撃関数を呼ぶ(間隔の制御はMainWeaponControllerに一任)
-        if (isAttackPressed) StartAttack();
-
-
-        MoveControl();
-        JumpControl();       
-        AbilityControl();
-        //トリガーリセット関数の呼び出し
-        ResetTrigger();
+        //MoveControl();
+        //JumpControl();       
+        //AbilityControl();
     }
 
     public override void Initalize() {
         //HPやフラグ関連などの基礎的な初期化
         base.Initalize();
         //MaxMPが0でなければ最大値で初期化
-        //if (maxMP != 0) MP = maxMP; 
+        if (parameter.maxMP != 0) parameter.MP = parameter.maxMP; 
         //弾倉が0でなければ最大値で初期化
         if (weaponController_main.weaponData.maxAmmo != 0)
             weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
-        //Passive関連の初期化
-        equippedPassives[0].coolTime = 0;
-        equippedPassives[0].isPassiveActive = false;
-        //Skill関連の初期化
-        equippedSkills[0].isSkillUse = false;
-    }
+    }   
 
-    public override void StatusInport(GeneralCharacterStatus _inport = null) {
-        if (_inport == null) {
-            DefaultStatusInport();
-            return;
-        }
-
-        runtimeStatus = _inport;
-        maxHP = runtimeStatus.maxHP;
-        HP = maxHP;
-        maxMP = runtimeStatus.maxMP;
-        MP = maxMP;
-        attack = runtimeStatus.attack;
-        moveSpeed = runtimeStatus.moveSpeed;
-        equippedSkills = runtimeStatus.skills;
-        equippedPassives = runtimeStatus.passives;
-        /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */        
-        Debug.Log("ステータス、パッシブ、スキルのインポートを行いました。\n" +
-            "インポートしたステータス... キャラクター:" + runtimeStatus.displayName + "　maxHP:" + maxHP + "　attack:" + attack + "　moveSpeed:" + moveSpeed + "\n" +
-            "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.passiveName)) +
-            "　：　インポートしたスキル..." + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.skillName)));
-        // パッシブの初期セットアップ
-        equippedPassives[0].PassiveSetting(this);
-        // デフォルトステータスを代入
-        InDefaultStatus();
-
-        // メインウェポンとサブウェポンの参照を取得
-        weaponController_main = GetComponent<MainWeaponController>();
-        weaponController_sub = GetComponent<SubWeaponController>();
-
-        //キャラクターの職業設定
-        weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
-
-        //初期武器の設定
-        var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
-        var subWeapon = runtimeStatus.SubWeapon.WeaponName;
-        weaponController_main.SetWeaponDataInit(mainWeapon);
-        weaponController_sub.SetWeaponData(subWeapon);
-    }
-
-    protected override void StartUseSkill() {
-        if (isCanSkill) {
-            equippedSkills[0].Activate(this);
-            isCanSkill = false;
-            //CT計測時間をリセット
-            skillAfterTime = 0;
-        }       
-    }
     public override void Respawn() {
         base.Respawn();
         //パッシブのセットアップ
-        equippedPassives[0].PassiveSetting(this);
-    }
-
-    protected override void AbilityControl() {
-        //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)
-        equippedPassives[0].PassiveReflection(this);
-        //スキル更新関数を呼ぶ(中身を未定義の場合は何もしない)
-        equippedSkills[0].SkillEffectUpdate(this);
-
-        //スキル使用不可中、スキルクールタイム中かつスキルがインポートされていれば時間を計測
-        if (!isCanSkill && skillAfterTime <= equippedSkills[0].cooldown && equippedSkills[0] != null)
-            skillAfterTime += Time.deltaTime;
-        //スキルクールタイムを過ぎていたら丁度になるよう補正
-        else if (skillAfterTime > equippedSkills[0].cooldown) skillAfterTime = equippedSkills[0].cooldown;
-        //スキルがインポートされていて、かつ規定CTが経過していればスキルを使用可能にする
-        var Skill = equippedSkills[0];
-        if (!isCanSkill && Skill != null && skillAfterTime >= Skill.cooldown) {
-            isCanSkill = true;
-            //経過時間を固定
-            skillAfterTime = Skill.cooldown;
-        }        
+        parameter.equippedPassives[0].PassiveSetting();
     }
 }

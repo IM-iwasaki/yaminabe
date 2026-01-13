@@ -54,7 +54,7 @@ public class AppearanceChangeManager : MonoBehaviour
         //　変更タハラ:生成したオブジェクトからAnimatorを取得できるように変更
         GameObject newSkin = Instantiate(prefab, spawnPos, parent.rotation, parent);
         //  プレイヤーのステータスを置き換える
-        player.GetComponent<CharacterBase>().StatusInport(data.characters[characterCount].statusData);
+        player.GetComponent<CharacterBase>().parameter.StatusInport(data.characters[characterCount].statusData);
         //  プレイヤーのIDを取得・格納
         uint netId = player.GetComponent<NetworkIdentity>().netId;
         //  変更したデータを保存する

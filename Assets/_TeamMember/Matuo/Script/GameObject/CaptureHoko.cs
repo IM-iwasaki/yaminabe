@@ -120,7 +120,7 @@ public class CaptureHoko : NetworkBehaviour {
         var player = holder.GetComponent<CharacterBase>();
         if (player == null) return;
 
-        int teamId = player.TeamID;
+        int teamId = player.parameter.TeamID;
         RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
     }
 

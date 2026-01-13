@@ -10,7 +10,7 @@ public class Passive_Gunman : PassiveBase {
     //               ‚±‚ÌŒø‰Ê‚Íˆê“x”­“®‚·‚é‚Æ35•bŠÔ‚Í”­“®‚µ‚È‚¢B
     //
 
-    public override void PassiveSetting(CharacterBase user) {
+    public override void PassiveSetting() {
         //”­“®’†‚Å‚È‚©‚Á‚½‚ç”­“®’†‚Ìó‘Ô‚É‚·‚é
         if (!isPassiveActive) {
             isPassiveActive = true;
@@ -32,7 +32,7 @@ public class Passive_Gunman : PassiveBase {
         }
 
         //”­“®’†‚ÉHP‚ªğŒ‚ğ–‚½‚µ‚½‚ç”­“®B
-        if (isPassiveActive && user.HP <= user.maxHP / 5) {
+        if (isPassiveActive && user.parameter.HP <= user.parameter.maxHP / 5) {
             user.MoveSpeedBuff(0.3f, 10.0f);
             //”­“®ó‘Ô‚ğ‰ğœ
             isPassiveActive = false;
