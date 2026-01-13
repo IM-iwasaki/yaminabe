@@ -16,7 +16,7 @@ public class SelectObjectManager : NetworkBehaviour {
     private readonly int DEFAULT_SKIN_COUNT = 0;
 
     [Header("キャラクターデータ")]
-    [SerializeField] private CharacterDatabase data;
+    [SerializeField] private CharacterDatabase characterData;
 
     [Header("解放していないキャラクターを代用で表示させる")]
     [SerializeField] private GameObject unuseObject;
@@ -31,6 +31,12 @@ public class SelectObjectManager : NetworkBehaviour {
     [Header("スキン選択ボタンを生成させる")]
     [SerializeField] private GameObject skinButton;
     [SerializeField] private Transform buttonParent;
+
+    [Header("バナーデザインデータ")]
+    [SerializeField] private BannerData bannerData;
+
+    [Header("バナー画像を表示するオブジェクト")]
+    [SerializeField] private Image bannerImage;
 
     //  親オブジェクトを保存
     private GameObject parent;
@@ -61,6 +67,11 @@ public class SelectObjectManager : NetworkBehaviour {
     //  ローカルで使用するスキン番号保持
     private int localSkinCount;
 
+    //  ネットワークで同期させるバナー番号
+    private int networkBannerCount;
+    //  ローカルで同期させるばバナー番号
+    private int localBannerCount = 0;
+
     //  初期は登録してあるプレハブの一番目を生成しておく
     private void Start() {
         //  親オブジェクトを自身にする
@@ -79,11 +90,11 @@ public class SelectObjectManager : NetworkBehaviour {
     /// <summary>
     /// 左右切り替えボタン
     /// </summary>
-    public void OnChangeLeft() {
+    public void OnChangeCharacterLeft() {
         AudioManager.Instance.CmdPlayUISE("選択");
         ChangeObject(SUB_ONE_COUNT);
     }
-    public void OnChangeRight() {
+    public void OnChangeCharacterRight() {
         AudioManager.Instance.CmdPlayUISE("選択");
         ChangeObject(ADD_ONE_COUNT);
     }
@@ -96,6 +107,19 @@ public class SelectObjectManager : NetworkBehaviour {
         localSkinCount = skinCount;
         ChangeCharacterObject(skinCount);
     }
+
+    /// <summary>
+    /// 左右バナー切り替えボタン
+    /// </summary>
+    public void OnChangeBannerLeft() {
+        AudioManager.Instance.CmdPlayUISE("選択");
+        ChangeBanner(SUB_ONE_COUNT);
+    }
+    public void OnChangeBannerRight() {
+        AudioManager.Instance.CmdPlayUISE("選択");
+        ChangeBanner(ADD_ONE_COUNT);
+    }
+
     #endregion
 
     #region ローカルキャラクター選択UIの処理
@@ -103,8 +127,8 @@ public class SelectObjectManager : NetworkBehaviour {
     /// データの中身があるかどうかのチェック
     /// </summary>
     /// <returns></returns>
-    private bool CheckData() {
-        if(data == null || data.characters == null || data.characters.Count == 0) {
+    private bool CheckCharacterData() {
+        if(characterData == null || characterData.characters == null || characterData.characters.Count == 0) {
             Debug.LogError("CharacterDatabaseが空、または設定されていません。");
             return false;
         }
@@ -118,11 +142,11 @@ public class SelectObjectManager : NetworkBehaviour {
     /// <param name="count"></param>
     /// <param name="num"></param>
     /// <returns></returns>
-    private int CheckCount(int count, int num) {
+    private int CheckCharacterCount(int count, int num) {
         //  増減
         count += num;
         //  最大値を保存
-        int max = data.characters.Count - 1;
+        int max = characterData.characters.Count - 1;
         //  数値が最大値より大きくなったら0に戻す
         if (count > max) return 0;
         //  数値が0を下回ったら最大値にする
@@ -136,11 +160,11 @@ public class SelectObjectManager : NetworkBehaviour {
     /// </summary>
     /// <param name="num"></param>
     private void ChangeObject(int num) {
-        if (!CheckData()) return;
+        if (!CheckCharacterData()) return;
         //  数値を増減
-        localCharacterCount = CheckCount(localCharacterCount, num);
+        localCharacterCount = CheckCharacterCount(localCharacterCount, num);
         //  characterCount番目のキャラクターを取得して格納
-        character = data.characters[localCharacterCount];
+        character = characterData.characters[localCharacterCount];
         //  スキン番号を初期の番号に戻す
         localSkinCount = DEFAULT_SKIN_COUNT;
         //  スキン選択ボタンの取得
@@ -276,6 +300,51 @@ public class SelectObjectManager : NetworkBehaviour {
     }
     #endregion
 
+    #region ローカルバナー選択UIの処理
+
+    /// <summary>
+    /// データの中身があるかどうかのチェック
+    /// </summary>
+    /// <returns></returns>
+    private bool CheckBannerData() {
+        if(bannerData == null) {
+            Debug.LogError("BannerDataが空、または設定されていません。");
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// 数値を増減する（数値が一周したら戻す）
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="num"></param>
+    /// <returns></returns>
+    private int CheckBannerCount(int count, int num) {
+        //  増減
+        count += num;
+        //  最大値を保存
+        int max = bannerData.bannerInfos.Count - 1;
+        //  数値が最大値より大きくなったら0に戻す
+        if (count > max) return 0;
+        //  数値が0を下回ったら最大値にする
+        if (count < 0) return max;
+        //  何もなければそのまま返す
+        return count;
+    }
+
+    private void ChangeBanner(int num) {
+        if (!CheckBannerData()) return;
+        //  数値を増減
+        localBannerCount = CheckBannerCount(localBannerCount, num);
+        //  バナーデータの○番目の数値を保存
+        BannerData.BannerInfo bannerInfo = bannerData.bannerInfos[localBannerCount];
+        //  バナー画像を変更させる
+        bannerImage.sprite = bannerInfo.bannerImage;
+    }
+
+    #endregion
+
     #region 削除関数
     /// <summary>
     /// 指定の親オブジェクトの子オブジェクトを全部削除する
@@ -294,25 +363,30 @@ public class SelectObjectManager : NetworkBehaviour {
     /// </summary>
     /// <param name="player"></param>
     public void ConfirmPlayerChange(GameObject player) {
-        CmdPlayerChange(player, localCharacterCount, localSkinCount, localCanChange);
+        CmdPlayerChange(player, localCharacterCount, localSkinCount, localCanChange, localBannerCount);
         AppearanceChangeManager.instance.ChangeSkillUI(localCharacterCount);
     }
 
     //  クライアントからサーバーへ送信
     [Command(requiresAuthority = false)]
-    public void CmdPlayerChange(GameObject player, int characterCount, int skinCount, bool canChange) {
+    public void CmdPlayerChange(
+        GameObject player, int characterCount, int skinCount, bool canChange, int bannerCount) {
         //  サーバーが全員に通知
-        RpcPlayerChange(player, characterCount, skinCount, canChange);
+        RpcPlayerChange(player, characterCount, skinCount, canChange, bannerCount);
     }
     //  サーバーから全員へ同期
     [ClientRpc]
-    public void RpcPlayerChange(GameObject player, int characterCount, int skinCount, bool canChange) {
+    public void RpcPlayerChange(
+        GameObject player, int characterCount, int skinCount, bool canChange, int bannerCount) {
         //  ローカルスキン番号をネットワークスキン番号に反映
         networkSkinCount = skinCount;
         //  ローカルキャラクター番号をネットワークキャラクター番号に反映
         networkCharacterCount = characterCount;
         //  ローカルチェンジ判定をネットワークチェンジ判定に反映
         networkCanChange = canChange;
+        //  一旦仮でバナーを変更できるかどうか
+        player.GetComponent<CharacterBase>().bannerNum = bannerCount;
+
         //  自分自身のプレイヤー変更
         AppearanceChangeManager.instance.PlayerChange(player, networkCharacterCount, networkSkinCount, networkCanChange);
         //  他のスキンを同時に読み込む
