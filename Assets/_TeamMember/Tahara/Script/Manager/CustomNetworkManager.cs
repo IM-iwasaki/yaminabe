@@ -185,4 +185,31 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnStopClient() {
         SceneManager.LoadScene("TitleScene");
     }
+
+    public override void OnApplicationQuit() {
+        // サーバー or クライアントとして接続中なら安全に終了
+        if (NetworkServer.active || NetworkClient.isConnected) {
+            DisconnectHost();
+        }
+    }
+
+
+    public void DisconnectHost() {
+        NetworkManager.singleton.StopHost();
+    }
+
+
+    public override void OnStopHost() {
+        base.OnStopHost();
+        ShutdownHost();
+    }
+
+    private void ShutdownHost() {
+        transport.Shutdown();
+        serverManager.connectPlayer.Clear();
+    }
+
+    public override void OnStopServer() {
+        serverManager.connectPlayer.Clear();
+    }
 }
