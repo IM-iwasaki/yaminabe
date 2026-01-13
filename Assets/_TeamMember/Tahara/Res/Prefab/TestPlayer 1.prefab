@@ -609,6 +609,7 @@ MonoBehaviour:
   passiveChains: {fileID: 3314119137198316088}
   player: {fileID: 4002470521652151712}
   interactUI: {fileID: 6292602705022258001}
+  localUIObject: {fileID: 7992546859846387416}
 --- !u!114 &3114236005330367030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1856,6 +1857,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &7992546859846387416 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6231740509802659688, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 4075948961502607792}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7993167223288143597 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6232351595055458141, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}

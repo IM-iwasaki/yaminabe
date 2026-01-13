@@ -219,17 +219,22 @@ public class GachaSystem : MonoBehaviour {
 
         SetGachaState(true);
 
+        // UIを非表示（移動開始前）
+        if (gachaUI != null) 
+            gachaUI.SetActive(false);
 
-        if (gachaUI != null) gachaUI.SetActive(false);
-
+        // カメラ移動開始
         if (cameraManager != null && cameraTargetPoint != null) {
             cameraManager.MoveCamera(player, cameraTargetPoint.position, cameraTargetPoint.rotation);
         }
 
-        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        //  プレイヤーの見た目非表示
+        Transform parent = player.transform;
+        Transform skin = FindChildWithTag(parent, SKIN_TAG);
         if (skin != null) skin.gameObject.SetActive(false);
 
         isOpen = true;
+        //  カーソルをOnにする
         ChangeCursorView();
 
         if (gachaUI != null)
@@ -252,10 +257,18 @@ public class GachaSystem : MonoBehaviour {
             }
         }
 
-        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        //  カメラを戻す
+        if (cameraManager != null) cameraManager.ReturnCamera();
+
+        //  プレイヤーの見た目表示
+        Transform parent = currentPlayer.transform;
+        Transform skin = FindChildWithTag(parent, SKIN_TAG);
         if (skin != null) skin.gameObject.SetActive(true);
 
-        if (cameraManager != null) cameraManager.ReturnCamera();
+        //  プレイヤー側のローカルUIを表示させる
+        if (currentPlayer.GetComponent<PlayerLocalUIController>()) {
+            currentPlayer.GetComponent<PlayerLocalUIController>().OnLocalUIObject();
+        }
 
         isOpen = false;
         ChangeCursorView();

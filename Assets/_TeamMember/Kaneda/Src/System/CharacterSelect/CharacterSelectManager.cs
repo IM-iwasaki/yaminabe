@@ -120,6 +120,11 @@ public class CharacterSelectManager : NetworkBehaviour {
         Transform skin = FindChildWithTag(parent, SKIN_TAG);
         skin.gameObject.SetActive(true);
 
+        //  プレイヤー側のローカルUIを表示させる
+        if (currentPlayer.GetComponent<PlayerLocalUIController>()) {
+            currentPlayer.GetComponent<PlayerLocalUIController>().OnLocalUIObject();
+        }
+
         //  カーソルをOffにする
         ChangeCursorView();
 

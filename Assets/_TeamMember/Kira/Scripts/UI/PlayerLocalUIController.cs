@@ -51,6 +51,9 @@ public class PlayerLocalUIController : NetworkBehaviour {
 
     [SerializeField] GameObject interactUI;
 
+    //  ÉçÅ[ÉJÉãUIÇÃñ{ëÃÇéÊìæ
+    [SerializeField] GameObject localUIObject;
+
     public void Initialize() {
         hpBar.interactable = false;
         mpBar.interactable = false;
@@ -232,6 +235,13 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
     public void OffChangeInteractUI() {
         interactUI.SetActive(false);
+    }
+
+    public void OnLocalUIObject() {
+        localUIObject.SetActive(true);
+    }
+    public void OffLocalUIObject() {
+        localUIObject.SetActive(false);
     }
 
 }
