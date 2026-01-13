@@ -914,6 +914,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
     private Coroutine attackCoroutine;
+    private Coroutine damageCutCoroutine;
+
     [Header("バフに使用するエフェクトデータ")]
     [SerializeField] private EffectData buffEffect;
 
@@ -922,6 +924,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     private readonly int SPEED_BUFF_EFFECT = 1;
     private readonly int HEAL_BUFF_EFFECT = 2;
     private readonly int DEBUFF_EFFECT = 3;
+
+    //近くにいるか判別
+    [SerializeField] public float allyCheckRadius = 8f;
+    [SerializeField] public LayerMask allyLayer;
 
     #endregion  
 
@@ -1012,6 +1018,28 @@ public abstract class CharacterBase : NetworkBehaviour {
         parameter.moveSpeed = parameter.defaultMoveSpeed;
         DestroyChildrenWithTag(EFFECT_TAG);
         speedCoroutine = null;
+    }
+
+    /// <summary>
+    /// 古谷作成
+    /// 被ダメージ倍率変更処理
+    /// </summary>
+    [Command]
+    public void DamageCut(int _value, float _usingTime) {
+        if (speedCoroutine != null) StopCoroutine(damageCutCoroutine);
+
+        damageCutCoroutine = StartCoroutine(DamageCutRoutine(_value, _usingTime));
+    }
+
+    /// <summary>
+    /// 古谷
+    ///  時間まで被ダメを下げておく実行処理(コルーチン)
+    /// </summary>
+    private IEnumerator DamageCutRoutine(int _value, float _duration) {
+        parameter.DamageRatio = _value;
+        yield return new WaitForSeconds(_duration);
+        parameter.DamageRatio = 100;
+        damageCutCoroutine = null;
     }
 
     /// <summary>

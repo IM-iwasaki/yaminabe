@@ -35,7 +35,7 @@ public class CharacterParameter : NetworkBehaviour{
     //リロード中か
     [SyncVar(hook = nameof(UpdateReloadIcon))] public bool isReloading = false;
     //基礎攻撃力
-    [SyncVar] public int attack;
+    [SyncVar] public float attack;
     //移動速度
     [SyncVar] public int moveSpeed = 5;
     
@@ -53,8 +53,11 @@ public class CharacterParameter : NetworkBehaviour{
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
     
-    public int defaultAttack { get; protected set; }
+    public float defaultAttack { get; protected set; }
     public int defaultMoveSpeed { get; protected set; }
+
+    // 味方検知用
+    public bool HasNearbyAlly { get; private set; }
 
     #endregion
 
@@ -193,7 +196,7 @@ public class CharacterParameter : NetworkBehaviour{
         attack = defaultAttack;
     }
 
-    private void OutDefaultStatus_MoveSpeed() {
+    public void OutDefaultStatus_MoveSpeed() {
         moveSpeed = defaultMoveSpeed;
     }
 
@@ -274,6 +277,15 @@ public class CharacterParameter : NetworkBehaviour{
         }
         // 当たらなければそのままaimPoint方向
         return direction;
+    }
+
+    //近くに味方がいるか判別　古谷
+    public void UpdateNearbyAlly(float radius, LayerMask allyLayer) {
+        HasNearbyAlly = Physics.CheckSphere(
+            transform.position,
+            radius,
+            allyLayer
+        );
     }
 
     /// <summary>
