@@ -16,11 +16,11 @@ public class CharacterInput : NetworkBehaviour {
 
     public bool InteractTriggered;
 
-    private CharacterAnimationController characterAnimationController;
+    private CharacterAnimationController animCon;
 
     public void Initialize(CharacterBase core) {
         this.core = core;
-        characterAnimationController = GetComponent<CharacterAnimationController>();
+        animCon = GetComponent<CharacterAnimationController>();
         //コンテキストの登録
         var map = inputActions.FindActionMap("Player");
         foreach (var action in map.actions) {
@@ -102,7 +102,7 @@ public class CharacterInput : NetworkBehaviour {
         switch (actionName) {
             case "Move":
                 MoveInput = Vector2.zero;
-                characterAnimationController.CmdResetAnimation();
+                animCon.CmdResetAnimation();
                 break;
             case "Fire_Main":
             case "Fire_Sub":
@@ -119,7 +119,7 @@ public class CharacterInput : NetworkBehaviour {
         float moveX = MoveInput.x;
         float moveZ = MoveInput.y;
         //アニメーション管理
-        characterAnimationController.ControllMoveAnimation(moveX, moveZ);
+        animCon.ControllMoveAnimation(moveX, moveZ);
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ public class CharacterInput : NetworkBehaviour {
         if (context.performed && core.parameter.IsGrounded) {
             isJumpPressed = true;
             bool isJumping = !core.parameter.IsGrounded;
-            characterAnimationController.anim.SetBool("Jump", isJumping);
+            animCon.anim.SetBool("Jump", isJumping);
         }
     }
 
@@ -147,7 +147,7 @@ public class CharacterInput : NetworkBehaviour {
             //離した瞬間まで
             case InputActionPhase.Canceled:
                 AttackPressed = false;
-                characterAnimationController.StopShootAnim();
+                animCon.StopShootAnim();
                 break;
             //押した瞬間
             case InputActionPhase.Performed:

@@ -106,6 +106,5 @@ public class PlayerRankingManager : NetworkBehaviour {
         SavePlayerData(playerData.currentRate + _addRate);
         //ƒeƒXƒg
         ChatManager.instance.CmdSendSystemMessage($"{playerData.playerName}'s Rate : {playerData.currentRate}");
-        
     }
 }
