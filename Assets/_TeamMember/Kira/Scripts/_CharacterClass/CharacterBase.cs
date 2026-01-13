@@ -56,6 +56,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         input = GetComponent<CharacterInput>();
         action = GetComponent<CharacterActions>();
         parameter = GetComponent<CharacterParameter>();
+        animCon = GetComponent<CharacterAnimationController>();
         input.Initialize(this);
         action.Initialize(this);
         parameter.Initialize(this);

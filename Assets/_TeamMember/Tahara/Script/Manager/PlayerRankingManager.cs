@@ -4,8 +4,8 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// プレイヤーのレーティングランキング管理
-/// 表示と数値の変更を扱う
+/// プレイヤーのレート管理
+/// 数値の変更を扱う
 /// </summary>
 public class PlayerRankingManager : NetworkBehaviour {
     /// <summary>
@@ -76,9 +76,7 @@ public class PlayerRankingManager : NetworkBehaviour {
         List<NetworkConnectionToClient> playerConn = new List<NetworkConnectionToClient>();
         foreach (var addConn in ServerManager.instance.connectPlayer) {
             if (addConn == null || addConn.connectionToClient == null) continue;
-            //ホスト分もスキップ
-            if (addConn.connectionToClient.connectionId == 0) continue;
-
+            
             playerConn.Add(addConn.connectionToClient);
         }
         //全員に対してレート加算&保存を通知
@@ -105,7 +103,6 @@ public class PlayerRankingManager : NetworkBehaviour {
     private void AddAndSaveRate(NetworkConnectionToClient _winnerConn, int _addRate) {
         SavePlayerData(playerData.currentRate + _addRate);
         //テスト
-        ChatManager.instance.CmdSendSystemMessage($"{playerData.playerName}'s Rate : {playerData.currentRate}");
-        
+        //ChatManager.instance.CmdSendSystemMessage($"{playerData.playerName}'s Rate : {playerData.currentRate}");
     }
 }

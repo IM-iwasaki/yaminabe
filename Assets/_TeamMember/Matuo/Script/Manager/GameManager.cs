@@ -82,8 +82,8 @@ public class GameManager : NetworkSystemObject<GameManager> {
         // Ÿ”sˆ—
         if (ruleManager.currentRule == GameRuleType.DeathMatch)
             ruleManager.EndDeathMatch();
-        else
-            ruleManager.CheckWinConditionAllTeams();
+        //else
+        //    ruleManager.CheckWinConditionAllTeams();
 
         if (hoko != null)
             hoko.HandleGameEnd();

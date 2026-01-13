@@ -1,11 +1,14 @@
 using Mirror;
 using UnityEngine;
 
+/// <summary>
+/// プレイヤーのアニメーション管理クラス
+/// </summary>
 public class CharacterAnimationController : NetworkBehaviour {
+    //扱うアニメーター
     public Animator anim = null;
+    //現在のアニメーションの文字列
     private string currentAnimation;
-    #region アニメーション関連
-
     /// <summary>
     /// アニメーターのレイヤー切り替え
     /// </summary>
@@ -89,6 +92,5 @@ public class CharacterAnimationController : NetworkBehaviour {
     public void RpcDeadAnimation() {
         anim.SetTrigger("Dead");
     }
-    #endregion
 
 }
