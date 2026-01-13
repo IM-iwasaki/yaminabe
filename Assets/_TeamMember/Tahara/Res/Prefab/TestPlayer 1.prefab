@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 8790688429599344454}
   - component: {fileID: 53306003606112779}
   - component: {fileID: 3114236005330367030}
+  - component: {fileID: 4739513752236649057}
   m_Layer: 6
   m_Name: TestPlayer 1
   m_TagString: Player
@@ -486,7 +487,6 @@ MonoBehaviour:
   syncInterval: 0
   localUI: {fileID: 53306003606112779}
   CameraMenu: {fileID: 1182430980143703742}
-  anim: {fileID: 8693632831192975952}
   weaponController_main: {fileID: 6621664334883643172}
   weaponController_sub: {fileID: 205382949362171920}
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
@@ -626,6 +626,22 @@ MonoBehaviour:
   syncInterval: 0
   clientAuthority: 0
   animator: {fileID: 8693632831192975952}
+--- !u!114 &4739513752236649057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3519547391971899168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 577f865d3ecaac24a9b0c8a7e7142f24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  anim: {fileID: 8693632831192975952}
 --- !u!1 &4854489468192512913
 GameObject:
   m_ObjectHideFlags: 0

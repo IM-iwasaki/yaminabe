@@ -16,11 +16,13 @@ public class MainWeaponController : NetworkBehaviour {
     private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
+    private CharacterAnimationController characterAnimationController;
     private PlayerLocalUIController playerUI;
 
     private void Awake() {
         base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
+        characterAnimationController = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
@@ -78,7 +80,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        characterBase.anim.SetBool("Shoot", true);
+        characterAnimationController.anim.SetBool("Shoot", true);
     }
 
     /// <summary>
@@ -155,7 +157,7 @@ public class MainWeaponController : NetworkBehaviour {
         playerUI.LocalUIChanged();
         characterBase.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
         //見た目変更
-        characterBase.GetComponent<CharacterBase>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
+        characterBase.GetComponent<CharacterAnimationController>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 
