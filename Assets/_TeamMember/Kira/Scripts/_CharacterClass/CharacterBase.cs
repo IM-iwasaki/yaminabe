@@ -32,6 +32,9 @@ public abstract class CharacterBase : NetworkBehaviour {
     public MainWeaponController weaponController_main;
     public SubWeaponController weaponController_sub;
 
+    //  バナーを変更させるため
+    public int bannerNum = 0;
+
     public CharacterInput input { get ; private set; }
     public CharacterActions action { get ; private set; }
     public CharacterParameter parameter { get ; private set; }
@@ -165,7 +168,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (parameter.HP <= 0) {
             parameter.HP = 0;
             //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
-            KillLogManager.instance.CmdSendKillLog(4, _name, parameter.PlayerName);
+            KillLogManager.instance.CmdSendKillLog(bannerNum, _name, parameter.PlayerName);
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 // スコア加算
