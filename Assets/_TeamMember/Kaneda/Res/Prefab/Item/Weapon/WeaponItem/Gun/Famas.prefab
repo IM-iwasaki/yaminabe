@@ -178,8 +178,8 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   canDestroy: 1
-  weaponType: 0
-  weaponData: {fileID: 0}
+  weaponType: 1
+  weaponData: {fileID: 11400000, guid: 881d969855b604943b56bb60ee1fd6d4, type: 2}
 --- !u!114 &499720699669264237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,7 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 278722266
+  _assetId: 1168847533
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

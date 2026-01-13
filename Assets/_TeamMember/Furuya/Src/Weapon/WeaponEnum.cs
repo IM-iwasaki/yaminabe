@@ -108,7 +108,6 @@ public enum ItemType {
     HealthPack,     // HP回復
     Shield,         // 一時的防御バフ
     SpeedBoost,     // 一時的移動速度アップ
-    Invisibility,   // 一時的透明化
 }
 
 public enum MagicType {
