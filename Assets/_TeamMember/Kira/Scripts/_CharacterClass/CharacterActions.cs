@@ -162,12 +162,13 @@ public class CharacterActions : NetworkBehaviour {
             if (useTag == "SelectCharacterObject") {
                 CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
                 select.StartCharacterSelect(gameObject);
+                core.localUI.OffLocalUIObject();
                 return;
             }
             if (useTag == "Gacha") {
                 GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
                 gacha.StartGachaSelect(gameObject);
-                core.localUI.gameObject.SetActive(false);
+                core.localUI.OffLocalUIObject();
                 return;
             }
 

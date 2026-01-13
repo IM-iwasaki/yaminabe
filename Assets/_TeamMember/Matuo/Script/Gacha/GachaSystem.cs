@@ -32,12 +32,10 @@ public class GachaSystem : MonoBehaviour {
     private GameObject currentPlayer; // 現在選択中のプレイヤー
     public bool isOpen;               // ガチャ画面の開閉状態およびカーソル状態
 
-
     /// <summary>
     /// ガチャ画面中かどうかのフラグ
     /// </summary>
     private bool isGacha = false;
-
 
     // 結果表示用
     private Canvas resultCanvas;      // 結果UIを配置するCanvas
@@ -45,7 +43,8 @@ public class GachaSystem : MonoBehaviour {
 
     private void Awake() {
         // 最初はガチャUIを非表示
-        gachaUI.SetActive(false);
+        if (gachaUI != null)
+            gachaUI.SetActive(false);
     }
 
     private void Update() {
@@ -66,7 +65,7 @@ public class GachaSystem : MonoBehaviour {
     public GachaItem PullSingle() {
         if (PlayerWallet.Instance == null) return null;
 
-        // 所持金チェックと支払い
+        // 所持金チェックと支払い（ここで ±○○ 表示される）
         if (!PlayerWallet.Instance.SpendMoney(gachaCost)) return null;
 
         // ガチャ演出
@@ -91,6 +90,8 @@ public class GachaSystem : MonoBehaviour {
         if (PlayerWallet.Instance == null || count <= 0) return results;
 
         int totalCost = gachaCost * count;
+
+        // 所持金チェックと支払い（まとめて -○○ 表示）
         if (!PlayerWallet.Instance.SpendMoney(totalCost))
             return results;
 
@@ -154,9 +155,8 @@ public class GachaSystem : MonoBehaviour {
 
     #endregion
 
-
-
     #region オプション中ブロック
+
     /// <summary>
     /// シーン内の OptionMenu をキャッシュするためのフィールド
     /// インスペクタからは設定しない
@@ -164,8 +164,7 @@ public class GachaSystem : MonoBehaviour {
     private OptionMenu cachedOptionMenu;
 
     /// <summary>
-    /// シーン内から OptionMenu を自動で探してくるゲッター
-    /// 初回だけ FindObjectOfType し、その後はキャッシュを使う
+    /// シーン内から OptionMenu を自動で探してくる
     /// </summary>
     private OptionMenu Option {
         get {
@@ -177,8 +176,7 @@ public class GachaSystem : MonoBehaviour {
     }
 
     /// <summary>
-    /// オプションメニューが開いているため
-    /// ガチャを開けない状態かどうか
+    /// オプションメニューが開いているためガチャを開けないか
     /// </summary>
     public bool IsBlockedByOptionMenu() {
         // OptionMenu が無いならブロックしない
@@ -187,13 +185,10 @@ public class GachaSystem : MonoBehaviour {
         // OptionMenu 側でメニューが開いているならブロック
         return Option.isOpen;
     }
-    /// <summary>
-    /// ガチャ状態をまとめて切り替える
-    /// </summary>
+
     private void SetGachaState(bool open) {
         isGacha = open;
     }
-
 
     // ガチャの状態を返す
     public bool IsGachaActive() {
@@ -208,28 +203,29 @@ public class GachaSystem : MonoBehaviour {
     /// ガチャ選択画面開始
     /// </summary>
     public void StartGachaSelect(GameObject player) {
-
-        // OptionMenu が開いているならガチャを開かない
-        if (IsBlockedByOptionMenu()) {
-            return;
-        }
-
+        if (IsBlockedByOptionMenu()) return;
         if (currentPlayer != null) return;
-        currentPlayer = player;
 
+        currentPlayer = player;
         SetGachaState(true);
 
+        // ガチャ中は所持金UIを表示
+        PlayerWallet.Instance?.ShowMoneyUI();
 
-        if (gachaUI != null) gachaUI.SetActive(false);
+        if (gachaUI != null)
+            gachaUI.SetActive(false);
 
+        // カメラ移動開始
         if (cameraManager != null && cameraTargetPoint != null) {
             cameraManager.MoveCamera(player, cameraTargetPoint.position, cameraTargetPoint.rotation);
         }
 
-        Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
+        // プレイヤーの見た目非表示
+        Transform skin = FindChildWithTag(player.transform, SKIN_TAG);
         if (skin != null) skin.gameObject.SetActive(false);
 
         isOpen = true;
+        //  カーソルをOnにする
         ChangeCursorView();
 
         if (gachaUI != null)
@@ -244,22 +240,26 @@ public class GachaSystem : MonoBehaviour {
 
         OffGachaAnim();
 
-        if (gachaUI != null) {
+        if (gachaUI != null)
             gachaUI.SetActive(false);
-            if (currentPlayer.GetComponent<NetworkIdentity>().isLocalPlayer) {
-                //var playerUI = currentPlayer.GetComponent<CharacterBase>().localUI;
-                //playerUI.gameObject.SetActive(true);
-            }
-        }
 
+        // ガチャ終了時に所持金UIを隠す
+        PlayerWallet.Instance?.HideMoneyUI();
+
+        if (cameraManager != null)
+            cameraManager.ReturnCamera();
+
+        // プレイヤーの見た目表示
         Transform skin = FindChildWithTag(currentPlayer.transform, SKIN_TAG);
         if (skin != null) skin.gameObject.SetActive(true);
 
-        if (cameraManager != null) cameraManager.ReturnCamera();
+        //  プレイヤー側のローカルUIを表示させる
+        if (currentPlayer.GetComponent<PlayerLocalUIController>()) {
+            currentPlayer.GetComponent<PlayerLocalUIController>().OnLocalUIObject();
+        }
 
         isOpen = false;
         ChangeCursorView();
-
         SetGachaState(false);
 
         currentPlayer = null;
@@ -338,6 +338,7 @@ public class GachaSystem : MonoBehaviour {
         temp.SetActive(true);
 
         RenderTexture rtTex = new RenderTexture((int)iconSize, (int)iconSize, 16);
+
         if (resultCamera == null) {
             GameObject camObj = new GameObject("ResultCamera");
             resultCamera = camObj.AddComponent<Camera>();
@@ -345,6 +346,7 @@ public class GachaSystem : MonoBehaviour {
             resultCamera.backgroundColor = Color.black;
             resultCamera.enabled = false;
         }
+
         resultCamera.targetTexture = rtTex;
 
         // カメラ配置（正面から）
@@ -358,12 +360,11 @@ public class GachaSystem : MonoBehaviour {
         resultCamera.targetTexture = null;
 
         Destroy(temp);
-
         yield return null;
     }
 
     /// <summary>
-    /// 10連など複数ガチャ結果のGridLayout表示
+    /// 複数ガチャ結果表示
     /// </summary>
     private IEnumerator ShowMultipleResults(List<GachaItem> items) {
         if (items == null || items.Count == 0) yield break;
@@ -390,7 +391,6 @@ public class GachaSystem : MonoBehaviour {
         GridLayoutGroup grid = gridParent.AddComponent<GridLayoutGroup>();
         grid.cellSize = new Vector2(iconSize, iconSize);
         grid.spacing = new Vector2(spacing, spacing);
-        grid.startAxis = GridLayoutGroup.Axis.Horizontal;
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         grid.constraintCount = 5;
 
@@ -427,11 +427,9 @@ public class GachaSystem : MonoBehaviour {
             resultCamera.targetTexture = null;
 
             Destroy(temp);
-
             yield return new WaitForEndOfFrame();
         }
     }
 
     #endregion
-
 }

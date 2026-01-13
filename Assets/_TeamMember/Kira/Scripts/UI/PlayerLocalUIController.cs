@@ -20,6 +20,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField] Image mainWeaponReloadIcon;
     private bool reloadIconRotating = false;
     [SerializeField] TextMeshProUGUI[] subWeaponText;
+    [SerializeField] GameObject mpBar;
 
     /// <summary>
     /// バー補正用定数
@@ -30,9 +31,9 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField]
     private TextMeshProUGUI mpText = null;
     [SerializeField]
-    private Slider hpBar = null;
+    private Slider hpBar_slider = null;
     [SerializeField]
-    private Slider mpBar = null;
+    private Slider mpBar_slider = null;
     [SerializeField]
     private Image hpBarImage = null;
     [SerializeField]
@@ -51,9 +52,12 @@ public class PlayerLocalUIController : NetworkBehaviour {
 
     [SerializeField] GameObject interactUI;
 
+    //  ローカルUIの本体を取得
+    [SerializeField] GameObject localUIObject;
+
     public void Initialize() {
-        hpBar.interactable = false;
-        mpBar.interactable = false;
+        hpBar_slider.interactable = false;
+        mpBar_slider.interactable = false;
 
         if (!isLocalPlayer) {
             var LocalUI = GetComponentInChildren<Canvas>();
@@ -118,6 +122,14 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// スキルとパッシブのアイコン、武器の情報の反映
     /// </summary>
     public void LocalUIChanged() {
+        //MPを必要とする職業かでMPの表示非表示を分ける
+        if (player.weaponController_main.weaponData.type == WeaponType.Magic) {
+            mpBar.SetActive(true);
+        }
+        else {
+            mpBar.SetActive(false);
+        }
+
         //ステータス系の初期化
         hpText.text = player.parameter.HP.ToString();
         ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
@@ -166,17 +178,17 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// <param name="_hp"></param>
     public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
-        hpBar.value = (float)_hp / _maxHP * FIXED_RATIO;
+        hpBar_slider.value = (float)_hp / _maxHP * FIXED_RATIO;
         //死亡時
-        if (hpBar.value < 1)
+        if (hpBar_slider.value < 1)
             hpBarImage.gameObject.SetActive(false);
         //2割以下
-        else if (hpBar.value <= _maxHP / 5 && hpBar.value >= 1) {
+        else if (hpBar_slider.value <= _maxHP / 5 && hpBar_slider.value >= 1) {
             hpBarImage.color = Color.red;
             hpText.color = Color.red;
         }
         //5割以下
-        else if (hpBar.value <= _maxHP / 2) {
+        else if (hpBar_slider.value <= _maxHP / 2) {
             hpBarImage.color = Color.yellow;
             hpText.color = Color.yellow;
         }
@@ -196,7 +208,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// <param name="_mp"></param>
     public void ChangeMPUI(int _maxMP, int _mp) {
         mpText.text = _mp.ToString();
-        mpBar.value = (float)_mp / _maxMP * FIXED_RATIO;
+        mpBar_slider.value = (float)_mp / _maxMP * FIXED_RATIO;
         if (_mp <= 0)
             mpBarImage.gameObject.SetActive(false);
         else
@@ -232,6 +244,13 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
     public void OffChangeInteractUI() {
         interactUI.SetActive(false);
+    }
+
+    public void OnLocalUIObject() {
+        localUIObject.SetActive(true);
+    }
+    public void OffLocalUIObject() {
+        localUIObject.SetActive(false);
     }
 
 }

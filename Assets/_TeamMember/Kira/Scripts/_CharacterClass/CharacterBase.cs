@@ -16,11 +16,9 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
-    [System.NonSerialized]public Rigidbody rb;
+    [System.NonSerialized] public Rigidbody rb;
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
-    public Animator anim = null;
-    private string currentAnimation;
 
     //GroundLayer
     public LayerMask GroundLayer { get; private set; }
@@ -32,9 +30,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     public MainWeaponController weaponController_main;
     public SubWeaponController weaponController_sub;
 
-    public CharacterInput input { get ; private set; }
-    public CharacterActions action { get ; private set; }
-    public CharacterParameter parameter { get ; private set; }
+    public CharacterInput input { get; private set; }
+    public CharacterActions action { get; private set; }
+    public CharacterParameter parameter { get; private set; }
+    public CharacterAnimationController animCon { get; private set; }
 
     #region ～初期化関係関数～
 
@@ -43,7 +42,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void Awake() {
         //シーン変わったりしても消えないようにする
-        DontDestroyOnLoad(gameObject);        
+        DontDestroyOnLoad(gameObject);
 
         rb = GetComponent<Rigidbody>();
 
@@ -102,7 +101,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (TeamGlowManager.Instance != null) {
             TeamGlowManager.Instance.RegisterPlayer(this);
         }
-    }   
+    }
 
     /// <summary>
     /// プレイヤー名用セッター
@@ -134,7 +133,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// プレイヤー状態を初期化する関数
     /// </summary>
     public virtual void Initalize() {
-        
+
     }
     /// <summary>
     /// 追加:タハラ クライアント用準備状態切り替え関数
@@ -219,7 +218,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         LocalDeadEffect();
         RespawnDelay();
         //アニメーションは全員に反映
-        RpcDeadAnimation();
+        animCon.RpcDeadAnimation();
         // スコア計算にここから行きます
         if (TryGetComponent<PlayerCombat>(out var combat)) {
             int victimTeam = parameter.TeamID;
@@ -294,14 +293,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
         //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
-    }
-    /// <summary>
-    /// NetworkAnimatorを使用した結果
-    /// ローカルでの変更によってアニメーション変更がかかるため制作
-    /// </summary>
-    [ClientRpc]
-    private void RpcDeadAnimation() {
-        anim.SetTrigger("Dead");
     }
 
     [Server]
@@ -410,7 +401,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
     }
 
-    
+
 
     /// <summary>
     /// 追加:タハラ
@@ -431,7 +422,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_ID"></param>
     [ClientRpc]
     private void RpcChangeWeapon(int _ID) {
-        Transform handRoot = GetComponent<CharacterBase>().anim.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform handRoot = GetComponent<CharacterAnimationController>().anim.GetBoneTransform(HumanBodyBones.RightHand);
 
         //今現在持っている武器に新たなメッシュを反映
         GameObject currentWeapon = handRoot.GetChild(3).gameObject;
@@ -690,7 +681,7 @@ public abstract class CharacterBase : NetworkBehaviour {
             rb.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
         }
     }
-    */   
+    */
 
     /// <summary>
     /// ジャンプ管理関数(死亡中は呼ばないでください。)
@@ -787,7 +778,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = GetShootDirection();
         weaponController_main.CmdRequestAttack(shootDir);
-    }*/    
+    }*/
 
     /// <summary>
     /// スキル呼び出し関数
@@ -826,88 +817,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     //    }
     //}
 
-    #endregion      
+    #endregion
 
     #region おれのじゃないやつ
 
-    #region アニメーション関連
-
-    /// <summary>
-    /// アニメーターのレイヤー切り替え
-    /// </summary>
-    [Server]
-    public void ChangeLayerWeight(int _layerIndex) {
-        //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for (int i = 1, max = anim.layerCount - 1; i < max; i++) {
-            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
-        }
-    }
-
-    /// <summary>
-    /// 移動アニメーションの管理
-    /// </summary>
-    /// <param name="_x"></param>
-    /// <param name="_z"></param>
-    [Command]
-    private void ControllMoveAnimation(float _x, float _z) {
-        ResetRunAnimation();
-        //斜め入力の場合
-        if (_x != 0 && _z != 0) {
-            anim.SetBool("RunL", false);
-            anim.SetBool("RunR", false);
-            if (_z > 0) {
-                currentAnimation = "RunF";
-            }
-            if (_z < 0) {
-                currentAnimation = "RunB";
-            }
-            anim.SetBool(currentAnimation, true);
-            return;
-
-        }
-
-        if (_x > 0 && _z == 0) {
-            currentAnimation = "RunR";
-        }
-        if (_x < 0 && _z == 0) {
-            currentAnimation = "RunL";
-        }
-        if (_x == 0 && _z > 0) {
-            currentAnimation = "RunF";
-        }
-        if (_x == 0 && _z < 0) {
-            currentAnimation = "RunB";
-        }
-        anim.SetBool(currentAnimation, true);
-    }
-
-    /// <summary>
-    /// 移動アニメーションのリセット
-    /// </summary>
-    private void ResetRunAnimation() {
-        anim.SetBool("RunF", false);
-        anim.SetBool("RunR", false);
-        anim.SetBool("RunL", false);
-        anim.SetBool("RunB", false);
-
-        currentAnimation = null;
-    }
-
-    [Command]
-    private void CmdResetAnimation() {
-        ResetRunAnimation();
-    }
-
-    /// <summary>
-    /// 追加:タハラ　入力がなくなったらショットアニメーション終了
-    /// </summary>
-    [Command]
-   public void StopShootAnim() {
-        //アニメーション終了
-        anim.SetBool("Shoot", false);
-    }
-
-    #endregion
 
     #region バフ関連変数
 
