@@ -78,8 +78,8 @@ public class CustomNetworkManager : NetworkManager {
 
         GameObject player = Instantiate(playerPrefab);
         NetworkServer.AddPlayerForConnection(_conn, player);
-
-        serverManager.connectPlayer.Add(_conn.identity);
+        if (!serverManager.connectPlayer.Contains(_conn.identity))
+            serverManager.connectPlayer.Add(_conn.identity);
         ChatManager.instance.CmdSendSystemMessage(serverManager.connectPlayer.Count + "is Connected ");
     }
 
@@ -91,7 +91,7 @@ public class CustomNetworkManager : NetworkManager {
         if (TitleManager.instance.isClient) {
             Destroy(FindObjectOfType<UDPBroadcaster>().gameObject);
         }
-            
+
     }
 
     /// <summary>
@@ -116,8 +116,8 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
         if (newSceneName == GameSceneManager.Instance.gameSceneName) {
-            if(HostUI.isVisibleUI)
-            HostUI.ShowOrHideUI();
+            if (HostUI.isVisibleUI)
+                HostUI.ShowOrHideUI();
             GameSceneManager.Instance.ResetIsChangedScene();
         }
         Cursor.lockState = HostUI.isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
@@ -154,7 +154,7 @@ public class CustomNetworkManager : NetworkManager {
             //ロビーシーンなら開始地点に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
                 //重なることを考慮してランダムで座標をずらす
-                Vector3 respawnPos = new Vector3(Random.Range(1,10), 0, 0);
+                Vector3 respawnPos = new Vector3(Random.Range(1, 10), 0, 0);
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
             }
             //初期化

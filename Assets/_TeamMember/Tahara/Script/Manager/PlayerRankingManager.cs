@@ -76,9 +76,7 @@ public class PlayerRankingManager : NetworkBehaviour {
         List<NetworkConnectionToClient> playerConn = new List<NetworkConnectionToClient>();
         foreach (var addConn in ServerManager.instance.connectPlayer) {
             if (addConn == null || addConn.connectionToClient == null) continue;
-            //ホスト分もスキップ
-            if (addConn.connectionToClient.connectionId == 0) continue;
-
+            
             playerConn.Add(addConn.connectionToClient);
         }
         //全員に対してレート加算&保存を通知
