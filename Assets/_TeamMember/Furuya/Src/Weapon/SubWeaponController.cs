@@ -3,6 +3,7 @@ using Mirror;
 using System.Collections;
 using Mirror.Examples.Basic;
 using static CharacterEnum;
+using Mirror.Examples.Benchmark;
 
 /// <summary>
 /// サブ武器操作用
@@ -160,11 +161,31 @@ public class SubWeaponController : NetworkBehaviour {
     private void UseItem() {
         if (subWeaponData is not ItemData itemData) return;
 
-        // 回復アイテムの場合
-        if (itemData.itemType == ItemType.HealthPack) {
-            //回復処理をここに追加
+        switch (itemData.itemType) {
+
+            case ItemType.HealthPack: {
+                if (itemData is HealthPackData hpData )
+                    characterBase.Heal(hpData.healAmount, 1);
+                break;
+            }
+
+            case ItemType.Shield: {
+                if (itemData is ShieldData shieldData) {
+                    SpawnShieldBarricade(shieldData);
+                }
+                break;
+            }
+
+            case ItemType.SpeedBoost: {
+                if (itemData is SpeedBoostData speedData) {
+                    characterBase.MoveSpeedBuff(
+                        speedData.speedMultiplier,
+                        speedData.duration
+                    );
+                }
+                break;
+            }
         }
-        // その他のアイテムタイプの処理はここに追加
     }
 
     /// <summary>
