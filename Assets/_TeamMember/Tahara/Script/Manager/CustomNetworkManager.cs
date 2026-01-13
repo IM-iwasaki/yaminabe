@@ -156,6 +156,8 @@ public class CustomNetworkManager : NetworkManager {
                 //重なることを考慮してランダムで座標をずらす
                 Vector3 respawnPos = new Vector3(Random.Range(1, 10), 0, 0);
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
+                //レートの数値を反映して表示
+                RateDisplay.instance.ChangeRateUI();
             }
             //初期化
             character.Initalize();
