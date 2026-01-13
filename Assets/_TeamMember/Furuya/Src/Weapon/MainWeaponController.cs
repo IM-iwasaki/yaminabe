@@ -16,13 +16,13 @@ public class MainWeaponController : NetworkBehaviour {
     private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
-    private CharacterAnimationController characterAnimationController;
+    private CharacterAnimationController animCon;
     private PlayerLocalUIController playerUI;
 
     private void Awake() {
         base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
-        characterAnimationController = GetComponent<CharacterAnimationController>();
+        animCon = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
@@ -80,7 +80,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        characterAnimationController.anim.SetBool("Shoot", true);
+        animCon.anim.SetBool("Shoot", true);
     }
 
     /// <summary>
