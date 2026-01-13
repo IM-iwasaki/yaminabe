@@ -505,7 +505,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  inputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
+  inputStatus: {fileID: 11400000, guid: 2b2b23650934ee54687ca8d729b424b1, type: 2}
   HP: 0
   MP: 0
   isReloading: 0
@@ -592,10 +592,11 @@ MonoBehaviour:
   - {fileID: 2802844320495516465}
   - {fileID: 2251574200841326661}
   - {fileID: 3367472487914884127}
+  mpBar: {fileID: 1376865105966231322}
   hpText: {fileID: 711741364411891535}
   mpText: {fileID: 7747474235637660459}
-  hpBar: {fileID: 8594643932531418125}
-  mpBar: {fileID: 2845675577603631553}
+  hpBar_slider: {fileID: 8594643932531418125}
+  mpBar_slider: {fileID: 2845675577603631553}
   hpBarImage: {fileID: 9131699680444306003}
   mpBarImage: {fileID: 8600873991544450308}
   skill_Icon:
@@ -1670,6 +1671,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1376865105966231322 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3137661458381493930, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 4075948961502607792}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2251574200841326661 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2859679327084669429, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
@@ -1697,7 +1703,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2300621567709515889, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
   m_PrefabInstance: {fileID: 4075948961502607792}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1376865105966231322}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
