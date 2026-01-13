@@ -28,6 +28,9 @@ public class PlayerWallet : MonoBehaviour {
     private TextMeshProUGUI moneyText;
     private Coroutine moneyDisplayCoroutine;
 
+    // ガチャ中など、所持金UIを常時表示するかどうか
+    private bool keepMoneyUIVisible = false;
+
     private void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(gameObject);
@@ -36,7 +39,7 @@ public class PlayerWallet : MonoBehaviour {
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        CreateMoneyUI();
+        // 起動時にはUIを生成しない
         LoadMoney();
     }
 
@@ -44,6 +47,9 @@ public class PlayerWallet : MonoBehaviour {
     /// 所持金表示用CanvasとTMP Textを生成
     /// </summary>
     private void CreateMoneyUI() {
+        // 既に生成済みなら何もしない
+        if (moneyCanvas != null) return;
+
         // Canvas作成
         GameObject canvasGO = new GameObject("MoneyCanvas");
         moneyCanvas = canvasGO.AddComponent<Canvas>();
@@ -79,6 +85,8 @@ public class PlayerWallet : MonoBehaviour {
     /// </summary>
     /// <param name="changeAmount">変化量</param>
     private void UpdateMoneyText(int changeAmount) {
+        if (moneyText == null) return;
+
         if (changeAmount == 0) {
             moneyText.text = $"Money: {currentMoney}";
         } else {
@@ -93,8 +101,13 @@ public class PlayerWallet : MonoBehaviour {
     private IEnumerator ShowMoneyChange(int changeAmount) {
         UpdateMoneyText(changeAmount);
         moneyText.gameObject.SetActive(true);
+
         yield return new WaitForSeconds(1.5f);
-        moneyText.gameObject.SetActive(false);
+
+        // ガチャ中など常時表示モードでなければ非表示
+        if (!keepMoneyUIVisible) {
+            moneyText.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -165,5 +178,24 @@ public class PlayerWallet : MonoBehaviour {
         var data = PlayerSaveData.Load();
         currentMoney = data.currentMoney;
         OnMoneyChanged?.Invoke(currentMoney);
+    }
+
+    /// <summary>
+    /// ガチャ開始時に所持金UIを表示
+    /// </summary>
+    public void ShowMoneyUI() {
+        CreateMoneyUI();
+        keepMoneyUIVisible = true;
+        UpdateMoneyText(0);
+        moneyText.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// ガチャ終了時に所持金UIを非表示
+    /// </summary>
+    public void HideMoneyUI() {
+        keepMoneyUIVisible = false;
+        if (moneyText != null)
+            moneyText.gameObject.SetActive(false);
     }
 }
