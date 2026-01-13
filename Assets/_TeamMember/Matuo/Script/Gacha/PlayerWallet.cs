@@ -126,7 +126,7 @@ public class PlayerWallet : MonoBehaviour {
         if (moneyText != null)
             moneyText.gameObject.SetActive(false);
     }
-    #region 所持金表示UI
+    #region 所持金UI
     /// <summary>
     /// 所持金表示用CanvasとTMP Textを生成
     /// </summary>
@@ -171,7 +171,9 @@ public class PlayerWallet : MonoBehaviour {
         if (moneyText == null) return;
         moneyText.text = $"Money: {currentMoney}";
     }
+    #endregion
 
+    #region 増減UI
     /// <summary>
     /// フローティング表示（±○○）
     /// </summary>
@@ -183,12 +185,13 @@ public class PlayerWallet : MonoBehaviour {
         floatGO.transform.SetParent(moneyText.transform.parent, false);
 
         TextMeshProUGUI floatText = floatGO.AddComponent<TextMeshProUGUI>();
-        floatText.fontSize = 48;
+        floatText.fontSize = 72;
         floatText.alignment = TextAlignmentOptions.TopLeft;
 
         string sign = amount > 0 ? "+" : "";
         floatText.text = $"{sign}{amount}";
-        floatText.color = amount > 0 ? Color.yellow : Color.yellow;
+
+        floatText.color = amount > 0 ? Color.yellow : Color.red;
 
         RectTransform rt = floatText.rectTransform;
 
