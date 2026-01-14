@@ -350,6 +350,37 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.018616438, y: 0.04596275, z: 0.48210913}
     m_Extent: {x: 0.6623423, y: 0.7539962, z: 0.5807361}
   m_DirtyAABB: 0
+--- !u!1 &1541854072011085406
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4005932247458778141}
+  m_Layer: 0
+  m_Name: HandPower
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4005932247458778141
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541854072011085406}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1326685740635210823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1566414587786305203
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,6 +979,7 @@ Transform:
   - {fileID: 7262947471368347036}
   - {fileID: 7297442216554580286}
   - {fileID: 5045791279734920856}
+  - {fileID: 4005932247458778141}
   m_Father: {fileID: 3803503561677193228}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5327558935572912261
