@@ -154,7 +154,7 @@ public class CustomNetworkManager : NetworkManager {
             //ロビーシーンなら開始地点に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
                 //重なることを考慮してランダムで座標をずらす
-                Vector3 respawnPos = new Vector3(Random.Range(1, 10), 0, 0);
+                Vector3 respawnPos = new Vector3(Random.Range(1, 10), 5, 0);
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
                 //レートの数値を反映して表示
                 RateDisplay.instance.ChangeRateUI();
@@ -183,6 +183,7 @@ public class CustomNetworkManager : NetworkManager {
     /// クライアントが止まった時の処理
     /// </summary>
     public override void OnStopClient() {
+        Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene("TitleScene");
     }
 
@@ -195,7 +196,7 @@ public class CustomNetworkManager : NetworkManager {
 
 
     public void DisconnectHost() {
-        NetworkManager.singleton.StopHost();
+        singleton.StopHost();
     }
 
 

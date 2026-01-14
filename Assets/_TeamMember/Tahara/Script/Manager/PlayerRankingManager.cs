@@ -12,13 +12,6 @@ public class PlayerRankingManager : NetworkBehaviour {
     /// インスタンス
     /// </summary>
     public static PlayerRankingManager instance { get; private set; }
-
-    /// <summary>
-    /// レート表示用UI
-    /// </summary>
-    [SerializeField]
-    private TextMeshProUGUI rateUI = null;
-
     /// <summary>
     /// レートを変更するプレイヤーのデータ
     /// </summary>

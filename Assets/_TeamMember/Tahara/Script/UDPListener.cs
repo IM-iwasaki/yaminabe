@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.Collections;
 using System.Net;
+using System.Collections.Generic;
 /// <summary>
 /// IPアドレスを定期的に受信する
 /// </summary>
@@ -12,6 +13,9 @@ public class UDPListener : MonoBehaviour {
     /// 取り出せた時にだけ処理できる安全なキュー
     /// </summary>
     ConcurrentQueue<UdpMessage> messageQueue = new ConcurrentQueue<UdpMessage>();
+
+    public List<UdpMessage> discoveredHosts = new List<UdpMessage>();
+
     /// <summary>
     /// 受信するメッセージ
     /// </summary>
@@ -27,12 +31,16 @@ public class UDPListener : MonoBehaviour {
     /// </summary>
     public bool isGetIP = false;
 
+    private void Awake() {
+        isGetIP = false;
+    }
+
     // Update is called once per frame
     void Update() {
         if (!TitleManager.instance) return;
 
         if (messageQueue.TryDequeue(out UdpMessage msg)) {
-            TitleManager.instance.ipAddress = msg.ip;
+            discoveredHosts.Add(msg);
             isGetIP = true;
         }
     }
