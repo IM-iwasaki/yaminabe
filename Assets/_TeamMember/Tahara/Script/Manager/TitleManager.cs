@@ -56,6 +56,9 @@ public class TitleManager : MonoBehaviour {
     [SerializeField]
     private UDPListener receiver = null;
 
+    [SerializeField]
+    private GameObject hostsDisplay;
+
 
     private void Awake() {
         DontDestroyOnLoad(gameObject);
