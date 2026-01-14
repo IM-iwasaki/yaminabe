@@ -133,10 +133,7 @@ public class MainWeaponController : NetworkBehaviour {
             return;
         }
 
-        weaponData = data;
-        ammo = weaponData.ammo;
-        playerUI.LocalUIChanged();
-        Debug.LogWarning($"'{data.weaponName}' を使用します");
+        CmdSetWeaponData(name);
     }
 
     /// <summary>
