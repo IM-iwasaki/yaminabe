@@ -26,7 +26,41 @@ public class CharacterActions : NetworkBehaviour {
     //スキルを使用できるか
     public bool isCanSkill { get; private set; }
 
+    // キャラクター選択管理
+    private CharacterSelectManager characterSelectManager;
+
+    // ガチャ管理
+    private GachaSystem gachaSystem;
+
+    private HudManager hud;
+
+
+
     private void Update() {
+        // ローカルプレイヤー以外は処理しない
+        if (!isLocalPlayer) return;
+
+        // キャラ選択中 or ガチャ中なら全操作ブロック
+        if ((characterSelectManager != null && characterSelectManager.IsCharacterSelectActive()) ||
+            (gachaSystem != null && gachaSystem.IsGachaActive())
+        ) {
+
+
+            // HUD（レティクル）非表示
+            hud?.SetReticleVisible(false);
+
+
+            // 移動を完全停止
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            isMoving = false;
+            return;
+
+
+
+        }
+
+        hud?.SetReticleVisible(true);
+
         JumpControl();
 
         //攻撃入力がある間攻撃関数を呼ぶ(間隔の制御はMainWeaponControllerに一任)
@@ -47,12 +81,23 @@ public class CharacterActions : NetworkBehaviour {
         input = core.input;
         rb = core.GetComponent<Rigidbody>();
 
+        // シーンに1つだけ存在する想定
+        characterSelectManager = FindObjectOfType<CharacterSelectManager>();
+        gachaSystem = FindObjectOfType<GachaSystem>();
+        hud = FindObjectOfType<HudManager>();
+
+
+
         isCanPickup = false;
         isCanInteruct = false;
         isCanSkill = false;
     }
 
     private void MoveControl() {
+
+        
+
+
         //移動入力が行われている間は移動中フラグを立てる
         if (input.MoveInput != Vector2.zero) isMoving = true;
         else isMoving = false;

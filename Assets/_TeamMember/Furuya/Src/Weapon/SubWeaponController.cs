@@ -18,20 +18,50 @@ public class SubWeaponController : NetworkBehaviour {
     private CharacterBase characterBase; // チームIDなどを取得するため
     private CharacterAnimationController characterAnimationController;
     private PlayerLocalUIController playerUI;
+    private CharacterSelectManager characterSelectManager;
+    private GachaSystem gachaSystem;
+
 
     public void Awake() {
         characterBase = GetComponent<CharacterBase>();
         characterAnimationController = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
 
+        characterSelectManager = FindObjectOfType<CharacterSelectManager>();
+        gachaSystem = FindObjectOfType<GachaSystem>();
+
         if (subWeaponData != null)
             currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
     }
 
     /// <summary>
+    /// UI 操作中などでサブ武器を使えない状態か
+    /// </summary>
+    private bool IsUIBlocked() {
+
+        if (!characterBase.isLocalPlayer)
+            return true;
+
+        if (characterSelectManager != null &&
+            characterSelectManager.IsCharacterSelectActive())
+            return true;
+
+        if (gachaSystem != null &&
+            gachaSystem.IsGachaActive())
+            return true;
+
+        return false;
+    }
+
+
+    /// <summary>
     /// サブ武器の使用可否判定
     /// </summary>
     public void TryUseSubWeapon() {
+        // キャラ選択・ガチャ中ならブロック
+        if (IsUIBlocked())
+            return;
+
         if (subWeaponData == null || currentUses <= 0 || !characterBase.isLocalPlayer) return;
         CmdUseSubWeapon();
     }

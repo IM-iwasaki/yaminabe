@@ -188,7 +188,7 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// キャラ選択画面中かどうか
     /// true: キャラ選択モード / false: 通常
     /// </summary>
-    private bool isCharacterSelect = false;
+    public bool isCharacterSelect = false;
 
     /// <summary>
     /// キャラ選択状態をまとめて切り替える
@@ -198,7 +198,7 @@ public class CharacterSelectManager : NetworkBehaviour {
         isCharacterSelect = active;
 
         // 将来「キャラ選択中だけ有効にしたい処理」が増えたら
-        // ここにまとめて書けば OK
+        // ここにまとめて書く
     }
 
     /// <summary>
