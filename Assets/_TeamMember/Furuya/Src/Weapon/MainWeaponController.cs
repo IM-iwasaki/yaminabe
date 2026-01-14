@@ -133,7 +133,9 @@ public class MainWeaponController : NetworkBehaviour {
             return;
         }
 
-        CmdSetWeaponData(name);
+        weaponData = data;
+        ammo = weaponData.ammo;
+        playerUI.LocalUIChanged();
     }
 
     /// <summary>
