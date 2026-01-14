@@ -39,7 +39,7 @@ public class TitleManager : MonoBehaviour {
     /// <summary>
     /// ボタン押下判定用変数
     /// </summary>
-    static private bool once = false;
+    private static bool once = false;
     /// <summary>
     /// ロードするロビーシーンの名前
     /// </summary>
@@ -55,12 +55,13 @@ public class TitleManager : MonoBehaviour {
     /// </summary>
     [SerializeField]
     private UDPListener receiver = null;
-    
+
 
     private void Awake() {
         DontDestroyOnLoad(gameObject);
 
         instance = this;
+        once = false;
     }
 
     /// <summary>
@@ -88,10 +89,8 @@ public class TitleManager : MonoBehaviour {
             if (ipAddress == null)
                 return;
             TitleAudio.Instance.PlaySE("決定");
-            if (!once) {
-                //IPアドレスが取得できたらロビーシーンに移行
-                StartCoroutine(WaitReceivedIP());
-            }
+            //IPアドレスが取得できたらロビーシーンに移行
+            StartCoroutine(WaitReceivedIP());
             once = true;
         }
     }
@@ -104,7 +103,7 @@ public class TitleManager : MonoBehaviour {
         receiver.StartReceiveIP();
 
         //タイムアウトまでのカウントとタイマー
-        float timeout = 10.0f;
+        float timeout = 5.0f;
         float timer = 0.0f;
 
         //取得できたかタイムアウトするまで待機
@@ -115,11 +114,24 @@ public class TitleManager : MonoBehaviour {
         }
         //取得できた
         if (receiver.isGetIP) {
+            //全ホストを表示※UIに変更
+            foreach (var hosts in receiver.discoveredHosts) {
+                Debug.Log(hosts.hostName);
+            }
+            //ホスト選択まで待機
+            //yield return new WaitUntil(() => );
+
+            //ホストをUIから取得
+            var selectedHost = receiver.discoveredHosts[0];
+
+            //IPアドレス設定
+            ipAddress = selectedHost.ip;
+            //サーバーに参加
             isClient = true;
             SceneManager.LoadScene(lobbySceneName);
             isTitle = false;
         }
-        //取得できなかったのでシーンを再ロード
+        //取得できなかったので結果を表示
         else {
 
             SearchOrMissingText.text = "Not Found";
