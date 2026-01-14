@@ -96,10 +96,62 @@ public class HostUI : NetworkBehaviour {
     /// </summary>
     /// <param name="_isVisibleFlag"></param>
     public static void ShowOrHideUI() {
+        // HostUI を探す
+        HostUI hostUI = FindObjectOfType<HostUI>();
+        if (hostUI == null) return;
+
+        // 開こうとしている時だけブロック判定
+        if (!isVisibleUI) {
+            if (hostUI.IsBlockedByGacha() || hostUI.IsBlockedByCharacterSelect())
+                return;
+        }
+
         isVisibleUI = !isVisibleUI;
         uiRootObject.SetActive(isVisibleUI);
-        Cursor.lockState = isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked ;
+        Cursor.lockState = isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
+    #region ガチャ中ブロック
+    private GachaSystem cachedGachaSystem;
 
+    private GachaSystem Gacha {
+        get {
+            if (cachedGachaSystem == null) {
+                cachedGachaSystem = FindObjectOfType<GachaSystem>();
+            }
+            return cachedGachaSystem;
+        }
+    }
+
+    /// <summary>
+    /// ガチャ画面が開いているため
+    /// HostUIを開けない状態かどうか
+    /// </summary>
+    public bool IsBlockedByGacha() {
+        if (Gacha == null) return false;
+        return Gacha.IsGachaActive();
+    }
+    #endregion
+
+    #region キャラ選択中ブロック
+    private CharacterSelectManager cachedSelectManager;
+
+    private CharacterSelectManager CharSelect {
+        get {
+            if (cachedSelectManager == null) {
+                cachedSelectManager = FindObjectOfType<CharacterSelectManager>();
+            }
+            return cachedSelectManager;
+        }
+    }
+
+    /// <summary>
+    /// キャラ選択画面が開いているため
+    /// HostUIを開けない状態かどうか
+    /// </summary>
+    public bool IsBlockedByCharacterSelect() {
+        if (CharSelect == null) return false;
+        return CharSelect.IsCharacterSelectActive();
+    }
+    #endregion
 }

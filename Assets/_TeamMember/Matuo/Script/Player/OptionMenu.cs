@@ -150,9 +150,8 @@ public class OptionMenu : MonoBehaviour {
 
 
         // ガチャとキャラ選択中ブロック
-        if (!isOpen && (IsBlockedByGacha() || IsBlockedByCharacterSelect())) {
-            return;
-        }
+        if (!isOpen && (IsBlockedByGacha() || IsBlockedByCharacterSelect()))
+            return;       
 
 
         isOpen = !isOpen;
