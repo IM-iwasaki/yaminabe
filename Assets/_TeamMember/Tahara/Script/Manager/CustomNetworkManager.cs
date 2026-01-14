@@ -196,7 +196,7 @@ public class CustomNetworkManager : NetworkManager {
 
 
     public void DisconnectHost() {
-        NetworkManager.singleton.StopHost();
+        singleton.StopHost();
     }
 
 
