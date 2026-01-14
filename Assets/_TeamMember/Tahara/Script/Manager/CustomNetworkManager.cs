@@ -183,6 +183,7 @@ public class CustomNetworkManager : NetworkManager {
     /// クライアントが止まった時の処理
     /// </summary>
     public override void OnStopClient() {
+        Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene("TitleScene");
     }
 
