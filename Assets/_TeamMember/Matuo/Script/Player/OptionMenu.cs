@@ -147,6 +147,9 @@ public class OptionMenu : MonoBehaviour {
     /// オプションメニューの開閉を切り替える
     /// </summary>
     public void ToggleMenu() {
+        // リザルト中は開けない
+        if (!isOpen && ResultManager.IsResultShowing)
+            return;
 
 
         // ガチャとキャラ選択中ブロック
