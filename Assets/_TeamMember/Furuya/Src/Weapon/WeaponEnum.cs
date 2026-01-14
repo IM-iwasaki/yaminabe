@@ -48,6 +48,7 @@ public enum ProjectileCategory {
 public enum ProjectileType {
     Linear,
     Parabola,
+    DoT,
 }
 
 public enum EffectType { 
