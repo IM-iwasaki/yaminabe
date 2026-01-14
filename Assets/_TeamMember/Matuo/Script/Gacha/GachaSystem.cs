@@ -68,6 +68,9 @@ public class GachaSystem : MonoBehaviour {
         // 所持金チェックと支払い（ここで ±○○ 表示される）
         if (!PlayerWallet.Instance.SpendMoney(gachaCost)) return null;
 
+        // 前回のガチャ結果を削除
+        ClearPreviousResults();
+
         // ガチャ演出
         StartCoroutine(PlayGachaAnimation());
 
@@ -94,6 +97,9 @@ public class GachaSystem : MonoBehaviour {
         // 所持金チェックと支払い（まとめて -○○ 表示）
         if (!PlayerWallet.Instance.SpendMoney(totalCost))
             return results;
+
+        // 前回のガチャ結果を削除
+        ClearPreviousResults();
 
         StartCoroutine(PlayGachaAnimation());
 
@@ -307,6 +313,17 @@ public class GachaSystem : MonoBehaviour {
     #endregion
 
     #region 結果表示
+
+    /// <summary>
+    /// 前回のガチャ結果を全て削除
+    /// </summary>
+    private void ClearPreviousResults() {
+        if (resultCanvas == null) return;
+
+        foreach (Transform child in resultCanvas.transform) {
+            Destroy(child.gameObject);
+        }
+    }
 
     /// <summary>
     /// 単発ガチャ結果のRawImage表示
