@@ -75,28 +75,14 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     void Update() {
-        //スキルの表示状態管理
-        if (player.action.isCanSkill) {
-            skill_State.fillAmount = 1.0f;
-            skill_State.color = Color.yellow;
-        }
-        else {
-            skillStateProgress = player.parameter.skillAfterTime / player.parameter.equippedSkills[0].cooldown;
-            skill_State.fillAmount = skillStateProgress;
-            skill_State.color = Color.white;
-        }
-        //パッシブの表示状態管理
-        if (player.parameter.equippedPassives[0].isPassiveActive || player.parameter.equippedPassives[0].passiveChains >= 1) {
-            passiveChains.text = player.parameter.equippedPassives[0].passiveChains.ToString();
-            passive_State.color = Color.yellow;
-        }
-        else {
-            passive_State.color = Color.white;
-        }
+        //表示状態管理関数の呼び出し
+        UpdateSkillState();
+        UpdatePassiveState();
 
         //現在使用している武器タイプで分岐
         switch (player.weaponController_main.weaponData.type) {
             case WeaponType.Melee:
+                //近接攻撃に弾数やMPは存在しないので表示を切り替える
                 mainWeaponText[(int)TextIndex.Current].text = "∞";
                 break;
             case WeaponType.Gun:
@@ -111,16 +97,58 @@ public class PlayerLocalUIController : NetworkBehaviour {
                     #endif
                     return;
                 }
+                //MP消費量をテキストに反映
                 mainWeaponText[(int)TextIndex.Partition].text = "Cost : " + magicData.MPCost.ToString();
                 break;
         }
+        //現在のMPをテキストに反映
         mpText.text = player.parameter.MP.ToString();
-
         //サブウェポンの現在所持数を更新
-        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
+        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();        
+    }
+
+    /// <summary>
+    /// スキルの表示状態管理
+    /// </summary>
+    private void UpdateSkillState() {
+        //現在のスキルの状態をキャッシュ
+        var skillParam = player.parameter.equippedSkills[0];
+
+        //スキルが使用可能な場合
+        if (player.action.isCanSkill) {
+            //ゲージの端数を捨て、色を黄色にする
+            skill_State.fillAmount = 1.0f;
+            skill_State.color = Color.yellow;
+        }
+        //スキルが使用不可だった場合
+        else {
+            //ゲージを更新・反映する、色を白に変更する
+            skillStateProgress = player.parameter.skillAfterTime / skillParam.cooldown;
+            skill_State.fillAmount = skillStateProgress;
+            skill_State.color = Color.white;
+        }
+    }
+
+    /// <summary>
+    /// パッシブの表示状態管理
+    /// </summary>
+    private void UpdatePassiveState() {
+        //現在のパッシブの状態をキャッシュ
+        var passiveParam = player.parameter.equippedPassives[0];
+
+        //パッシブが発動中、またはパッシブの蓄積数が1以上ある場合
+        if (passiveParam.isPassiveActive || passiveParam.passiveChains >= 1) {
+            //蓄積数をテキストに反映、アイコンを黄色に変える
+            passiveChains.text = passiveParam.passiveChains.ToString();
+            passive_State.color = Color.yellow;
+        }
+        else {
+            //アイコンを白色に変える
+            passive_State.color = Color.white;
+        }
 
         //パッシブの蓄積数が0だったら空欄にする
-        if (player.parameter.equippedPassives[0].passiveChains == 0) passiveChains.text = "";
+        if (passiveParam.passiveChains == 0) passiveChains.text = "";
     }
 
     /// <summary>
@@ -217,7 +245,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     /// <summary>
-    /// リロードアイコンを1回転させる ( float _duration = 1回転するまでにかかる時間 )
+    /// リロードアイコンを1回転させる (float _duration = 1回転するまでにかかる時間 )
     /// </summary>
     public IEnumerator RotateReloadIcon(float _duration) {
         reloadIconRotating = true;
@@ -240,18 +268,28 @@ public class PlayerLocalUIController : NetworkBehaviour {
         mainWeaponReloadIcon.enabled = false;
     }
 
+    /// <summary>
+    /// インタラクト用UIの表示
+    /// </summary>
     public void OnChangeInteractUI() {
         interactUI.SetActive(true);
     }
+    /// <summary>
+    /// インタラクト用UIの非表示
+    /// </summary>
     public void OffChangeInteractUI() {
         interactUI.SetActive(false);
     }
-
+    /// <summary>
+    /// プレイヤーローカルUIの表示
+    /// </summary>
     public void OnLocalUIObject() {
         localUIObject.SetActive(true);
     }
+    /// <summary>
+    /// プレイヤーローカルUIの非表示
+    /// </summary>
     public void OffLocalUIObject() {
         localUIObject.SetActive(false);
     }
-
 }

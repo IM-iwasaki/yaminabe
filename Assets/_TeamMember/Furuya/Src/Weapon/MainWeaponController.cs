@@ -110,6 +110,7 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerMagicAttack(direction);
                 break;
         }
+        characterBase.parameter.AttackTrigger = true;
     }
 
     /// <summary>
@@ -418,7 +419,7 @@ public class MainWeaponController : NetworkBehaviour {
     [Server]
     public void ReloadRequest() {
         //射撃中やリロード中ならやめる
-        if (characterBase.parameter.isAttackPressed && characterBase.parameter.isReloading) return;
+        if (characterBase.input.AttackPressed && characterBase.parameter.isReloading) return;
         //使っている武器が銃でなければやめる
         if (weaponData.type != WeaponType.Gun) return;
 

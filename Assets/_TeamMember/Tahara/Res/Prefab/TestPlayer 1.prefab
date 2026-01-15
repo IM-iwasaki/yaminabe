@@ -489,7 +489,12 @@ MonoBehaviour:
   CameraMenu: {fileID: 1182430980143703742}
   weaponController_main: {fileID: 6621664334883643172}
   weaponController_sub: {fileID: 205382949362171920}
+  bannerNum: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
+  allyCheckRadius: 8
+  allyLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &-3297767670412554955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -517,6 +522,7 @@ MonoBehaviour:
   ready: 1
   firePoint: {fileID: 8141860258521693391}
   isDead: 0
+  AttackTrigger: 0
 --- !u!114 &7720380049160173364
 MonoBehaviour:
   m_ObjectHideFlags: 0

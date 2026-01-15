@@ -21,7 +21,7 @@ public class CharacterInput : NetworkBehaviour {
     public void Initialize(CharacterBase core) {
         this.core = core;
         animCon = GetComponent<CharacterAnimationController>();
-        //コンテキストの登録
+        //InputActionのコンテキストの登録・有効化
         var map = inputActions.FindActionMap("Player");
         foreach (var action in map.actions) {
             action.started += ctx => OnInputStarted(action.name, ctx);
@@ -32,11 +32,14 @@ public class CharacterInput : NetworkBehaviour {
     }
 
     private void LateUpdate() {
+        //押した瞬間・離した瞬間を管理する変数のリセット
         AttackReleased = false;
         AttackTriggered = false;
         SkillTriggered = false;
         InteractTriggered = false;
         isJumpPressed = false;
+        //TODO：ここでやりたくないけど現状ここでしか毎フレームリセットできない。
+        core.parameter.AttackTrigger = false;
     }
 
     /// <summary>
@@ -115,10 +118,10 @@ public class CharacterInput : NetworkBehaviour {
     /// 移動
     /// </summary>
     public void OnMove(InputAction.CallbackContext ctx) {
-        MoveInput = ctx.ReadValue<Vector2>();
+        MoveInput = ctx.ReadValue<Vector2>();        
+        //アニメーション管理
         float moveX = MoveInput.x;
         float moveZ = MoveInput.y;
-        //アニメーション管理
         animCon.ControllMoveAnimation(moveX, moveZ);
     }
 
@@ -159,8 +162,7 @@ public class CharacterInput : NetworkBehaviour {
     /// <summary>
     /// スキル
     /// </summary>
-    public void OnSkill(InputAction.CallbackContext ctx)
-    {
+    public void OnSkill(InputAction.CallbackContext ctx) {
         if (ctx.performed) SkillTriggered = true;
     }
 
@@ -171,6 +173,10 @@ public class CharacterInput : NetworkBehaviour {
         if (ctx.performed) InteractTriggered = true;
     }
 
+    /// <summary>
+    /// リロード
+    /// </summary>
+    /// <param name="context"></param>
     public void OnReload(InputAction.CallbackContext context) {
         if (context.performed && core.weaponController_main.ammo < core.weaponController_main.weaponData.maxAmmo) {
             core.weaponController_main.CmdReloadRequest();

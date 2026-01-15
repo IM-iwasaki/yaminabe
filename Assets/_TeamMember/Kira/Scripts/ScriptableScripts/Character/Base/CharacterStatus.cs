@@ -17,9 +17,13 @@ public abstract class CharacterStatus : ScriptableObject {
     [Header("このキャラクターの初期サブ武器を割り当ててください。")]
     public SubWeaponData SubWeapon;
 
+    //
+    // ※SkillBaseとPassiveBaseは配列ですが0番目のみ使用してください。
+    // 　これは拡張性を持たせるためにやっていました。
+    //
+
     public virtual int maxHP => baseStatus.maxHP;
     public virtual int moveSpeed => baseStatus.moveSpeed;
 
-    //TODO:多分消す。
     public virtual int baseAttack => baseStatus.attack;
 }
