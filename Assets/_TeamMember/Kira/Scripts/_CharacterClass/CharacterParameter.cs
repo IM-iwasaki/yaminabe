@@ -75,15 +75,13 @@ public class CharacterParameter : NetworkBehaviour{
     //€–S‚µ‚Ä‚¢‚é‚©
     [SyncVar] public bool isDead = false;
     //€–S‚µ‚½uŠÔ‚©
-    public bool isDeadTrigger { get; protected set; } = false;
+    public bool isDeadTrigger { get; private set; } = false;
     //•œŠˆŒã‚Ì–³“GŠÔ’†‚Å‚ ‚é‚©
-    protected bool isInvincible = false;
+    public bool isInvincible { get; private set; } = false;
     //•œŠˆ‚µ‚Ä‚©‚ç‚ÌŒo‰ßŠÔ
-    protected float respownAfterTime { get; private set; } = 0.0f;
-    //UŒ‚’†‚©
-    public bool isAttackPressed { get; private set; } = false;
-    //UŒ‚‚ğ‰Ÿ‚µ‚½uŠÔ‚©
-    public bool isAttackTrigger { get; protected set; } = false;
+    public float respownAfterTime { get; private set; } = 0.0f;
+    //UŒ‚‚µ‚½uŠÔ‚©
+    public bool AttackTrigger = false;
     //UŒ‚ŠJnŠÔ
     public float attackStartTime { get; private set; } = 0.0f;
     
@@ -91,14 +89,14 @@ public class CharacterParameter : NetworkBehaviour{
     [System.NonSerialized] public float skillAfterTime = 0.0f;
     
     //Ú’n‚µ‚Ä‚¢‚é‚©
-    public bool IsGrounded{ get; private set; }
+    public bool IsGrounded { get; private set; }
     //ˆÚ“®’†‚©
     //public bool ismoving { get; private set; }
 
     //LocalUI‚ÌQÆ‚¾‚¯‚Â
-    PlayerLocalUIController localUI;
-    MainWeaponController weaponController_main;
-    SubWeaponController weaponController_sub;
+    private PlayerLocalUIController localUI;
+    private MainWeaponController weaponController_main;
+    private SubWeaponController weaponController_sub;
 
     #endregion
 

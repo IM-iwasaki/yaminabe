@@ -39,13 +39,15 @@ public class Skill_Chaser : SkillBase {
             if (useTime >= effectTime) isSkillUse = false;
 
             //攻撃が入力された中かつインターバルが経過していたら
-            if(user.parameter.isAttackPressed && intervalTime >= intervalDelay) {
+            if(user.input.AttackPressed && intervalTime >= intervalDelay) {
                 //インターバルをリセット
                 intervalTime = 0;
                 //若干の遅延を入れて追加攻撃発動
                 RequestExtraAttackWithDelay(intervalDelay, user);
             }
         }
+        //スキル使用中だったらMP消費を相殺
+        if (user.parameter.AttackTrigger) user.parameter.MP += 4;
     }
 
     //遅延をかけて追加攻撃開始の合図を送る

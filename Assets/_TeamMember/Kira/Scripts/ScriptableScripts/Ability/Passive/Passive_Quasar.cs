@@ -37,7 +37,7 @@ public class Passive_Quasar : PassiveBase {
             user.parameter.MP += (user.parameter.maxMP / 10) * 3;
         }
         //HP‚ª20“–¢–‚Ì‚ÉUŒ‚‚·‚é‚ÆMP‚ğ‘SÁ”ï‚µÁ”ï‚µ‚½MP*2‚Ì’l•ªHP‚ğ‰ñ•œB
-        if (user.parameter.HP < user.parameter.maxMP / 5 && user.input.AttackTriggered && isPassiveActive) {
+        if (user.parameter.HP < user.parameter.maxHP / 5 && user.input.AttackTriggered && isPassiveActive) {
             int RemoveMP = user.parameter.MP;
             user.parameter.MP -= RemoveMP;
             user.parameter.HP += RemoveMP * 2;
