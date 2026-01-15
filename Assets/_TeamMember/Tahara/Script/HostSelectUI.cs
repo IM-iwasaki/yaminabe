@@ -22,6 +22,13 @@ public class HostSelectUI : MonoBehaviour {
             var hostData = _host[i];
             //ボタン生成
             Button createdButton = Instantiate(selectHostButton, UIRoot);
+            if (hostData.gamePlaying) {
+                ColorBlock buttonColor = createdButton.colors;
+                buttonColor.selectedColor = buttonColor.normalColor = buttonColor.disabledColor = buttonColor.highlightedColor = Color.red;
+                createdButton.colors = buttonColor;
+            }
+                
+
             //ボタンに表示するホストの名前を変更
             createdButton.GetComponentInChildren<TextMeshProUGUI>().text = hostData.hostName;
             //生成したボタンにイベント登録
@@ -40,6 +47,9 @@ public class HostSelectUI : MonoBehaviour {
     /// </summary>
     /// <param name="_host"></param>
     public void OnHostButtonClicked(UDPListener.UdpMessage _host) {
+        //ゲームプレイ中なら参加できないように弾く
+        if (_host.gamePlaying)
+            return;
         selectedHost = _host;
         isSelected = true;
     }

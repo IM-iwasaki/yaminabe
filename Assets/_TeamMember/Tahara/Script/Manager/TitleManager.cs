@@ -112,6 +112,7 @@ public class TitleManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     private IEnumerator WaitReceivedIP() {
+        //ホスト検索
         receiver.StartReceiveIP();
         //全ホストを表示※UIに変更
         hostsDisplayUI.gameObject.SetActive(true);

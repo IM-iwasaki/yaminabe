@@ -5,6 +5,8 @@ using System.Collections.Concurrent;
 using System.Collections;
 using System.Net;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 /// <summary>
 /// IPアドレスを定期的に受信する
 /// </summary>
@@ -20,11 +22,12 @@ public class UDPListener : MonoBehaviour {
     /// 受信するメッセージ
     /// </summary>
     [System.Serializable]
-    public struct UdpMessage {
+    public struct UdpMessage{
         public string ip;
         public int port;
         public string gameName;
         public string hostName;
+        public bool gamePlaying;
     }
     /// <summary>
     /// タイトルシーンでIPアドレスが取得できたかどうかを判定する用変数
@@ -51,6 +54,8 @@ public class UDPListener : MonoBehaviour {
     /// IPアドレスの受信を開始する
     /// </summary>
     public void StartReceiveIP() {
+        //一度ホスト一覧をリセットして探す
+        discoveredHosts.Clear();
         StartCoroutine(ReceiveMessageFromBroadcaster());
     }
 
