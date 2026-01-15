@@ -20,9 +20,11 @@ public class HostSelectUI : MonoBehaviour
         for(int i = 0 , max = _host.Count;i < max; i++) {
             //ボタン生成
             Button createdButton = Instantiate(selectHostButton, UIRoot);
+            //ボタンに表示するホストの名前を変更
+            createdButton.GetComponentInChildren<TextMeshProUGUI>().text = _host[i].hostName;
             //生成したボタンにイベント登録
             createdButton.onClick.AddListener(() => OnHostButtonClicked(_host[i]));
-            createdButton.GetComponentInChildren<TextMeshProUGUI>().text = _host[i].hostName;
+            
 
         }
     }
