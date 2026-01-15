@@ -16,6 +16,7 @@ public class HostSelectUI : MonoBehaviour {
     /// </summary>
     /// <param name="_host"></param>
     public void ShowHostList(List<UDPListener.UdpMessage> _host) {
+
         for (int i = 0, max = _host.Count; i < max; i++) {
             //ホストデータをキャプチャ
             var hostData = _host[i];
@@ -25,8 +26,12 @@ public class HostSelectUI : MonoBehaviour {
             createdButton.GetComponentInChildren<TextMeshProUGUI>().text = hostData.hostName;
             //生成したボタンにイベント登録
             createdButton.onClick.AddListener(() => OnHostButtonClicked(hostData));
+        }
+    }
 
-
+    public void ResetPanel() {
+        for(int i = 0,max = UIRoot.childCount;i < max; i++) {
+            Destroy(UIRoot.GetChild(i).gameObject);
         }
     }
 
