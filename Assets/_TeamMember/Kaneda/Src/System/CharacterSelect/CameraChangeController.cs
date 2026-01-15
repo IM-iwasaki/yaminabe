@@ -56,6 +56,15 @@ public class CameraChangeController : MonoBehaviour {
 
         // 移動コルーチン開始
         StartCoroutine(MoveCameraCoroutine(targetPosition, targetRotation));
+
+        var playerCam = player.GetComponentInChildren<PlayerCamera>();
+        if (playerCam != null) {
+            // 半透明を止めて全リセット
+            playerCam.enableTransparency = false;
+            playerCam.ResetAllTransparentObjects();
+        }
+
+
     }
 
     /// <summary>
@@ -66,6 +75,11 @@ public class CameraChangeController : MonoBehaviour {
 
         // 移動コルーチン開始（戻り）
         StartCoroutine(MoveCameraCoroutine(returnPosition, returnRotation, playerCamera));
+        var playerCam = playerCamera.GetComponentInParent<PlayerCamera>();
+        if (playerCam != null) {
+            // 半透明を再開
+            playerCam.enableTransparency = true;
+        }
     }
 
     /// <summary>
