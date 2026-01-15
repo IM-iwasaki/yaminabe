@@ -1483,7 +1483,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  rateUI: {fileID: 0}
 --- !u!1 &995586630
 GameObject:
   m_ObjectHideFlags: 0
@@ -1857,6 +1856,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 657a8ba31effb6e44b0a33a486350e88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  discoveredHosts: []
   isGetIP: 0
 --- !u!4 &1111948504
 Transform:
