@@ -51,8 +51,6 @@ public class CustomNetworkManager : NetworkManager {
             //その後は不必要なので更新しないようにする
             TitleManager.instance.enabled = false;
         }
-        //生成後ロビーシーンに遷移
-        //GameSceneManager.Instance.LoadLobbySceneForAll();
     }
 
     /// <summary>
@@ -190,6 +188,7 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     public override void OnStopClient() {
         Cursor.lockState = CursorLockMode.None;
+        Destroy(singleton.gameObject);
         SceneManager.LoadScene("TitleScene");
 
     }
@@ -204,6 +203,8 @@ public class CustomNetworkManager : NetworkManager {
 
     public void DisconnectHost() {
         singleton.StopHost();
+        NetworkServer.Shutdown();
+        NetworkClient.Shutdown();
     }
 
 
