@@ -24,6 +24,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
+        FindAnyObjectByType<UDPBroadcaster>().message.gamePlaying = true;
 
         //ここで準備完了かどうか判定を取って全員準備完了ならゲームシーンに移動
         foreach (var player in ServerManager.instance.connectPlayer) {
@@ -61,6 +62,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             isChanged = true;
             FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(lobbySceneName);
+            FindAnyObjectByType<UDPBroadcaster>().message.gamePlaying = false;
         }
     }
 
