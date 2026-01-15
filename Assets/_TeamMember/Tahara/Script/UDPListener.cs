@@ -40,7 +40,9 @@ public class UDPListener : MonoBehaviour {
         if (!TitleManager.instance) return;
 
         if (messageQueue.TryDequeue(out UdpMessage msg)) {
-            discoveredHosts.Add(msg);
+            //ìØàÍIPÇÕàÍÇ¬ÇÃÇ›ìoò^
+            if (!discoveredHosts.Contains(msg))
+                discoveredHosts.Add(msg);
             isGetIP = true;
         }
     }
@@ -59,7 +61,7 @@ public class UDPListener : MonoBehaviour {
     public IEnumerator ReceiveMessageFromBroadcaster() {
         IPEndPoint localEP = new IPEndPoint(IPAddress.Any, 55555);
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        socket.SetSocketOption(SocketOptionLevel.Socket,SocketOptionName.ReuseAddress,true);
+        socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         socket.Bind(localEP);
 
         UdpClient udpClient = new UdpClient();
@@ -71,7 +73,7 @@ public class UDPListener : MonoBehaviour {
                 string json = Encoding.UTF8.GetString(result);
                 UdpMessage message = JsonUtility.FromJson<UdpMessage>(json);
                 //ÉLÉÖÅ[Ç…í«â¡
-                messageQueue.Enqueue(message);   
+                messageQueue.Enqueue(message);
             }
             yield return null;
         }

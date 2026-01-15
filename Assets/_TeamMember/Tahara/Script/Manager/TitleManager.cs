@@ -105,16 +105,8 @@ public class TitleManager : MonoBehaviour {
     private IEnumerator WaitReceivedIP() {
         receiver.StartReceiveIP();
 
-        //タイムアウトまでのカウントとタイマー
-        float timeout = 5.0f;
-        float timer = 0.0f;
-
-        //取得できたかタイムアウトするまで待機
-        while (!receiver.isGetIP && timer < timeout) {
-            timer += Time.deltaTime;
-            SearchOrMissingText.text = "Now Searching...";
-            yield return null;
-        }
+        SearchOrMissingText.text = "Now Searching...";
+        yield return new WaitForSeconds(3.0f);
         //取得できた
         if (receiver.isGetIP) {
             //全ホストを表示※UIに変更
