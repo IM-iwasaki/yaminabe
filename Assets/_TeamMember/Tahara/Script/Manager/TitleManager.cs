@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
 
 /// <summary>
 /// タイトル管理クラス
@@ -56,8 +57,16 @@ public class TitleManager : MonoBehaviour {
     [SerializeField]
     private UDPListener receiver = null;
 
+    /// <summary>
+    /// サーバー一覧UI
+    /// </summary>
     [SerializeField]
-    private HostSelectUI hostsDisplay;
+    private HostSelectUI hostsDisplayUI;
+
+    /// <summary>
+    /// サーバー探知再走用ボタン
+    /// </summary>
+    public Button researchHostButton;
 
 
     private void Awake() {
@@ -104,19 +113,21 @@ public class TitleManager : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator WaitReceivedIP() {
         receiver.StartReceiveIP();
-
+        //全ホストを表示※UIに変更
+        hostsDisplayUI.gameObject.SetActive(true);
+        researchHostButton.gameObject.SetActive(false);
         SearchOrMissingText.text = "Now Searching...";
         yield return new WaitForSeconds(3.0f);
         //取得できた
         if (receiver.isGetIP) {
-            //全ホストを表示※UIに変更
-            hostsDisplay.ShowHostList(receiver.discoveredHosts);
+            SearchOrMissingText.text = "";
+            hostsDisplayUI.ShowHostList(receiver.discoveredHosts);
 
             //ホスト選択まで待機
-            yield return new WaitUntil(() => hostsDisplay.isSelected);
+            yield return new WaitUntil(() => hostsDisplayUI.isSelected);
 
             //ホストをUIから取得
-            var selectedHost = hostsDisplay.selectedHost;
+            var selectedHost = hostsDisplayUI.selectedHost;
 
             //IPアドレス設定
             ipAddress = selectedHost.ip;
@@ -129,15 +140,24 @@ public class TitleManager : MonoBehaviour {
         else {
 
             SearchOrMissingText.text = "Not Found";
+            researchHostButton.gameObject.SetActive(true);
             yield return new WaitForSeconds(1.0f);
             if (once)
                 once = false;
+            
         }
-
-
     }
     //InputField用関数
     public void SetIPAddress() {
         ipAddress = inputField.text;
+    }
+
+    /// <summary>
+    /// サーバーセレクトUIを閉じる処理
+    /// </summary>
+    public void OnReturnButtonClicked() {
+        hostsDisplayUI.gameObject.SetActive(false);
+        hostsDisplayUI.ResetPanel();
+        once = false;
     }
 }
