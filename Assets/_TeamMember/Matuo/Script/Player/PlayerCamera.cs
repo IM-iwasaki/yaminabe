@@ -51,6 +51,11 @@ public class PlayerCamera : MonoBehaviour {
     /// </summary>
     private readonly Dictionary<Renderer, (float current, float original)> fadingObjects = new();
 
+
+    // ズーム・カメラ切替中かどうか
+    public bool enableTransparency = true;
+
+
     private void Start() {
         // 初期化
         currentOffset = normalOffset;
@@ -177,7 +182,32 @@ public class PlayerCamera : MonoBehaviour {
 
         // カメラとプレイヤーの間の障害物を透明化（ローカルプレイヤーのみ）
         HandleTransparency(playerPos, desiredPos);
+
+        // カメラとプレイヤーの間の障害物を透明化
+        if (enableTransparency) {
+            HandleTransparency(playerPos, desiredPos);
+        }
+        else {
+            // 無効中は必ず元に戻す
+            ResetAllTransparentObjects();
+        }
     }
+    /// <summary>
+    /// すべての半透明オブジェクトを元に戻す
+    /// </summary>
+    public void ResetAllTransparentObjects() {
+        foreach (var kv in fadingObjects) {
+            if (!kv.Key) continue;
+
+            // 元のアルファ値に戻す
+            SetRendererAlpha(kv.Key, kv.Value.original);
+        }
+
+        // 管理リストをクリア
+        fadingObjects.Clear();
+    }
+
+
 
     /// <summary>
     /// プレイヤーとカメラの間にある障害物を半透明化
