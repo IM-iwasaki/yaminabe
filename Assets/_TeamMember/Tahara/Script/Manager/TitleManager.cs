@@ -56,6 +56,9 @@ public class TitleManager : MonoBehaviour {
     [SerializeField]
     private UDPListener receiver = null;
 
+    [SerializeField]
+    private HostSelectUI hostsDisplay;
+
 
     private void Awake() {
         DontDestroyOnLoad(gameObject);
@@ -102,27 +105,18 @@ public class TitleManager : MonoBehaviour {
     private IEnumerator WaitReceivedIP() {
         receiver.StartReceiveIP();
 
-        //タイムアウトまでのカウントとタイマー
-        float timeout = 5.0f;
-        float timer = 0.0f;
-
-        //取得できたかタイムアウトするまで待機
-        while (!receiver.isGetIP && timer < timeout) {
-            timer += Time.deltaTime;
-            SearchOrMissingText.text = "Now Searching...";
-            yield return null;
-        }
+        SearchOrMissingText.text = "Now Searching...";
+        yield return new WaitForSeconds(3.0f);
         //取得できた
         if (receiver.isGetIP) {
             //全ホストを表示※UIに変更
-            foreach (var hosts in receiver.discoveredHosts) {
-                Debug.Log(hosts.hostName);
-            }
+            hostsDisplay.ShowHostList(receiver.discoveredHosts);
+
             //ホスト選択まで待機
-            //yield return new WaitUntil(() => );
+            yield return new WaitUntil(() => hostsDisplay.isSelected);
 
             //ホストをUIから取得
-            var selectedHost = receiver.discoveredHosts[0];
+            var selectedHost = hostsDisplay.selectedHost;
 
             //IPアドレス設定
             ipAddress = selectedHost.ip;

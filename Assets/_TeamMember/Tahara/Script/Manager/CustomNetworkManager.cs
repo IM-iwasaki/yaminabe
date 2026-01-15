@@ -100,14 +100,20 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="_conn"></param>
     public override void OnServerDisconnect(NetworkConnectionToClient _conn) {
-        base.OnServerDisconnect(_conn);
+
         //ローカルクライアントが抜けた場合
-        if (!NetworkServer.localConnection.Equals(_conn)) {
+        if (_conn.connectionId > 0) {
             //参加者全員に通知
             ChatManager.instance.CmdSendSystemMessage("Leave Player");
+            if (_conn.identity != null)
+                serverManager.connectPlayer.Remove(_conn.identity);
+
+            base.OnServerDisconnect(_conn);
             return;
         }
+
         GameSceneManager.Instance.LoadTitleSceneForAll();
+        base.OnServerDisconnect(_conn);
     }
     /// <summary>
     /// シーンが変わった時に発火
@@ -185,6 +191,7 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnStopClient() {
         Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene("TitleScene");
+
     }
 
     public override void OnApplicationQuit() {
