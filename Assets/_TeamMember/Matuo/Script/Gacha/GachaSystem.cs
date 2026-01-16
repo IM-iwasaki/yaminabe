@@ -32,6 +32,9 @@ public class GachaSystem : MonoBehaviour {
     [Header("結果演出")]
     [SerializeField] private GachaResult gachaResult;
 
+    [Header("ガチャ集中線・キラキラ演出")]
+    [SerializeField] private GachaEffect gachaEffect;
+
     private bool isPulling = false;     // ガチャ実行中ロック
     private bool isGacha = false;       // ガチャ画面中か
     public bool isOpen = false;         // UI・カーソル状態
@@ -171,6 +174,9 @@ public class GachaSystem : MonoBehaviour {
 
     #region ガチャ実行API
 
+    /// <summary>
+    /// 単発ガチャを引く
+    /// </summary>
     public void PullSingle() {
         if (isPulling) return;
         if (!PlayerWallet.Instance.SpendMoney(gachaCost)) return;
@@ -204,15 +210,21 @@ public class GachaSystem : MonoBehaviour {
         isPulling = true;
         gachaResult.Clear();
 
-        yield return PlayGachaAnimationAndWait();
-
+        // 先に抽選
         GachaItem item = PullSingleInternal();
         if (item != null) {
             PlayerItemManager.Instance.UnlockGachaItem(item);
             // 抽選結果通知
             OnItemPulled?.Invoke(item);
-            gachaResult.ShowSingle(item);
         }
+
+        Rarity highestRarity = item != null ? item.rarity : Rarity.Common;
+
+        // 演出付きアニメーション
+        yield return PlayGachaAnimationAndWait(highestRarity);
+
+        if (item != null)
+            gachaResult.ShowSingle(item);
 
         isPulling = false;
     }
@@ -224,8 +236,6 @@ public class GachaSystem : MonoBehaviour {
         // ガチャ実行中ロック
         isPulling = true;
         gachaResult.Clear();
-
-        yield return PlayGachaAnimationAndWait();
 
         List<GachaItem> results = new();
 
@@ -239,6 +249,10 @@ public class GachaSystem : MonoBehaviour {
             // 抽選結果通知
             OnItemPulled?.Invoke(item);
         }
+
+        Rarity highestRarity = GetHighestRarity(results);
+
+        yield return PlayGachaAnimationAndWait(highestRarity);
 
         gachaResult.ShowMultiple(results);
         isPulling = false;
@@ -278,6 +292,15 @@ public class GachaSystem : MonoBehaviour {
         return null;
     }
 
+    private Rarity GetHighestRarity(List<GachaItem> items) {
+        Rarity highest = Rarity.Common;
+        foreach (var item in items) {
+            if (item.rarity > highest)
+                highest = item.rarity;
+        }
+        return highest;
+    }
+
     #endregion
 
     #region ガチャアニメーション
@@ -285,11 +308,19 @@ public class GachaSystem : MonoBehaviour {
     private void OnGachaAnim() => gachaAnim.SetBool("Open", true);
     private void OffGachaAnim() => gachaAnim.SetBool("Open", false);
 
-    private IEnumerator PlayGachaAnimationAndWait() {
+    private IEnumerator PlayGachaAnimationAndWait(Rarity rarity) {
         OffGachaAnim();
         yield return null;
+
+        if (gachaEffect != null)
+            gachaEffect.Play(rarity);
+
         OnGachaAnim();
+
         yield return new WaitForSeconds(gachaAnimationWaitTime);
+
+        if (gachaEffect != null)
+            gachaEffect.Stop();
     }
 
     #endregion

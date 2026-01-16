@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2035495841143375457}
   - component: {fileID: 3852216611882574746}
   - component: {fileID: 8526634875122976781}
+  - component: {fileID: 4294829540755192394}
   m_Layer: 0
   m_Name: GachaManager
   m_TagString: Untagged
@@ -53,6 +54,7 @@ MonoBehaviour:
   gachaAnim: {fileID: 0}
   gachaAnimationWaitTime: 1.5
   gachaResult: {fileID: 8526634875122976781}
+  gachaEffect: {fileID: 4294829540755192394}
   isOpen: 0
 --- !u!114 &8526634875122976781
 MonoBehaviour:
@@ -66,3 +68,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e4d6d1b144b31a44b3b306f2061b967, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4294829540755192394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124902549376388137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 673498e51fa7c6f4191def1029270573, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lineCount: 32
+  lineLength: 5
+  lineWidth: 0.05
+  rotateSpeed: 60
+  sparkleCount: 80
