@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,13 @@ public class GachaResult : MonoBehaviour {
 
     private Canvas resultCanvas;
     private Camera resultCamera;
+
+    private int gachaRenderLayer;
+
+    /// <summary>
+    /// Œ‹‰Ê‰‰o‚ª‚·‚×‚ÄŠ®—¹‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+    /// </summary>
+    public event Action OnResultAnimationFinished;
 
     #region Public API
 
@@ -27,7 +35,7 @@ public class GachaResult : MonoBehaviour {
         EnsureCanvas();
         EnsureCamera();
 
-        StartCoroutine(CreateResultUIRoutine(resultCanvas.transform, item, 256f));
+        StartCoroutine(ShowSingleRoutine(item));
     }
 
     public void ShowMultiple(List<GachaItem> items) {
@@ -49,6 +57,7 @@ public class GachaResult : MonoBehaviour {
         GameObject obj = new GameObject("ResultCanvas");
         resultCanvas = obj.AddComponent<Canvas>();
         resultCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
         obj.AddComponent<CanvasScaler>();
         obj.AddComponent<GraphicRaycaster>();
     }
@@ -56,11 +65,23 @@ public class GachaResult : MonoBehaviour {
     private void EnsureCamera() {
         if (resultCamera != null) return;
 
+        gachaRenderLayer = LayerMask.NameToLayer("GachaRender");
+
         GameObject obj = new GameObject("ResultCamera");
         resultCamera = obj.AddComponent<Camera>();
         resultCamera.clearFlags = CameraClearFlags.SolidColor;
-        resultCamera.backgroundColor = Color.black;
+        resultCamera.backgroundColor = Color.clear;
+        resultCamera.cullingMask = 1 << gachaRenderLayer;
         resultCamera.enabled = false;
+    }
+
+    #endregion
+
+    #region ’P”­‰‰o
+
+    private IEnumerator ShowSingleRoutine(GachaItem item) {
+        yield return CreateResultUIRoutine(resultCanvas.transform, item, 256f);
+        OnResultAnimationFinished?.Invoke();
     }
 
     #endregion
@@ -89,9 +110,10 @@ public class GachaResult : MonoBehaviour {
 
         foreach (var item in items) {
             if (item == null || item.resultPrefab == null) continue;
-
             yield return CreateResultUIRoutine(gridParent.transform, item, iconSize);
         }
+
+        OnResultAnimationFinished?.Invoke();
     }
 
     #endregion
@@ -105,7 +127,6 @@ public class GachaResult : MonoBehaviour {
     ) {
         Color rarityColor = GetRarityColor(item.rarity);
 
-        // UI
         GameObject root = new GameObject(item.itemName + "_Root");
         root.transform.SetParent(parent, false);
 
@@ -127,11 +148,14 @@ public class GachaResult : MonoBehaviour {
         icon.transform.SetParent(root.transform, false);
         icon.rectTransform.sizeDelta = new Vector2(iconSize, iconSize);
 
-        // B‰e
+        // ===== B‰e‘ÎÛ¶¬ =====
         GameObject temp = Instantiate(item.resultPrefab);
         temp.SetActive(true);
+        SetLayerRecursively(temp, gachaRenderLayer);
 
         RenderTexture rtTex = new RenderTexture((int)iconSize, (int)iconSize, 16);
+        rtTex.Create();
+
         resultCamera.targetTexture = rtTex;
 
         Vector3 offset = temp.transform.forward * 2f + Vector3.up;
@@ -146,11 +170,20 @@ public class GachaResult : MonoBehaviour {
         resultCamera.targetTexture = null;
 
         Destroy(temp);
+
+        yield return new WaitForSeconds(0.15f);
     }
 
     #endregion
 
-    #region ‰‰o
+    #region Utility
+
+    private void SetLayerRecursively(GameObject obj, int layer) {
+        obj.layer = layer;
+        foreach (Transform child in obj.transform) {
+            SetLayerRecursively(child.gameObject, layer);
+        }
+    }
 
     private Color GetRarityColor(Rarity rarity) {
         return rarity switch {

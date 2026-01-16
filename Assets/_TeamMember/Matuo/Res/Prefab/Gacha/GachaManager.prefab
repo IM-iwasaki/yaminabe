@@ -68,6 +68,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e4d6d1b144b31a44b3b306f2061b967, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  captureItemPosition: {x: 0, y: 100, z: 0}
+  cameraPosition: {x: 0, y: 100.2, z: -3}
+  cameraLookAt: {x: 0, y: 100, z: 0}
 --- !u!114 &4294829540755192394
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -39,6 +39,8 @@ public class GachaSystem : MonoBehaviour {
     private bool isGacha = false;       // ガチャ画面中か
     public bool isOpen = false;         // UI・カーソル状態
 
+    private bool isResultFinished = true;   // 結果演出完了フラグ
+
     private GameObject currentPlayer;
 
     public event Action<GachaItem> OnItemPulled;
@@ -47,6 +49,13 @@ public class GachaSystem : MonoBehaviour {
         // 最初はガチャUIを非表示
         if (gachaUI != null)
             gachaUI.SetActive(false);
+
+        // 結果演出完了通知を受け取る
+        if (gachaResult != null) {
+            gachaResult.OnResultAnimationFinished += () => {
+                isResultFinished = true;
+            };
+        }
     }
 
     private void Update() {
@@ -119,6 +128,8 @@ public class GachaSystem : MonoBehaviour {
     /// ガチャ画面終了
     /// </summary>
     public void EndGachaSelect() {
+        // ★結果演出が終わっていない間は出られない
+        if (!isResultFinished) return;
         if (currentPlayer == null) return;
 
         OffGachaAnim();
@@ -208,6 +219,7 @@ public class GachaSystem : MonoBehaviour {
     private IEnumerator PullSingleFlow() {
         // ガチャ実行中ロック
         isPulling = true;
+        isResultFinished = false;
         gachaResult.Clear();
 
         // 先に抽選
@@ -235,6 +247,7 @@ public class GachaSystem : MonoBehaviour {
     private IEnumerator PullMultipleFlow(int count) {
         // ガチャ実行中ロック
         isPulling = true;
+        isResultFinished = false;
         gachaResult.Clear();
 
         List<GachaItem> results = new();
