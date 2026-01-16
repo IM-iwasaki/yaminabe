@@ -63,10 +63,10 @@ public class CharacterParameter : NetworkBehaviour{
 
     #region Transform系変数
 
-    //視点を要求する方向
-    protected Vector2 lookInput { get; private set; }
+    //足元のTransform
+    [SerializeField]public Transform footPoint;
     //射撃位置
-    public Transform firePoint;
+    [SerializeField]private Transform firePoint;
 
     #endregion
 
@@ -90,6 +90,8 @@ public class CharacterParameter : NetworkBehaviour{
     
     //接地しているか
     public bool IsGrounded { get; private set; }
+    //GroundLayer
+    public LayerMask GroundLayer { get; private set; }
     //移動中か
     //public bool ismoving { get; private set; }
 
@@ -101,15 +103,17 @@ public class CharacterParameter : NetworkBehaviour{
     #endregion
 
     public void Initialize(CharacterBase core) {
+        //ステータスのインポート
         StatusInport(inputStatus);
 
-        localUI = core.GetComponent<PlayerLocalUIController>();
+        // "Ground" という名前のレイヤーを取得してマスク化
+        int groundLayerIndex = LayerMask.NameToLayer("Ground");
+        GroundLayer = 1 << groundLayerIndex;
 
-        HP = maxHP;
+        localUI = core.GetComponent<PlayerLocalUIController>();        
 
         isDead = false;
         isInvincible = false;        
-
         respownAfterTime = 0;
         attackStartTime = 0;
         skillAfterTime = 0;
@@ -203,7 +207,9 @@ public class CharacterParameter : NetworkBehaviour{
     /// </summary>
     /// <param name="_checkPos"></param>
     public void GroundCheck(Vector3 _checkPos) {
-        IsGrounded = Physics.Raycast(_checkPos, Vector3.down, 1.1f);
+        //IsGrounded = Physics.Raycast(_checkPos, Vector3.down, PlayerConst.GROUND_DISTANCE);
+        // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
+        IsGrounded = Physics.CheckSphere(_checkPos, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }
 
     /// <summary>

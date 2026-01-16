@@ -44,22 +44,15 @@ public class CharacterActions : NetworkBehaviour {
         if ((characterSelectManager != null && characterSelectManager.IsCharacterSelectActive()) ||
             (gachaSystem != null && gachaSystem.IsGachaActive())
         ) {
-
-
             // HUD（レティクル）非表示
-            hud?.SetReticleVisible(false);
-
+            if(hud != null) hud.SetReticleVisible(false);
 
             // 移動を完全停止
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
             isMoving = false;
             return;
-
-
-
         }
-
-        hud?.SetReticleVisible(true);
+        if(hud != null) hud.SetReticleVisible(true);
 
         JumpControl();
 
@@ -70,7 +63,7 @@ public class CharacterActions : NetworkBehaviour {
         HandleInteract();
 
         MoveControl();
-        param.GroundCheck(core.transform.position);
+        param.GroundCheck(core.parameter.footPoint.position);
         
         AbilityControl();
     }
@@ -155,11 +148,7 @@ public class CharacterActions : NetworkBehaviour {
         else if (rb.velocity.y < 0) {
             //追加の重力補正を掛ける
             rb.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
-            //anim.SetBool("Jump", false);
-        }
-
-        // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
-        //IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, core.GroundLayer);
+        }       
     }
 
     /// <summary>

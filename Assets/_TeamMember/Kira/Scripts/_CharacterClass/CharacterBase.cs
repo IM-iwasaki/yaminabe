@@ -20,11 +20,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
 
-    //GroundLayer
-    public LayerMask GroundLayer { get; private set; }
-    //足元の確認用Transform
-    public Transform GroundCheck { get; private set; }
-
     //武器を使用するため
     [Header("アクション用変数")]
     public MainWeaponController weaponController_main;
@@ -46,15 +41,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //シーン変わったりしても消えないようにする
         DontDestroyOnLoad(gameObject);
 
+        //各コンポーネントの参照取得と初期化
         rb = GetComponent<Rigidbody>();
-
-        // "Ground" という名前のレイヤーを取得してマスク化
-        int groundLayerIndex = LayerMask.NameToLayer("Ground");
-        GroundLayer = 1 << groundLayerIndex;
-
-        //GroundCheck変数をアタッチする。
-        GroundCheck = transform.Find("FootRoot");
-
         input = GetComponent<CharacterInput>();
         action = GetComponent<CharacterActions>();
         parameter = GetComponent<CharacterParameter>();
@@ -166,7 +154,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //　nameをスコア加算関数に送る
         if (parameter.HP <= 0) {
             parameter.HP = 0;
-            //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
+            //  キルログを流す
             KillLogManager.instance.CmdSendKillLog(bannerNum, _name, parameter.PlayerName);
             Dead(_name);
             if (PlayerListManager.Instance != null) {
