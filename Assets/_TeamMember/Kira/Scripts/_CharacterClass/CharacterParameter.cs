@@ -207,7 +207,6 @@ public class CharacterParameter : NetworkBehaviour{
     /// </summary>
     /// <param name="_checkPos"></param>
     public void GroundCheck(Vector3 _checkPos) {
-        //IsGrounded = Physics.Raycast(_checkPos, Vector3.down, PlayerConst.GROUND_DISTANCE);
         // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
         IsGrounded = Physics.CheckSphere(_checkPos, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }

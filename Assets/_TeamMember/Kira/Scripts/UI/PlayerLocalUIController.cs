@@ -53,9 +53,14 @@ public class PlayerLocalUIController : NetworkBehaviour {
     //[SyncVar] float passiveStateProgress = 0.0f;
 
     [SerializeField] GameObject interactUI;
-
     //  ローカルUIの本体を取得
     [SerializeField] GameObject localUIObject;
+
+    //裏のバーの参照
+    [SerializeField] Slider hpUnderBar_slider = null;
+    [SerializeField] Slider mpUnderBar_slider = null;
+    //裏のバーの減少開始遅延
+    private readonly float underBar_Delay = 0.5f;
 
     /// <summary>
     /// ローカルUI全体の初期化
@@ -63,6 +68,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
     public void Initialize() {
         hpBar_slider.interactable = false;
         mpBar_slider.interactable = false;
+        hpUnderBar_slider.interactable = false;
+        mpUnderBar_slider.interactable = false;
 
         if (!isLocalPlayer) {
             var LocalUI = GetComponentInChildren<Canvas>();
@@ -78,6 +85,21 @@ public class PlayerLocalUIController : NetworkBehaviour {
         //表示状態管理関数の呼び出し
         UpdateSkillState();
         UpdatePassiveState();
+
+        if (hpBar_slider.value < hpUnderBar_slider.value) {
+            //裏バー値と表バー値の差分を算出
+            float valueDiscrepancy = hpUnderBar_slider.value - hpBar_slider.value;
+            //差分が一定以下になったらバー同士の値を合わせる
+            if(valueDiscrepancy <= 2) {
+                hpUnderBar_slider.value = hpBar_slider.value;
+            }
+            //指数関数的に速度を落としながら裏バーの値を減少させる
+            hpUnderBar_slider.value -= valueDiscrepancy / 60;
+        }
+        //表バーが裏バーの値を超える時値を合わせる
+        if (hpBar_slider.value > hpUnderBar_slider.value) {
+            hpUnderBar_slider.value = hpBar_slider.value;
+        }
 
         //現在使用している武器タイプで分岐
         switch (player.weaponController_main.weaponData.type) {
