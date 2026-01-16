@@ -2785,10 +2785,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4984384127893192753, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
-      propertyPath: pools.Array.size
-      value: 12
-      objectReference: {fileID: 0}
     - target: {fileID: 6968258868527881071, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
       propertyPath: sceneId
       value: 313991989
@@ -3090,11 +3086,7 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 549607917205571446, guid: e71691b3404b46e4a974de60fdba7b78, type: 3}
-      propertyPath: allWeaponData.Array.size
-      value: 19
-      objectReference: {fileID: 0}
-    - target: {fileID: 549607917205571446, guid: e71691b3404b46e4a974de60fdba7b78, type: 3}
-      propertyPath: allWeaponData.Array.data[18]
+      propertyPath: allWeaponData.Array.data[21]
       value: 
       objectReference: {fileID: 11400000, guid: 0f7647991c2e54244ac3b78ea50a4a61, type: 2}
     - target: {fileID: 2146062183756680490, guid: e71691b3404b46e4a974de60fdba7b78, type: 3}
