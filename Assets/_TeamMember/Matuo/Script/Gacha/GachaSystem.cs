@@ -28,6 +28,10 @@ public class GachaSystem : MonoBehaviour {
     [Header("ガチャアニメーション")]
     [SerializeField] private Animator gachaAnim;                  // ガチャ演出用アニメーター
 
+    [Header("ガチャアニメーション設定")]
+    [SerializeField]
+    private float gachaAnimationWaitTime = 1.5f; // アニメーション開始から結果表示までの待機時間
+
     private GameObject currentPlayer; // 現在選択中のプレイヤー
     public bool isOpen;               // ガチャ画面の開閉状態およびカーソル状態
 
@@ -56,99 +60,6 @@ public class GachaSystem : MonoBehaviour {
 
     public event Action<GachaItem> OnItemPulled; // ガチャ抽選結果通知イベント
 
-    #region ガチャ抽選
-
-    /// <summary>
-    /// 単発ガチャを引く
-    /// </summary>
-    public GachaItem PullSingle() {
-        if (PlayerWallet.Instance == null) return null;
-
-        // 所持金チェックと支払い
-        if (!PlayerWallet.Instance.SpendMoney(gachaCost)) return null;
-
-        // 前回のガチャ結果を削除
-        ClearPreviousResults();
-
-        // ガチャ演出
-        StartCoroutine(PlayGachaAnimation());
-
-        // 抽選処理
-        var item = PullSingleInternal();
-        if (item != null) {
-            PlayerItemManager.Instance.UnlockGachaItem(item);
-            StartCoroutine(ShowSingleResult(item));
-        }
-
-        OnItemPulled?.Invoke(item);
-        return item;
-    }
-
-    /// <summary>
-    /// 複数回（10連など）ガチャを引く
-    /// </summary>
-    public List<GachaItem> PullMultiple(int count) {
-        List<GachaItem> results = new();
-        if (PlayerWallet.Instance == null || count <= 0) return results;
-
-        int totalCost = gachaCost * count;
-
-        if (!PlayerWallet.Instance.SpendMoney(totalCost))
-            return results;
-
-        ClearPreviousResults();
-        StartCoroutine(PlayGachaAnimation());
-
-        for (int i = 0; i < count; i++) {
-            var item = PullSingleInternal();
-            if (item != null) {
-                results.Add(item);
-                PlayerItemManager.Instance.UnlockGachaItem(item);
-            }
-        }
-
-        StartCoroutine(ShowMultipleResults(results));
-        return results;
-    }
-
-    /// <summary>
-    /// ガチャ抽選の内部処理
-    /// </summary>
-    private GachaItem PullSingleInternal() {
-        if (data == null) return null;
-
-        int roll = UnityEngine.Random.Range(0, 100);
-        int current = 0;
-        Rarity selectedRarity = Rarity.Common;
-
-        foreach (var r in data.rarityRates) {
-            current += r.rate;
-            if (roll < current) {
-                selectedRarity = r.rarity;
-                break;
-            }
-        }
-
-        var pool = data.GetItemsByRarity(selectedRarity);
-        if (pool == null || pool.Count == 0) return null;
-
-        int totalRate = 0;
-        foreach (var item in pool) totalRate += item.rate;
-        if (totalRate <= 0) return null;
-
-        int randomValue = UnityEngine.Random.Range(0, totalRate);
-        int currentWeight = 0;
-
-        foreach (var item in pool) {
-            currentWeight += item.rate;
-            if (randomValue < currentWeight)
-                return item;
-        }
-
-        return null;
-    }
-
-    #endregion
 
     #region オプション中ブロック
 
@@ -258,6 +169,75 @@ public class GachaSystem : MonoBehaviour {
 
     #endregion
 
+    #region ガチャ抽選
+
+    /// <summary>
+    /// 単発ガチャを引く
+    /// </summary>
+    public void PullSingle() {
+        if (PlayerWallet.Instance == null) return;
+
+        // 所持金チェックと支払い
+        if (!PlayerWallet.Instance.SpendMoney(gachaCost)) return;
+
+        // ガチャの一連の流れをCoroutineで制御
+        StartCoroutine(PullSingleFlow());
+    }
+
+    /// <summary>
+    /// 複数回（10連など）ガチャを引く
+    /// </summary>
+    public void PullMultiple(int count) {
+        if (PlayerWallet.Instance == null || count <= 0) return;
+
+        int totalCost = gachaCost * count;
+
+        if (!PlayerWallet.Instance.SpendMoney(totalCost))
+            return;
+
+        // ガチャの一連の流れをCoroutineで制御
+        StartCoroutine(PullMultipleFlow(count));
+    }
+
+    /// <summary>
+    /// ガチャ抽選の内部処理
+    /// </summary>
+    private GachaItem PullSingleInternal() {
+        if (data == null) return null;
+
+        int roll = UnityEngine.Random.Range(0, 100);
+        int current = 0;
+        Rarity selectedRarity = Rarity.Common;
+
+        foreach (var r in data.rarityRates) {
+            current += r.rate;
+            if (roll < current) {
+                selectedRarity = r.rarity;
+                break;
+            }
+        }
+
+        var pool = data.GetItemsByRarity(selectedRarity);
+        if (pool == null || pool.Count == 0) return null;
+
+        int totalRate = 0;
+        foreach (var item in pool) totalRate += item.rate;
+        if (totalRate <= 0) return null;
+
+        int randomValue = UnityEngine.Random.Range(0, totalRate);
+        int currentWeight = 0;
+
+        foreach (var item in pool) {
+            currentWeight += item.rate;
+            if (randomValue < currentWeight)
+                return item;
+        }
+
+        return null;
+    }
+
+    #endregion
+
     #region ガチャアニメーション
 
     private void OnGachaAnim() => gachaAnim.SetBool("Open", true);
@@ -267,6 +247,73 @@ public class GachaSystem : MonoBehaviour {
         OffGachaAnim();
         yield return null;
         OnGachaAnim();
+    }
+
+    /// <summary>
+    /// ガチャアニメーションを再生し、一定時間待機する
+    /// </summary>
+    private IEnumerator PlayGachaAnimationAndWait() {
+        OffGachaAnim();
+        yield return null;
+        OnGachaAnim();
+
+        // アニメーション開始後、指定時間待機
+        yield return new WaitForSeconds(gachaAnimationWaitTime);
+    }
+
+    #endregion
+
+    #region ガチャ実行フロー
+
+    /// <summary>
+    /// 単発ガチャの一連の処理フロー
+    /// </summary>
+    private IEnumerator PullSingleFlow() {
+        // 前回のガチャ結果を削除
+        ClearPreviousResults();
+
+        // ガチャ演出（一定時間待機）
+        yield return StartCoroutine(PlayGachaAnimationAndWait());
+
+        // 抽選処理
+        var item = PullSingleInternal();
+        if (item == null) yield break;
+
+        PlayerItemManager.Instance.UnlockGachaItem(item);
+
+        // 抽選結果通知
+        OnItemPulled?.Invoke(item);
+
+        // 結果表示
+        yield return StartCoroutine(ShowSingleResult(item));
+    }
+
+    /// <summary>
+    /// 複数回ガチャ（10連など）の一連の処理フロー
+    /// </summary>
+    private IEnumerator PullMultipleFlow(int count) {
+        // 前回のガチャ結果を削除
+        ClearPreviousResults();
+
+        // ガチャ演出（一定時間待機）
+        yield return StartCoroutine(PlayGachaAnimationAndWait());
+
+        List<GachaItem> results = new();
+
+        // 抽選処理
+        for (int i = 0; i < count; i++) {
+            var item = PullSingleInternal();
+            if (item == null) continue;
+
+            results.Add(item);
+            PlayerItemManager.Instance.UnlockGachaItem(item);
+
+            // 抽選結果通知
+            OnItemPulled?.Invoke(item);
+        }
+
+        // 結果表示
+        yield return StartCoroutine(ShowMultipleResults(results));
     }
 
     #endregion
