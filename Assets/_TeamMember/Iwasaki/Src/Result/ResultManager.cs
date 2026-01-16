@@ -196,7 +196,6 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
 
             // ƒJ[ƒ\ƒ‹‚ğŒ³‚É–ß‚·
             Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
     }
 }
