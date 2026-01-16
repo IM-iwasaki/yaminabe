@@ -6233,6 +6233,18 @@ PrefabInstance:
       propertyPath: serverManager
       value: 
       objectReference: {fileID: 261839327}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.size
+      value: 47
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[45]
+      value: 
+      objectReference: {fileID: 107947191535415832, guid: 9d6d589d52f084b4dbe99003aa8603a3, type: 3}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[46]
+      value: 
+      objectReference: {fileID: 5471543249360583010, guid: 7679fac087d19cd479781fac86c569f4, type: 3}
     - target: {fileID: 8116109016544477545, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Name
       value: CustomNetworkManager
