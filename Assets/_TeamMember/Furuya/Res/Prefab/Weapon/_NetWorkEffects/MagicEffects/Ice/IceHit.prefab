@@ -33319,6 +33319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400014}
   - component: {fileID: 6953754270088007997}
+  - component: {fileID: 5806946425116518072}
   m_Layer: 0
   m_Name: IceHit
   m_TagString: Untagged
@@ -33366,6 +33367,23 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &5806946425116518072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270e7a6926a55c34bbb10a9cc75b33d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  interval: 1
+  targetTag: Player
 --- !u!1 &100016
 GameObject:
   m_ObjectHideFlags: 0

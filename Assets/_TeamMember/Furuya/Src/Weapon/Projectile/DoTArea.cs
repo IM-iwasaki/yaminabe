@@ -54,6 +54,19 @@ public class DoTArea : NetworkBehaviour {
         transform.position += transform.forward * speed * Time.fixedDeltaTime;
     }
 
+    [ServerCallback]
+    private void OnTriggerEnter(Collider other) {
+        if (!initialized || !isServer) return;
+        if (!other.CompareTag(targetTag)) return;
+        // ©•ª©g‚Ì”­ËŒ³‚É‚Í“–‚½‚ç‚È‚¢
+        var target = other.GetComponent<CharacterBase>();
+        if (target.parameter.TeamID == ownerTeamID) return;
+
+        var character = other.GetComponent<CharacterBase>();
+        if (character != null) {
+           character.TakeDamage(damage, ownerName);
+        }
+    }
 
     [ServerCallback]
     private void OnTriggerStay(Collider other) {
