@@ -31,6 +31,8 @@ public class GachaSystem : MonoBehaviour {
     [Header("ガチャアニメーション設定")]
     [SerializeField]
     private float gachaAnimationWaitTime = 1.5f; // アニメーション開始から結果表示までの待機時間
+    
+    private bool isPulling = false;     // ガチャ実行中（結果表示含む）かどうか
 
     private GameObject currentPlayer; // 現在選択中のプレイヤー
     public bool isOpen;               // ガチャ画面の開閉状態およびカーソル状態
@@ -175,6 +177,9 @@ public class GachaSystem : MonoBehaviour {
     /// 単発ガチャを引く
     /// </summary>
     public void PullSingle() {
+        // ガチャ結果表示中は引けない
+        if (isPulling) return;
+
         if (PlayerWallet.Instance == null) return;
 
         // 所持金チェックと支払い
@@ -188,6 +193,9 @@ public class GachaSystem : MonoBehaviour {
     /// 複数回（10連など）ガチャを引く
     /// </summary>
     public void PullMultiple(int count) {
+        // ガチャ結果表示中は引けない
+        if (isPulling) return;
+
         if (PlayerWallet.Instance == null || count <= 0) return;
 
         int totalCost = gachaCost * count;
@@ -238,37 +246,15 @@ public class GachaSystem : MonoBehaviour {
 
     #endregion
 
-    #region ガチャアニメーション
-
-    private void OnGachaAnim() => gachaAnim.SetBool("Open", true);
-    private void OffGachaAnim() => gachaAnim.SetBool("Open", false);
-
-    private IEnumerator PlayGachaAnimation() {
-        OffGachaAnim();
-        yield return null;
-        OnGachaAnim();
-    }
-
-    /// <summary>
-    /// ガチャアニメーションを再生し、一定時間待機する
-    /// </summary>
-    private IEnumerator PlayGachaAnimationAndWait() {
-        OffGachaAnim();
-        yield return null;
-        OnGachaAnim();
-
-        // アニメーション開始後、指定時間待機
-        yield return new WaitForSeconds(gachaAnimationWaitTime);
-    }
-
-    #endregion
-
     #region ガチャ実行フロー
 
     /// <summary>
     /// 単発ガチャの一連の処理フロー
     /// </summary>
     private IEnumerator PullSingleFlow() {
+        // ガチャ実行中ロック
+        isPulling = true;
+
         // 前回のガチャ結果を削除
         ClearPreviousResults();
 
@@ -277,7 +263,10 @@ public class GachaSystem : MonoBehaviour {
 
         // 抽選処理
         var item = PullSingleInternal();
-        if (item == null) yield break;
+        if (item == null) {
+            isPulling = false;
+            yield break;
+        }
 
         PlayerItemManager.Instance.UnlockGachaItem(item);
 
@@ -286,12 +275,18 @@ public class GachaSystem : MonoBehaviour {
 
         // 結果表示
         yield return StartCoroutine(ShowSingleResult(item));
+
+        // ロック解除
+        isPulling = false;
     }
 
     /// <summary>
     /// 複数回ガチャ（10連など）の一連の処理フロー
     /// </summary>
     private IEnumerator PullMultipleFlow(int count) {
+        // ガチャ実行中ロック
+        isPulling = true;
+
         // 前回のガチャ結果を削除
         ClearPreviousResults();
 
@@ -314,6 +309,34 @@ public class GachaSystem : MonoBehaviour {
 
         // 結果表示
         yield return StartCoroutine(ShowMultipleResults(results));
+
+        // ロック解除
+        isPulling = false;
+    }
+
+    #endregion
+
+    #region ガチャアニメーション
+
+    private void OnGachaAnim() => gachaAnim.SetBool("Open", true);
+    private void OffGachaAnim() => gachaAnim.SetBool("Open", false);
+
+    private IEnumerator PlayGachaAnimation() {
+        OffGachaAnim();
+        yield return null;
+        OnGachaAnim();
+    }
+
+    /// <summary>
+    /// ガチャアニメーションを再生し、一定時間待機する
+    /// </summary>
+    private IEnumerator PlayGachaAnimationAndWait() {
+        OffGachaAnim();
+        yield return null;
+        OnGachaAnim();
+
+        // アニメーション開始後、指定時間待機
+        yield return new WaitForSeconds(gachaAnimationWaitTime);
     }
 
     #endregion
