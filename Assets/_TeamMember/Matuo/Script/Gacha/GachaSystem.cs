@@ -190,9 +190,9 @@ public class GachaSystem : MonoBehaviour {
     /// </summary>
     public void PullSingle() {
         if (isPulling) return;
+        if (!isResultFinished) return;
         if (!PlayerWallet.Instance.SpendMoney(gachaCost)) return;
 
-        // ガチャの一連の流れをCoroutineで制御
         StartCoroutine(PullSingleFlow());
     }
 
@@ -201,11 +201,11 @@ public class GachaSystem : MonoBehaviour {
     /// </summary>
     public void PullMultiple(int count) {
         if (isPulling || count <= 0) return;
+        if (!isResultFinished) return;
 
         int totalCost = gachaCost * count;
         if (!PlayerWallet.Instance.SpendMoney(totalCost)) return;
 
-        // ガチャの一連の流れをCoroutineで制御
         StartCoroutine(PullMultipleFlow(count));
     }
 

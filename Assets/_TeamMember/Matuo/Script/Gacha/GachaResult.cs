@@ -148,7 +148,6 @@ public class GachaResult : MonoBehaviour {
         icon.transform.SetParent(root.transform, false);
         icon.rectTransform.sizeDelta = new Vector2(iconSize, iconSize);
 
-        // ===== éBâeëŒè€ê∂ê¨ =====
         GameObject temp = Instantiate(item.resultPrefab);
         temp.SetActive(true);
         SetLayerRecursively(temp, gachaRenderLayer);
