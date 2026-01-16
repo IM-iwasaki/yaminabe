@@ -189,22 +189,18 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnStopClient() {
         Cursor.lockState = CursorLockMode.None;
         Destroy(singleton.gameObject);
+        transport.Shutdown();
         SceneManager.LoadScene("TitleScene");
-
     }
 
+    /// <summary>
+    /// アプリ終了時の解放処理
+    /// </summary>
     public override void OnApplicationQuit() {
         // サーバー or クライアントとして接続中なら安全に終了
         if (NetworkServer.active || NetworkClient.isConnected) {
-            DisconnectHost();
+            StopHost();
         }
-    }
-
-
-    public void DisconnectHost() {
-        singleton.StopHost();
-        NetworkServer.Shutdown();
-        NetworkClient.Shutdown();
     }
 
 
