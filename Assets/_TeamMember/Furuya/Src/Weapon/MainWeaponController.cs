@@ -322,6 +322,17 @@ public class MainWeaponController : NetworkBehaviour {
                 direction
             );
         }
+        else if (proj.TryGetComponent(out DoTArea dotArea)) {
+            int teamID = characterBase?.parameter.TeamID ?? 0;
+            Vector3 Direction = transform.forward;
+            dotArea.Init(
+                teamID,
+                characterBase.parameter.PlayerName,
+                magicData.projectileSpeed,
+                magicData.damage,
+                Direction
+                );
+        }
     }
 
     /// <summary>
