@@ -40,7 +40,7 @@ public class TitleManager : MonoBehaviour {
     /// <summary>
     /// ボタン押下判定用変数
     /// </summary>
-    private static bool once = false;
+    private static bool onButtonOnce = false;
     /// <summary>
     /// ロードするロビーシーンの名前
     /// </summary>
@@ -68,26 +68,35 @@ public class TitleManager : MonoBehaviour {
     /// </summary>
     public Button researchHostButton;
 
+    private Coroutine waitCorutine;
+
+    private bool runningCorutine;
 
     private void Awake() {
-        DontDestroyOnLoad(gameObject);
-
         instance = this;
-        once = false;
+        DontDestroyOnLoad(gameObject);
+        onButtonOnce = false;
     }
 
     /// <summary>
     /// ホストになるボタンを押下した時の処理
     /// </summary>
     public void OnStartHostButton() {
-        if (!once) {
+        if (!onButtonOnce) {
+            //もしホスト検索コルーチンが走っていたら止める
+            if (waitCorutine != null && runningCorutine) {
+                StopCoroutine(waitCorutine);
+                waitCorutine = null;
+            }
+
+
             //明示的にホスト状態をtrueにし、ロビーシーンに移行
             TitleAudio.Instance.PlaySE("決定");
             isHost = true;
             sender.StartSendIP();
             SceneManager.LoadScene(lobbySceneName);
             isTitle = false;
-            once = true;
+            onButtonOnce = true;
         }
 
     }
@@ -96,14 +105,14 @@ public class TitleManager : MonoBehaviour {
     /// クライアントになるボタンを押下した時の処理
     /// </summary>
     public void OnStartClientButton() {
-        if (!once) {
+        if (!onButtonOnce) {
             //IPアドレス未設定を防ぐために早期リターン
             if (ipAddress == null)
                 return;
             TitleAudio.Instance.PlaySE("決定");
             //IPアドレスが取得できたらロビーシーンに移行
-            StartCoroutine(WaitReceivedIP());
-            once = true;
+            waitCorutine = StartCoroutine(WaitReceivedIP());
+            onButtonOnce = true;
         }
     }
 
@@ -112,6 +121,7 @@ public class TitleManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     private IEnumerator WaitReceivedIP() {
+        runningCorutine = true;
         //ホスト検索
         receiver.StartReceiveIP();
         //全ホストを表示※UIに変更
@@ -139,13 +149,12 @@ public class TitleManager : MonoBehaviour {
         }
         //取得できなかったので結果を表示
         else {
-
             SearchOrMissingText.text = "Not Found";
             researchHostButton.gameObject.SetActive(true);
             yield return new WaitForSeconds(1.0f);
-            if (once)
-                once = false;
-            
+            if (onButtonOnce)
+                onButtonOnce = false;
+            runningCorutine = false;
         }
     }
     //InputField用関数
@@ -159,6 +168,6 @@ public class TitleManager : MonoBehaviour {
     public void OnReturnButtonClicked() {
         hostsDisplayUI.gameObject.SetActive(false);
         hostsDisplayUI.ResetPanel();
-        once = false;
+        onButtonOnce = false;
     }
 }
