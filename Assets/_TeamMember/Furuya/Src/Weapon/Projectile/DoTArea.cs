@@ -39,7 +39,6 @@ public class DoTArea : NetworkBehaviour {
             rb.angularVelocity = Vector3.zero;
 
             rb.useGravity = false;
-            rb.velocity = direction * speed;
         }
 
         initialized = true;
@@ -102,6 +101,7 @@ public class DoTArea : NetworkBehaviour {
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         initialized = false;
+        timers.Clear();
 
         if (ProjectilePool.Instance != null)
             ProjectilePool.Instance.DespawnToPool(gameObject);

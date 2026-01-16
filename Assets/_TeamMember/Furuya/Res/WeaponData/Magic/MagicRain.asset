@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3744319c5a4bea645a75fd9293b7d8ca, type: 3}
-  m_Name: IceMagic
+  m_Name: MagicRain
   m_EditorClassIdentifier: 
-  weaponName: IceMagic
+  weaponName: MagicRain
   type: 2
-  damage: 30
-  cooldown: 0.3
+  damage: 10
+  cooldown: 1
   ID: 0
-  muzzleFlashType: 2
-  hitEffectType: 2
+  muzzleFlashType: 0
+  hitEffectType: 0
   maxAmmo: 0
   reloadTime: 0
-  projectilePrefab: {fileID: 107947191535415832, guid: 9d6d589d52f084b4dbe99003aa8603a3, type: 3}
-  projectileSpeed: 8
-  MPCost: 7
+  projectilePrefab: {fileID: 5471543249360583010, guid: 7679fac087d19cd479781fac86c569f4, type: 3}
+  projectileSpeed: 3
+  MPCost: 20
   chargeEffectType: 0
-  chargeTime: 3
-  magicType: 0
-  initialHeightSpeed: 0
-  se: 1
+  chargeTime: 0
+  magicType: 2
+  initialHeightSpeed: 5
+  se: 2
