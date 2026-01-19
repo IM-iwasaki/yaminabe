@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 8249008130809468944}
   - component: {fileID: 9040320925483914234}
   - component: {fileID: 2379700136208438871}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SniperRifleDefault
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -126,8 +126,8 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   canDestroy: 1
-  weaponType: 0
-  weaponData: {fileID: 0}
+  weaponType: 1
+  weaponData: {fileID: 11400000, guid: f6de3303c968f494b8f7bedf53c83e68, type: 2}
 --- !u!114 &2379700136208438871
 MonoBehaviour:
   m_ObjectHideFlags: 0

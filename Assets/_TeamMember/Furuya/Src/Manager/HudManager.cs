@@ -38,4 +38,14 @@ public class HudManager : SystemObject<HudManager> {
     public Sprite GetReticleSprite() {
         return reticleImage != null ? reticleImage.sprite : null;
     }
+
+    /// <summary>
+    /// レティクルの表示・非表示を切り替える
+    /// </summary>
+    public void SetReticleVisible(bool visible) {
+        if (reticleImage == null) return;
+        reticleImage.enabled = visible;
+    }
+
+
 }

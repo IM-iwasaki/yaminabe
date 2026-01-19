@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b57f1631f241f3c48a205884bc2b4846, type: 3}
+  m_Name: Quasar
+  m_EditorClassIdentifier: 
+  baseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
+  displayName: "\u30AF\u30A8\u30FC\u30B5\u30FC"
+  skills:
+  - {fileID: 11400000, guid: e0798274eca131f48a7764b1e9124330, type: 2}
+  passives:
+  - {fileID: 11400000, guid: 373c1f0ceb85288479c6893e1a359cfc, type: 2}
+  MainWeapon: {fileID: 11400000, guid: 9390fd3f4ae7e9148ac4f1315fd7fdfa, type: 2}
+  SubWeapon: {fileID: 11400000, guid: 8fa2c4c5f7650b747899e553f2c38e25, type: 2}
+  chatacterType: 1
+  maxHPCorrection: 100
+  speedCorrection: 0
+  attack: 0
+  maxMP: 60

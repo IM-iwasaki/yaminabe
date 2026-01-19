@@ -35,7 +35,7 @@ public class CharacterParameter : NetworkBehaviour{
     //リロード中か
     [SyncVar(hook = nameof(UpdateReloadIcon))] public bool isReloading = false;
     //基礎攻撃力
-    [SyncVar] public int attack;
+    [SyncVar] public float attack;
     //移動速度
     [SyncVar] public int moveSpeed = 5;
     
@@ -53,17 +53,20 @@ public class CharacterParameter : NetworkBehaviour{
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
     
-    public int defaultAttack { get; protected set; }
+    public float defaultAttack { get; protected set; }
     public int defaultMoveSpeed { get; protected set; }
+
+    // 味方検知用
+    public bool HasNearbyAlly { get; private set; }
 
     #endregion
 
     #region Transform系変数
 
-    //視点を要求する方向
-    protected Vector2 lookInput { get; private set; }
+    //足元のTransform
+    [SerializeField]public Transform footPoint;
     //射撃位置
-    public Transform firePoint;
+    [SerializeField]private Transform firePoint;
 
     #endregion
 
@@ -72,15 +75,13 @@ public class CharacterParameter : NetworkBehaviour{
     //死亡しているか
     [SyncVar] public bool isDead = false;
     //死亡した瞬間か
-    public bool isDeadTrigger { get; protected set; } = false;
+    public bool isDeadTrigger { get; private set; } = false;
     //復活後の無敵時間中であるか
-    protected bool isInvincible = false;
+    public bool isInvincible { get; private set; } = false;
     //復活してからの経過時間
-    protected float respownAfterTime { get; private set; } = 0.0f;
-    //攻撃中か
-    public bool isAttackPressed { get; private set; } = false;
-    //攻撃を押した瞬間か
-    public bool isAttackTrigger { get; protected set; } = false;
+    public float respownAfterTime { get; private set; } = 0.0f;
+    //攻撃した瞬間か
+    public bool AttackTrigger = false;
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0.0f;
     
@@ -88,27 +89,31 @@ public class CharacterParameter : NetworkBehaviour{
     [System.NonSerialized] public float skillAfterTime = 0.0f;
     
     //接地しているか
-    public bool IsGrounded{ get; private set; }
+    public bool IsGrounded { get; private set; }
+    //GroundLayer
+    public LayerMask GroundLayer { get; private set; }
     //移動中か
     //public bool ismoving { get; private set; }
 
     //LocalUIの参照だけ持つ
-    PlayerLocalUIController localUI;
-    MainWeaponController weaponController_main;
-    SubWeaponController weaponController_sub;
+    private PlayerLocalUIController localUI;
+    private MainWeaponController weaponController_main;
+    private SubWeaponController weaponController_sub;
 
     #endregion
 
     public void Initialize(CharacterBase core) {
+        //ステータスのインポート
         StatusInport(inputStatus);
 
-        localUI = core.GetComponent<PlayerLocalUIController>();
+        // "Ground" という名前のレイヤーを取得してマスク化
+        int groundLayerIndex = LayerMask.NameToLayer("Ground");
+        GroundLayer = 1 << groundLayerIndex;
 
-        HP = maxHP;
+        localUI = core.GetComponent<PlayerLocalUIController>();        
 
         isDead = false;
         isInvincible = false;        
-
         respownAfterTime = 0;
         attackStartTime = 0;
         skillAfterTime = 0;
@@ -193,7 +198,7 @@ public class CharacterParameter : NetworkBehaviour{
         attack = defaultAttack;
     }
 
-    private void OutDefaultStatus_MoveSpeed() {
+    public void OutDefaultStatus_MoveSpeed() {
         moveSpeed = defaultMoveSpeed;
     }
 
@@ -202,7 +207,9 @@ public class CharacterParameter : NetworkBehaviour{
     /// </summary>
     /// <param name="_checkPos"></param>
     public void GroundCheck(Vector3 _checkPos) {
-        IsGrounded = Physics.Raycast(_checkPos, Vector3.down, 1.1f);
+        //IsGrounded = Physics.Raycast(_checkPos, Vector3.down, PlayerConst.GROUND_DISTANCE);
+        // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
+        IsGrounded = Physics.CheckSphere(_checkPos, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }
 
     /// <summary>
@@ -274,6 +281,15 @@ public class CharacterParameter : NetworkBehaviour{
         }
         // 当たらなければそのままaimPoint方向
         return direction;
+    }
+
+    //近くに味方がいるか判別　古谷
+    public void UpdateNearbyAlly(float radius, LayerMask allyLayer) {
+        HasNearbyAlly = Physics.CheckSphere(
+            transform.position,
+            radius,
+            allyLayer
+        );
     }
 
     /// <summary>

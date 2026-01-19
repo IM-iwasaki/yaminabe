@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
 
 /// <summary>
 /// タイトル管理クラス
@@ -39,7 +40,7 @@ public class TitleManager : MonoBehaviour {
     /// <summary>
     /// ボタン押下判定用変数
     /// </summary>
-    static private bool once = false;
+    private static bool onButtonOnce = false;
     /// <summary>
     /// ロードするロビーシーンの名前
     /// </summary>
@@ -55,26 +56,47 @@ public class TitleManager : MonoBehaviour {
     /// </summary>
     [SerializeField]
     private UDPListener receiver = null;
-    
+
+    /// <summary>
+    /// サーバー一覧UI
+    /// </summary>
+    [SerializeField]
+    private HostSelectUI hostsDisplayUI;
+
+    /// <summary>
+    /// サーバー探知再走用ボタン
+    /// </summary>
+    public Button researchHostButton;
+
+    private Coroutine waitCorutine;
+
+    private bool runningCorutine;
 
     private void Awake() {
-        DontDestroyOnLoad(gameObject);
-
         instance = this;
+        DontDestroyOnLoad(gameObject);
+        onButtonOnce = false;
     }
 
     /// <summary>
     /// ホストになるボタンを押下した時の処理
     /// </summary>
     public void OnStartHostButton() {
-        if (!once) {
+        if (!onButtonOnce) {
+            //もしホスト検索コルーチンが走っていたら止める
+            if (waitCorutine != null && runningCorutine) {
+                StopCoroutine(waitCorutine);
+                waitCorutine = null;
+            }
+
+
             //明示的にホスト状態をtrueにし、ロビーシーンに移行
             TitleAudio.Instance.PlaySE("決定");
             isHost = true;
             sender.StartSendIP();
             SceneManager.LoadScene(lobbySceneName);
             isTitle = false;
-            once = true;
+            onButtonOnce = true;
         }
 
     }
@@ -83,16 +105,14 @@ public class TitleManager : MonoBehaviour {
     /// クライアントになるボタンを押下した時の処理
     /// </summary>
     public void OnStartClientButton() {
-        if (!once) {
+        if (!onButtonOnce) {
             //IPアドレス未設定を防ぐために早期リターン
             if (ipAddress == null)
                 return;
             TitleAudio.Instance.PlaySE("決定");
-            if (!once) {
-                //IPアドレスが取得できたらロビーシーンに移行
-                StartCoroutine(WaitReceivedIP());
-            }
-            once = true;
+            //IPアドレスが取得できたらロビーシーンに移行
+            waitCorutine = StartCoroutine(WaitReceivedIP());
+            onButtonOnce = true;
         }
     }
 
@@ -101,37 +121,53 @@ public class TitleManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     private IEnumerator WaitReceivedIP() {
+        runningCorutine = true;
+        //ホスト検索
         receiver.StartReceiveIP();
-
-        //タイムアウトまでのカウントとタイマー
-        float timeout = 10.0f;
-        float timer = 0.0f;
-
-        //取得できたかタイムアウトするまで待機
-        while (!receiver.isGetIP && timer < timeout) {
-            timer += Time.deltaTime;
-            SearchOrMissingText.text = "Now Searching...";
-            yield return null;
-        }
+        //全ホストを表示※UIに変更
+        hostsDisplayUI.gameObject.SetActive(true);
+        researchHostButton.gameObject.SetActive(false);
+        SearchOrMissingText.text = "Now Searching...";
+        yield return new WaitForSeconds(3.0f);
         //取得できた
         if (receiver.isGetIP) {
+            SearchOrMissingText.text = "";
+            hostsDisplayUI.ShowHostList(receiver.discoveredHosts);
+
+            //ホスト選択まで待機
+            yield return new WaitUntil(() => hostsDisplayUI.isSelected);
+
+            //ホストをUIから取得
+            var selectedHost = hostsDisplayUI.selectedHost;
+
+            //IPアドレス設定
+            ipAddress = selectedHost.ip;
+            //サーバーに参加
             isClient = true;
             SceneManager.LoadScene(lobbySceneName);
             isTitle = false;
         }
-        //取得できなかったのでシーンを再ロード
+        //取得できなかったので結果を表示
         else {
-
             SearchOrMissingText.text = "Not Found";
+            researchHostButton.gameObject.SetActive(true);
             yield return new WaitForSeconds(1.0f);
-            if (once)
-                once = false;
+            if (onButtonOnce)
+                onButtonOnce = false;
+            runningCorutine = false;
         }
-
-
     }
     //InputField用関数
     public void SetIPAddress() {
         ipAddress = inputField.text;
+    }
+
+    /// <summary>
+    /// サーバーセレクトUIを閉じる処理
+    /// </summary>
+    public void OnReturnButtonClicked() {
+        hostsDisplayUI.gameObject.SetActive(false);
+        hostsDisplayUI.ResetPanel();
+        onButtonOnce = false;
     }
 }

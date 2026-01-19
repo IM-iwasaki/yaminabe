@@ -51,8 +51,6 @@ public class CustomNetworkManager : NetworkManager {
             //その後は不必要なので更新しないようにする
             TitleManager.instance.enabled = false;
         }
-        //生成後ロビーシーンに遷移
-        //GameSceneManager.Instance.LoadLobbySceneForAll();
     }
 
     /// <summary>
@@ -78,8 +76,8 @@ public class CustomNetworkManager : NetworkManager {
 
         GameObject player = Instantiate(playerPrefab);
         NetworkServer.AddPlayerForConnection(_conn, player);
-
-        serverManager.connectPlayer.Add(_conn.identity);
+        if (!serverManager.connectPlayer.Contains(_conn.identity))
+            serverManager.connectPlayer.Add(_conn.identity);
         ChatManager.instance.CmdSendSystemMessage(serverManager.connectPlayer.Count + "is Connected ");
     }
 
@@ -91,7 +89,7 @@ public class CustomNetworkManager : NetworkManager {
         if (TitleManager.instance.isClient) {
             Destroy(FindObjectOfType<UDPBroadcaster>().gameObject);
         }
-            
+
     }
 
     /// <summary>
@@ -100,14 +98,20 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="_conn"></param>
     public override void OnServerDisconnect(NetworkConnectionToClient _conn) {
-        base.OnServerDisconnect(_conn);
+
         //ローカルクライアントが抜けた場合
-        if (!NetworkServer.localConnection.Equals(_conn)) {
+        if (_conn.connectionId > 0) {
             //参加者全員に通知
             ChatManager.instance.CmdSendSystemMessage("Leave Player");
+            if (_conn.identity != null)
+                serverManager.connectPlayer.Remove(_conn.identity);
+
+            base.OnServerDisconnect(_conn);
             return;
         }
+
         GameSceneManager.Instance.LoadTitleSceneForAll();
+        base.OnServerDisconnect(_conn);
     }
     /// <summary>
     /// シーンが変わった時に発火
@@ -116,8 +120,8 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
         if (newSceneName == GameSceneManager.Instance.gameSceneName) {
-            if(HostUI.isVisibleUI)
-            HostUI.ShowOrHideUI();
+            if (HostUI.isVisibleUI)
+                HostUI.ShowOrHideUI();
             GameSceneManager.Instance.ResetIsChangedScene();
         }
         Cursor.lockState = HostUI.isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
@@ -154,8 +158,10 @@ public class CustomNetworkManager : NetworkManager {
             //ロビーシーンなら開始地点に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
                 //重なることを考慮してランダムで座標をずらす
-                Vector3 respawnPos = new Vector3(Random.Range(1,10), 0, 0);
+                Vector3 respawnPos = new Vector3(Random.Range(1, 10), 5, 0);
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
+                //レートの数値を反映して表示
+                RateDisplay.instance.ChangeRateUI();
             }
             //初期化
             character.Initalize();
@@ -181,6 +187,34 @@ public class CustomNetworkManager : NetworkManager {
     /// クライアントが止まった時の処理
     /// </summary>
     public override void OnStopClient() {
+        Cursor.lockState = CursorLockMode.None;
+        Destroy(singleton.gameObject);
+        transport.Shutdown();
         SceneManager.LoadScene("TitleScene");
+    }
+
+    /// <summary>
+    /// アプリ終了時の解放処理
+    /// </summary>
+    public override void OnApplicationQuit() {
+        // サーバー or クライアントとして接続中なら安全に終了
+        if (NetworkServer.active || NetworkClient.isConnected) {
+            StopHost();
+        }
+    }
+
+
+    public override void OnStopHost() {
+        base.OnStopHost();
+        ShutdownHost();
+    }
+
+    private void ShutdownHost() {
+        transport.Shutdown();
+        serverManager.connectPlayer.Clear();
+    }
+
+    public override void OnStopServer() {
+        serverManager.connectPlayer.Clear();
     }
 }

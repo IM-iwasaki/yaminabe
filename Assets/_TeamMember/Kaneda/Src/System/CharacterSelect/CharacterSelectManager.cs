@@ -56,7 +56,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// </summary>
     /// <param name="player">操作中のプレイヤー</param>
     public void StartCharacterSelect(GameObject player) {
-
+        if (cameraManager != null && cameraManager.IsCameraTransitioning())
+            return;
         // OptionMenu が開いているならキャラ選択を開かない
         if (IsBlockedByOptionMenu()) {
             return;
@@ -119,6 +120,11 @@ public class CharacterSelectManager : NetworkBehaviour {
         Transform parent = currentPlayer.transform;
         Transform skin = FindChildWithTag(parent, SKIN_TAG);
         skin.gameObject.SetActive(true);
+
+        //  プレイヤー側のローカルUIを表示させる
+        if (currentPlayer.GetComponent<PlayerLocalUIController>()) {
+            currentPlayer.GetComponent<PlayerLocalUIController>().OnLocalUIObject();
+        }
 
         //  カーソルをOffにする
         ChangeCursorView();
@@ -183,7 +189,7 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// キャラ選択画面中かどうか
     /// true: キャラ選択モード / false: 通常
     /// </summary>
-    private bool isCharacterSelect = false;
+    public bool isCharacterSelect = false;
 
     /// <summary>
     /// キャラ選択状態をまとめて切り替える
@@ -193,7 +199,7 @@ public class CharacterSelectManager : NetworkBehaviour {
         isCharacterSelect = active;
 
         // 将来「キャラ選択中だけ有効にしたい処理」が増えたら
-        // ここにまとめて書けば OK
+        // ここにまとめて書く
     }
 
     /// <summary>

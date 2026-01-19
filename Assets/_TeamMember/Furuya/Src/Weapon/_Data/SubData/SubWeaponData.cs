@@ -24,7 +24,7 @@ public abstract class SubWeaponData : ScriptableObject, IWeaponInfo {
     public bool startFull = true;
 
     [Header("Projectile Settings")]
-    public GameObject ObjectPrefab;
+    public GameObject ObjectPrefab = null;
     public float projectileSpeed = 15f;
 
     [Header("Visual / Audio")]

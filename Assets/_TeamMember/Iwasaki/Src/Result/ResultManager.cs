@@ -17,6 +17,8 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     private GameObject currentUIRoot;    // 現在のUIルート（生成後のCanvas）
     private ResultPanel currentResultPanel; // 勝敗パネル参照
 
+    public static bool IsResultShowing { get; private set; }
+
     // チームスコアのための配列
     [System.Serializable]
     public struct TeamScoreEntry {
@@ -99,10 +101,15 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     /// </summary>
     [ClientRpc]
     private void RpcSpawnResultPanel() {
-        // 既にUIが存在する場合はスキップ
-        if (currentUIRoot != null) {
+        if (currentUIRoot != null)
             return;
-        }
+
+        // ===== リザルト中フラグON =====
+        IsResultShowing = true;
+
+        // カーソル表示
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         // プレハブを生成
         GameObject ui = Instantiate(resultUIPrefab);
@@ -183,7 +190,12 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
             Destroy(currentUIRoot);
             currentUIRoot = null;
             currentResultPanel = null;
-           
+
+            // ===== リザルト中フラグOFF =====
+            IsResultShowing = false;
+
+            // カーソルを元に戻す
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 }

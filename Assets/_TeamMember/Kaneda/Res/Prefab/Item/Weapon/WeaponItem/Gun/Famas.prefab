@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5883567518757117194}
   - component: {fileID: 1325660273570286870}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder.015
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,9 +114,9 @@ GameObject:
   - component: {fileID: 6626819795892387797}
   - component: {fileID: 2661720942500685872}
   - component: {fileID: 499720699669264237}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Famas
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -178,8 +178,8 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   canDestroy: 1
-  weaponType: 0
-  weaponData: {fileID: 0}
+  weaponType: 1
+  weaponData: {fileID: 11400000, guid: 881d969855b604943b56bb60ee1fd6d4, type: 2}
 --- !u!114 &499720699669264237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,7 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 278722266
+  _assetId: 1168847533
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -206,7 +206,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6827858995307641787}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bullets_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,7 +237,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7787914479495299462}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bullets
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +269,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6119461875715943797}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bullet_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -300,7 +300,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3044157557488714540}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -332,7 +332,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6829367541806841799}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: mag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -365,7 +365,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8150392159141280781}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -397,7 +397,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6403264522549549182}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: magrelease_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -428,7 +428,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7029486120087275145}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bolt_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -459,7 +459,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9178366078791778923}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: selector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -491,7 +491,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 964285556702543111}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: selector_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -522,7 +522,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 392375705069225708}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Armature
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -538,9 +538,9 @@ Transform:
   m_GameObject: {fileID: 7637072177769859901}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5000001, y: 0.50000006, z: -0.4999999, w: -0.49999994}
-  m_LocalPosition: {x: -0.99945056, y: -0.5312857, z: -0.00000007171184}
-  m_LocalScale: {x: 100, y: 100, z: 100}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: -0.112, y: -0.223, z: -0.00000007171184}
+  m_LocalScale: {x: 20, y: 20, z: 20}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6916804679262278208}
   m_Father: {fileID: 4512494947573321602}
@@ -554,7 +554,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5203772805785202901}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: magrelease
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -586,7 +586,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6916804679262278208}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: body
   m_TagString: Untagged
   m_Icon: {fileID: 0}

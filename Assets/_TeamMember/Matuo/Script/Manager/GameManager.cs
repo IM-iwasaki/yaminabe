@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// ゲーム全体の進行管理
@@ -25,7 +26,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     }
 
     /// <summary>
-    /// ゲーム開始
+    /// ゲーム開始（準備フェーズ）
     /// </summary>
     /// <param name="rule">開始するルールタイプ</param>
     /// <param name="stageData">生成するステージのステージデータ</param>
@@ -41,13 +42,28 @@ public class GameManager : NetworkSystemObject<GameManager> {
         else
             StageManager.Instance.SetRespawnMode(RespawnMode.Team);
 
-        isGameRunning = true;
-
         // ルール設定
         ruleManager.currentRule = rule;
 
         // チームスコアとペナルティを RuleManager 側で初期化
         ruleManager.InitializeScoresForRule(rule);
+
+        // カウントダウン開始
+        CountdownManager.Instance.SendCountdown(3);
+
+        // カウントダウン後に実際のゲーム開始
+        StartCoroutine(StartGameAfterCountdown(rule));
+    }
+
+    /// <summary>
+    /// カウントダウン終了後にゲームを開始する
+    /// </summary>
+    [Server]
+    private IEnumerator StartGameAfterCountdown(GameRuleType rule) {
+        // 3秒カウントダウン + GO表示1秒
+        yield return new WaitForSeconds(4f);
+
+        isGameRunning = true;
 
         // タイマー終了時処理
         gameTimer.OnTimerFinished += () => {
@@ -59,7 +75,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
             EndGame();
         };
 
-        // タイマー開始
+        // タイマー開始（GO! と同時）
         gameTimer.StartTimer();
     }
 

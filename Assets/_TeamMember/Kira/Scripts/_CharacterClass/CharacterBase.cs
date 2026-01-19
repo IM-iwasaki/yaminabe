@@ -16,25 +16,21 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
-    [System.NonSerialized]public Rigidbody rb;
+    [System.NonSerialized] public Rigidbody rb;
     public PlayerLocalUIController localUI = null;
     [SerializeField] private OptionMenu CameraMenu;
-    public Animator anim = null;
-    private string currentAnimation;
-
-    //GroundLayer
-    public LayerMask GroundLayer { get; private set; }
-    //足元の確認用Transform
-    public Transform GroundCheck { get; private set; }
 
     //武器を使用するため
     [Header("アクション用変数")]
     public MainWeaponController weaponController_main;
     public SubWeaponController weaponController_sub;
 
-    public CharacterInput input { get ; private set; }
-    public CharacterActions action { get ; private set; }
-    public CharacterParameter parameter { get ; private set; }
+    public int bannerNum = 0;
+
+    public CharacterInput input { get; private set; }
+    public CharacterActions action { get; private set; }
+    public CharacterParameter parameter { get; private set; }
+    public CharacterAnimationController animCon { get; private set; }
 
     #region ～初期化関係関数～
 
@@ -43,23 +39,19 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     protected void Awake() {
         //シーン変わったりしても消えないようにする
-        DontDestroyOnLoad(gameObject);        
+        DontDestroyOnLoad(gameObject);
 
+        //各コンポーネントの参照取得と初期化
         rb = GetComponent<Rigidbody>();
-
-        // "Ground" という名前のレイヤーを取得してマスク化
-        int groundLayerIndex = LayerMask.NameToLayer("Ground");
-        GroundLayer = 1 << groundLayerIndex;
-
-        //GroundCheck変数をアタッチする。
-        GroundCheck = transform.Find("FootRoot");
-
         input = GetComponent<CharacterInput>();
         action = GetComponent<CharacterActions>();
         parameter = GetComponent<CharacterParameter>();
+        animCon = GetComponent<CharacterAnimationController>();
         input.Initialize(this);
         action.Initialize(this);
         parameter.Initialize(this);
+
+        RpcChangeWeapon(weaponController_main.weaponData.ID);
     }
 
     /// <summary>
@@ -102,7 +94,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         if (TeamGlowManager.Instance != null) {
             TeamGlowManager.Instance.RegisterPlayer(this);
         }
-    }   
+    }
 
     /// <summary>
     /// プレイヤー名用セッター
@@ -134,7 +126,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// プレイヤー状態を初期化する関数
     /// </summary>
     public virtual void Initalize() {
-        
+
     }
     /// <summary>
     /// 追加:タハラ クライアント用準備状態切り替え関数
@@ -164,8 +156,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         //　nameをスコア加算関数に送る
         if (parameter.HP <= 0) {
             parameter.HP = 0;
-            //  キルログを流す(最初の引数は一旦仮で海老の番号、本来はバナー画像の出したい番号を入れる)
-            KillLogManager.instance.CmdSendKillLog(4, _name, parameter.PlayerName);
+            //  キルログを流す
+            KillLogManager.instance.CmdSendKillLog(bannerNum, _name, parameter.PlayerName);
             Dead(_name);
             if (PlayerListManager.Instance != null) {
                 // スコア加算
@@ -219,7 +211,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         LocalDeadEffect();
         RespawnDelay();
         //アニメーションは全員に反映
-        RpcDeadAnimation();
+        animCon.RpcDeadAnimation();
         // スコア計算にここから行きます
         if (TryGetComponent<PlayerCombat>(out var combat)) {
             int victimTeam = parameter.TeamID;
@@ -295,14 +287,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
     }
-    /// <summary>
-    /// NetworkAnimatorを使用した結果
-    /// ローカルでの変更によってアニメーション変更がかかるため制作
-    /// </summary>
-    [ClientRpc]
-    private void RpcDeadAnimation() {
-        anim.SetTrigger("Dead");
-    }
 
     [Server]
     private void ResetHealth() {
@@ -376,7 +360,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         isDeadTrigger = false;
     }*/
 
-
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
@@ -410,8 +393,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
     }
 
-    
-
     /// <summary>
     /// 追加:タハラ
     /// アイテムを取ったクライアントの武器の見た目変更
@@ -431,7 +412,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_ID"></param>
     [ClientRpc]
     private void RpcChangeWeapon(int _ID) {
-        Transform handRoot = GetComponent<CharacterBase>().anim.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform handRoot = GetComponent<CharacterAnimationController>().anim.GetBoneTransform(HumanBodyBones.RightHand);
 
         //今現在持っている武器に新たなメッシュを反映
         GameObject currentWeapon = handRoot.GetChild(3).gameObject;
@@ -442,134 +423,14 @@ public abstract class CharacterBase : NetworkBehaviour {
         GameObject newWeapon = Instantiate(modelList.weaponModelList[_ID], handRoot);
         newWeapon.transform.localPosition = Vector3.zero;
         newWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
+        //魔法の杖の場合
+        if(_ID == 20) {
+            newWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+        }
     }
     #endregion
 
     #region 入力受付・入力実行・判定関数
-
-    ///// <summary>
-    ///// 入力の共通ハンドラ
-    ///// </summary>
-    //private void OnInputStarted(string actionName, InputAction.CallbackContext ctx) {
-    //    switch (actionName) {
-    //        case "Jump":
-    //            OnJump(ctx);
-    //            break;
-    //        case "Fire_Main":
-    //            HandleAttack(ctx);
-    //            break;
-    //        case "Fire_Sub":
-    //            HandleAttack(ctx);
-    //            break;
-    //        case "SubWeapon":
-    //            weaponController_sub.TryUseSubWeapon();
-    //            break;
-    //        case "ShowHostUI":
-    //            OnShowHostUI(ctx);
-    //            break;
-    //        case "CameraMenu":
-    //            OnShowCameraMenu(ctx);
-    //            break;
-    //        case "Ready":
-    //            OnReadyPlayer(ctx);
-    //            break;
-    //        case "SendMessage":
-    //            OnSendMessage(ctx);
-    //            break;
-    //        case "SendStamp":
-    //            OnSendStamp(ctx);
-    //            break;
-    //    }
-    //}
-    //private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
-    //    switch (actionName) {
-    //        case "Move":
-    //            OnMove(ctx);
-    //            break;
-    //        case "Jump":
-    //            OnJump(ctx);
-    //            break;
-    //        case "Fire_Main":
-    //            HandleAttack(ctx);
-    //            break;
-    //        case "Fire_Sub":
-    //            HandleAttack(ctx);
-    //            break;
-    //        case "Skill":
-    //            OnUseSkill(ctx);
-    //            break;
-    //        case "Interact":
-    //            OnInteract(ctx);
-    //            break;
-    //        case "Reload":
-    //            OnReload(ctx);
-    //            break;
-    //    }
-    //}
-    //private void OnInputCanceled(string actionName, InputAction.CallbackContext ctx) {
-    //    switch (actionName) {
-    //        case "Move":
-    //            MoveInput = Vector2.zero;
-    //            CmdResetAnimation();
-    //            break;
-    //        case "Fire_Main":
-    //        case "Fire_Sub":
-    //            HandleAttack(ctx);
-    //            break;
-    //    }
-    //}    
-
-    /// <summary>
-    /// 移動
-    /// </summary>
-    /*public void OnMove(InputAction.CallbackContext context) {
-        MoveInput = context.ReadValue<Vector2>();
-        float moveX = MoveInput.x;
-        float moveZ = MoveInput.y;
-        //アニメーション管理
-        ControllMoveAnimation(moveX, moveZ);
-    }*/
-    /// <summary>
-    /// 視点(現在未使用)
-    /// </summary>
-    /*public void OnLook(InputAction.CallbackContext context) {
-        lookInput = context.ReadValue<Vector2>();
-    }*/
-    /// <summary>
-    /// ジャンプ
-    /// </summary>
-    /*public void OnJump(InputAction.CallbackContext context) {
-        // ボタンが押された瞬間だけ反応させる
-        if (context.performed && IsGrounded) {
-            IsJumpPressed = true;
-            bool isJumping = !IsGrounded;
-            anim.SetBool("Jump", isJumping);
-        }
-    }*/
-
-    /// <summary>
-    /// スキル
-    /// </summary
-    //public void OnUseSkill(InputAction.CallbackContext context) {
-    //    if (context.performed)
-    //        StartUseSkill();
-    //}
-
-    /// <summary>
-    /// インタラクト
-    /// </summary>
-    //public void OnInteract(InputAction.CallbackContext context) {
-    //    if (context.performed) Interact();
-    //}
-
-    /// <summary>
-    /// リロード
-    /// </summary>
-    //public void OnReload(InputAction.CallbackContext context) {
-    //    if (context.performed && weaponController_main.ammo < weaponController_main.weaponData.maxAmmo) {
-    //        weaponController_main.CmdReloadRequest();
-    //    }
-    //}
 
     /// <summary>
     /// 追加:タハラ UI表示
@@ -594,7 +455,14 @@ public abstract class CharacterBase : NetworkBehaviour {
             CameraMenu.ToggleMenu();
         }
     }
-    /// <summary>
+
+    #endregion
+
+    #region おれのじゃないやつ
+
+    #region チーム管理関連
+
+        /// <summary>
     /// 追加:タハラ プレイヤーの準備状態切り替え
     /// </summary>
     /// <param name="context"></param>
@@ -649,264 +517,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         }
     }
 
-    /// <summary>
-    /// 移動関数(死亡中は呼ばないでください。)
-    /// </summary>
-    /*protected void MoveControl() {
-        //移動入力が行われている間は移動中フラグを立てる
-        if (MoveInput != Vector2.zero) isMoving = true;
-        else isMoving = false;
-
-        //カメラの向きを取得
-        Transform cameraTransform = Camera.main.transform;
-        //進行方向のベクトルを取得
-        Vector3 forward = cameraTransform.forward;
-        forward.y = 0f;
-        forward.Normalize();
-        //右方向のベクトルを取得
-        Vector3 right = cameraTransform.right;
-        right.y = 0f;
-        right.Normalize();
-        //2つのベクトルを合成
-        moveDirection = forward * MoveInput.y + right * MoveInput.x;
-
-        // カメラの向いている方向をプレイヤーの正面に
-        Vector3 aimForward = forward; // 水平面だけを考慮
-        if (aimForward != Vector3.zero) {
-            Quaternion targetRot = Quaternion.LookRotation(aimForward);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, PlayerConst.TURN_SPEED * Time.deltaTime);
-        }
-
-        // 空中か地上で挙動を分ける
-        Vector3 velocity = rb.velocity;
-        Vector3 targetVelocity = new(moveDirection.x * moveSpeed, velocity.y, moveDirection.z * moveSpeed);
-
-        //地面に立っていたら通常通り
-        if (IsGrounded) {
-            rb.velocity = targetVelocity;
-        }
-        else {
-            // 空中では地上速度に向けてゆるやかに補間（慣性を残す）
-            rb.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
-        }
-    }
-    */   
-
-    /// <summary>
-    /// ジャンプ管理関数(死亡中は呼ばないでください。)
-    /// </summary>
-    /*protected void JumpControl() {
-        // ジャンプ判定
-        if (IsJumpPressed && IsGrounded) {
-            // 現在の速度をリセットしてから上方向に力を加える
-            Vector3 velocity = rb.velocity;
-            velocity.y = 0f;
-            rb.velocity = velocity;
-
-            rb.AddForce(Vector3.up * PlayerConst.JUMP_FORCE, ForceMode.Impulse);
-            IsJumpPressed = false; // 連打防止
-        }
-
-        //ベクトルが上方向に働いている時
-        if (rb.velocity.y > 0) {
-            //追加の重力補正を掛ける
-            rb.velocity += (PlayerConst.JUMP_UPFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
-        }
-        // ベクトルが下方向に働いている時
-        else if (rb.velocity.y < 0) {
-            //追加の重力補正を掛ける
-            rb.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
-            anim.SetBool("Jump", false);
-        }
-
-
-        // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
-        IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, GroundLayer);
-    }
-    */
-
-    /// <summary>
-    /// リスポーン管理関数(死亡中も呼んでください。)
-    /// </summary>
-    /*virtual protected void RespawnControl() {
-        //死亡した瞬間の処理
-        if (isDeadTrigger) {
-            Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
-        }
-        //復活後であるときの処理
-        if (isInvincible) {
-            //復活してからの時間を加算
-            respownAfterTime += Time.deltaTime;
-            //規定時間経過後無敵状態を解除
-            if (respownAfterTime >= PlayerConst.RESPAWN_INVINCIBLE_TIME) {
-                isInvincible = false;
-            }
-        }
-    }*/
-
-    /// <summary>
-    /// Abstruct : スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
-    /// </summary>
-    //abstract protected void AbilityControl();
-
-    /// <summary>
-    /// 攻撃入力のハンドル分岐
-    /// </summary>
-    /*private void HandleAttack(InputAction.CallbackContext context) {
-        //死亡していたら攻撃できない
-        if (isDead || !isLocalPlayer) return;
-
-        //入力タイプで分岐
-        switch (context.phase) {
-            //押した瞬間から
-            case InputActionPhase.Started:
-                isAttackPressed = true;
-                break;
-            //離した瞬間まで
-            case InputActionPhase.Canceled:
-                isAttackPressed = false;
-                StopShootAnim();
-                break;
-            //押した瞬間
-            case InputActionPhase.Performed:
-                isAttackTrigger = true;
-                break;
-        }
-
-    }*/
-    /// <summary>
-    /// 攻撃関数
-    /// </summary>
-    /*virtual public void StartAttack() {
-        if (weaponController_main == null) return;
-
-        if (HostUI.isVisibleUI == true) return;
-        
-        //最後に攻撃した時間を記録
-        attackStartTime = Time.time;
-        // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
-        Vector3 shootDir = GetShootDirection();
-        weaponController_main.CmdRequestAttack(shootDir);
-    }*/    
-
-    /// <summary>
-    /// スキル呼び出し関数
-    /// </summary>
-    //protected void StartUseSkill() {
-    //    if (isCanSkill) {
-    //        equippedSkills[0].Activate(this);
-    //        isCanSkill = false;
-    //        //CT計測時間をリセット
-    //        skillAfterTime = 0;
-    //    }
-    //}
-
-    /// <summary>
-    /// インタラクト関数
-    /// </summary>
-    //protected void Interact() {
-    //    if (isCanPickup) {
-    //        ItemBase item = useCollider.GetComponent<ItemBase>();
-    //        item.Use(gameObject);
-    //        return;
-    //    }
-    //    if (isCanInteruct) {
-    //        if (useTag == "SelectCharacterObject") {
-    //            CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
-    //            select.StartCharacterSelect(gameObject);
-    //            return;
-    //        }
-    //        if (useTag == "Gacha") {
-    //            GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
-    //            gacha.StartGachaSelect(gameObject);
-    //            localUI.gameObject.SetActive(false);
-    //            return;
-    //        }
-    //
-    //    }
-    //}
-
-    #endregion      
-
-    #region おれのじゃないやつ
-
-    #region アニメーション関連
-
-    /// <summary>
-    /// アニメーターのレイヤー切り替え
-    /// </summary>
-    [Server]
-    public void ChangeLayerWeight(int _layerIndex) {
-        //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for (int i = 1, max = anim.layerCount - 1; i < max; i++) {
-            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
-        }
-    }
-
-    /// <summary>
-    /// 移動アニメーションの管理
-    /// </summary>
-    /// <param name="_x"></param>
-    /// <param name="_z"></param>
-    [Command]
-    private void ControllMoveAnimation(float _x, float _z) {
-        ResetRunAnimation();
-        //斜め入力の場合
-        if (_x != 0 && _z != 0) {
-            anim.SetBool("RunL", false);
-            anim.SetBool("RunR", false);
-            if (_z > 0) {
-                currentAnimation = "RunF";
-            }
-            if (_z < 0) {
-                currentAnimation = "RunB";
-            }
-            anim.SetBool(currentAnimation, true);
-            return;
-
-        }
-
-        if (_x > 0 && _z == 0) {
-            currentAnimation = "RunR";
-        }
-        if (_x < 0 && _z == 0) {
-            currentAnimation = "RunL";
-        }
-        if (_x == 0 && _z > 0) {
-            currentAnimation = "RunF";
-        }
-        if (_x == 0 && _z < 0) {
-            currentAnimation = "RunB";
-        }
-        anim.SetBool(currentAnimation, true);
-    }
-
-    /// <summary>
-    /// 移動アニメーションのリセット
-    /// </summary>
-    private void ResetRunAnimation() {
-        anim.SetBool("RunF", false);
-        anim.SetBool("RunR", false);
-        anim.SetBool("RunL", false);
-        anim.SetBool("RunB", false);
-
-        currentAnimation = null;
-    }
-
-    [Command]
-    private void CmdResetAnimation() {
-        ResetRunAnimation();
-    }
-
-    /// <summary>
-    /// 追加:タハラ　入力がなくなったらショットアニメーション終了
-    /// </summary>
-    [Command]
-   public void StopShootAnim() {
-        //アニメーション終了
-        anim.SetBool("Shoot", false);
-    }
-
     #endregion
 
     #region バフ関連変数
@@ -914,6 +524,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     private Coroutine healCoroutine;
     private Coroutine speedCoroutine;
     private Coroutine attackCoroutine;
+    private Coroutine damageCutCoroutine;
+
     [Header("バフに使用するエフェクトデータ")]
     [SerializeField] private EffectData buffEffect;
 
@@ -922,6 +534,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     private readonly int SPEED_BUFF_EFFECT = 1;
     private readonly int HEAL_BUFF_EFFECT = 2;
     private readonly int DEBUFF_EFFECT = 3;
+
+    //近くにいるか判別
+    [SerializeField] public float allyCheckRadius = 8f;
+    [SerializeField] public LayerMask allyLayer;
 
     #endregion  
 
@@ -1012,6 +628,28 @@ public abstract class CharacterBase : NetworkBehaviour {
         parameter.moveSpeed = parameter.defaultMoveSpeed;
         DestroyChildrenWithTag(EFFECT_TAG);
         speedCoroutine = null;
+    }
+
+    /// <summary>
+    /// 古谷作成
+    /// 被ダメージ倍率変更処理
+    /// </summary>
+    [Command]
+    public void DamageCut(int _value, float _usingTime) {
+        if (speedCoroutine != null) StopCoroutine(damageCutCoroutine);
+
+        damageCutCoroutine = StartCoroutine(DamageCutRoutine(_value, _usingTime));
+    }
+
+    /// <summary>
+    /// 古谷
+    ///  時間まで被ダメを下げておく実行処理(コルーチン)
+    /// </summary>
+    private IEnumerator DamageCutRoutine(int _value, float _duration) {
+        parameter.DamageRatio = _value;
+        yield return new WaitForSeconds(_duration);
+        parameter.DamageRatio = 100;
+        damageCutCoroutine = null;
     }
 
     /// <summary>

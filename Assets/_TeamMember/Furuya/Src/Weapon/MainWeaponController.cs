@@ -16,11 +16,13 @@ public class MainWeaponController : NetworkBehaviour {
     private CharacterEnum.CharaterType charaterType;
 
     private CharacterBase characterBase; // 名前を取得するため
+    private CharacterAnimationController animCon;
     private PlayerLocalUIController playerUI;
 
     private void Awake() {
         base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
+        animCon = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
@@ -76,7 +78,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        characterBase.anim.SetBool("Shoot", true);
+        animCon.anim.SetBool("Shoot", true);
     }
 
     /// <summary>
@@ -107,6 +109,7 @@ public class MainWeaponController : NetworkBehaviour {
                 //ServerMagicAttack(direction);
                 break;
         }
+        characterBase.parameter.AttackTrigger = true;
     }
 
     /// <summary>
@@ -133,7 +136,6 @@ public class MainWeaponController : NetworkBehaviour {
         weaponData = data;
         ammo = weaponData.ammo;
         playerUI.LocalUIChanged();
-        Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 
     /// <summary>
@@ -154,7 +156,7 @@ public class MainWeaponController : NetworkBehaviour {
         playerUI.LocalUIChanged();
         characterBase.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
         //見た目変更
-        characterBase.GetComponent<CharacterBase>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
+        characterBase.GetComponent<CharacterAnimationController>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 
@@ -319,6 +321,17 @@ public class MainWeaponController : NetworkBehaviour {
                 direction
             );
         }
+        else if (proj.TryGetComponent(out DoTArea dotArea)) {
+            int teamID = characterBase?.parameter.TeamID ?? 0;
+            Vector3 Direction = transform.forward;
+            dotArea.Init(
+                teamID,
+                characterBase.parameter.PlayerName,
+                magicData.projectileSpeed,
+                magicData.damage,
+                Direction
+                );
+        }
     }
 
     /// <summary>
@@ -417,7 +430,7 @@ public class MainWeaponController : NetworkBehaviour {
     [Server]
     public void ReloadRequest() {
         //射撃中やリロード中ならやめる
-        if (characterBase.parameter.isAttackPressed && characterBase.parameter.isReloading) return;
+        if (characterBase.input.AttackPressed && characterBase.parameter.isReloading) return;
         //使っている武器が銃でなければやめる
         if (weaponData.type != WeaponType.Gun) return;
 
@@ -442,8 +455,9 @@ public class MainWeaponController : NetworkBehaviour {
     /// <returns></returns>
     public int GenerateWeaponIndex(string _weaponName) {
         return _weaponName switch {
-            "HandGun" or "Punch" or "FireMagic" => 1,
-            "Assult" or "BurstAssult" or "Spear" or "IceMagic" => 2,
+            "HandGun" or "Punch" or "FireMagic" or "IceMagic" or "MagicRain" => 1,
+            "Assult" or "BurstAssult" or "Spear" or "IceMagic"  or "Katana" or "Lightsaver" 
+            or "KnifeDefault" or "PizzaCutter" or "Spear" => 2,
             "RPG" => 3,
             "Sniper" => 4,
             "Minigun" => 5,

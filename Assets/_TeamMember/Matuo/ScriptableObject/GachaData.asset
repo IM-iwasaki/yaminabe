@@ -15,37 +15,62 @@ MonoBehaviour:
   rarityRates:
   - rarityName: "\u30B3\u30E2\u30F3"
     rarity: 0
-    rate: 70
+    rate: 75
   - rarityName: "\u30EC\u30A2"
     rarity: 1
     rate: 20
   - rarityName: "\u30A8\u30D4\u30C3\u30AF"
     rarity: 2
-    rate: 9
+    rate: 4
   - rarityName: "\u30EC\u30B8\u30A7\u30F3\u30C0\u30EA\u30FC"
     rarity: 3
     rate: 1
   commonItems:
   - characterName: Chicken
     itemName: Default
+    rarity: 0
     rate: 10
     resultPrefab: {fileID: 3548868566056176881, guid: 98d6a2fbec6271046aea2df749876bb7, type: 3}
-  - characterName: Alien
-    itemName: Another
+  - characterName: Bob
+    itemName: Default
+    rarity: 0
     rate: 10
-    resultPrefab: {fileID: 3108797039877070855, guid: 9147bb052d83cb748a579c1a6451d39e, type: 3}
+    resultPrefab: {fileID: 1762018173025169312, guid: 5811f4236f7f88b41b2a1da538566706, type: 3}
+  - characterName: Sam
+    itemName: Default
+    rarity: 0
+    rate: 10
+    resultPrefab: {fileID: 909545961731707779, guid: 5cacba29a1abb9a4aa2b32001a835a1f, type: 3}
+  - characterName: Mike
+    itemName: Default
+    rarity: 0
+    rate: 10
+    resultPrefab: {fileID: 359554459282209763, guid: 586bab38c75b5b147b9c1df83c23142b, type: 3}
+  - characterName: Jon
+    itemName: Default
+    rarity: 0
+    rate: 10
+    resultPrefab: {fileID: 79219089695756003, guid: 55d87a7c8e027d24fb93e6d6cd2a1e93, type: 3}
   rareItems:
   - characterName: Alien
-    itemName: Gold
+    itemName: Another
+    rarity: 1
     rate: 10
-    resultPrefab: {fileID: 3108797039877070855, guid: ea8ee7ded32385c48a0ec769b5ee454f, type: 3}
+    resultPrefab: {fileID: 3108797039877070855, guid: 9147bb052d83cb748a579c1a6451d39e, type: 3}
   epicItems:
   - characterName: Chicken
     itemName: Crazy
-    rate: 9
+    rarity: 2
+    rate: 10
     resultPrefab: {fileID: 3548868566056176881, guid: 80df7670b3ce0484e934d23878f7de37, type: 3}
   legendaryItems:
   - characterName: Chicken
     itemName: Gold
+    rarity: 3
     rate: 10
     resultPrefab: {fileID: 3548868566056176881, guid: 15fa7e1f49cf3284ba1465b20791ea8b, type: 3}
+  - characterName: Alien
+    itemName: Gold
+    rarity: 3
+    rate: 10
+    resultPrefab: {fileID: 3108797039877070855, guid: ea8ee7ded32385c48a0ec769b5ee454f, type: 3}

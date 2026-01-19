@@ -31,8 +31,10 @@ public class GeneralCharacter : CharacterBase {
     void Update() {
         if(!isLocalPlayer) return;  //©•ª‚¾‚¯ˆ—‚·‚é         
 
+        parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
+
         //RespawnControl();    
-               
+
         //€‚ñ‚Å‚¢‚½‚çˆÈ~‚Ìˆ—‚Ís‚í‚È‚¢B
         //if (isDead) return;
 

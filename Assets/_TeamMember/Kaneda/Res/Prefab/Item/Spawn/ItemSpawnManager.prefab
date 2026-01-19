@@ -53,23 +53,43 @@ MonoBehaviour:
   weaponCategory:
     items:
     - prefab: {fileID: 7444770962804427274, guid: 3eb659f932228ff4290b4f91447a2abe, type: 3}
-      spawnChancePercent: 40
+      spawnChancePercent: 30
     - prefab: {fileID: 6287281268592559782, guid: c7b92192aa1e78b479168acd4ed896d8, type: 3}
-      spawnChancePercent: 30
+      spawnChancePercent: 20
     - prefab: {fileID: 1247223829425721374, guid: 2ca53a5a5912f24438eabe43ced5d719, type: 3}
+      spawnChancePercent: 10
+    - prefab: {fileID: 552193186672911617, guid: 6263b0922afcea341a532ff7d9fbd33a, type: 3}
+      spawnChancePercent: 20
+    - prefab: {fileID: 3823321262691816068, guid: 09243c26b0d237140a23653b31937436, type: 3}
+      spawnChancePercent: 40
+    - prefab: {fileID: 2068966698171888845, guid: 40cbcd4b81f2e7d49af53774e86887f5, type: 3}
       spawnChancePercent: 30
-    spawnProbabilityPercent: 80
+    - prefab: {fileID: 3323609523921369958, guid: 714b30ec2f9afd943a788f12784c86df, type: 3}
+      spawnChancePercent: 25
+    - prefab: {fileID: 8430155969835752627, guid: 77b330b3028ed91439d5239d616997bd, type: 3}
+      spawnChancePercent: 40
+    - prefab: {fileID: 3012563358345653915, guid: 648f6887f87911c408c837dcc82cf4ea, type: 3}
+      spawnChancePercent: 35
+    - prefab: {fileID: 2324029550088476480, guid: 823966e8d70b238439ee73fbe3fd95b5, type: 3}
+      spawnChancePercent: 25
+    - prefab: {fileID: 2784461969116156225, guid: c51184baab41b394388e31ec7f922154, type: 3}
+      spawnChancePercent: 30
+    - prefab: {fileID: 2605843414203722085, guid: 25a71dc4369ec474287b8de36adffbe3, type: 3}
+      spawnChancePercent: 15
+    - prefab: {fileID: 5023171486721049170, guid: 8d030b5b47b3c3c45a9fa83f36b4e1dd, type: 3}
+      spawnChancePercent: 20
+    - prefab: {fileID: 4683901493550377598, guid: 44ceca121045c5444b3505fb964e2d53, type: 3}
+      spawnChancePercent: 30
+    spawnProbabilityPercent: 100
   consumableCategory:
     items:
     - prefab: {fileID: 5141172646852832494, guid: 70db3d2a271e49e41ae4f05d1d2f55f4, type: 3}
-      spawnChancePercent: 40
-    - prefab: {fileID: 5141172646852832494, guid: 8a2d4c1e194b38e418983356e6874884, type: 3}
-      spawnChancePercent: 30
+      spawnChancePercent: 60
     - prefab: {fileID: 5141172646852832494, guid: 00ed781235c86f04c9f46d3242f9f8b1, type: 3}
-      spawnChancePercent: 30
-    spawnProbabilityPercent: 90
-  weaponSpawnRatio: 0.4
-  respawnInterval: 30
+      spawnChancePercent: 40
+    spawnProbabilityPercent: 100
+  weaponSpawnRatio: 0.7
+  respawnInterval: 15
 --- !u!114 &7566513130517295199
 MonoBehaviour:
   m_ObjectHideFlags: 0

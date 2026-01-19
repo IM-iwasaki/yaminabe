@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 265829023263096712}
   - component: {fileID: 6230084460255312144}
   - component: {fileID: 7373200844315035111}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "muni\xE7\xE3o.004"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,9 +95,9 @@ GameObject:
   - component: {fileID: -378150004805754496}
   - component: {fileID: 8851532964826018187}
   - component: {fileID: -5150787487857035648}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: revolver
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -145,7 +145,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1
+  m_Radius: 3
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8851532964826018187
 MonoBehaviour:
@@ -166,8 +166,8 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   canDestroy: 1
-  weaponType: 0
-  weaponData: {fileID: 0}
+  weaponType: 1
+  weaponData: {fileID: 11400000, guid: 81dc79bc3dd45e8478435cd0c00aa928, type: 2}
 --- !u!114 &-5150787487857035648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,7 +196,7 @@ GameObject:
   - component: {fileID: 4044167878024819935}
   - component: {fileID: 249508609180520828}
   - component: {fileID: 6082308901613254118}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "muni\xE7\xE3o"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 3940839744030130421}
   - component: {fileID: 594041965611681326}
   - component: {fileID: 436860238023249357}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "muni\xE7\xE3o.003"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -362,7 +362,7 @@ GameObject:
   - component: {fileID: 2700806556413932853}
   - component: {fileID: 2166014863271323692}
   - component: {fileID: 4255110745082956388}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "muni\xE7\xE3o.005"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +445,7 @@ GameObject:
   - component: {fileID: 363767603355214019}
   - component: {fileID: 6376171421047488641}
   - component: {fileID: 7279679094268176266}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "muni\xE7\xE3o.002"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -528,7 +528,7 @@ GameObject:
   - component: {fileID: 2294297708631955461}
   - component: {fileID: 3230933374518272934}
   - component: {fileID: 1819370695797458704}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "muni\xE7\xE3o.001"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -611,7 +611,7 @@ GameObject:
   - component: {fileID: 6197781309421938228}
   - component: {fileID: 2568500254521174978}
   - component: {fileID: 4464551500306060195}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ferro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -694,7 +694,7 @@ GameObject:
   - component: {fileID: 8149794110697067547}
   - component: {fileID: 5861969711860231583}
   - component: {fileID: 2969069099597287980}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ferro.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -777,7 +777,7 @@ GameObject:
   - component: {fileID: 7923279006878715575}
   - component: {fileID: 1142890792359637625}
   - component: {fileID: 845235096391561825}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: tambor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

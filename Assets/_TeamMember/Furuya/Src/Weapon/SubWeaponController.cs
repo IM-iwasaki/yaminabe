@@ -3,6 +3,7 @@ using Mirror;
 using System.Collections;
 using Mirror.Examples.Basic;
 using static CharacterEnum;
+using Mirror.Examples.Benchmark;
 
 /// <summary>
 /// サブ武器操作用
@@ -15,20 +16,52 @@ public class SubWeaponController : NetworkBehaviour {
     private bool isRecharging;
 
     private CharacterBase characterBase; // チームIDなどを取得するため
+    private CharacterAnimationController characterAnimationController;
     private PlayerLocalUIController playerUI;
+    private CharacterSelectManager characterSelectManager;
+    private GachaSystem gachaSystem;
+
 
     public void Awake() {
         characterBase = GetComponent<CharacterBase>();
+        characterAnimationController = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
+
+        characterSelectManager = FindObjectOfType<CharacterSelectManager>();
+        gachaSystem = FindObjectOfType<GachaSystem>();
 
         if (subWeaponData != null)
             currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
     }
 
     /// <summary>
+    /// UI 操作中などでサブ武器を使えない状態か
+    /// </summary>
+    private bool IsUIBlocked() {
+
+        if (!characterBase.isLocalPlayer)
+            return true;
+
+        if (characterSelectManager != null &&
+            characterSelectManager.IsCharacterSelectActive())
+            return true;
+
+        if (gachaSystem != null &&
+            gachaSystem.IsGachaActive())
+            return true;
+
+        return false;
+    }
+
+
+    /// <summary>
     /// サブ武器の使用可否判定
     /// </summary>
     public void TryUseSubWeapon() {
+        // キャラ選択・ガチャ中ならブロック
+        if (IsUIBlocked())
+            return;
+
         if (subWeaponData == null || currentUses <= 0 || !characterBase.isLocalPlayer) return;
         CmdUseSubWeapon();
     }
@@ -158,11 +191,31 @@ public class SubWeaponController : NetworkBehaviour {
     private void UseItem() {
         if (subWeaponData is not ItemData itemData) return;
 
-        // 回復アイテムの場合
-        if (itemData.itemType == ItemType.HealthPack) {
-            //回復処理をここに追加
+        switch (itemData.itemType) {
+
+            case ItemType.HealthPack: {
+                if (itemData is HealthPackData hpData )
+                    characterBase.Heal(hpData.healAmount, 1);
+                break;
+            }
+
+            case ItemType.Shield: {
+                if (itemData is ShieldData shieldData) {
+                    SpawnShieldBarricade(shieldData);
+                }
+                break;
+            }
+
+            case ItemType.SpeedBoost: {
+                if (itemData is SpeedBoostData speedData) {
+                    characterBase.MoveSpeedBuff(
+                        speedData.speedMultiplier,
+                        speedData.duration
+                    );
+                }
+                break;
+            }
         }
-        // その他のアイテムタイプの処理はここに追加
     }
 
     /// <summary>
@@ -212,6 +265,6 @@ public class SubWeaponController : NetworkBehaviour {
 
     [ClientRpc]
     private void ThrowAnimation() {
-        characterBase.anim.SetTrigger("Throw");
+        characterAnimationController.anim.SetTrigger("Throw");
     }
 }

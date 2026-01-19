@@ -11,6 +11,7 @@ public class CharacterActions : NetworkBehaviour {
     private Rigidbody rb;
     private Collider useCollider;
     private string useTag;
+    private CameraChangeController cameraManager;
 
     //移動中か
     public bool isMoving { get; private set; } = false;
@@ -26,7 +27,34 @@ public class CharacterActions : NetworkBehaviour {
     //スキルを使用できるか
     public bool isCanSkill { get; private set; }
 
+    // キャラクター選択管理
+    private CharacterSelectManager characterSelectManager;
+
+    // ガチャ管理
+    private GachaSystem gachaSystem;
+
+    private HudManager hud;
+
+
+
     private void Update() {
+        // ローカルプレイヤー以外は処理しない
+        if (!isLocalPlayer) return;
+
+        // キャラ選択中 or ガチャ中なら全操作ブロック
+        if ((characterSelectManager != null && characterSelectManager.IsCharacterSelectActive()) ||
+            (gachaSystem != null && gachaSystem.IsGachaActive())
+        ) {
+            // HUD（レティクル）非表示
+            if(hud != null) hud.SetReticleVisible(false);
+
+            // 移動を完全停止
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            isMoving = false;
+            return;
+        }
+        if(hud != null) hud.SetReticleVisible(true);
+
         JumpControl();
 
         //攻撃入力がある間攻撃関数を呼ぶ(間隔の制御はMainWeaponControllerに一任)
@@ -36,7 +64,7 @@ public class CharacterActions : NetworkBehaviour {
         HandleInteract();
 
         MoveControl();
-        param.GroundCheck(core.transform.position);
+        param.GroundCheck(core.parameter.footPoint.position);
         
         AbilityControl();
     }
@@ -47,12 +75,25 @@ public class CharacterActions : NetworkBehaviour {
         input = core.input;
         rb = core.GetComponent<Rigidbody>();
 
+        // シーンに1つだけ存在する想定
+        characterSelectManager = FindObjectOfType<CharacterSelectManager>();
+        gachaSystem = FindObjectOfType<GachaSystem>();
+        hud = FindObjectOfType<HudManager>();
+
+
+
         isCanPickup = false;
         isCanInteruct = false;
         isCanSkill = false;
+
+        cameraManager = FindObjectOfType<CameraChangeController>();
     }
 
     private void MoveControl() {
+
+        
+
+
         //移動入力が行われている間は移動中フラグを立てる
         if (input.MoveInput != Vector2.zero) isMoving = true;
         else isMoving = false;
@@ -110,11 +151,7 @@ public class CharacterActions : NetworkBehaviour {
         else if (rb.velocity.y < 0) {
             //追加の重力補正を掛ける
             rb.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
-            //anim.SetBool("Jump", false);
-        }
-
-        // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
-        //IsGrounded = Physics.CheckSphere(GroundCheck.position, PlayerConst.GROUND_DISTANCE, core.GroundLayer);
+        }       
     }
 
     /// <summary>
@@ -150,6 +187,8 @@ public class CharacterActions : NetworkBehaviour {
     }
 
     private void HandleInteract() {
+        if (cameraManager != null && cameraManager.IsCameraTransitioning())
+            return;
         if (!input.InteractTriggered) return;
         input.InteractTriggered = false;
 
@@ -162,12 +201,13 @@ public class CharacterActions : NetworkBehaviour {
             if (useTag == "SelectCharacterObject") {
                 CharacterSelectManager select = useCollider.GetComponentInParent<CharacterSelectManager>();
                 select.StartCharacterSelect(gameObject);
+                core.localUI.OffLocalUIObject();
                 return;
             }
             if (useTag == "Gacha") {
                 GachaSystem gacha = useCollider.GetComponentInParent<GachaSystem>();
                 gacha.StartGachaSelect(gameObject);
-                core.localUI.gameObject.SetActive(false);
+                core.localUI.OffLocalUIObject();
                 return;
             }
 

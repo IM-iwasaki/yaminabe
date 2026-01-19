@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3351570236941265075
+--- !u!1 &701318076807842174
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7029848554359856314}
-  - component: {fileID: 290341832529678872}
-  - component: {fileID: 2781193644398025927}
-  - component: {fileID: 105732926404849627}
-  - component: {fileID: -8421365556318584830}
-  - component: {fileID: -6381680384408082335}
-  m_Layer: 0
+  - component: {fileID: 6764500568548598665}
+  - component: {fileID: 721269181257512120}
+  - component: {fileID: 7484443687317564088}
+  m_Layer: 7
   m_Name: Spear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7029848554359856314
+--- !u!4 &6764500568548598665
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3351570236941265075}
+  m_GameObject: {fileID: 701318076807842174}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalRotation: {x: -0.6442918, y: 0.2913557, z: -0.29135573, w: 0.6442917}
+  m_LocalPosition: {x: -0.835, y: -0.525, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &290341832529678872
+  m_Father: {fileID: 4558989808593794513}
+  m_LocalEulerAnglesHint: {x: -41.334, y: 90, z: -90}
+--- !u!33 &721269181257512120
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3351570236941265075}
+  m_GameObject: {fileID: 701318076807842174}
   m_Mesh: {fileID: 900222686236838700, guid: 34fa373c5db5f0644a7c529c055c885f, type: 3}
---- !u!23 &2781193644398025927
+--- !u!23 &7484443687317564088
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3351570236941265075}
+  m_GameObject: {fileID: 701318076807842174}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -86,13 +83,48 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &105732926404849627
+--- !u!1 &4683901493550377598
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4558989808593794513}
+  - component: {fileID: 5648269340910162594}
+  - component: {fileID: 3871770172664202350}
+  - component: {fileID: 4241174412889199443}
+  m_Layer: 7
+  m_Name: Spear
+  m_TagString: Item
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4558989808593794513
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4683901493550377598}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 6764500568548598665}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &5648269340910162594
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3351570236941265075}
+  m_GameObject: {fileID: 4683901493550377598}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -107,13 +139,13 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-8421365556318584830
+--- !u!114 &3871770172664202350
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3351570236941265075}
+  m_GameObject: {fileID: 4683901493550377598}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed0b112ba535525468e07c6828516b66, type: 3}
@@ -127,21 +159,21 @@ MonoBehaviour:
   icon: {fileID: 0}
   canDestroy: 1
   weaponType: 0
-  weaponData: {fileID: 0}
---- !u!114 &-6381680384408082335
+  weaponData: {fileID: 11400000, guid: 7e261f259fc91b64e9263e4bbe4a7831, type: 2}
+--- !u!114 &4241174412889199443
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3351570236941265075}
+  m_GameObject: {fileID: 4683901493550377598}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 2276137709
+  _assetId: 698524042
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
