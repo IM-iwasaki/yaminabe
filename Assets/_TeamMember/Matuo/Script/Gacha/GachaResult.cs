@@ -19,13 +19,15 @@ public class GachaResult : MonoBehaviour {
     /// </summary>
     public event Action OnResultAnimationFinished;
 
-    #region Public API
-
     public void Clear() {
+        // 進行中の演出をすべて止める
+        StopAllCoroutines();
+
         if (resultCanvas == null) return;
 
         foreach (Transform child in resultCanvas.transform) {
-            Destroy(child.gameObject);
+            if (child != null)
+                Destroy(child.gameObject);
         }
     }
 
@@ -46,8 +48,6 @@ public class GachaResult : MonoBehaviour {
 
         StartCoroutine(ShowMultipleRoutine(items));
     }
-
-    #endregion
 
     #region Canvas / Camera
 
@@ -86,7 +86,7 @@ public class GachaResult : MonoBehaviour {
 
     #endregion
 
-    #region Multiple Flow
+    #region 10連演出
 
     private IEnumerator ShowMultipleRoutine(List<GachaItem> items) {
         float iconSize = 256f;
@@ -125,6 +125,8 @@ public class GachaResult : MonoBehaviour {
         GachaItem item,
         float iconSize
     ) {
+        if (parent == null) yield break;
+
         Color rarityColor = GetRarityColor(item.rarity);
 
         GameObject root = new GameObject(item.itemName + "_Root");
@@ -132,6 +134,9 @@ public class GachaResult : MonoBehaviour {
 
         RectTransform rootRT = root.AddComponent<RectTransform>();
         rootRT.sizeDelta = new Vector2(iconSize + 40, iconSize + 40);
+
+        // 最初は非表示
+        rootRT.localScale = Vector3.zero;
 
         Image glow = new GameObject("Glow").AddComponent<Image>();
         glow.transform.SetParent(root.transform, false);
@@ -148,6 +153,7 @@ public class GachaResult : MonoBehaviour {
         icon.transform.SetParent(root.transform, false);
         icon.rectTransform.sizeDelta = new Vector2(iconSize, iconSize);
 
+        // 撮影対象生成
         GameObject temp = Instantiate(item.resultPrefab);
         temp.SetActive(true);
         SetLayerRecursively(temp, gachaRenderLayer);
@@ -163,12 +169,16 @@ public class GachaResult : MonoBehaviour {
 
         yield return new WaitForEndOfFrame();
 
-        resultCamera.Render();
+        if (resultCamera != null)
+            resultCamera.Render();
 
         icon.texture = rtTex;
         resultCamera.targetTexture = null;
 
         Destroy(temp);
+
+        // 破棄対策済みポップ演出
+        StartCoroutine(PopBounce(rootRT));
 
         yield return new WaitForSeconds(0.15f);
     }
@@ -204,6 +214,42 @@ public class GachaResult : MonoBehaviour {
             glow.color = new Color(baseColor.r, baseColor.g, baseColor.b, alpha);
             yield return null;
         }
+    }
+
+    /// <summary>
+    /// UIが出現したときに少し跳ねるポップ演出（Destroy安全版）
+    /// </summary>
+    private IEnumerator PopBounce(RectTransform rt) {
+        if (rt == null) yield break;
+
+        float t = 0f;
+
+        Vector3 start = Vector3.zero;
+        Vector3 overshoot = Vector3.one * 1.15f;
+        Vector3 end = Vector3.one;
+
+        // 0 → 少し大きく
+        while (t < 1f) {
+            if (rt == null) yield break;
+
+            t += Time.deltaTime * 10f;
+            rt.localScale = Vector3.Lerp(start, overshoot, t);
+            yield return null;
+        }
+
+        t = 0f;
+
+        // 少し大きい → 通常サイズ
+        while (t < 1f) {
+            if (rt == null) yield break;
+
+            t += Time.deltaTime * 12f;
+            rt.localScale = Vector3.Lerp(overshoot, end, t);
+            yield return null;
+        }
+
+        if (rt != null)
+            rt.localScale = Vector3.one;
     }
 
     #endregion
