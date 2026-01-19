@@ -423,7 +423,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         GameObject newWeapon = Instantiate(modelList.weaponModelList[_ID], handRoot);
         //魔法の杖の場合
         if(_ID == 20) {
-            newWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+            //newWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
         }
     }
     #endregion
