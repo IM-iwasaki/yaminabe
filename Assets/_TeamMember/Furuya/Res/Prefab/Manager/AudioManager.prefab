@@ -52,56 +52,56 @@ MonoBehaviour:
   bgmList:
   - name: "\u30B2\u30FC\u30E01"
     clip: {fileID: 8300000, guid: 710f6c2508e8d974982aaa7723cc10fc, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     minDistance: 1
     maxDistance: 500
   - name: "\u30B2\u30FC\u30E02"
     clip: {fileID: 8300000, guid: 3657741ca8398ae459495c3311b1975d, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     minDistance: 1
     maxDistance: 500
   - name: "\u30ED\u30D3\u30FC"
     clip: {fileID: 8300000, guid: e3c96d181c6e51d4cb242e49837be2e0, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     minDistance: 1
     maxDistance: 500
   worldSEList:
   - name: Explode
     clip: {fileID: 8300000, guid: c3bb2d7eb7f9a554eb001ba6eef34088, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     minDistance: 1
     maxDistance: 75
   - name: RocketLauncher
     clip: {fileID: 8300000, guid: 20f1dc2bd918f4a41b55d6afcb19b4f6, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     minDistance: 1
     maxDistance: 25
   - name: Gun
     clip: {fileID: 8300000, guid: 87ef11dfc453fd04a9bd16cf08b59137, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     minDistance: 1
     maxDistance: 25
   - name: Sniper
     clip: {fileID: 8300000, guid: 87ef11dfc453fd04a9bd16cf08b59137, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     minDistance: 1
     maxDistance: 25
   - name: Fire
     clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     minDistance: 1
     maxDistance: 25
   - name: Punch
     clip: {fileID: 8300000, guid: 7bda3da61dcc3ea4ebb9538f47646895, type: 3}
-    volume: 1
+    volume: 0.2
     pitch: 1
     minDistance: 1
     maxDistance: 25
