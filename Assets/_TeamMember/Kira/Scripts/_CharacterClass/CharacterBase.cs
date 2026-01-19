@@ -421,8 +421,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         //新たに武器を生成
         WeaponModelList modelList = FindAnyObjectByType<WeaponModelList>();
         GameObject newWeapon = Instantiate(modelList.weaponModelList[_ID], handRoot);
-        newWeapon.transform.localPosition = Vector3.zero;
-        newWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 90.0f);
         //魔法の杖の場合
         if(_ID == 20) {
             newWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
