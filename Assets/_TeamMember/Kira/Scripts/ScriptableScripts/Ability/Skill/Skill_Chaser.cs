@@ -45,9 +45,10 @@ public class Skill_Chaser : SkillBase {
                 //áŠ±‚Ì’x‰„‚ğ“ü‚ê‚Ä’Ç‰ÁUŒ‚”­“®
                 RequestExtraAttackWithDelay(intervalDelay, user);
             }
-        }
-        //ƒXƒLƒ‹g—p’†‚¾‚Á‚½‚çMPÁ”ï‚ğ‘ŠE
-        if (user.parameter.AttackTrigger) user.parameter.MP += 4;
+
+            //UŒ‚‚µ‚½uŠÔ‚ÉMPÁ”ï‚ğ‘ŠE
+            if (user.parameter.AttackTrigger) user.parameter.MP += 4;
+        }       
     }
 
     //’x‰„‚ğ‚©‚¯‚Ä’Ç‰ÁUŒ‚ŠJn‚Ì‡}‚ğ‘—‚é

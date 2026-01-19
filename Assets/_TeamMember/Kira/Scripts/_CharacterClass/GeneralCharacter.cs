@@ -1,8 +1,3 @@
-using Mirror;
-using System.Linq;
-using UnityEngine;
-using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
-
 //
 //  @file   Second_CharacterClass
 //
@@ -37,10 +32,6 @@ public class GeneralCharacter : CharacterBase {
 
         //€‚ñ‚Å‚¢‚½‚çˆÈ~‚Ìˆ—‚Ís‚í‚È‚¢B
         //if (isDead) return;
-
-        //MoveControl();
-        //JumpControl();       
-        //AbilityControl();
     }
 
     public override void Initalize() {

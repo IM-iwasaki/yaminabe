@@ -25,6 +25,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField] TextMeshProUGUI[] subWeaponText;
     //表示・非表示状態切り替え用
     [SerializeField] GameObject mpBar;
+    [SerializeField] GameObject mpUnderBar;
 
     /// <summary>
     /// バー補正用定数
@@ -205,9 +206,11 @@ public class PlayerLocalUIController : NetworkBehaviour {
         //MPを必要とする職業かでMPの表示非表示を分ける
         if (player.weaponController_main.weaponData.type == WeaponType.Magic) {
             mpBar.SetActive(true);
+            mpUnderBar.SetActive(true);
         }
         else {
             mpBar.SetActive(false);
+            mpUnderBar.SetActive(false);
         }
 
         //ステータス系の初期化
