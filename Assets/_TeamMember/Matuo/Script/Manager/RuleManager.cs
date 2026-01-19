@@ -44,6 +44,8 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         foreach (int teamId in new int[] { 0, 1 }) {
             SetInitialScore(teamId, initialScore);
         }
+        if (hasDistributedRewards)
+            hasDistributedRewards = false;
     }
 
     /// <summary>
@@ -257,7 +259,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             teamScores = teamScoreList.ToArray(),
         };
 
-        ResultManager.Instance.ShowTeamResult(data);
+         ResultManager.Instance.ShowTeamResult(data);
     }
 
     /// <summary>
