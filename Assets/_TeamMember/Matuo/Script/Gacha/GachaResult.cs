@@ -5,22 +5,27 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// ガチャ結果表示専用のクラス
+/// ガチャ結果表示専用クラス
 /// </summary>
 public class GachaResult : MonoBehaviour {
 
     private Canvas resultCanvas;
     private Camera resultCamera;
-
     private int gachaRenderLayer;
 
     /// <summary>
-    /// 結果演出がすべて完了したときに呼ばれる
+    /// すべての結果表示演出が完了したときに通知されるイベント
     /// </summary>
     public event Action OnResultAnimationFinished;
 
+    [Header("結果表示SE（AudioManager）")]
+    [SerializeField] private string resultSEName = "GachaResult";
+
+    /// <summary>
+    /// 結果表示UIと進行中の演出をすべてクリアする
+    /// ガチャ画面を閉じたときなどに呼ばれる
+    /// </summary>
     public void Clear() {
-        // 進行中の演出をすべて止める
         StopAllCoroutines();
 
         if (resultCanvas == null) return;
@@ -31,6 +36,9 @@ public class GachaResult : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// 単発ガチャの結果を表示する
+    /// </summary>
     public void ShowSingle(GachaItem item) {
         if (item == null || item.resultPrefab == null) return;
 
@@ -40,6 +48,9 @@ public class GachaResult : MonoBehaviour {
         StartCoroutine(ShowSingleRoutine(item));
     }
 
+    /// <summary>
+    /// 複数（10連）ガチャの結果を表示する
+    /// </summary>
     public void ShowMultiple(List<GachaItem> items) {
         if (items == null || items.Count == 0) return;
 
@@ -51,6 +62,9 @@ public class GachaResult : MonoBehaviour {
 
     #region Canvas / Camera
 
+    /// <summary>
+    /// 結果表示用 Canvas を生成・確保する
+    /// </summary>
     private void EnsureCanvas() {
         if (resultCanvas != null) return;
 
@@ -62,6 +76,9 @@ public class GachaResult : MonoBehaviour {
         obj.AddComponent<GraphicRaycaster>();
     }
 
+    /// <summary>
+    /// 結果撮影用 Camera を生成・確保する
+    /// </summary>
     private void EnsureCamera() {
         if (resultCamera != null) return;
 
@@ -74,20 +91,20 @@ public class GachaResult : MonoBehaviour {
         resultCamera.cullingMask = 1 << gachaRenderLayer;
         resultCamera.enabled = false;
     }
-
     #endregion
 
-    #region 単発演出
-
+    #region ガチャ演出
+    /// <summary>
+    /// 単発ガチャ結果表示の一連の演出
+    /// </summary>
     private IEnumerator ShowSingleRoutine(GachaItem item) {
         yield return CreateResultUIRoutine(resultCanvas.transform, item, 256f);
         OnResultAnimationFinished?.Invoke();
     }
 
-    #endregion
-
-    #region 10連演出
-
+    /// <summary>
+    /// 複数ガチャ（10連）結果表示の一連の演出
+    /// </summary>
     private IEnumerator ShowMultipleRoutine(List<GachaItem> items) {
         float iconSize = 256f;
         float spacing = 10f;
@@ -115,11 +132,12 @@ public class GachaResult : MonoBehaviour {
 
         OnResultAnimationFinished?.Invoke();
     }
-
     #endregion
 
     #region UI生成
-
+    /// <summary>
+    /// ガチャ結果1個分のUIを生成し、表示演出を行う
+    /// </summary>
     private IEnumerator CreateResultUIRoutine(
         Transform parent,
         GachaItem item,
@@ -129,31 +147,32 @@ public class GachaResult : MonoBehaviour {
 
         Color rarityColor = GetRarityColor(item.rarity);
 
+        // UIルート生成
         GameObject root = new GameObject(item.itemName + "_Root");
         root.transform.SetParent(parent, false);
 
         RectTransform rootRT = root.AddComponent<RectTransform>();
         rootRT.sizeDelta = new Vector2(iconSize + 40, iconSize + 40);
-
-        // 最初は非表示
         rootRT.localScale = Vector3.zero;
 
+        // 光演出
         Image glow = new GameObject("Glow").AddComponent<Image>();
         glow.transform.SetParent(root.transform, false);
         glow.rectTransform.sizeDelta = rootRT.sizeDelta;
         glow.color = rarityColor;
         StartCoroutine(GlowEffect(glow));
 
+        // 枠
         Image frame = new GameObject("Frame").AddComponent<Image>();
         frame.transform.SetParent(root.transform, false);
         frame.rectTransform.sizeDelta = new Vector2(iconSize + 10, iconSize + 10);
         frame.color = rarityColor;
 
+        // アイコン
         RawImage icon = new GameObject("Icon").AddComponent<RawImage>();
         icon.transform.SetParent(root.transform, false);
         icon.rectTransform.sizeDelta = new Vector2(iconSize, iconSize);
 
-        // 撮影対象生成
         GameObject temp = Instantiate(item.resultPrefab);
         temp.SetActive(true);
         SetLayerRecursively(temp, gachaRenderLayer);
@@ -169,24 +188,30 @@ public class GachaResult : MonoBehaviour {
 
         yield return new WaitForEndOfFrame();
 
-        if (resultCamera != null)
-            resultCamera.Render();
+        resultCamera.Render();
 
         icon.texture = rtTex;
         resultCamera.targetTexture = null;
 
         Destroy(temp);
 
-        // 破棄対策済みポップ演出
+        // ポップ演出
         StartCoroutine(PopBounce(rootRT));
+
+        // UI専用SE（クライアントのみ）
+        if (AudioManager.Instance != null) {
+            AudioManager.Instance.CmdPlayUISE(resultSEName);
+        }
 
         yield return new WaitForSeconds(0.15f);
     }
-
     #endregion
 
     #region Utility
 
+    /// <summary>
+    /// 指定した GameObject とその子をすべて指定レイヤーに設定する
+    /// </summary>
     private void SetLayerRecursively(GameObject obj, int layer) {
         obj.layer = layer;
         foreach (Transform child in obj.transform) {
@@ -194,6 +219,9 @@ public class GachaResult : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// レアリティに応じた表示カラーを取得する
+    /// </summary>
     private Color GetRarityColor(Rarity rarity) {
         return rarity switch {
             Rarity.Common => Color.white,
@@ -204,6 +232,9 @@ public class GachaResult : MonoBehaviour {
         };
     }
 
+    /// <summary>
+    /// 枠の発光エフェクト
+    /// </summary>
     private IEnumerator GlowEffect(Image glow) {
         float t = 0f;
         Color baseColor = glow.color;
@@ -217,21 +248,18 @@ public class GachaResult : MonoBehaviour {
     }
 
     /// <summary>
-    /// UIが出現したときに少し跳ねるポップ演出（Destroy安全版）
+    /// UI出現時に少し跳ねるポップ演出
     /// </summary>
     private IEnumerator PopBounce(RectTransform rt) {
         if (rt == null) yield break;
 
         float t = 0f;
-
         Vector3 start = Vector3.zero;
         Vector3 overshoot = Vector3.one * 1.15f;
         Vector3 end = Vector3.one;
 
-        // 0 → 少し大きく
         while (t < 1f) {
             if (rt == null) yield break;
-
             t += Time.deltaTime * 10f;
             rt.localScale = Vector3.Lerp(start, overshoot, t);
             yield return null;
@@ -239,10 +267,8 @@ public class GachaResult : MonoBehaviour {
 
         t = 0f;
 
-        // 少し大きい → 通常サイズ
         while (t < 1f) {
             if (rt == null) yield break;
-
             t += Time.deltaTime * 12f;
             rt.localScale = Vector3.Lerp(overshoot, end, t);
             yield return null;
@@ -251,6 +277,5 @@ public class GachaResult : MonoBehaviour {
         if (rt != null)
             rt.localScale = Vector3.one;
     }
-
     #endregion
 }

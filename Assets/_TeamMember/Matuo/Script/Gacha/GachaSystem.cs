@@ -32,7 +32,7 @@ public class GachaSystem : MonoBehaviour {
     [Header("結果演出")]
     [SerializeField] private GachaResult gachaResult;
 
-    [Header("ガチャ集中線・キラキラ演出")]
+    [Header("ガチャ集中線・パーティクル演出")]
     [SerializeField] private GachaEffect gachaEffect;
 
     private bool isPulling = false;     // ガチャ実行中ロック
