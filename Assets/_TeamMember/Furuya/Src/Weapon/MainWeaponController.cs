@@ -71,10 +71,8 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Magic:
                 if (weaponData is MainMagicData magicdata)
-                    if (magicdata.chargeTime > 0) {
-                        ServerStartMagicCast(direction);
-                    }
-                    else ServerMagicAttack(direction);
+                    ServerStartMagicCast(direction);
+                //ServerMagicAttack(direction);
                 break;
         }
         //アニメーション開始
@@ -105,7 +103,8 @@ public class MainWeaponController : NetworkBehaviour {
                 ServerGunAttack(direction);
                 break;
             case WeaponType.Magic:
-                ServerMagicAttack(direction);
+                ServerStartMagicCast(direction);
+                //ServerMagicAttack(direction);
                 break;
         }
     }
@@ -331,7 +330,8 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not MainMagicData magicData) return;
 
         //クライアント側にチャージエフェクトを出させる
-        RpcPlayChargeEffect(firePoint.position, magicData.chargeEffectType);
+        if(magicData.chargeTime > 0)
+            RpcPlayChargeEffect(firePoint.position, magicData.chargeEffectType);
         StartCoroutine(CastAfterDelay(direction, magicData));
     }
 
@@ -347,11 +347,6 @@ public class MainWeaponController : NetworkBehaviour {
 
         // SE はここでサーバー再生
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
-
-        //シュートポイントに追従
-        activeChargeFx.transform.SetParent(firePoint);
-        activeChargeFx.transform.localPosition = Vector3.zero;
-        activeChargeFx.transform.localRotation = Quaternion.identity;
     }
 
     // --- チャージエフェクト再生 ---
@@ -360,6 +355,11 @@ public class MainWeaponController : NetworkBehaviour {
         GameObject prefab = EffectPoolRegistry.Instance.GetChargeEffect(type);
         if (prefab != null) {
             activeChargeFx = EffectPool.Instance.GetFromPool(prefab, pos, transform.rotation);
+
+            //シュートポイントに追従
+            activeChargeFx.transform.SetParent(firePoint);
+            activeChargeFx.transform.localPosition = Vector3.zero;
+            activeChargeFx.transform.localRotation = Quaternion.identity;
         }
     }
 
