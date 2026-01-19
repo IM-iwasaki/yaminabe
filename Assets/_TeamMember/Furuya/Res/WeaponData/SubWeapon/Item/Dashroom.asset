@@ -17,11 +17,11 @@ MonoBehaviour:
   damage: 0
   throwForce: 10
   maxUses: 3
-  rechargeTime: 5
+  rechargeTime: 10
   startFull: 1
   ObjectPrefab: {fileID: 0}
   projectileSpeed: 15
   useEffectType: 0
   itemType: 2
-  speedMultiplier: 3
-  duration: 10
+  speedMultiplier: 1.2
+  duration: 5
