@@ -600,6 +600,7 @@ MonoBehaviour:
   - {fileID: 2251574200841326661}
   - {fileID: 3367472487914884127}
   mpBar: {fileID: 1376865105966231322}
+  mpUnderBar: {fileID: 4510646159709822501}
   hpText: {fileID: 711741364411891535}
   mpText: {fileID: 7747474235637660459}
   hpBar_slider: {fileID: 8594643932531418125}
@@ -618,6 +619,8 @@ MonoBehaviour:
   player: {fileID: 4002470521652151712}
   interactUI: {fileID: 6292602705022258001}
   localUIObject: {fileID: 7992546859846387416}
+  hpUnderBar_slider: {fileID: 1166887507396106579}
+  mpUnderBar_slider: {fileID: 8659353022450162480}
 --- !u!114 &3114236005330367030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1667,9 +1670,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: MPBar
       objectReference: {fileID: 0}
+    - target: {fileID: 4551371150522675829, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551371150522675829, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6231740509802659688, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7172227263237107352, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7172227263237107352, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7706903557877420709, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1693,6 +1712,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1166887507396106579 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2927678396094980323, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 4075948961502607792}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1376865105966231322 stripped
@@ -1815,6 +1845,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4510646159709822501 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 435060484392609685, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 4075948961502607792}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5104692772546592045 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9099293231318336669, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
@@ -1922,6 +1957,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8659353022450162480 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4664777371409506944, guid: c77ceebc921d5f048a6903ecc1e6b933, type: 3}
+  m_PrefabInstance: {fileID: 4075948961502607792}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4510646159709822501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &8884460643233407582 stripped

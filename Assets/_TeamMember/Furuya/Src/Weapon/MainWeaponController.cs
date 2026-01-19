@@ -79,6 +79,8 @@ public class MainWeaponController : NetworkBehaviour {
         }
         //アニメーション開始
         animCon.anim.SetBool("Shoot", true);
+        //フレーム中攻撃した瞬間にフラグを立てる
+        characterBase.parameter.AttackTrigger = true;
     }
 
     /// <summary>

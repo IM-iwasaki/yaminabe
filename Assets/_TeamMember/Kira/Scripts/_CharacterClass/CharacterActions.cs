@@ -80,20 +80,34 @@ public class CharacterActions : NetworkBehaviour {
         gachaSystem = FindObjectOfType<GachaSystem>();
         hud = FindObjectOfType<HudManager>();
 
-
-
         isCanPickup = false;
         isCanInteruct = false;
         isCanSkill = false;
 
         cameraManager = FindObjectOfType<CameraChangeController>();
+        //一定間隔でMPを回復する
+        InvokeRepeating(nameof(MPRegeneration), 0.0f,0.1f);
     }
 
+    /// <summary>
+    /// MPを回復する
+    /// </summary>
+    void MPRegeneration() {
+        //攻撃してから短い間を置く。
+        if (Time.time <= param.attackStartTime + 0.2f) return;
+        //基本回復量は1
+        int MPHealValue = 1;
+        //移動していないときは回復量+2
+        if (!isMoving) MPHealValue += 2;
+
+        //MP回復
+        param.MP += MPHealValue;
+        //最大値を超えたら補正する
+        if (param.MP > param.maxMP) param.MP = param.maxMP;
+    }
+
+
     private void MoveControl() {
-
-        
-
-
         //移動入力が行われている間は移動中フラグを立てる
         if (input.MoveInput != Vector2.zero) isMoving = true;
         else isMoving = false;

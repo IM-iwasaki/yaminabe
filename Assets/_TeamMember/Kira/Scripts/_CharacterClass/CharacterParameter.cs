@@ -103,6 +103,9 @@ public class CharacterParameter : NetworkBehaviour{
     #endregion
 
     public void Initialize(CharacterBase core) {
+        //自身だけ
+        if (!isLocalPlayer) return;
+
         //ステータスのインポート
         StatusInport(inputStatus);
 
@@ -126,9 +129,6 @@ public class CharacterParameter : NetworkBehaviour{
         equippedPassives[0].isPassiveActive = false;
         //Skill関連の初期化
         equippedSkills[0].isSkillUse = false;
-
-        //一定間隔でMPを回復する
-        InvokeRepeating(nameof(MPRegeneration), 0.0f,0.1f);
     }
 
     /// <summary>
@@ -207,7 +207,6 @@ public class CharacterParameter : NetworkBehaviour{
     /// </summary>
     /// <param name="_checkPos"></param>
     public void GroundCheck(Vector3 _checkPos) {
-        //IsGrounded = Physics.Raycast(_checkPos, Vector3.down, PlayerConst.GROUND_DISTANCE);
         // 地面判定（下方向SphereCastでもOK。そこまで深く考えなくていいかも。）
         IsGrounded = Physics.CheckSphere(_checkPos, PlayerConst.GROUND_DISTANCE, GroundLayer);
     }
@@ -243,18 +242,6 @@ public class CharacterParameter : NetworkBehaviour{
     private void UpdateReloadIcon(bool _, bool _new) {
         if (_new)
             localUI.StartRotateReloadIcon();
-    }
-
-    /// <summary>
-    /// MPを回復する
-    /// </summary>
-    void MPRegeneration() {
-        //攻撃してから短い間を置く。
-        if (Time.time <= attackStartTime + 0.2f) return;
-
-        MP++;
-        //最大値を超えたら補正する
-        if (MP > maxMP) MP = maxMP;
     }
 
     public void AttackStartTimeRecord() {

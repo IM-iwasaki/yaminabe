@@ -11,6 +11,6 @@ public class Skill_Quasar : SkillBase {
     //Å@CT      ÅF16ïb
     //
     public override void Activate(CharacterBase user) {
-        
+
     }
 }

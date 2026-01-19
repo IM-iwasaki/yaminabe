@@ -25,6 +25,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField] TextMeshProUGUI[] subWeaponText;
     //表示・非表示状態切り替え用
     [SerializeField] GameObject mpBar;
+    [SerializeField] GameObject mpUnderBar;
 
     /// <summary>
     /// バー補正用定数
@@ -53,9 +54,14 @@ public class PlayerLocalUIController : NetworkBehaviour {
     //[SyncVar] float passiveStateProgress = 0.0f;
 
     [SerializeField] GameObject interactUI;
-
     //  ローカルUIの本体を取得
     [SerializeField] GameObject localUIObject;
+
+    //裏のバーの参照
+    [SerializeField] Slider hpUnderBar_slider = null;
+    [SerializeField] Slider mpUnderBar_slider = null;
+    //裏のバーの減少開始遅延
+    private readonly float underBar_Delay = 0.5f;
 
     /// <summary>
     /// ローカルUI全体の初期化
@@ -63,6 +69,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
     public void Initialize() {
         hpBar_slider.interactable = false;
         mpBar_slider.interactable = false;
+        hpUnderBar_slider.interactable = false;
+        mpUnderBar_slider.interactable = false;
 
         if (!isLocalPlayer) {
             var LocalUI = GetComponentInChildren<Canvas>();
@@ -75,10 +83,14 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     void Update() {
+        if(!isLocalPlayer)return;
+
         //表示状態管理関数の呼び出し
         UpdateSkillState();
         UpdatePassiveState();
 
+        //裏バーの更新
+        UpdateUnderBar();
         //現在使用している武器タイプで分岐
         switch (player.weaponController_main.weaponData.type) {
             case WeaponType.Melee:
@@ -90,8 +102,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
                 mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
                 break;
             case WeaponType.Magic:
-                ////所持している武器が魔法であるか確認。
-                if (player.weaponController_main.weaponData is not MainMagicData magicData) {
+                //所持している武器が魔法であるか確認。
+                if (WeaponDataRegistry.GetWeapon(player.weaponController_main.weaponData.WeaponName) is not MainMagicData magicData) {
                     #if UNITY_EDITOR
                     Debug.LogError("所持している魔法の詳細情報を正常に取得できませんでした。");
                     #endif
@@ -105,6 +117,42 @@ public class PlayerLocalUIController : NetworkBehaviour {
         mpText.text = player.parameter.MP.ToString();
         //サブウェポンの現在所持数を更新
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();        
+    }
+
+    /// <summary>
+    /// 裏バーの更新関数
+    /// </summary>
+    private void UpdateUnderBar() {
+        //表バー値が裏バー値より低かったら
+        if (hpBar_slider.value < hpUnderBar_slider.value) {
+            //裏バー値と表バー値の差分を算出
+            float valueDiscrepancy = hpUnderBar_slider.value - hpBar_slider.value;
+            //差分が一定以下になったらバー同士の値を合わせる
+            if(valueDiscrepancy <= 0.2f) {
+                hpUnderBar_slider.value = hpBar_slider.value;
+            }
+            //指数関数的に速度を落としながら裏バーの値を減少させる
+            hpUnderBar_slider.value -= valueDiscrepancy / 60;
+        }
+        //表バーが裏バーの値を超える時値を合わせる
+        if (hpBar_slider.value > hpUnderBar_slider.value) {
+            hpUnderBar_slider.value = hpBar_slider.value;
+        }
+        //表バー値が裏バー値より低かったら
+        if (mpBar_slider.value < mpUnderBar_slider.value) {
+            //裏バー値と表バー値の差分を算出
+            float valueDiscrepancy = mpUnderBar_slider.value - mpBar_slider.value;
+            //差分が一定以下になったらバー同士の値を合わせる
+            if(valueDiscrepancy <= 0.2f) {
+                mpUnderBar_slider.value = mpBar_slider.value;
+            }
+            //指数関数的に速度を落としながら裏バーの値を減少させる
+            mpUnderBar_slider.value -= valueDiscrepancy / 60;
+        }
+        //表バーが裏バーの値を超える時値を合わせる
+        if (mpBar_slider.value > mpUnderBar_slider.value) {
+            mpUnderBar_slider.value = mpBar_slider.value;
+        }
     }
 
     /// <summary>
@@ -158,9 +206,11 @@ public class PlayerLocalUIController : NetworkBehaviour {
         //MPを必要とする職業かでMPの表示非表示を分ける
         if (player.weaponController_main.weaponData.type == WeaponType.Magic) {
             mpBar.SetActive(true);
+            mpUnderBar.SetActive(true);
         }
         else {
             mpBar.SetActive(false);
+            mpUnderBar.SetActive(false);
         }
 
         //ステータス系の初期化
@@ -229,7 +279,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
             hpBarImage.color = Color.green;
             hpText.color = Color.green;
         }
-
     }
 
     /// <summary>
