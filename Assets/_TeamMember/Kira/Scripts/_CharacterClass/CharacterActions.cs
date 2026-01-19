@@ -11,6 +11,7 @@ public class CharacterActions : NetworkBehaviour {
     private Rigidbody rb;
     private Collider useCollider;
     private string useTag;
+    private CameraChangeController cameraManager;
 
     //ˆÚ“®’†‚©
     public bool isMoving { get; private set; } = false;
@@ -84,6 +85,8 @@ public class CharacterActions : NetworkBehaviour {
         isCanPickup = false;
         isCanInteruct = false;
         isCanSkill = false;
+
+        cameraManager = FindObjectOfType<CameraChangeController>();
     }
 
     private void MoveControl() {
@@ -184,6 +187,8 @@ public class CharacterActions : NetworkBehaviour {
     }
 
     private void HandleInteract() {
+        if (cameraManager != null && cameraManager.IsCameraTransitioning())
+            return;
         if (!input.InteractTriggered) return;
         input.InteractTriggered = false;
 

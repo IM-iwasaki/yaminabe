@@ -100,6 +100,8 @@ public class GachaSystem : MonoBehaviour {
     /// ガチャ選択画面開始
     /// </summary>
     public void StartGachaSelect(GameObject player) {
+        if (cameraManager != null && cameraManager.IsCameraTransitioning())
+            return;
         if (IsBlockedByOptionMenu()) return;
         if (currentPlayer != null) return;
 
@@ -128,7 +130,7 @@ public class GachaSystem : MonoBehaviour {
     /// ガチャ画面終了
     /// </summary>
     public void EndGachaSelect() {
-        // ★結果演出が終わっていない間は出られない
+        // 結果演出が終わっていない間は出られない
         if (!isResultFinished) return;
         if (currentPlayer == null) return;
 

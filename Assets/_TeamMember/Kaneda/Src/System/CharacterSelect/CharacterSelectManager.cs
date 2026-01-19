@@ -56,7 +56,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// </summary>
     /// <param name="player">操作中のプレイヤー</param>
     public void StartCharacterSelect(GameObject player) {
-
+        if (cameraManager != null && cameraManager.IsCameraTransitioning())
+            return;
         // OptionMenu が開いているならキャラ選択を開かない
         if (IsBlockedByOptionMenu()) {
             return;

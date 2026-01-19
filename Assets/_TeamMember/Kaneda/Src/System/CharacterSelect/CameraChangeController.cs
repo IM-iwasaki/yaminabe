@@ -27,6 +27,10 @@ public class CameraChangeController : MonoBehaviour {
         subCamera.gameObject.SetActive(false);
     }
 
+    public bool IsCameraTransitioning() {
+        return isTransitioning;
+    }
+
     /// <summary>
     /// ƒJƒƒ‰‚ğw’èˆÊ’u‚ÖˆÚ“®
     /// </summary>
