@@ -12,7 +12,7 @@ public class CaptureArea : NetworkBehaviour {
     public float scorePerSecond = 1f;        // 1秒ごとのスコア
     public Collider areaCollider;
 
-    private HashSet<CharacterBase> playersInArea = new(); // エリア内プレイヤー
+    public HashSet<CharacterBase> playersInArea { get; private set; } = new ();// エリア内プレイヤー
     private float timer = 0f;
 
     private void Awake() {
