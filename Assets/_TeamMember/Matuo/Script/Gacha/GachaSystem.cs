@@ -183,7 +183,7 @@ public class GachaSystem : MonoBehaviour {
 
     #endregion
 
-    #region ガチャ実行API
+    #region ガチャ実行
 
     /// <summary>
     /// 単発ガチャを引く

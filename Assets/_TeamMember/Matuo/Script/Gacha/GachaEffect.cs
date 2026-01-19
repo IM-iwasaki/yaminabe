@@ -13,14 +13,12 @@ public class GachaEffect : MonoBehaviour {
     [SerializeField] private float lineWidth = 0.05f;
     [SerializeField] private float rotateSpeed = 60f;
 
-    [Header("キラキラ設定")]
+    [Header("パーティクル設定")]
     [SerializeField] private int sparkleCount = 80;
 
     private readonly List<GameObject> lineObjects = new();
     private ParticleSystem sparkle;
     private bool isPlaying;
-
-    #region Public API
 
     public void Play(Rarity rarity) {
         if (isPlaying) return;
@@ -44,14 +42,12 @@ public class GachaEffect : MonoBehaviour {
         }
         lineObjects.Clear();
 
-        // キラキラだけ消す
+        // パーティクル消す
         if (sparkle != null)
             Destroy(sparkle.gameObject);
 
         StopAllCoroutines();
     }
-
-    #endregion
 
     #region 集中線
 
@@ -87,7 +83,7 @@ public class GachaEffect : MonoBehaviour {
 
     #endregion
 
-    #region キラキラ
+    #region パーティクル
 
     private void CreateSparkle(Color color, Rarity rarity) {
         GameObject obj = new GameObject("Sparkle");
