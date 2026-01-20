@@ -115,6 +115,37 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 追加攻撃用(こちらは攻撃間隔を無視して攻撃を呼び出せます)
+    /// </summary>
+    /// <param name="direction"></param>
+    [Command]
+    public void CmdRequestSkillAttack(Vector3 direction,WeaponData skillweapon) {
+        lastAttackTime = Time.time;
+
+        switch (skillweapon.type) {
+            case WeaponType.Melee:
+                ServerMeleeAttack();
+                break;
+            case WeaponType.Gun:
+                //弾がなかったら通過不可。かわりにリロードを要求する。
+                if (ammo == 0) {
+                    ReloadRequest();
+                    return;
+                }
+                //その他リロード中は射撃できなくする。
+                else if (characterBase.parameter.isReloading) return;
+
+                ServerGunAttack(direction);
+                break;
+            case WeaponType.Magic:
+                ServerStartMagicCast(direction);
+                //ServerMagicAttack(direction);
+                break;
+        }
+        characterBase.parameter.AttackTrigger = true;
+    }
+
+    /// <summary>
     /// 攻撃可否判定
     /// </summary>
     /// <returns></returns>

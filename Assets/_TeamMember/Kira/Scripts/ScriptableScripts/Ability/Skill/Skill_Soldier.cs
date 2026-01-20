@@ -6,7 +6,7 @@ using UnityEngine;
 public class Skill_Soldier : SkillBase {
 
     //
-    //  スキル名：全力突撃
+    //  スキル名：ラウンドクラッシュ
     //  タイプ　：連続攻撃型
     //  効果    ：前方に突進しながら怒涛の連続攻撃を行う。
     //　CT      ：20秒
@@ -14,6 +14,7 @@ public class Skill_Soldier : SkillBase {
 
     readonly float forwardPower = 30.0f;
     readonly float upPower = 4.0f;
+
 
     public override void Activate(CharacterBase user) {       
         Vector3 attackDir = user.parameter.GetShootDirection();
