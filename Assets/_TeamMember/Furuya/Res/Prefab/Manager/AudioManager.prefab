@@ -100,7 +100,37 @@ MonoBehaviour:
     minDistance: 1
     maxDistance: 25
   - name: Punch
-    clip: {fileID: 8300000, guid: 7bda3da61dcc3ea4ebb9538f47646895, type: 3}
+    clip: {fileID: 8300000, guid: aaf16cccfe1686545817b086685c4f7b, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Lightsaber
+    clip: {fileID: 8300000, guid: 237e4ecdceee1cf4c9d2a16301367670, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Chainsaw
+    clip: {fileID: 8300000, guid: 3553c33edf86acf4eacb150382930976, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Katana
+    clip: {fileID: 8300000, guid: f50552a5494fbd547a6612e11824917c, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Sword
+    clip: {fileID: 8300000, guid: 30d26e2464cf52b418f12fbb3cac8880, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Sword
+    clip: {fileID: 8300000, guid: 30d26e2464cf52b418f12fbb3cac8880, type: 3}
     volume: 0.2
     pitch: 1
     minDistance: 1
