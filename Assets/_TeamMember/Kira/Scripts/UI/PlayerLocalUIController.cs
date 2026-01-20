@@ -83,7 +83,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     void Update() {
-        if(!isLocalPlayer)return;
+        //if(!isLocalPlayer)return;
 
         //•\¦ó‘ÔŠÇ—ŠÖ”‚ÌŒÄ‚Ño‚µ
         UpdateSkillState();
@@ -260,6 +260,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar_slider.value = (float)_hp / _maxHP * FIXED_RATIO;
+        Debug.Log("value:"+_hp + "/ slider.value:" + hpBar_slider.value);
         //€–S
         if (hpBar_slider.value < 1)
             hpBarImage.gameObject.SetActive(false);

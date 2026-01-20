@@ -29,6 +29,12 @@ public class Skill_Quasar : SkillBase {
     }
 
     private void ExtraAttack(Vector3 dir, CharacterBase user) {
-        user.weaponController_main.CmdRequestExtraAttack(dir);
+        //元の武器情報をキャッシュ
+        var SkillCash = user.weaponController_main.weaponData;
+        //スキル用武器に切り替えて攻撃
+        user.weaponController_main.weaponData = weaponData;
+        user.weaponController_main.CmdRequestSkillAttack(dir, weaponData);
+        //武器を戻す
+        user.weaponController_main.weaponData = SkillCash;
     }
 }
