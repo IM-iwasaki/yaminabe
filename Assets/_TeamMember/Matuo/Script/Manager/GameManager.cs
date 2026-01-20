@@ -34,13 +34,21 @@ public class GameManager : NetworkSystemObject<GameManager> {
     public void StartGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
 
+        // 試合開始前の初期化
+        isGameRunning = false;
+
+        if (gameTimer != null) {
+            gameTimer.ResetTimer();
+        }
+
         // ステージ生成
         StageManager.Instance.SpawnStage(stageData, rule);
 
-        if (rule == GameRuleType.DeathMatch)
-            StageManager.Instance.SetRespawnMode(RespawnMode.Random);
-        else
-            StageManager.Instance.SetRespawnMode(RespawnMode.Team);
+        StageManager.Instance.SetRespawnMode(
+            rule == GameRuleType.DeathMatch
+                ? RespawnMode.Random
+                : RespawnMode.Team
+        );
 
         // ルール設定
         ruleManager.currentRule = rule;
@@ -55,17 +63,19 @@ public class GameManager : NetworkSystemObject<GameManager> {
         StartCoroutine(StartGameAfterCountdown(rule));
     }
 
+
     /// <summary>
     /// カウントダウン終了後にゲームを開始する
     /// </summary>
     [Server]
     private IEnumerator StartGameAfterCountdown(GameRuleType rule) {
-        // 3秒カウントダウン + GO表示1秒
         yield return new WaitForSeconds(4f);
 
         isGameRunning = true;
 
-        // タイマー終了時処理
+        // 前試合のイベントを破棄
+        gameTimer.ClearOnTimerFinished();
+
         gameTimer.OnTimerFinished += () => {
             if (rule == GameRuleType.DeathMatch)
                 ruleManager.EndDeathMatch();

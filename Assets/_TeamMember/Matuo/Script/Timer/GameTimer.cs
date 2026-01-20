@@ -90,4 +90,15 @@ public class GameTimer : NetworkBehaviour {
             OnTimerFinished?.Invoke();
         }
     }
+
+    [Server]
+    public void ResetTimer() {
+        isRunning = false;
+        elapsedTime = 0f;
+    }
+
+    [Server]
+    public void ClearOnTimerFinished() {
+        OnTimerFinished = null;
+    }
 }
