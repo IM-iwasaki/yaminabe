@@ -5,12 +5,30 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Character/Skill/Quasar_氷結列撃の術")]
 public class Skill_Quasar : SkillBase {
     //
-    //  スキル名：氷結列撃の術
-    //  タイプ　：直線範囲攻撃型
-    //  効果    ：前方一直線に氷の柱を複数召喚する。
+    //  スキル名：扇状氷結の術
+    //  タイプ　：範囲攻撃型
+    //  効果    ：前方に氷の衝撃波を発生させる。
     //　CT      ：16秒
     //
-    public override void Activate(CharacterBase user) {
 
+    [SerializeField]WeaponData weaponData;
+
+     public override void Activate(CharacterBase user) {       
+        Vector3 attackDir = user.parameter.GetShootDirection();
+        StartExtraAttackDelay(user, attackDir);
+    }
+
+    public void StartExtraAttackDelay(CharacterBase user, Vector3 dir) {
+        user.StartCoroutine(ExtraAttackRoutine(user, dir));
+    }
+
+    private IEnumerator ExtraAttackRoutine(CharacterBase user, Vector3 dir) {
+        yield return null;
+        //攻撃する
+        ExtraAttack(dir,user);
+    }
+
+    private void ExtraAttack(Vector3 dir, CharacterBase user) {
+        user.weaponController_main.CmdRequestExtraAttack(dir);
     }
 }
