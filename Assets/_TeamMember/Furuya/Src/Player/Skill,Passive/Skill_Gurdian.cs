@@ -10,6 +10,8 @@ public class Skill_Gurdian : SkillBase {
     //Å@CT      ÅF12ïb
     //
 
+    public WeaponData weaponData;
+
     public int SkillDamage = 50;
 
     public override void Activate(CharacterBase user) {
