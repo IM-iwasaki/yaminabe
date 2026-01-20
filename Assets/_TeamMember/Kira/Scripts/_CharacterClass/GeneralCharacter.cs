@@ -6,12 +6,11 @@ public class GeneralCharacter : CharacterBase {
     protected new void Awake() {
         base.Awake();
         //Initalize();        
-    }   
+    }
 
-    public override void OnStartClient() {
-        base.OnStartClient();
+    public override void OnStartLocalPlayer() {
+        base.OnStartLocalPlayer();
         localUI.Initialize();
-
 
         if (!isLocalPlayer) return; // Ž©•ª‚¾‚¯•\Ž¦
         SkillBase skill = parameter.equippedSkills[0];
@@ -21,6 +20,14 @@ public class GeneralCharacter : CharacterBase {
         skill.skillName, skill.skillDescription,
         passive.passiveName, passive.passiveDescription
         );
+    }
+
+    public override void OnStartClient() {
+        base.OnStartClient();
+        
+
+
+        
     }
 
     void Update() {
