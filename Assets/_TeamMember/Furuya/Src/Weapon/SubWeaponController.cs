@@ -21,6 +21,8 @@ public class SubWeaponController : NetworkBehaviour {
     private CharacterSelectManager characterSelectManager;
     private GachaSystem gachaSystem;
 
+    private bool isUsingSubWeapon;
+
 
     public void Awake() {
         characterBase = GetComponent<CharacterBase>();
@@ -62,9 +64,15 @@ public class SubWeaponController : NetworkBehaviour {
         if (IsUIBlocked())
             return;
 
-        if (subWeaponData == null || currentUses <= 0 || !characterBase.isLocalPlayer) return;
+        if (subWeaponData == null || currentUses <= 0 || !characterBase.isLocalPlayer)
+            return;
+        if (isUsingSubWeapon)
+            return;
+
+        isUsingSubWeapon = true;
         CmdUseSubWeapon();
     }
+
     /// <summary>
     /// サブ武器使用
     /// </summary>
@@ -79,12 +87,15 @@ public class SubWeaponController : NetworkBehaviour {
             case SubWeaponType.Grenade:
                 SpawnGrenade();
                 break;
+
             case SubWeaponType.Trap:
                 SpawnTrap();
                 break;
+
             case SubWeaponType.Item:
                 UseItem();
                 break;
+
             case SubWeaponType.Magic:
                 // 魔法処理（未実装）
                 break;
@@ -92,6 +103,17 @@ public class SubWeaponController : NetworkBehaviour {
 
         if (!isRecharging)
             StartCoroutine(RechargeRoutine());
+
+        // クライアント側のロック解除
+        RpcOnSubWeaponUsed();
+    }
+
+    /// <summary>
+    /// サブ武器使用完了
+    /// </summary>
+    [ClientRpc]
+    private void RpcOnSubWeaponUsed() {
+        isUsingSubWeapon = false;
     }
 
     /// <summary>
