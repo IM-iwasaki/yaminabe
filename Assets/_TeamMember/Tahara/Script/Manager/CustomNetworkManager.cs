@@ -13,6 +13,12 @@ public class CustomNetworkManager : NetworkManager {
     private ServerManager serverManager = null;
 
     /// <summary>
+    /// ホスト専用UI
+    /// </summary>
+    [SerializeField]
+    private HostUI hostUI = null;
+
+    /// <summary>
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
     public override void Awake() {
@@ -51,6 +57,19 @@ public class CustomNetworkManager : NetworkManager {
             //その後は不必要なので更新しないようにする
             TitleManager.instance.enabled = false;
         }
+    }
+
+    /// <summary>
+    /// クライアント開始時
+    /// </summary>
+    public override void OnStartClient() {
+        base.OnStartClient();
+        if (NetworkServer.active) {
+            GameObject uiRoot = GameObject.Find("GameUI");
+            HostUI host = Instantiate(hostUI,uiRoot.transform);
+            host.Init();
+        }
+
     }
 
     /// <summary>
@@ -109,9 +128,6 @@ public class CustomNetworkManager : NetworkManager {
             base.OnServerDisconnect(_conn);
             return;
         }
-
-        GameSceneManager.Instance.LoadTitleSceneForAll();
-        base.OnServerDisconnect(_conn);
     }
     /// <summary>
     /// シーンが変わった時に発火
@@ -134,8 +150,7 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnServerSceneChanged(string sceneName) {
         //ゲームシーンに遷移したならゲームスタート
         if (sceneName == GameSceneManager.Instance.gameSceneName) {
-            HostUI hostUi = FindObjectOfType<HostUI>();
-            int stageIndex = Mathf.Abs(hostUi.stageIndex % StageManager.Instance.stages.Count);
+            int stageIndex = Mathf.Abs(hostUI.stageIndex % StageManager.Instance.stages.Count);
             GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
             // 全クライアントに送る
             CountdownManager.Instance.SendCountdown(3);
@@ -187,10 +202,15 @@ public class CustomNetworkManager : NetworkManager {
     /// クライアントが止まった時の処理
     /// </summary>
     public override void OnStopClient() {
+        base.OnStopClient();
         Cursor.lockState = CursorLockMode.None;
-        Destroy(singleton.gameObject);
-        transport.Shutdown();
+        Destroy(gameObject);
         SceneManager.LoadScene("TitleScene");
+    }
+
+    public override void OnClientDisconnect() {
+        base.OnClientDisconnect();
+
     }
 
     /// <summary>
@@ -206,15 +226,6 @@ public class CustomNetworkManager : NetworkManager {
 
     public override void OnStopHost() {
         base.OnStopHost();
-        ShutdownHost();
-    }
-
-    private void ShutdownHost() {
-        transport.Shutdown();
-        serverManager.connectPlayer.Clear();
-    }
-
-    public override void OnStopServer() {
-        serverManager.connectPlayer.Clear();
+        Destroy(gameObject);
     }
 }

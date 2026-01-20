@@ -47,11 +47,8 @@ public abstract class CharacterBase : NetworkBehaviour {
         action = GetComponent<CharacterActions>();
         parameter = GetComponent<CharacterParameter>();
         animCon = GetComponent<CharacterAnimationController>();
-        input.Initialize(this);
-        action.Initialize(this);
-        parameter.Initialize(this);
 
-        RpcChangeWeapon(weaponController_main.weaponData.ID);
+        //RpcChangeWeapon(weaponController_main.weaponData.ID);
     }
 
     /// <summary>
@@ -59,6 +56,11 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public override void OnStartLocalPlayer() {
         if (isLocalPlayer) {
+
+            input.Initialize(this);
+            action.Initialize(this);
+            parameter.Initialize(this);
+
             Camera camera = GetComponentInChildren<Camera>();
             camera.tag = "MainCamera";
             camera.enabled = true;
