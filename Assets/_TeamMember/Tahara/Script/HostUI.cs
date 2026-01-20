@@ -41,16 +41,15 @@ public class HostUI : NetworkBehaviour {
     [SerializeField]
     private Button gameStartButton = null;
 
-    private void Start() {
+    public void Init() {
         uiRootObject = GameObject.Find("Background");
         uiRootObject.SetActive(false);
-        //ÉzÉXÉgÇ≈Ç»ÇØÇÍÇŒèàóùÇµÇ»Ç¢
-        if (!isServer) return;
         if (GameSceneManager.Instance != null) { 
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
         }
         rule.text = ruleNames[ruleIndex];
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
+        
     }
 
     /// <summary>
