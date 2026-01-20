@@ -168,7 +168,7 @@ public class ResultPanel : NetworkBehaviour {
 
             // スコア初期化
             RuleManager.Instance?.Initialize();
-
+            GameManager.Instance.EndGame();
             GameSceneManager.Instance.LoadGameSceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（再戦処理は後で追加）
         }
@@ -184,6 +184,7 @@ public class ResultPanel : NetworkBehaviour {
             ItemSpawnManager.Instance.ResetSpawnPoint();
             // スコア初期化
             RuleManager.Instance?.Initialize();
+            GameManager.Instance.EndGame();
             GameSceneManager.Instance.LoadLobbySceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
         }         
