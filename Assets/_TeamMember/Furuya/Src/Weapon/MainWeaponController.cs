@@ -490,7 +490,7 @@ public class MainWeaponController : NetworkBehaviour {
         return _weaponName switch {
             "HandGun" or "Punch" or "FireMagic" or "IceMagic" or "MagicRain" => 1,
             "Assult" or "BurstAssult" or "Spear" or "IceMagic"  or "Katana" or "Lightsaver" 
-            or "KnifeDefault" or "PizzaCutter" or "Spear" => 2,
+            or "Knife" or "PizzaCutter" or "Spear" => 2,
             "RPG" => 3,
             "Sniper" => 4,
             "Minigun" => 5,
