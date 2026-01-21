@@ -140,6 +140,21 @@ public abstract class CharacterBase : NetworkBehaviour {
         ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
     }
 
+    [Server]
+    private NetworkConnectionToClient GetConnectionByPlayerName(string playerName) {
+        foreach (var conn in NetworkServer.connections.Values) {
+            if (conn.identity == null) continue;
+
+            var chara = conn.identity.GetComponent<CharacterBase>();
+            if (chara == null) continue;
+
+            if (chara.parameter.PlayerName == playerName)
+                return conn;
+        }
+        return null;
+    }
+
+
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
@@ -155,19 +170,43 @@ public abstract class CharacterBase : NetworkBehaviour {
         //HPの減算処理
         parameter.HP -= (int)damage;
 
-        //　nameをスコア加算関数に送る
+        // hitSE 再生
+        PlayHitSE(_name);
+
         if (parameter.HP <= 0) {
             parameter.HP = 0;
-            //  キルログを流す
-            KillLogManager.instance.CmdSendKillLog(bannerNum, _name, parameter.PlayerName);
+
+            KillLogManager.instance.CmdSendKillLog(
+                bannerNum, _name, parameter.PlayerName
+            );
+
             Dead(_name);
+
             if (PlayerListManager.Instance != null) {
                 // スコア加算
                 PlayerListManager.Instance.AddScoreByName(_name, 100);
+                PlayerListManager.Instance.AddKill(_name);
             }
+        }
             // キル数加算
             if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddKill(_name);
-        }
+    }
+
+    [Server]
+    private void PlayHitSE(string attackerName) {
+        // 被弾者
+        NetworkConnectionToClient victimConn =
+            GetComponent<NetworkIdentity>().connectionToClient;
+
+        // 攻撃者（名前から取得）
+        NetworkConnectionToClient attackerConn =
+            GetConnectionByPlayerName(attackerName);
+
+        if (attackerConn != null)
+            AudioManager.Instance.CmdPlayUISE("hit", attackerConn);
+
+        if (victimConn != null)
+            AudioManager.Instance.CmdPlayUISE("hit", victimConn);
     }
 
     /// <summary>
