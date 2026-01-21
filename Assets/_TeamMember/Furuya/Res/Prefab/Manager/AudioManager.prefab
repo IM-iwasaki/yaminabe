@@ -131,12 +131,18 @@ MonoBehaviour:
     maxDistance: 25
   - name: Chainsaw
     clip: {fileID: 8300000, guid: 22c378917b26e6d4fb43af562963b53e, type: 3}
-    volume: 0.2
+    volume: 0.15
     pitch: 1
     minDistance: 1
     maxDistance: 25
   - name: Lightsaber
     clip: {fileID: 8300000, guid: 237e4ecdceee1cf4c9d2a16301367670, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Spear
+    clip: {fileID: 8300000, guid: ea9d84f5f8f41cc40ae192ab0237f3a4, type: 3}
     volume: 0.2
     pitch: 1
     minDistance: 1

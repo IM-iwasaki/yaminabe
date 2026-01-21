@@ -78,6 +78,7 @@ public enum MeleeSEType {
     Katana,
     Chainsaw,
     Lightsaber,
+    Spear,
 }
 
 public enum WeaponType { 
