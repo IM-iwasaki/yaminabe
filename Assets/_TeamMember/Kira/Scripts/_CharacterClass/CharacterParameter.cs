@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms;
 using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
 using UnityEngine.Windows;
+using UnityEngine.InputSystem.LowLevel;
 
 /// <summary>
 /// Characterの変数管理
@@ -134,11 +135,13 @@ public class CharacterParameter : NetworkBehaviour{
     /// <summary>
     /// ステータスのインポート
     /// </summary>
-    public void StatusInport(GeneralCharacterStatus _inport = null) {
+     public void StatusInport(GeneralCharacterStatus _inport = null) {
         if (_inport == null) {
             DefaultStatusInport();
             return;
         }
+
+        inputStatus = _inport;
 
         runtimeStatus = _inport;
         maxHP = runtimeStatus.maxHP;
