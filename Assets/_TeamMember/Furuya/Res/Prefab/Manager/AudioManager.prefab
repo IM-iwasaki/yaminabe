@@ -69,18 +69,6 @@ MonoBehaviour:
     minDistance: 1
     maxDistance: 500
   worldSEList:
-  - name: Explode
-    clip: {fileID: 8300000, guid: c3bb2d7eb7f9a554eb001ba6eef34088, type: 3}
-    volume: 0.5
-    pitch: 1
-    minDistance: 1
-    maxDistance: 75
-  - name: RocketLauncher
-    clip: {fileID: 8300000, guid: 20f1dc2bd918f4a41b55d6afcb19b4f6, type: 3}
-    volume: 0.5
-    pitch: 1
-    minDistance: 1
-    maxDistance: 25
   - name: Gun
     clip: {fileID: 8300000, guid: 87ef11dfc453fd04a9bd16cf08b59137, type: 3}
     volume: 0.2
@@ -93,8 +81,32 @@ MonoBehaviour:
     pitch: 1
     minDistance: 1
     maxDistance: 25
+  - name: RocketLauncher
+    clip: {fileID: 8300000, guid: 20f1dc2bd918f4a41b55d6afcb19b4f6, type: 3}
+    volume: 0.5
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Explode
+    clip: {fileID: 8300000, guid: c3bb2d7eb7f9a554eb001ba6eef34088, type: 3}
+    volume: 0.5
+    pitch: 1
+    minDistance: 1
+    maxDistance: 75
   - name: Fire
     clip: {fileID: 8300000, guid: 292184b48b7347a43aff651cc19d9f4b, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Ice
+    clip: {fileID: 8300000, guid: 537620d3d920d2a4bb47b3027bbd5a29, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 25
+  - name: Water
+    clip: {fileID: 8300000, guid: 326fbd2c44cbda14ea584f827f58e21c, type: 3}
     volume: 0.2
     pitch: 1
     minDistance: 1
@@ -105,14 +117,8 @@ MonoBehaviour:
     pitch: 1
     minDistance: 1
     maxDistance: 25
-  - name: Lightsaber
-    clip: {fileID: 8300000, guid: 237e4ecdceee1cf4c9d2a16301367670, type: 3}
-    volume: 0.2
-    pitch: 1
-    minDistance: 1
-    maxDistance: 25
-  - name: Chainsaw
-    clip: {fileID: 8300000, guid: 3553c33edf86acf4eacb150382930976, type: 3}
+  - name: Sword
+    clip: {fileID: 8300000, guid: 30d26e2464cf52b418f12fbb3cac8880, type: 3}
     volume: 0.2
     pitch: 1
     minDistance: 1
@@ -123,14 +129,14 @@ MonoBehaviour:
     pitch: 1
     minDistance: 1
     maxDistance: 25
-  - name: Sword
-    clip: {fileID: 8300000, guid: 30d26e2464cf52b418f12fbb3cac8880, type: 3}
+  - name: Chainsaw
+    clip: {fileID: 8300000, guid: 3553c33edf86acf4eacb150382930976, type: 3}
     volume: 0.2
     pitch: 1
     minDistance: 1
     maxDistance: 25
-  - name: Sword
-    clip: {fileID: 8300000, guid: 30d26e2464cf52b418f12fbb3cac8880, type: 3}
+  - name: Lightsaber
+    clip: {fileID: 8300000, guid: 237e4ecdceee1cf4c9d2a16301367670, type: 3}
     volume: 0.2
     pitch: 1
     minDistance: 1
