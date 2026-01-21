@@ -13,23 +13,54 @@ public class CharacterInput : NetworkBehaviour {
     public bool AttackTriggered { get; private set; }
 
     public bool SkillTriggered;
-
     public bool InteractTriggered;
 
     private CharacterAnimationController animCon;
+    private InputActionMap playerMap;
+    private bool inputInitialized;
+
+    #region 初期化 / クリーンアップ
 
     public void Initialize(CharacterBase core) {
+        if (inputInitialized) return;
+        inputInitialized = true;
+
         this.core = core;
         animCon = GetComponent<CharacterAnimationController>();
-        //InputActionのコンテキストの登録・有効化
-        var map = inputActions.FindActionMap("Player");
-        foreach (var action in map.actions) {
-            action.started += ctx => OnInputStarted(action.name, ctx);
-            action.performed += ctx => OnInputPerformed(action.name, ctx);
-            action.canceled += ctx => OnInputCanceled(action.name, ctx);
+
+        playerMap = inputActions.FindActionMap("Player");
+
+        foreach (var action in playerMap.actions) {
+            action.started += OnActionStarted;
+            action.performed += OnActionPerformed;
+            action.canceled += OnActionCanceled;
         }
-        map.Enable();
+
+        playerMap.Enable();
     }
+
+    public override void OnStopClient() {
+        CleanupInput();
+    }
+
+    private void OnDestroy() {
+        CleanupInput();
+    }
+
+    private void CleanupInput() {
+        if (!inputInitialized || playerMap == null) return;
+
+        foreach (var action in playerMap.actions) {
+            action.started -= OnActionStarted;
+            action.performed -= OnActionPerformed;
+            action.canceled -= OnActionCanceled;
+        }
+
+        playerMap.Disable();
+        inputInitialized = false;
+    }
+
+    #endregion
 
     private void LateUpdate() {
         //押した瞬間・離した瞬間を管理する変数のリセット
@@ -38,13 +69,29 @@ public class CharacterInput : NetworkBehaviour {
         SkillTriggered = false;
         InteractTriggered = false;
         isJumpPressed = false;
-        //TODO：ここでやりたくないけど現状ここでしか毎フレームリセットできない。
-        core.parameter.AttackTrigger = false;
+
+        if (core != null)
+            core.parameter.AttackTrigger = false;
     }
 
-    /// <summary>
-    /// 入力の共通ハンドラ
-    /// </summary>
+    #region InputSystem 共通ハンドラ
+
+    private void OnActionStarted(InputAction.CallbackContext ctx) {
+        OnInputStarted(ctx.action.name, ctx);
+    }
+
+    private void OnActionPerformed(InputAction.CallbackContext ctx) {
+        OnInputPerformed(ctx.action.name, ctx);
+    }
+
+    private void OnActionCanceled(InputAction.CallbackContext ctx) {
+        OnInputCanceled(ctx.action.name, ctx);
+    }
+
+    #endregion
+
+    #region 入力処理
+
     private void OnInputStarted(string actionName, InputAction.CallbackContext ctx) {
         switch (actionName) {
             case "Jump":
@@ -76,6 +123,7 @@ public class CharacterInput : NetworkBehaviour {
                 break;
         }
     }
+
     private void OnInputPerformed(string actionName, InputAction.CallbackContext ctx) {
         switch (actionName) {
             case "Move":
@@ -101,6 +149,7 @@ public class CharacterInput : NetworkBehaviour {
                 break;
         }
     }
+
     private void OnInputCanceled(string actionName, InputAction.CallbackContext ctx) {
         switch (actionName) {
             case "Move":
@@ -114,12 +163,13 @@ public class CharacterInput : NetworkBehaviour {
         }
     }
 
-    /// <summary>
-    /// 移動
-    /// </summary>
+    #endregion
+
+    #region 各種入力
+
     public void OnMove(InputAction.CallbackContext ctx) {
-        MoveInput = ctx.ReadValue<Vector2>();        
-        //アニメーション管理
+        MoveInput = ctx.ReadValue<Vector2>();
+
         float moveX = MoveInput.x;
         float moveZ = MoveInput.y;
         animCon.ControllMoveAnimation(moveX, moveZ);
@@ -178,8 +228,10 @@ public class CharacterInput : NetworkBehaviour {
     /// </summary>
     /// <param name="context"></param>
     public void OnReload(InputAction.CallbackContext context) {
-        if (context.performed && core.weaponController_main.ammo < core.weaponController_main.weaponData.maxAmmo) {
+        if (context.performed &&
+            core.weaponController_main.ammo < core.weaponController_main.weaponData.maxAmmo) {
             core.weaponController_main.CmdReloadRequest();
         }
     }
+    #endregion
 }
