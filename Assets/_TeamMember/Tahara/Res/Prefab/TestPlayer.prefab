@@ -452,7 +452,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  weaponData: {fileID: 0}
+  weaponData: {fileID: 11400000, guid: c7a01917bcaabcc47832e0fcbb847bf1, type: 2}
   firePoint: {fileID: 8141860258521693391}
 --- !u!114 &205382949362171920
 MonoBehaviour:
@@ -487,6 +487,7 @@ MonoBehaviour:
   syncInterval: 0
   localUI: {fileID: 53306003606112779}
   CameraMenu: {fileID: 1182430980143703742}
+  weaponController_main: {fileID: 6621664334883643172}
   weaponController_sub: {fileID: 205382949362171920}
   bannerNum: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
@@ -509,7 +510,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  inputStatus: {fileID: 11400000, guid: adb843a43467b3a4d96f2f9f910acd93, type: 2}
+  inputStatus: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
   HP: 0
   MP: 0
   isReloading: 0

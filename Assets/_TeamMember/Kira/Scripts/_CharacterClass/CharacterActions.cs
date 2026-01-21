@@ -172,7 +172,7 @@ public class CharacterActions : NetworkBehaviour {
     /// 攻撃関数
     /// </summary>
     virtual public void StartAttack() {
-        if (core.parameter.weaponController_main == null) return;
+        if (core.weaponController_main == null) return;
 
         if (HostUI.isVisibleUI == true) return;
         
@@ -180,7 +180,7 @@ public class CharacterActions : NetworkBehaviour {
         param.AttackStartTimeRecord();
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = core.parameter.GetShootDirection();
-        core.parameter.weaponController_main.CmdRequestAttack(shootDir);
+        core.weaponController_main.CmdRequestAttack(shootDir);
     }
 
     private void HandleSkill()
