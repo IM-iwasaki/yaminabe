@@ -172,7 +172,8 @@ public class CharacterParameter : NetworkBehaviour{
         //‰Šú•Ší‚Ìİ’è
         var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
         var subWeapon = runtimeStatus.SubWeapon.WeaponName;
-        weaponController_main.SetWeaponDataInit(mainWeapon);
+        weaponController_main.CmdSetWeaponData(mainWeapon);
+        //weaponController_main.SetWeaponDataInit(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
     }
 
