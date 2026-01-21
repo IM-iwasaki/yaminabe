@@ -2689,7 +2689,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 66350315652334039, guid: c065ce3e1ca92694187672f3aa9d3f74, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 598275818543314391, guid: c065ce3e1ca92694187672f3aa9d3f74, type: 3}
       propertyPath: sceneId
@@ -5662,33 +5662,13 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
-      propertyPath: hostUI
-      value: 
-      objectReference: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
-    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: hostUIRoot
       value: 
       objectReference: {fileID: 1596833295}
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
-      propertyPath: playerPrefab
-      value: 
-      objectReference: {fileID: 3519547391971899168, guid: 2de1945ee5c3b444f9b0bca0b4210bf7, type: 3}
-    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: serverManager
       value: 
       objectReference: {fileID: 261839327}
-    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
-      propertyPath: spawnPrefabs.Array.size
-      value: 47
-      objectReference: {fileID: 0}
-    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
-      propertyPath: spawnPrefabs.Array.data[45]
-      value: 
-      objectReference: {fileID: 107947191535415832, guid: 9d6d589d52f084b4dbe99003aa8603a3, type: 3}
-    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
-      propertyPath: spawnPrefabs.Array.data[46]
-      value: 
-      objectReference: {fileID: 5471543249360583010, guid: 7679fac087d19cd479781fac86c569f4, type: 3}
     - target: {fileID: 8116109016544477545, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Name
       value: CustomNetworkManager
@@ -6025,6 +6005,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SystemManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7830444608210131597, guid: b8b074524e97d54409db5f9f87df70bd, type: 3}
+      propertyPath: networkSystemPrefabs.Array.size
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830444608210131597, guid: b8b074524e97d54409db5f9f87df70bd, type: 3}
+      propertyPath: networkSystemPrefabs.Array.data[11]
+      value: 
+      objectReference: {fileID: 66350315652334039, guid: c065ce3e1ca92694187672f3aa9d3f74, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

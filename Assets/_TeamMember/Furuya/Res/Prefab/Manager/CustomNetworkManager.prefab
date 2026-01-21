@@ -59,7 +59,7 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 5478059386412428429, guid: 6479413a8b35c31408725e44aa2abf3d, type: 3}
+  playerPrefab: {fileID: 3519547391971899168, guid: 2de1945ee5c3b444f9b0bca0b4210bf7, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
@@ -108,7 +108,8 @@ MonoBehaviour:
   - {fileID: 99578184253258787, guid: 33cac7427c6fb794d856144fbbc06014, type: 3}
   - {fileID: 7774603864644439867, guid: e82f231b6339fba408eb26215ea25800, type: 3}
   - {fileID: 100008, guid: 5b897e9b68304c9429dcb9fb4781dc5b, type: 3}
-  - {fileID: 3156866507962234106, guid: a18d328b1b40b9a45a5e1b7ccbf5e5fa, type: 3}
+  - {fileID: 107947191535415832, guid: 9d6d589d52f084b4dbe99003aa8603a3, type: 3}
+  - {fileID: 5471543249360583010, guid: 7679fac087d19cd479781fac86c569f4, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -125,6 +126,7 @@ MonoBehaviour:
   evaluationInterval: 3
   timeInterpolationGui: 0
   serverManager: {fileID: 0}
+  hostUI: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
 --- !u!114 &1526895916821643918
 MonoBehaviour:
   m_ObjectHideFlags: 0

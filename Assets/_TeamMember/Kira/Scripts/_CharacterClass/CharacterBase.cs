@@ -137,7 +137,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     private void CmdChangePlayerReady() {
         if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName) return;
         parameter.ready = !parameter.ready;
-        ChatManager.instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
+        ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
     }
 
     /// <summary>
@@ -200,7 +200,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
         //死亡フラグをたててHPを0にしておく
         parameter.isDead = true;
-        ChatManager.instance.CmdSendSystemMessage(_name + " is Dead!!");
+        ChatManager.Instance.CmdSendSystemMessage(_name + " is Dead!!");
         //死亡トリガーを発火
         parameter.StartDeadTrigger();
         //バフ全解除
@@ -306,7 +306,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //死んでいなかったら即抜け
         if (!parameter.isDead) return;
 
-        ChatManager.instance.CmdSendSystemMessage("isDead : " + parameter.isDead);
+        ChatManager.Instance.CmdSendSystemMessage("isDead : " + parameter.isDead);
         //保険で明示的に処理
         parameter.ChangeHP(parameter.maxHP, parameter.HP);
         //リスポーン地点に移動させる
@@ -373,12 +373,12 @@ public abstract class CharacterBase : NetworkBehaviour {
 
         //加入しようとしてるチームが埋まっていたら
         if (ServerManager.instance.teams[newTeam].teamPlayerList.Count >= TEAMMATE_MAX) {
-            ChatManager.instance.CmdSendSystemMessage("team member is over");
+            ChatManager.Instance.CmdSendSystemMessage("team member is over");
             return;
         }
         //既に同じチームに入っていたら
         if (newTeam == currentTeam) {
-            ChatManager.instance.CmdSendSystemMessage("you join same team now");
+            ChatManager.Instance.CmdSendSystemMessage("you join same team now");
             return;
         }
         //新たなチームに加入する時
@@ -392,7 +392,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.parameter.TeamID = newTeam;
         //ログを表示
-        ChatManager.instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
+        ChatManager.Instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
     }
 
     /// <summary>
@@ -474,7 +474,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 CmdChangePlayerReady();
             else {
                 parameter.ready = !parameter.ready;
-                ChatManager.instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
+                ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
             }
         }
     }
@@ -502,7 +502,7 @@ public abstract class CharacterBase : NetworkBehaviour {
                 sendMessage = "4649";
                 break;
         }
-        ChatManager.instance.CmdSendSystemMessage(parameter.PlayerName + ":" + sendMessage);
+        ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + ":" + sendMessage);
     }
 
     /// <summary>
@@ -513,7 +513,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         //チャット送信
         if (context.started) {
             int stampIndex = Random.Range(0, 4);
-            ChatManager.instance.CmdSendStamp(stampIndex, parameter.PlayerName);
+            ChatManager.Instance.CmdSendStamp(stampIndex, parameter.PlayerName);
         }
     }
 

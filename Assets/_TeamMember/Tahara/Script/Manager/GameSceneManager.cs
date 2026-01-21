@@ -31,16 +31,16 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             CharacterBase readyPlayer = player.GetComponent<CharacterBase>();
             //‚»‚à‚»‚àPlayer‚ªæ‚ê‚Ä‚¢‚È‚¢
             if (!readyPlayer) {
-                ChatManager.instance.CmdSendSystemMessage("Not found player Info");
+                ChatManager.Instance.CmdSendSystemMessage("Not found player Info");
                 return;
             }
             //€”õ–¢Š®—¹‚È‚ç
             if (!readyPlayer.parameter.ready) {
-                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is not ready");
+                ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is not ready");
                 return;
             }
             else {
-                ChatManager.instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is ready!!");
+                ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is ready!!");
             }
         }
         //ƒ`[ƒ€Œˆ‚ß

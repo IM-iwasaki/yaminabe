@@ -97,7 +97,7 @@ public class CustomNetworkManager : NetworkManager {
         NetworkServer.AddPlayerForConnection(_conn, player);
         if (!serverManager.connectPlayer.Contains(_conn.identity))
             serverManager.connectPlayer.Add(_conn.identity);
-        ChatManager.instance.CmdSendSystemMessage(serverManager.connectPlayer.Count + "is Connected ");
+        ChatManager.Instance.CmdSendSystemMessage(serverManager.connectPlayer.Count + "is Connected ");
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public class CustomNetworkManager : NetworkManager {
         //ローカルクライアントが抜けた場合
         if (_conn.connectionId > 0) {
             //参加者全員に通知
-            ChatManager.instance.CmdSendSystemMessage("Leave Player");
+            ChatManager.Instance.CmdSendSystemMessage("Leave Player");
             if (_conn.identity != null)
                 serverManager.connectPlayer.Remove(_conn.identity);
 

@@ -81,7 +81,7 @@ public class ServerManager : NetworkBehaviour {
             }
             //プレイヤーのチームIDを設定
             player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
-            ChatManager.instance.CmdSendSystemMessage(player.GetComponent<GeneralCharacter>().parameter.PlayerName + " is " + teamIndex + "Team");
+            ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<GeneralCharacter>().parameter.PlayerName + " is " + teamIndex + "Team");
         }
 
     }

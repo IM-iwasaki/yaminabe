@@ -5,12 +5,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ChatManager : NetworkBehaviour {
+public class ChatManager : NetworkSystemObject<ChatManager> {
     //  オブジェクト名の定数
     private readonly string TEXT_OBJECT_NAME = "UserName";
     private readonly string IMAGE_OBJECT_NAME = "StampImage";
-    //  インスタンス用
-    public static ChatManager instance = null;
 
     //  変数
     [Header("チャットログ用の親オブジェクト")]
@@ -36,10 +34,6 @@ public class ChatManager : NetworkBehaviour {
 
     //  フェード処理をそれぞれが持っておく
     private readonly Dictionary<GameObject, Coroutine> fadeRoutines = new();
-
-    private void Awake() {
-        instance = this;
-    }
 
     #region スタンプ生成
     /// <summary>
