@@ -24,6 +24,9 @@ public class GachaEffect : MonoBehaviour {
         if (isPlaying) return;
         isPlaying = true;
 
+        // ガチャ演出開始SE
+        AudioManager.Instance.CmdPlayUISE("Lottery");
+
         Color color = GetRarityColor(rarity);
 
         CreateLines(color);
