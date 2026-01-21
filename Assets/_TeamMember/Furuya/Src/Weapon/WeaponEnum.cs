@@ -69,12 +69,16 @@ public enum GunSEType {
 public enum MagicSEType {
     Fire,
     Ice,
-    Lightning,
+    Water,
 }
 
 public enum MeleeSEType {
     Punch,
     Sword,
+    Katana,
+    Chainsaw,
+    Lightsaber,
+    Spear,
 }
 
 public enum WeaponType { 

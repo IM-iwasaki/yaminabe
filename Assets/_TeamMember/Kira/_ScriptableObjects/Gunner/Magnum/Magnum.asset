@@ -10,16 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b57f1631f241f3c48a205884bc2b4846, type: 3}
-  m_Name: New General Character Status
+  m_Name: Magnum
   m_EditorClassIdentifier: 
   baseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
-  displayName: 
-  skills: []
-  passives: []
-  MainWeapon: {fileID: 0}
-  SubWeapon: {fileID: 0}
-  chatacterType: 0
-  maxHPCorrection: 0
-  speedCorrection: 0
+  displayName: "\u30DE\u30B0\u30CA\u30E0"
+  skills:
+  - {fileID: 11400000, guid: 2895060aadb3f504586cff2525a32f7a, type: 2}
+  passives:
+  - {fileID: 11400000, guid: c52148c9b38ad094a914c3579ce0032a, type: 2}
+  MainWeapon: {fileID: 11400000, guid: c7a01917bcaabcc47832e0fcbb847bf1, type: 2}
+  SubWeapon: {fileID: 11400000, guid: 8fa2c4c5f7650b747899e553f2c38e25, type: 2}
+  chatacterType: 2
+  maxHPCorrection: -15
+  speedCorrection: 1
   attack: 0
   maxMP: 0

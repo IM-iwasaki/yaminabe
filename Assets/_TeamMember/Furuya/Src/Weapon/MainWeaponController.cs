@@ -242,10 +242,10 @@ public class MainWeaponController : NetworkBehaviour {
             if (angle <= allowedAngle || dist < 0.2f) {
                 hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName);
                 RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
-                AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
             }
 
         }
+                AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
 #if UNITY_EDITOR
         MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif

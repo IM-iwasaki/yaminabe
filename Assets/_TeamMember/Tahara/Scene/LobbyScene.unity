@@ -2332,6 +2332,65 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
+--- !u!1 &702754594
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 702754596}
+  - component: {fileID: 702754595}
+  m_Layer: 0
+  m_Name: WeaponMeshList
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &702754595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 702754594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ce41beabfcb8b146bb16282deda1510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponModelList:
+  - {fileID: 7775909171458005017, guid: 26c304c542935a646a21dd134e1c2cea, type: 3}
+  - {fileID: 552193186672911617, guid: d6903d8eddccdf242ab655c7b2a07dde, type: 3}
+  - {fileID: 3823321262691816068, guid: 226c568e48d1bbc45a3110f8660d2e2c, type: 3}
+  - {fileID: 2196376887939949475, guid: 79cfad6d28604f54a97b32d45af9d2b2, type: 3}
+  - {fileID: 2068966698171888845, guid: 12789ee0f0e947642b259489eeabeef5, type: 3}
+  - {fileID: 1247223829425721374, guid: f3aa0537edf19a840a5ee3762f7bb9ed, type: 3}
+  - {fileID: 3323609523921369958, guid: d4481c76bd8df8844b540671759a53e0, type: 3}
+  - {fileID: 2208055804547234966, guid: 4a35b72a70e8b614ab659339a818c3b9, type: 3}
+  - {fileID: 2324029550088476480, guid: 1e723aebdb7066341916d9c1bd15e53a, type: 3}
+  - {fileID: 1541296155197690359, guid: 7b2284d4a9faf474492e3b11a78a77ca, type: 3}
+  - {fileID: 8664746500468644813, guid: 56d800898b877134ea00420b241e329d, type: 3}
+  - {fileID: 5023171486721049170, guid: a2cc1881e2e35f441944c509732cfe15, type: 3}
+  - {fileID: 3351570236941265075, guid: 5a97dbe67cb558641a82630e66f60d5c, type: 3}
+  - {fileID: 499899552944049350, guid: 91bd0ccf113a47646bc65a585bcbdf53, type: 3}
+--- !u!4 &702754596
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 702754594}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &790541058
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5669,6 +5728,14 @@ PrefabInstance:
       propertyPath: serverManager
       value: 
       objectReference: {fileID: 261839327}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.size
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[47]
+      value: 
+      objectReference: {fileID: 8660969764485811580, guid: 683839cb91157ec4987bb689a7fa5916, type: 3}
     - target: {fileID: 8116109016544477545, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Name
       value: CustomNetworkManager
@@ -9139,3 +9206,4 @@ SceneRoots:
   - {fileID: 1273472870}
   - {fileID: 127839251}
   - {fileID: 870507719}
+  - {fileID: 702754596}

@@ -14,18 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: IceMagic
   type: 2
-  damage: 45
+  damage: 70
   cooldown: 1.1
-  ID: 20
+  ID: 7
   muzzleFlashType: 2
   hitEffectType: 2
   maxAmmo: 0
   reloadTime: 0
   projectilePrefab: {fileID: 107947191535415832, guid: 9d6d589d52f084b4dbe99003aa8603a3, type: 3}
-  projectileSpeed: 8
-  MPCost: 7
+  projectileSpeed: 12
+  MPCost: 10
   chargeEffectType: 2
   chargeTime: 1
   magicType: 0
   initialHeightSpeed: 0
-  se: 0
+  se: 1

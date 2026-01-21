@@ -1,6 +1,7 @@
 using Mirror;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 /// <summary>
@@ -71,15 +72,12 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
     public override void Initialize() {
         if (!isServer) return; // Mirrorの仕様上、生成はサーバー側でのみ行う
 
-        //  開始時にスポーンポイントを取得・アイテム生成
-        //SetupSpawnPoint();
-
     }
 
     /// <summary>
     /// ステージ生成時にスポーンポイントを取得・アイテム生成を開始する処理
     /// </summary>
-    public void SetupSpawnPoint() {
+    public async void SetupSpawnPoint() {
         if (!isServer) return; // Mirrorの仕様上、生成はサーバー側でのみ行う
 
         //  一度全部リセットする
@@ -93,6 +91,9 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
             Debug.LogWarning($"[ItemSpawnManager] スポーンポイント（タグ: {spawnPointTag}）が見つかりません。");
             return;
         }
+
+        //  3秒後に開始
+        await Task.Delay(3000);
 
         // 初回スポーン実行
         SpawnAllItems();
