@@ -83,7 +83,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     void Update() {
-        //if(!isLocalPlayer)return;
+        if(!isLocalPlayer)return;
 
         //表示状態管理関数の呼び出し
         UpdateSkillState();
@@ -159,6 +159,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// スキルの表示状態管理
     /// </summary>
     private void UpdateSkillState() {
+        if (!isLocalPlayer) return;
         //現在のスキルの状態をキャッシュ
         var skillParam = player.parameter.equippedSkills[0];
 
@@ -181,6 +182,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// パッシブの表示状態管理
     /// </summary>
     private void UpdatePassiveState() {
+        if (!isLocalPlayer) return;
         //現在のパッシブの状態をキャッシュ
         var passiveParam = player.parameter.equippedPassives[0];
 
@@ -203,6 +205,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// スキルとパッシブのアイコン、武器の情報の反映
     /// </summary>
     public void LocalUIChanged() {
+        if (!isLocalPlayer) return;
         //MPを必要とする職業かでMPの表示非表示を分ける
         if (player.weaponController_main.weaponData.type == WeaponType.Magic) {
             mpBar.SetActive(true);
