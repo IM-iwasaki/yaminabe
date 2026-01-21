@@ -22,7 +22,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     //武器を使用するため
     [Header("アクション用変数")]
-    public MainWeaponController weaponController_main;
+    //public MainWeaponController weaponController_main;
     public SubWeaponController weaponController_sub;
 
     public int bannerNum = 0;
@@ -60,6 +60,9 @@ public abstract class CharacterBase : NetworkBehaviour {
             input.Initialize(this);
             action.Initialize(this);
             parameter.Initialize(this);
+
+            parameter.weaponController_main.ResetAmmo();
+
 
             Camera camera = GetComponentInChildren<Camera>();
             camera.tag = "MainCamera";
@@ -173,7 +176,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <summary>
     /// PlayerLocalUIControllerの取得用ゲッター
     /// </summary>
-    public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>(); }
+    public PlayerLocalUIController GetPlayerLocalUI() { return localUI; }
 
     #region 禁断の死亡処理(グロ注意)
     ///--------------------変更:タハラ---------------------

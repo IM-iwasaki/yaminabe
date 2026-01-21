@@ -49,7 +49,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField] Image[] passive_Icon;
     [SerializeField] Image passive_State;
     [SerializeField] TextMeshProUGUI passiveChains;
-    [SerializeField] GeneralCharacter player;
+    [SerializeField] CharacterBase player;
     [SyncVar] float skillStateProgress = 0.0f;
     //[SyncVar] float passiveStateProgress = 0.0f;
 
@@ -67,23 +67,22 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// ローカルUI全体の初期化
     /// </summary>
     public void Initialize() {
-        hpBar_slider.interactable = false;
-        mpBar_slider.interactable = false;
-        hpUnderBar_slider.interactable = false;
-        mpUnderBar_slider.interactable = false;
-
         if (!isLocalPlayer) {
             var LocalUI = GetComponentInChildren<Canvas>();
             LocalUI.gameObject.SetActive(false);
             return;
         }
+        hpBar_slider.interactable = false;
+        mpBar_slider.interactable = false;
+        hpUnderBar_slider.interactable = false;
+        mpUnderBar_slider.interactable = false;
+        
         mainWeaponReloadIcon.enabled = false;
         interactUI.SetActive(false);
-        LocalUIChanged();
     }
 
     void Update() {
-        //if(!isLocalPlayer)return;
+        if(!isLocalPlayer)return;
 
         //表示状態管理関数の呼び出し
         UpdateSkillState();
@@ -92,18 +91,18 @@ public class PlayerLocalUIController : NetworkBehaviour {
         //裏バーの更新
         UpdateUnderBar();
         //現在使用している武器タイプで分岐
-        switch (player.weaponController_main.weaponData.type) {
+        switch (player.parameter.weaponController_main.weaponData.type) {
             case WeaponType.Melee:
                 //近接攻撃に弾数やMPは存在しないので表示を切り替える
                 mainWeaponText[(int)TextIndex.Current].text = "∞";
                 break;
             case WeaponType.Gun:
                 //メインウェポンの現在弾倉数を更新
-                mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
+                mainWeaponText[(int)TextIndex.Current].text = player.parameter.weaponController_main.ammo.ToString();
                 break;
             case WeaponType.Magic:
                 //所持している武器が魔法であるか確認。
-                if (WeaponDataRegistry.GetWeapon(player.weaponController_main.weaponData.WeaponName) is not MainMagicData magicData) {
+                if (WeaponDataRegistry.GetWeapon(player.parameter.weaponController_main.weaponData.WeaponName) is not MainMagicData magicData) {
                     #if UNITY_EDITOR
                     Debug.LogError("所持している魔法の詳細情報を正常に取得できませんでした。");
                     #endif
@@ -160,8 +159,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// </summary>
     private void UpdateSkillState() {
         //現在のスキルの状態をキャッシュ
-        var skillParam = player.parameter.equippedSkills[0];
-
+        //SkillBase skillParam = player.parameter.equippedSkills[0];
         //スキルが使用可能な場合
         if (player.action.isCanSkill) {
             //ゲージの端数を捨て、色を黄色にする
@@ -171,7 +169,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         //スキルが使用不可だった場合
         else {
             //ゲージを更新・反映する、色を白に変更する
-            skillStateProgress = player.parameter.skillAfterTime / skillParam.cooldown;
+            skillStateProgress = player.parameter.skillAfterTime / player.parameter.equippedSkills[0].cooldown;
             skill_State.fillAmount = skillStateProgress;
             skill_State.color = Color.white;
         }
@@ -203,8 +201,10 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// スキルとパッシブのアイコン、武器の情報の反映
     /// </summary>
     public void LocalUIChanged() {
+        if(!isLocalPlayer)return;
+
         //MPを必要とする職業かでMPの表示非表示を分ける
-        if (player.weaponController_main.weaponData.type == WeaponType.Magic) {
+        if (player.parameter.weaponController_main.weaponData.type == WeaponType.Magic) {
             mpBar.SetActive(true);
             mpUnderBar.SetActive(true);
         }
@@ -227,12 +227,12 @@ public class PlayerLocalUIController : NetworkBehaviour {
             passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
         }
 
-        mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;
+        mainWeaponText[(int)TextIndex.WeaponName].text = player.parameter.weaponController_main.weaponData.weaponName;
         //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
-        if (player.weaponController_main.weaponData.type == WeaponType.Gun) {
+        if (player.parameter.weaponController_main.weaponData.type == WeaponType.Gun) {
             mainWeaponText[(int)TextIndex.Partition].text = "/";
-            mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
-            mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
+            mainWeaponText[(int)TextIndex.Current].text = player.parameter.weaponController_main.ammo.ToString();
+            mainWeaponText[(int)TextIndex.Max].text = player.parameter.weaponController_main.weaponData.maxAmmo.ToString();
         }
         else {
             mainWeaponText[(int)TextIndex.Partition].text = "";
@@ -251,7 +251,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// </summary>
     public void StartRotateReloadIcon() {
         if (!reloadIconRotating)
-            StartCoroutine(RotateReloadIcon(player.weaponController_main.weaponData.reloadTime));
+            StartCoroutine(RotateReloadIcon(player.parameter.weaponController_main.weaponData.reloadTime));
     }
 
     /// <summary>
@@ -265,12 +265,12 @@ public class PlayerLocalUIController : NetworkBehaviour {
         if (hpBar_slider.value < 1)
             hpBarImage.gameObject.SetActive(false);
         //2割以下
-        else if (hpBar_slider.value <= _maxHP / 5 && hpBar_slider.value >= 1) {
+        else if (_hp <= _maxHP / 5 && _hp >= 1) {
             hpBarImage.color = Color.red;
             hpText.color = Color.red;
         }
         //5割以下
-        else if (hpBar_slider.value <= _maxHP / 2) {
+        else if (_hp <= _maxHP / 2) {
             hpBarImage.color = Color.yellow;
             hpText.color = Color.yellow;
         }

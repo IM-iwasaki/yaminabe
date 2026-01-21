@@ -1,13 +1,6 @@
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.InputSystem;
-using UnityEngine.SocialPlatforms;
-using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
-using UnityEngine.Windows;
-using UnityEngine.InputSystem.LowLevel;
 
 /// <summary>
 /// Character‚Ì•Ï”ŠÇ—
@@ -98,7 +91,7 @@ public class CharacterParameter : NetworkBehaviour{
 
     //LocalUI‚ÌQÆ‚¾‚¯‚Â
     private PlayerLocalUIController localUI;
-    private MainWeaponController weaponController_main;
+    public MainWeaponController weaponController_main{ get; private set; }
     private SubWeaponController weaponController_sub;
 
     #endregion
@@ -170,8 +163,8 @@ public class CharacterParameter : NetworkBehaviour{
         weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
 
         //‰Šú•Ší‚Ìİ’è
-        var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
-        var subWeapon = runtimeStatus.SubWeapon.WeaponName;
+        var mainWeapon = runtimeStatus.MainWeapon.WeaponName.ToString();
+        var subWeapon = runtimeStatus.SubWeapon.WeaponName.ToString();
         weaponController_main.SetWeaponDataInit(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
     }
