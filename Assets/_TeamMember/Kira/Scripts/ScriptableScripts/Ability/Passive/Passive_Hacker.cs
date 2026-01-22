@@ -12,27 +12,9 @@ public class Passive_Hacker : PassiveBase {
 
    
 
-    //public override void PassiveReflection(CharacterBase user) {
-    //    // デスマッチかどうか
-    //    if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch) {
-    //        return;
-    //    }
-
-    //    // ルールに関与している敵を取得
-    //    foreach (var enemy in FindObjectsOfType<CharacterBase>()) {
-    //        if (enemy == user) continue;
-    //        if (enemy.parameter.TeamID == user.parameter.TeamID) continue;
-
-    //        // エリア or ホコに関与しているか
-    //        if (IsEnemyAffectingRule(enemy)) {
-    //            // 敵のスキルCT回復を半減
-    //            enemy.parameter.skillAfterTime -= Time.deltaTime / 2f;
-
-    //            // 自身のスキルCT回復を3倍
-    //            user.parameter.skillAfterTime += Time.deltaTime * 3f;
-    //        }
-    //    }
-    //}
+    public override void PassiveReflection(CharacterBase user) {
+        
+    }
 
 
     /// <summary>
