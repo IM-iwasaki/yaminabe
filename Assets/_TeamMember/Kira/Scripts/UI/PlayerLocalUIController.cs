@@ -19,6 +19,9 @@ public class PlayerLocalUIController : NetworkBehaviour {
         WeaponName,
     }
 
+    [SerializeField]
+    private GameObject LocalUICanvas;
+
     [SerializeField] TextMeshProUGUI[] mainWeaponText;
     [SerializeField] Image mainWeaponReloadIcon;
     private bool reloadIconRotating = false;
@@ -72,68 +75,48 @@ public class PlayerLocalUIController : NetworkBehaviour {
         hpUnderBar_slider.interactable = false;
         mpUnderBar_slider.interactable = false;
 
-        if (!isLocalPlayer) {
-            var LocalUI = GetComponentInChildren<Canvas>();
-            LocalUI.gameObject.SetActive(false);
-            return;
-        }
+        localUIObject.SetActive(true);
+
+
         mainWeaponReloadIcon.enabled = false;
         interactUI.SetActive(false);
     }
 
-    public override void OnStartLocalPlayer() {
-        base.OnStartLocalPlayer();
-        Initialize();
-    }
-
     void Update() {
-        // ローカルプレイヤー以外は一切処理しない
         if (!isLocalPlayer) return;
 
-        // null ガード（Spawn直後・切断直前対策）
-        if (player == null) return;
-        if (player.parameter == null) return;
-        if (player.weaponController_main == null) return;
-        if (player.weaponController_sub == null) return;
-
-        var mainWeapon = player.weaponController_main.weaponData;
-        if (mainWeapon == null) return;
-
-        // スキル / パッシブ状態更新
+        //表示状態管理関数の呼び出し
         UpdateSkillState();
         UpdatePassiveState();
 
-        // 裏バー更新
+        //裏バーの更新
         UpdateUnderBar();
-
-        // 武器タイプ別UI更新
-        switch (mainWeapon.type) {
+        //現在使用している武器タイプで分岐
+        switch (player.weaponController_main.weaponData.type) {
             case WeaponType.Melee:
-                // 近接は弾数無限表示
+                //近接攻撃に弾数やMPは存在しないので表示を切り替える
                 mainWeaponText[(int)TextIndex.Current].text = "∞";
                 break;
-
             case WeaponType.Gun:
-                // 銃は現在弾数表示
-                mainWeaponText[(int)TextIndex.Current].text =
-                    player.weaponController_main.ammo.ToString();
+                //メインウェポンの現在弾倉数を更新
+                mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
                 break;
-
             case WeaponType.Magic:
-                // 魔法はMPコスト表示
-                if (WeaponDataRegistry.GetWeapon(mainWeapon.WeaponName) is MainMagicData magicData) {
-                    mainWeaponText[(int)TextIndex.Partition].text =
-                        "Cost : " + magicData.MPCost.ToString();
+                //所持している武器が魔法であるか確認。
+                if (WeaponDataRegistry.GetWeapon(player.weaponController_main.weaponData.WeaponName) is not MainMagicData magicData) {
+#if UNITY_EDITOR
+                    Debug.LogError("所持している魔法の詳細情報を正常に取得できませんでした。");
+#endif
+                    return;
                 }
+                //MP消費量をテキストに反映
+                mainWeaponText[(int)TextIndex.Partition].text = "Cost : " + magicData.MPCost.ToString();
                 break;
         }
-
-        // MP表示更新
+        //現在のMPをテキストに反映
         mpText.text = player.parameter.MP.ToString();
-
-        // サブ武器表示更新
-        subWeaponText[(int)TextIndex.Current].text =
-            player.weaponController_sub.currentUses.ToString();
+        //サブウェポンの現在所持数を更新
+        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
     }
 
     /// <summary>
@@ -145,7 +128,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             //裏バー値と表バー値の差分を算出
             float valueDiscrepancy = hpUnderBar_slider.value - hpBar_slider.value;
             //差分が一定以下になったらバー同士の値を合わせる
-            if(valueDiscrepancy <= 0.2f) {
+            if (valueDiscrepancy <= 0.2f) {
                 hpUnderBar_slider.value = hpBar_slider.value;
             }
             //指数関数的に速度を落としながら裏バーの値を減少させる
@@ -160,7 +143,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             //裏バー値と表バー値の差分を算出
             float valueDiscrepancy = mpUnderBar_slider.value - mpBar_slider.value;
             //差分が一定以下になったらバー同士の値を合わせる
-            if(valueDiscrepancy <= 0.2f) {
+            if (valueDiscrepancy <= 0.2f) {
                 mpUnderBar_slider.value = mpBar_slider.value;
             }
             //指数関数的に速度を落としながら裏バーの値を減少させる
@@ -222,66 +205,47 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// スキルとパッシブのアイコン、武器の情報の反映
     /// </summary>
     public void LocalUIChanged() {
-        // ローカルプレイヤー以外は処理しない
         if (!isLocalPlayer) return;
-
-        // null ガード（Mirrorでは必須）
-        if (player == null) return;
-        if (player.weaponController_main == null) return;
-        if (player.weaponController_sub == null) return;
-
-        var mainWeapon = player.weaponController_main.weaponData;
-        var subWeapon = player.weaponController_sub.subWeaponData;
-
-        if (mainWeapon == null || subWeapon == null) return;
-        if (player.parameter == null) return;
-
-        // MPバーの表示制御
-        if (mainWeapon.type == WeaponType.Magic) {
+        //MPを必要とする職業かでMPの表示非表示を分ける
+        if (player.weaponController_main.weaponData.type == WeaponType.Magic) {
             mpBar.SetActive(true);
             mpUnderBar.SetActive(true);
-        } else {
+        }
+        else {
             mpBar.SetActive(false);
             mpUnderBar.SetActive(false);
         }
 
-        // HP / MP UI
+        //ステータス系の初期化
         hpText.text = player.parameter.HP.ToString();
         ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
-
         mpText.text = player.parameter.MP.ToString();
         ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
 
-        // スキル / パッシブアイコン
-        if (player.parameter.equippedSkills != null && player.parameter.equippedSkills.Length > 0) {
-            for (int i = 0; i < skill_Icon.Length; i++) {
-                skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
-            }
+
+        for (int i = 0; i < skill_Icon.Length; i++) {
+            skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
+        }
+        for (int i = 0; i < passive_Icon.Length; i++) {
+            passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
         }
 
-        if (player.parameter.equippedPassives != null && player.parameter.equippedPassives.Length > 0) {
-            for (int i = 0; i < passive_Icon.Length; i++) {
-                passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
-            }
-        }
-
-        // メイン武器UI
-        mainWeaponText[(int)TextIndex.WeaponName].text = mainWeapon.weaponName;
-
-        if (mainWeapon.type == WeaponType.Gun) {
+        mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;
+        //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
+        if (player.weaponController_main.weaponData.type == WeaponType.Gun) {
             mainWeaponText[(int)TextIndex.Partition].text = "/";
             mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
-            mainWeaponText[(int)TextIndex.Max].text = mainWeapon.maxAmmo.ToString();
-        } else {
+            mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
+        }
+        else {
             mainWeaponText[(int)TextIndex.Partition].text = "";
             mainWeaponText[(int)TextIndex.Current].text = "";
             mainWeaponText[(int)TextIndex.Max].text = "";
         }
-
-        // サブ武器UI
+        //プレイヤーのサブウェポンUIを反映
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
-        subWeaponText[(int)TextIndex.Max].text = subWeapon.maxUses.ToString();
-        subWeaponText[(int)TextIndex.WeaponName].text = subWeapon.WeaponName;
+        subWeaponText[(int)TextIndex.Max].text = player.weaponController_sub.subWeaponData.maxUses.ToString();
+        subWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_sub.subWeaponData.WeaponName;
     }
 
     /// <summary>
@@ -299,7 +263,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar_slider.value = (float)_hp / _maxHP * FIXED_RATIO;
-        Debug.Log("value:"+_hp + "/ slider.value:" + hpBar_slider.value);
+        Debug.Log("value:" + _hp + "/ slider.value:" + hpBar_slider.value);
         //死亡時
         if (hpBar_slider.value < 1)
             hpBarImage.gameObject.SetActive(false);

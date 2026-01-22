@@ -10,10 +10,11 @@ public class GeneralCharacter : CharacterBase {
 
     public override void OnStartLocalPlayer() {
         base.OnStartLocalPlayer();
+        if (!isLocalPlayer) return; // Ž©•ª‚¾‚¯•\Ž¦
 
+        localUI.Initialize();
         localUI.LocalUIChanged();
 
-        if (!isLocalPlayer) return; // Ž©•ª‚¾‚¯•\Ž¦
         SkillBase skill = parameter.equippedSkills[0];
         PassiveBase passive = parameter.equippedPassives[0];
 
@@ -25,9 +26,6 @@ public class GeneralCharacter : CharacterBase {
 
     public override void OnStartClient() {
         base.OnStartClient();
-
-        localUI.Initialize();
-
 
     }
 
