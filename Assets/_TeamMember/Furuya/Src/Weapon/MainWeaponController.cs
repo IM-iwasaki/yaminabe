@@ -32,12 +32,19 @@ public class MainWeaponController : NetworkBehaviour {
 
     [Command]
     public void RequestAmmoReset() {
-        // 追加：キラ   弾薬数を最大にする。
         if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
             ammo = weaponData.maxAmmo;
-            playerUI.LocalUIChanged();
+
+            // クライアントのUI更新は ClientRpc で呼べよ by マツオ 
+            RpcUpdateAmmoUI();
         }
+    }
+
+    [ClientRpc]
+    void RpcUpdateAmmoUI() {
+        if (!isLocalPlayer) return; // 自分のUIだけ更新
+        playerUI?.LocalUIChanged();
     }
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
