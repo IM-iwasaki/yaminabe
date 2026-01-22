@@ -79,7 +79,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
         }
         mainWeaponReloadIcon.enabled = false;
         interactUI.SetActive(false);
-        LocalUIChanged();
     }
 
     void Update() {
