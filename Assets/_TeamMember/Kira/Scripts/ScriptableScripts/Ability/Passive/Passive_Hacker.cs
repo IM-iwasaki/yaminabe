@@ -41,21 +41,14 @@ public class Passive_Hacker : PassiveBase {
     private bool IsEnemyAffectingRule(CharacterBase enemy) {
         // エリア制圧中
         if (enemy.TryGetComponent<CaptureArea>(out var area)) {
-            if (area.IsCapturing) return true;
+            //if (area.IsCapturing) return true;
         }
 
         // ホコ保持中
         if (enemy.TryGetComponent<CaptureHoko>(out var hoko)) {
-            if (hoko.IsHolder) return true;
+            //if (hoko.IsHolder) return true;
         }
 
         return false;
     }
-}
-
-
-
-
-
-}
 }
