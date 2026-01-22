@@ -25,16 +25,6 @@ public class MainWeaponController : NetworkBehaviour {
         animCon = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
     }
-
-    [Command]
-    public void RequestAmmoReset() {
-        // 追加：キラ   弾薬数を最大にする。
-        if (weaponData.type == WeaponType.Gun) {
-            weaponData.AmmoReset();
-            ammo = weaponData.maxAmmo;
-        }
-    }
-
     public void SetCharacterType(CharacterEnum.CharaterType type) {
         charaterType = type;
     }
