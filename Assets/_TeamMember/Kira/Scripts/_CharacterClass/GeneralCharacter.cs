@@ -12,8 +12,6 @@ public class GeneralCharacter : CharacterBase {
         base.OnStartLocalPlayer();
         if (!isLocalPlayer) return; // 自分だけ表示
 
-        weaponController_main.RequestAmmoReset();
-
         localUI.Initialize();
         localUI.LocalUIChanged();
 
@@ -54,6 +52,7 @@ public class GeneralCharacter : CharacterBase {
 
     public override void Respawn() {
         base.Respawn();
+        if (!isLocalPlayer) return;
         //パッシブのセットアップ
         parameter.equippedPassives[0].PassiveSetting();
     }

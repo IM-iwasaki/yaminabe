@@ -93,4 +93,13 @@ public class CharacterAnimationController : NetworkBehaviour {
         anim.SetTrigger("Dead");
     }
 
+    public void SetNewAnimator(Animator _newAnimator) {
+        anim = _newAnimator;
+
+        var networkAnim = GetComponentInChildren<NetworkAnimator>();
+
+        networkAnim.animator.runtimeAnimatorController = anim.runtimeAnimatorController;
+
+    }
+
 }
