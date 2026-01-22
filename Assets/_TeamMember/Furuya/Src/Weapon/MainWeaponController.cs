@@ -101,7 +101,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        animCon.anim.SetBool("Shoot", true);
+        RpcShootAnimation();
         //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
@@ -137,7 +137,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        animCon.anim.SetBool("Shoot", true);
+        RpcShootAnimation();
         //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
@@ -172,7 +172,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        animCon.anim.SetBool("Shoot", true);
+        RpcShootAnimation();
         //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
@@ -218,11 +218,18 @@ public class MainWeaponController : NetworkBehaviour {
 
         weaponData = data;
         ammo = weaponData.ammo;
-        playerUI.LocalUIChanged();
         characterBase.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
-        //見た目変更
-        characterBase.GetComponent<CharacterAnimationController>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
+        RpcOnChangeWeapon();
         Debug.LogWarning($"'{data.weaponName}' を使用します");
+    }
+
+    [TargetRpc]
+    private void RpcOnChangeWeapon() {
+        if (!isLocalPlayer) return;
+
+        playerUI.LocalUIChanged();
+        //見た目変更
+        animCon.activeLayer = GenerateWeaponIndex(weaponData.weaponName);
     }
 
     /// <summary>
@@ -528,6 +535,10 @@ public class MainWeaponController : NetworkBehaviour {
             "Minigun" => 5,
             _ => -1,
         };
+    }
+    [ClientRpc]
+    private void RpcShootAnimation() {
+        animCon.anim.SetBool("Shoot", true);
     }
 }
 

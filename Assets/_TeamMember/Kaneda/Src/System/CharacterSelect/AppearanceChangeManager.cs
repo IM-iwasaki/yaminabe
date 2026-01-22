@@ -61,7 +61,6 @@ public class AppearanceChangeManager : MonoBehaviour
         AppearanceSyncManager.instance.RecordAppearance(netId, characterCount, skinCount);
         //　追加タハラ:アニメーターを再度保存
         Animator newAnimator = newSkin.GetComponent<Animator>();
-        player.GetComponent<NetworkAnimator>().animator = newAnimator;
         player.GetComponent<CharacterAnimationController>().anim = newAnimator;
     }
 

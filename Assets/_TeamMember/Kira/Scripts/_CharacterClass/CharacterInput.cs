@@ -154,7 +154,6 @@ public class CharacterInput : NetworkBehaviour {
         switch (actionName) {
             case "Move":
                 MoveInput = Vector2.zero;
-                animCon.CmdResetAnimation();
                 break;
             case "Fire_Main":
             case "Fire_Sub":
@@ -169,10 +168,6 @@ public class CharacterInput : NetworkBehaviour {
 
     public void OnMove(InputAction.CallbackContext ctx) {
         MoveInput = ctx.ReadValue<Vector2>();
-
-        float moveX = MoveInput.x;
-        float moveZ = MoveInput.y;
-        animCon.ControllMoveAnimation(moveX, moveZ);
     }
 
     /// <summary>
@@ -200,7 +195,6 @@ public class CharacterInput : NetworkBehaviour {
             //ó£ÇµÇΩèuä‘Ç‹Ç≈
             case InputActionPhase.Canceled:
                 AttackPressed = false;
-                animCon.StopShootAnim();
                 break;
             //âüÇµÇΩèuä‘
             case InputActionPhase.Performed:
