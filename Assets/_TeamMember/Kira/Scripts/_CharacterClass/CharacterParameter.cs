@@ -244,6 +244,8 @@ public class CharacterParameter : NetworkBehaviour{
     /// <param name="_">–³–¼•Ï”</param>
     /// <param name="_new">V‚½‚É•ÏX‚³‚ê‚½’l(¡‰ñ‚Å‚¢‚¤‚ÆisReloading)</param>
     private void UpdateReloadIcon(bool _, bool _new) {
+        if (!isLocalPlayer) return;
+
         if (_new)
             localUI.StartRotateReloadIcon();
     }
