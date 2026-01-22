@@ -204,6 +204,7 @@ public class SubWeaponController : NetworkBehaviour {
                     landMineData.explosionRadius,
                     landMineData.damage,
                     landMineData.canDamageAllies,
+                    characterBase.parameter.playerId,
                     landMineData.useEffectType
                 );
             }

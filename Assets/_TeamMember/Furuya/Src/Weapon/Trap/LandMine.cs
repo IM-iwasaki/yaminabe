@@ -10,6 +10,7 @@ public class LandMine : TrapBase {
     private int damage;
     private bool canDamageAllies;
     private EffectType explosionEffect;
+    private int ID;
 
     [Server]
     public void Init(
@@ -17,12 +18,14 @@ public class LandMine : TrapBase {
     float explosionRadius,
     int damage,
     bool canDamageAllies,
+    int _ID,
     EffectType explosionEffect
-) {
+    ) {
         base.Init(trapData);
         this.explosionRadius = explosionRadius;
         this.damage = damage;
         this.canDamageAllies = canDamageAllies;
+        this.ID = _ID;
         this.explosionEffect = explosionEffect;
 
         hasTriggered = false;
@@ -63,7 +66,7 @@ public class LandMine : TrapBase {
             var target = c.GetComponent<CharacterBase>();
             if (target == null) continue;
             if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) continue;
-            target.TakeDamage(damage, ownerName, target.parameter.playerId);
+            target.TakeDamage(damage, ownerName, ID);
         }
 
         RpcPlayEffect(transform.position, explosionEffect);
