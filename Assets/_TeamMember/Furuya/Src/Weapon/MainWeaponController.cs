@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
 using System.Collections;
+using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -78,8 +79,11 @@ public class MainWeaponController : NetworkBehaviour {
                 else if (characterBase.parameter.isReloading) return;
 
                 if (weaponData is GunData gunData) { 
-                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay)); 
-                    if(ammo > 0)
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+
+                   
+
+                    if (ammo > 0)
                         ammo--; 
                 }
 

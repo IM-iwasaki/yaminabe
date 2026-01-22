@@ -1,17 +1,39 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Character/Skill/Hacker_迅速切込")]
+/// <summary>
+/// スキル：ハッキング
+/// ・敵全体の移動速度を大幅低下
+/// ・受けるダメージを増加させる
+/// </summary>
+[CreateAssetMenu(menuName = "Character/Skill/Hacker_ハッキング")]
 public class Skill_Hacker : SkillBase {
 
-    //
-    //  スキル名：迅速切込
-    //  タイプ　：自己強化型
-    //  効果    ：一瞬の間、移動速度を大幅に上昇。
-    //　CT      ：14秒
-    //
-
     public override void Activate(CharacterBase user) {
-        //移動速度上昇開始
-        user.MoveSpeedBuff(5.0f,0.3f);
+
+        CharacterParameter selfParam = user.GetComponent<CharacterParameter>();
+        if (selfParam == null) return;
+
+        // 全キャラクター取得
+        CharacterParameter[] allPlayers =
+            GameObject.FindObjectsOfType<CharacterParameter>();
+
+        foreach (CharacterParameter target in allPlayers) {
+
+            // 自分は除外
+            if (target == selfParam) continue;
+
+            // 未所属 or 同チームは除外
+            if (target.TeamID == -1) continue;
+            if (target.TeamID == selfParam.TeamID) continue;
+
+            CharacterBase enemy = target.GetComponent<CharacterBase>();
+            if (enemy == null) continue;
+
+            // 移動速度を30%に低下（4秒）
+            enemy.MoveSpeedBuff(0.3f, 4.0f);
+
+            // 被ダメージ1.25倍（4秒）
+            enemy.DamageCut(125, 4.0f);
+        }
     }
 }
