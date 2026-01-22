@@ -19,6 +19,9 @@ public class PlayerLocalUIController : NetworkBehaviour {
         WeaponName,
     }
 
+    [SerializeField]
+    private GameObject LocalUICanvas;
+
     [SerializeField] TextMeshProUGUI[] mainWeaponText;
     [SerializeField] Image mainWeaponReloadIcon;
     private bool reloadIconRotating = false;
@@ -72,17 +75,15 @@ public class PlayerLocalUIController : NetworkBehaviour {
         hpUnderBar_slider.interactable = false;
         mpUnderBar_slider.interactable = false;
 
-        if (!isLocalPlayer) {
-            var LocalUI = GetComponentInChildren<Canvas>();
-            LocalUI.gameObject.SetActive(false);
-            return;
-        }
+        localUIObject.SetActive(true);
+
+
         mainWeaponReloadIcon.enabled = false;
         interactUI.SetActive(false);
     }
 
     void Update() {
-        if(!isLocalPlayer)return;
+        if (!isLocalPlayer) return;
 
         //表示状態管理関数の呼び出し
         UpdateSkillState();
@@ -103,19 +104,19 @@ public class PlayerLocalUIController : NetworkBehaviour {
             case WeaponType.Magic:
                 //所持している武器が魔法であるか確認。
                 if (WeaponDataRegistry.GetWeapon(player.weaponController_main.weaponData.WeaponName) is not MainMagicData magicData) {
-                    #if UNITY_EDITOR
+#if UNITY_EDITOR
                     Debug.LogError("所持している魔法の詳細情報を正常に取得できませんでした。");
-                    #endif
+#endif
                     return;
                 }
                 //MP消費量をテキストに反映
-                mainWeaponText[(int) TextIndex.Partition].text = "Cost : " + magicData.MPCost.ToString();
+                mainWeaponText[(int)TextIndex.Partition].text = "Cost : " + magicData.MPCost.ToString();
                 break;
         }
         //現在のMPをテキストに反映
         mpText.text = player.parameter.MP.ToString();
         //サブウェポンの現在所持数を更新
-        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();        
+        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
     }
 
     /// <summary>
@@ -127,7 +128,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             //裏バー値と表バー値の差分を算出
             float valueDiscrepancy = hpUnderBar_slider.value - hpBar_slider.value;
             //差分が一定以下になったらバー同士の値を合わせる
-            if(valueDiscrepancy <= 0.2f) {
+            if (valueDiscrepancy <= 0.2f) {
                 hpUnderBar_slider.value = hpBar_slider.value;
             }
             //指数関数的に速度を落としながら裏バーの値を減少させる
@@ -142,7 +143,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             //裏バー値と表バー値の差分を算出
             float valueDiscrepancy = mpUnderBar_slider.value - mpBar_slider.value;
             //差分が一定以下になったらバー同士の値を合わせる
-            if(valueDiscrepancy <= 0.2f) {
+            if (valueDiscrepancy <= 0.2f) {
                 mpUnderBar_slider.value = mpBar_slider.value;
             }
             //指数関数的に速度を落としながら裏バーの値を減少させる
@@ -262,7 +263,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
         hpBar_slider.value = (float)_hp / _maxHP * FIXED_RATIO;
-        Debug.Log("value:"+_hp + "/ slider.value:" + hpBar_slider.value);
+        Debug.Log("value:" + _hp + "/ slider.value:" + hpBar_slider.value);
         //死亡時
         if (hpBar_slider.value < 1)
             hpBarImage.gameObject.SetActive(false);
