@@ -26,7 +26,7 @@ public class MainWeaponController : NetworkBehaviour {
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
-    public override void OnStartLocalPlayer() {       
+    public override void OnStartLocalPlayer() {
         // 追加：キラ   弾薬数を最大にする。
         if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
@@ -68,8 +68,12 @@ public class MainWeaponController : NetworkBehaviour {
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.parameter.isReloading) return;
 
-                if (weaponData is GunData gunData)
-                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                if (weaponData is GunData gunData) { 
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay)); 
+                    if(ammo > 0)
+                        ammo--; 
+                }
+
                 break;
             case WeaponType.Magic:
                 if (weaponData is MainMagicData magicdata)
@@ -119,7 +123,7 @@ public class MainWeaponController : NetworkBehaviour {
     /// </summary>
     /// <param name="direction"></param>
     [Command]
-    public void CmdRequestSkillAttack(Vector3 direction,WeaponData skillweapon) {
+    public void CmdRequestSkillAttack(Vector3 direction, WeaponData skillweapon) {
         lastAttackTime = Time.time;
 
         switch (skillweapon.type) {
@@ -246,7 +250,7 @@ public class MainWeaponController : NetworkBehaviour {
             }
 
         }
-                AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
+        AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
 #if UNITY_EDITOR
         MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
@@ -283,10 +287,6 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not GunData gunData || gunData.projectilePrefab == null)
             return;
 
-        //  追加：キラ  弾薬が必要な場合、弾薬が残っていれば銃の弾薬を消費して通過
-        if (ammo > 0) ammo--;
-        else return;
-
         // 弾をネットワークプールから取得
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(
             gunData.projectilePrefab.name, // プール名で取得
@@ -304,8 +304,7 @@ public class MainWeaponController : NetworkBehaviour {
                 gunData.projectileSpeed,
                 gunData.damage
             );
-        }
-        else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
+        } else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
             ExpProjScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
@@ -353,8 +352,7 @@ public class MainWeaponController : NetworkBehaviour {
                 magicData.damage,
                 direction
             );
-        }
-        else if (proj.TryGetComponent(out DoTArea dotArea)) {
+        } else if (proj.TryGetComponent(out DoTArea dotArea)) {
             int teamID = characterBase?.parameter.TeamID ?? 0;
             Vector3 Direction = transform.forward;
             dotArea.Init(
@@ -376,7 +374,7 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not MainMagicData magicData) return;
 
         //クライアント側にチャージエフェクトを出させる
-        if(magicData.chargeTime > 0)
+        if (magicData.chargeTime > 0)
             RpcPlayChargeEffect(firePoint.position, magicData.chargeEffectType);
         StartCoroutine(CastAfterDelay(direction, magicData));
     }
@@ -489,7 +487,7 @@ public class MainWeaponController : NetworkBehaviour {
     public int GenerateWeaponIndex(string _weaponName) {
         return _weaponName switch {
             "HandGun" or "Punch" or "FireMagic" or "IceMagic" or "MagicRain" => 1,
-            "Assult" or "BurstAssult" or "Spear" or "IceMagic"  or "Katana" or "Lightsaver" 
+            "Assult" or "BurstAssult" or "Spear" or "IceMagic" or "Katana" or "Lightsaver"
             or "Knife" or "PizzaCutter" or "Spear" => 2,
             "RPG" => 3,
             "Sniper" => 4,
