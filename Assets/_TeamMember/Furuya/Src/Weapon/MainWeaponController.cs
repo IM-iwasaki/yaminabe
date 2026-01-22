@@ -93,11 +93,10 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="direction"></param>
     [Command]
     public void CmdRequestExtraAttack(Vector3 direction) {
-        lastAttackTime = Time.time;
-
         switch (weaponData.type) {
             case WeaponType.Melee:
-                ServerMeleeAttack();
+                if (weaponData is MeleeData meleeData)
+                    StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
                 break;
             case WeaponType.Gun:
                 //弾がなかったら通過不可。かわりにリロードを要求する。
@@ -108,13 +107,19 @@ public class MainWeaponController : NetworkBehaviour {
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.parameter.isReloading) return;
 
-                ServerGunAttack(direction);
+                if (weaponData is GunData gunData) {
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                }
+
                 break;
             case WeaponType.Magic:
-                ServerStartMagicCast(direction);
-                //ServerMagicAttack(direction);
+                if (weaponData is MainMagicData magicdata)
+                    ServerStartMagicCast(direction);
                 break;
         }
+        //アニメーション開始
+        animCon.anim.SetBool("Shoot", true);
+        //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
 
@@ -124,11 +129,10 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="direction"></param>
     [Command]
     public void CmdRequestSkillAttack(Vector3 direction, WeaponData skillweapon) {
-        lastAttackTime = Time.time;
-
         switch (skillweapon.type) {
             case WeaponType.Melee:
-                ServerMeleeAttack();
+                if (skillweapon is MeleeData meleeData)
+                    StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
                 break;
             case WeaponType.Gun:
                 //弾がなかったら通過不可。かわりにリロードを要求する。
@@ -139,13 +143,18 @@ public class MainWeaponController : NetworkBehaviour {
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.parameter.isReloading) return;
 
-                ServerGunAttack(direction);
+                if (skillweapon is GunData gunData) {
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                }
                 break;
             case WeaponType.Magic:
-                ServerStartMagicCast(direction);
+                    ServerStartMagicCast(direction);
                 //ServerMagicAttack(direction);
                 break;
         }
+        //アニメーション開始
+        animCon.anim.SetBool("Shoot", true);
+        //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
 
