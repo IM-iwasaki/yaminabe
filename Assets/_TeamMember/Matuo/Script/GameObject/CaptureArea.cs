@@ -54,4 +54,48 @@ public class CaptureArea : NetworkBehaviour {
             RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
         }
     }
+
+    // 岩﨑
+    /// <summary>
+    /// 敵チームのみがエリアを制圧しており、
+    /// 実際にカウントが進行している状態か
+    /// </summary>
+    /// <param name="myTeamId">自分のチームID</param>
+    /// <returns>trueなら敵制圧中</returns>
+    [Server]
+    public bool IsEnemyOnlyCapturing(int myTeamId) {
+        if (playersInArea.Count == 0)
+            return false;
+
+        int teamId = -1;
+
+        foreach (var player in playersInArea) {
+            if (player == null) continue;
+
+            // 最初のプレイヤーのチームを基準にする
+            if (teamId == -1) {
+                teamId = player.parameter.TeamID;
+            }
+            else if (player.parameter.TeamID != teamId) {
+                // 複数チーム混在 → カウント停止中
+                return false;
+            }
+        }
+
+        // 単一チームだが、それが自分のチームなら敵ではない
+        return teamId != myTeamId;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
