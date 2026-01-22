@@ -53,6 +53,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  initializationOrder: 0
   chatRoot: {fileID: 5024840609614556114}
   stamp: {fileID: 3240541392492979954, guid: 129386dcfb4cea644aa97509f7dbb4af, type: 3}
   systemText: {fileID: 7383272722991171285, guid: f7d3c8d098e1d3c47a2615bdae4649a6, type: 3}
@@ -215,7 +216,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 10, y: 200}
+  m_AnchoredPosition: {x: 10, y: 300}
   m_SizeDelta: {x: 500, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &8659510480529335224
