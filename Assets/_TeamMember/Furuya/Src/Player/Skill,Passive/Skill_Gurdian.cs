@@ -1,30 +1,48 @@
+using System.Collections;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Character/Skill/Gurdian_猪突猛進")]
+[CreateAssetMenu(menuName = "Character/Skill/Gurdian_決死の盾")]
 public class Skill_Gurdian : SkillBase {
 
     //
-    //  スキル名：猪突猛進
-    //  タイプ　：攻撃型
-    //  効果    ：前方に力強く突進する、使用中は受けるダメージを半減する
+    //  スキル名：決死の盾
+    //  タイプ　：固定防御型
+    //  効果    ：短い間その場で停止し、受けるダメージを大幅に軽減する。(80％軽減)
+    //            効果終了時に全てのデバフを解除し
+    //            損傷ダメージの50％を回復する。(最大回復量は50)
     //　CT      ：12秒
     //
 
-    public WeaponData weaponData;
-
-    public int SkillDamage = 50;
+    int SkillDamage = 50;
 
     public override void Activate(CharacterBase user) {
+        //停止
+        user.parameter.moveSpeed = 0;
+        //被ダメ大幅軽減
+        user.DamageCut(20, 2.0f);
+        //スキル使用後効果を予約
+        user.StartCoroutine(SkillEndEffect(user));
+
         // 突進
-        user.MoveSpeedBuff(5.0f, 0.3f);
-
+        //user.MoveSpeedBuff(5.0f, 0.3f);
         // 被ダメ半減
-        user.DamageCut(50, 0.3f);
-
+        //user.DamageCut(50, 0.3f);
         // ヒットボックス（Serverのみ）
-        if (user.isServer) {
-            CreateHitBox(user);
-        }
+        //if (user.isServer) {
+        //    CreateHitBox(user);
+        //}
+    }
+
+    IEnumerator SkillEndEffect(CharacterBase user, float _delay = 2.0f) {
+        yield return new WaitForSeconds(_delay);
+        //移動速度を戻す。
+        user.parameter.moveSpeed = user.parameter.defaultMoveSpeed;
+        //全バフデバフを解除。
+        user.RemoveBuff();
+        //損傷HPの50％回復。最大回復量は50。
+        int recoveryHP = (user.parameter.maxHP - user.parameter.HP) / 2;
+        if (recoveryHP > 50) recoveryHP = 50;
+        user.parameter.HP += recoveryHP;
     }
 
     void CreateHitBox(CharacterBase user) {

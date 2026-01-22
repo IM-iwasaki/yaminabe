@@ -675,7 +675,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     public void DamageCut(int _value, float _usingTime) {
-        if (speedCoroutine != null) StopCoroutine(damageCutCoroutine);
+        if (damageCutCoroutine != null) StopCoroutine(damageCutCoroutine);
 
         damageCutCoroutine = StartCoroutine(DamageCutRoutine(_value, _usingTime));
     }

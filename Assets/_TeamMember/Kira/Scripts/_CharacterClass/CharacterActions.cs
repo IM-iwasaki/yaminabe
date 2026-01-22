@@ -229,7 +229,7 @@ public class CharacterActions : NetworkBehaviour {
     }
 
     /// <summary>
-    /// Abstruct : スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
+    /// スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
     /// </summary>
     private void AbilityControl() {
         //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)
