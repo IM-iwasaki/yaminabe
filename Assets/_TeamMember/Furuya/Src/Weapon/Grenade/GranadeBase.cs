@@ -9,6 +9,7 @@ using UnityEditor;
 public class GrenadeBase : NetworkBehaviour {
     [SyncVar] private int ownerTeamID;
     private string ownerName;
+    private int ID;
 
     private Rigidbody rb;
     protected bool exploded;
@@ -21,8 +22,9 @@ public class GrenadeBase : NetworkBehaviour {
     private float explosionDelay = 1.5f;
 
     [Server]
-    public void Init(int teamID, string _name, Vector3 direction, float throwForce, float projectileSpeed, float explosionRadius, int damage, bool canDamageAllies, EffectType hitEffect, float delay = 1.5f) {
+    public void Init(int teamID, int _ID, string _name, Vector3 direction, float throwForce, float projectileSpeed, float explosionRadius, int damage, bool canDamageAllies, EffectType hitEffect, float delay = 1.5f) {
         ownerTeamID = teamID;
+        ID = _ID;
         ownerName = _name;
         this.explosionRadius = explosionRadius;
         this.damage = damage;
@@ -69,7 +71,7 @@ public class GrenadeBase : NetworkBehaviour {
             if (target == null) continue;
             if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) continue;
 
-            target.TakeDamage(damage, ownerName);
+            target.TakeDamage(damage, ownerName, ID);
         }
 
         AudioManager.Instance.CmdPlayWorldSE("Explode", transform.position);

@@ -8,12 +8,13 @@ public class SmokeGrenade : GrenadeBase {
     private float smokeDuration;
 
     [Server]
-    public void Init(SmokeData data, int teamID, string _name, Vector3 direction) {
+    public void Init(SmokeData data, int teamID, int ID, string _name, Vector3 direction) {
         // GrenadeBaseのInitを呼び出す（ダメージ0、爆発半径0、味方にダメージなし）
         smokeDuration = data.duration;
 
         base.Init(
             teamID,
+            ID,
             _name,
             direction,
             data.throwForce,
