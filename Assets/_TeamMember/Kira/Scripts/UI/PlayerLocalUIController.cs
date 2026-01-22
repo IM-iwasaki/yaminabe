@@ -83,7 +83,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
 
         // UI参照が揃っていなければ中断
         if (!IsUIReady()) return;
-        
+
 
         LocalUIChanged();
     }
@@ -138,7 +138,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         //現在のMPをテキストに反映
         mpText.text = player.parameter.MP.ToString();
         //サブウェポンの現在所持数を更新
-        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
+        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.CurrentUses.ToString();
     }
 
     /// <summary>
@@ -213,8 +213,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             //蓄積数をテキストに反映、アイコンを黄色に変える
             passiveChains.text = passiveParam.passiveChains.ToString();
             passive_State.color = Color.yellow;
-        }
-        else {
+        } else {
             //アイコンを白色に変える
             passive_State.color = Color.white;
         }
@@ -276,7 +275,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         // サブ武器
         var sub = player.weaponController_sub;
         if (sub != null && sub.subWeaponData != null) {
-            subWeaponText[(int)TextIndex.Current].text = sub.currentUses.ToString();
+            subWeaponText[(int)TextIndex.Current].text = sub.CurrentUses.ToString();
             subWeaponText[(int)TextIndex.Max].text = sub.subWeaponData.maxUses.ToString();
             subWeaponText[(int)TextIndex.WeaponName].text = sub.subWeaponData.WeaponName;
         }

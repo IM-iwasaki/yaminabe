@@ -12,7 +12,11 @@ public class SubWeaponController : NetworkBehaviour {
     [Header("Sub Weapon")]
     public SubWeaponData subWeaponData;
 
-    public int currentUses { get; private set; }
+    [SyncVar(hook = nameof(OnCurrentUsesChanged))]
+    private int currentUses;
+
+    public int CurrentUses => currentUses;
+
     private bool isRecharging;
 
     private CharacterBase characterBase; // チームIDなどを取得するため
@@ -35,6 +39,15 @@ public class SubWeaponController : NetworkBehaviour {
         if (subWeaponData != null)
             currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
     }
+
+    void OnCurrentUsesChanged(int oldValue, int newValue) {
+        // ローカルプレイヤーのUIだけ更新
+        if (!isLocalPlayer) return;
+
+        if (playerUI != null)
+            playerUI.LocalUIChanged();
+    }
+
 
     /// <summary>
     /// UI 操作中などでサブ武器を使えない状態か
