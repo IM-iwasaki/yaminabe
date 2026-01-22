@@ -29,7 +29,15 @@ public class MainWeaponController : NetworkBehaviour {
         base.OnStartLocalPlayer();
 
         playerUI = characterBase.GetPlayerLocalUI();
+        if (playerUI == null) return;
 
+        var player = characterBase.GetComponent<GeneralCharacter>();
+        if (player == null) return;
+
+        // UI初期化
+        playerUI.InitializeLocalUI(player);
+
+        // 銃の場合のみ弾数初期化
         if (weaponData != null && weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
             ammo = weaponData.maxAmmo;
