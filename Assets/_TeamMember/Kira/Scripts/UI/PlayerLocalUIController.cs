@@ -67,7 +67,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     private readonly float underBar_Delay = 0.5f;
 
     /// <summary>
-    /// ローカルUIの安全な初期化(マツオ)
+    /// ローカルUIの安全な初期化
     /// </summary>
     public void InitializeLocalUI(GeneralCharacter _player) {
         if (!isLocalPlayer) return;
@@ -82,10 +82,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
         Initialize();
 
         // UI参照が揃っていなければ中断
-        if (!IsUIReady()) {
-            Debug.LogWarning("[PlayerLocalUIController] UI not ready yet");
-            return;
-        }
+        if (!IsUIReady()) return;
+        
 
         LocalUIChanged();
     }
@@ -233,7 +231,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         if (player == null) return;
         if (!IsUIReady()) return;
 
-        // ===== メイン武器 =====
+        // メイン武器
         var main = player.weaponController_main;
         if (main == null || main.weaponData == null) return;
 
@@ -244,7 +242,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
         ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
 
-        // ===== スキル =====
+        // スキル
         if (player.parameter.equippedSkills != null &&
             player.parameter.equippedSkills.Length > 0 &&
             player.parameter.equippedSkills[0] != null) {
@@ -253,7 +251,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
                 skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
         }
 
-        // ===== パッシブ =====
+        // パッシブ
         if (player.parameter.equippedPassives != null &&
             player.parameter.equippedPassives.Length > 0 &&
             player.parameter.equippedPassives[0] != null) {
@@ -262,7 +260,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
                 passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
         }
 
-        // ===== メイン武器UI =====
+        // メイン武器UI
         mainWeaponText[(int)TextIndex.WeaponName].text = main.weaponData.weaponName;
 
         if (main.weaponData.type == WeaponType.Gun) {
@@ -275,7 +273,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             mainWeaponText[(int)TextIndex.Max].text = "";
         }
 
-        // ===== サブ武器 =====
+        // サブ武器
         var sub = player.weaponController_sub;
         if (sub != null && sub.subWeaponData != null) {
             subWeaponText[(int)TextIndex.Current].text = sub.currentUses.ToString();
