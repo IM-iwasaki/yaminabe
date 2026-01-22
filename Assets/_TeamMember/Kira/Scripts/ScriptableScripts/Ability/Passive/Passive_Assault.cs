@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Character/Passive/Assault_”w…‚Ìwy–üz")]
-public class Passive_Hacker : PassiveBase {
+public class Passive_Assault : PassiveBase {
 
     //
     // ƒpƒbƒVƒu–¼@F”w…‚Ìwy–üz
