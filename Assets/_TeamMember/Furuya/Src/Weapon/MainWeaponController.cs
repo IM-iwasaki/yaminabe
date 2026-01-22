@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using Mirror;
 using System.Collections;
-using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -25,13 +24,16 @@ public class MainWeaponController : NetworkBehaviour {
         animCon = GetComponent<CharacterAnimationController>();
     }
 
-
     public override void OnStartLocalPlayer() {
         base.OnStartLocalPlayer();
 
         playerUI = characterBase.GetPlayerLocalUI();
+    }
 
-        if (weaponData != null && weaponData.type == WeaponType.Gun) {
+    [Command]
+    public void RequestAmmoReset() {
+        // 追加：キラ   弾薬数を最大にする。
+        if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
             ammo = weaponData.maxAmmo;
             playerUI.LocalUIChanged();
@@ -78,13 +80,10 @@ public class MainWeaponController : NetworkBehaviour {
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.parameter.isReloading) return;
 
-                if (weaponData is GunData gunData) { 
+                if (weaponData is GunData gunData) {
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
-
-                   
-
                     if (ammo > 0)
-                        ammo--; 
+                        ammo--;
                 }
 
                 break;
@@ -161,7 +160,7 @@ public class MainWeaponController : NetworkBehaviour {
                 }
                 break;
             case WeaponType.Magic:
-                    ServerStartMagicCast(direction);
+                ServerStartMagicCast(direction);
                 //ServerMagicAttack(direction);
                 break;
         }
@@ -326,7 +325,8 @@ public class MainWeaponController : NetworkBehaviour {
                 gunData.projectileSpeed,
                 gunData.damage
             );
-        } else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
+        }
+        else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
             ExpProjScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
@@ -374,7 +374,8 @@ public class MainWeaponController : NetworkBehaviour {
                 magicData.damage,
                 direction
             );
-        } else if (proj.TryGetComponent(out DoTArea dotArea)) {
+        }
+        else if (proj.TryGetComponent(out DoTArea dotArea)) {
             int teamID = characterBase?.parameter.TeamID ?? 0;
             Vector3 Direction = transform.forward;
             dotArea.Init(

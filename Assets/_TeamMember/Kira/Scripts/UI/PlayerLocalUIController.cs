@@ -67,6 +67,28 @@ public class PlayerLocalUIController : NetworkBehaviour {
     private readonly float underBar_Delay = 0.5f;
 
     /// <summary>
+    /// ローカルUIの安全な初期化
+    /// </summary>
+    public void InitializeLocalUI(GeneralCharacter _player) {
+        if (!isLocalPlayer) return;
+
+        player = _player;
+        if (player == null) return;
+
+        // UIオブジェクトが無効なら有効化
+        if (localUIObject != null && !localUIObject.activeSelf)
+            localUIObject.SetActive(true);
+
+        Initialize();
+
+        // UI参照が揃っていなければ中断
+        if (!IsUIReady()) return;
+        
+
+        LocalUIChanged();
+    }
+
+    /// <summary>
     /// ローカルUI全体の初期化
     /// </summary>
     public void Initialize() {
@@ -206,46 +228,75 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// </summary>
     public void LocalUIChanged() {
         if (!isLocalPlayer) return;
-        //MPを必要とする職業かでMPの表示非表示を分ける
-        if (player.weaponController_main.weaponData.type == WeaponType.Magic) {
-            mpBar.SetActive(true);
-            mpUnderBar.SetActive(true);
-        }
-        else {
-            mpBar.SetActive(false);
-            mpUnderBar.SetActive(false);
-        }
+        if (player == null) return;
+        if (!IsUIReady()) return;
 
-        //ステータス系の初期化
-        hpText.text = player.parameter.HP.ToString();
+        // メイン武器
+        var main = player.weaponController_main;
+        if (main == null || main.weaponData == null) return;
+
+        bool isMagic = main.weaponData.type == WeaponType.Magic;
+        mpBar.SetActive(isMagic);
+        mpUnderBar.SetActive(isMagic);
+
         ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
-        mpText.text = player.parameter.MP.ToString();
         ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
 
+        // スキル
+        if (player.parameter.equippedSkills != null &&
+            player.parameter.equippedSkills.Length > 0 &&
+            player.parameter.equippedSkills[0] != null) {
 
-        for (int i = 0; i < skill_Icon.Length; i++) {
-            skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
-        }
-        for (int i = 0; i < passive_Icon.Length; i++) {
-            passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
+            for (int i = 0; i < skill_Icon.Length; i++)
+                skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
         }
 
-        mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;
-        //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
-        if (player.weaponController_main.weaponData.type == WeaponType.Gun) {
+        // パッシブ
+        if (player.parameter.equippedPassives != null &&
+            player.parameter.equippedPassives.Length > 0 &&
+            player.parameter.equippedPassives[0] != null) {
+
+            for (int i = 0; i < passive_Icon.Length; i++)
+                passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
+        }
+
+        // メイン武器UI
+        mainWeaponText[(int)TextIndex.WeaponName].text = main.weaponData.weaponName;
+
+        if (main.weaponData.type == WeaponType.Gun) {
             mainWeaponText[(int)TextIndex.Partition].text = "/";
-            mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
-            mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
-        }
-        else {
+            mainWeaponText[(int)TextIndex.Current].text = main.ammo.ToString();
+            mainWeaponText[(int)TextIndex.Max].text = main.weaponData.maxAmmo.ToString();
+        } else {
             mainWeaponText[(int)TextIndex.Partition].text = "";
             mainWeaponText[(int)TextIndex.Current].text = "";
             mainWeaponText[(int)TextIndex.Max].text = "";
         }
-        //プレイヤーのサブウェポンUIを反映
-        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
-        subWeaponText[(int)TextIndex.Max].text = player.weaponController_sub.subWeaponData.maxUses.ToString();
-        subWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_sub.subWeaponData.WeaponName;
+
+        // サブ武器
+        var sub = player.weaponController_sub;
+        if (sub != null && sub.subWeaponData != null) {
+            subWeaponText[(int)TextIndex.Current].text = sub.currentUses.ToString();
+            subWeaponText[(int)TextIndex.Max].text = sub.subWeaponData.maxUses.ToString();
+            subWeaponText[(int)TextIndex.WeaponName].text = sub.subWeaponData.WeaponName;
+        }
+    }
+
+
+    private bool IsUIReady() {
+        return
+            mpBar != null &&
+            mpUnderBar != null &&
+            hpText != null &&
+            mpText != null &&
+            hpBar_slider != null &&
+            mpBar_slider != null &&
+            hpUnderBar_slider != null &&
+            mpUnderBar_slider != null &&
+            mainWeaponText != null &&
+            mainWeaponText.Length >= 4 &&
+            subWeaponText != null &&
+            subWeaponText.Length >= 4;
     }
 
     /// <summary>
