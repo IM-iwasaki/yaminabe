@@ -229,8 +229,8 @@ public class CharacterInput : NetworkBehaviour {
     /// <param name="context"></param>
     public void OnReload(InputAction.CallbackContext context) {
         if (context.performed &&
-            core.parameter.weaponController_main.ammo < core.parameter.weaponController_main.weaponData.maxAmmo) {
-            core.parameter.weaponController_main.CmdReloadRequest();
+            core.weaponController_main.ammo < core.weaponController_main.weaponData.maxAmmo) {
+            core.weaponController_main.CmdReloadRequest();
         }
     }
     #endregion

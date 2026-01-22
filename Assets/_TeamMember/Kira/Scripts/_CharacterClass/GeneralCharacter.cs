@@ -4,14 +4,15 @@
 public class GeneralCharacter : CharacterBase {
 
     protected new void Awake() {
-        base.Awake();        
+        base.Awake();
+        //Initalize();        
     }
 
     public override void OnStartLocalPlayer() {
         base.OnStartLocalPlayer();
-        
-        
+
         localUI.LocalUIChanged();
+
         if (!isLocalPlayer) return; // 自分だけ表示
         SkillBase skill = parameter.equippedSkills[0];
         PassiveBase passive = parameter.equippedPassives[0];
@@ -24,11 +25,14 @@ public class GeneralCharacter : CharacterBase {
 
     public override void OnStartClient() {
         base.OnStartClient();
+
         localUI.Initialize();
+
+
     }
 
     void Update() {
-        if(!isLocalPlayer) return;  //自分だけ処理する         
+        if (!isLocalPlayer) return;  //自分だけ処理する         
 
         parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
 
@@ -40,13 +44,13 @@ public class GeneralCharacter : CharacterBase {
 
     public override void Initalize() {
         //HPやフラグ関連などの基礎的な初期化
-        //base.Initalize();
+        base.Initalize();
         //MaxMPが0でなければ最大値で初期化
-        if (parameter.maxMP != 0) parameter.MP = parameter.maxMP; 
+        if (parameter.maxMP != 0) parameter.MP = parameter.maxMP;
         //弾倉が0でなければ最大値で初期化
-        if (parameter.weaponController_main.weaponData.maxAmmo != 0)
-            parameter.weaponController_main.weaponData.ammo = parameter.weaponController_main.weaponData.maxAmmo;
-    }   
+        if (weaponController_main.weaponData.maxAmmo != 0)
+            weaponController_main.weaponData.ammo = weaponController_main.weaponData.maxAmmo;
+    }
 
     public override void Respawn() {
         base.Respawn();

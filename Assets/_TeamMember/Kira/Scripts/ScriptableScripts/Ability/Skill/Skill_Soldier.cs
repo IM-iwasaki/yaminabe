@@ -36,7 +36,7 @@ public class Skill_Soldier : SkillBase {
     }
 
     private void ExtraAttack(Vector3 dir, CharacterBase user) {
-        user.parameter.weaponController_main.CmdRequestExtraAttack(dir);
+        user.weaponController_main.CmdRequestExtraAttack(dir);
     }
 
 }

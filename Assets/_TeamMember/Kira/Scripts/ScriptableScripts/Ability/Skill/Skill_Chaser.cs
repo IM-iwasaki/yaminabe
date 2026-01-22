@@ -28,7 +28,7 @@ public class Skill_Chaser : SkillBase {
     }
 
     public override void SkillEffectUpdate(CharacterBase user) {
-        intervalDelay = user.parameter.weaponController_main.weaponData.cooldown / 2;
+        intervalDelay = user.weaponController_main.weaponData.cooldown / 2;
 
         //使用中か確認、効果中は時間を計測
         if(isSkillUse) {
@@ -62,6 +62,6 @@ public class Skill_Chaser : SkillBase {
 
         // ここで追加攻撃を実行
         Vector3 shootDir = user.parameter.GetShootDirection();
-        user.parameter.weaponController_main.CmdRequestExtraAttack(shootDir);        
+        user.weaponController_main.CmdRequestExtraAttack(shootDir);        
     }
 }

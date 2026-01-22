@@ -20,12 +20,13 @@ public class MainWeaponController : NetworkBehaviour {
     private PlayerLocalUIController playerUI;
 
     private void Awake() {
+        base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
         animCon = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
- public void ResetAmmo() {
+    public override void OnStartLocalPlayer() {       
         // 追加：キラ   弾薬数を最大にする。
         if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
