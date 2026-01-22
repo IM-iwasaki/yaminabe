@@ -15,7 +15,7 @@ public class Skill_Hacker : SkillBase {
 
         // 全キャラクター取得
         CharacterParameter[] allPlayers =
-            GameObject.FindObjectsOfType<CharacterParameter>();
+            FindObjectsOfType<CharacterParameter>();
 
         foreach (CharacterParameter target in allPlayers) {
 

@@ -183,16 +183,25 @@ public class CharacterActions : NetworkBehaviour {
         Vector3 shootDir = core.parameter.GetShootDirection();
 
         //追加：岩﨑
-        //var passive = characterBase.GetComponent<Passive_Hacker>();
+        // ===== ハッカーパッシブ判定 =====
+        if (RuleManager.Instance.IsDeathMatch()) {
 
-        // デスマッチのみ
-        //if (passive != null &&
-        //    RuleManager.Instance.currentRule == GameRuleType.DeathMatch &&
-        //    Random.value <= 0.25f) {
-        //    core.weaponController_main.CmdRequestExtraAttack(shootDir);
-        //    // 弾を減らさない
-        //    return;
-        //}
+            CharacterParameter param = core.GetComponent<CharacterParameter>();
+            if (param != null) {
+
+                foreach (PassiveBase passive in param.equippedPassives) {
+
+                    if (passive is Passive_Hacker) {
+
+                        // 25%で弾消費無効
+                        if (Random.value <= 0.25f) {
+                            core.weaponController_main.CmdRequestAttack(shootDir);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
 
         core.weaponController_main.CmdRequestAttack(shootDir);
     }
