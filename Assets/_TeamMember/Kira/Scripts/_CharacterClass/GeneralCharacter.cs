@@ -12,6 +12,8 @@ public class GeneralCharacter : CharacterBase {
         base.OnStartLocalPlayer();
         if (!isLocalPlayer) return; // 自分だけ表示
 
+        weaponController_main.RequestAmmoReset();
+
         localUI.Initialize();
         localUI.LocalUIChanged();
 
@@ -42,7 +44,7 @@ public class GeneralCharacter : CharacterBase {
 
     public override void Initalize() {
         //HPやフラグ関連などの基礎的な初期化
-        base.Initalize();
+        //base.Initalize();
         //MaxMPが0でなければ最大値で初期化
         if (parameter.maxMP != 0) parameter.MP = parameter.maxMP;
         //弾倉が0でなければ最大値で初期化

@@ -26,7 +26,8 @@ public class MainWeaponController : NetworkBehaviour {
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
-    public override void OnStartLocalPlayer() {
+    [Command]
+    public void RequestAmmoReset() {
         // 追加：キラ   弾薬数を最大にする。
         if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
@@ -68,10 +69,10 @@ public class MainWeaponController : NetworkBehaviour {
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.parameter.isReloading) return;
 
-                if (weaponData is GunData gunData) { 
-                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay)); 
-                    if(ammo > 0)
-                        ammo--; 
+                if (weaponData is GunData gunData) {
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                    if (ammo > 0)
+                        ammo--;
                 }
 
                 break;
@@ -148,7 +149,7 @@ public class MainWeaponController : NetworkBehaviour {
                 }
                 break;
             case WeaponType.Magic:
-                    ServerStartMagicCast(direction);
+                ServerStartMagicCast(direction);
                 //ServerMagicAttack(direction);
                 break;
         }
@@ -313,7 +314,8 @@ public class MainWeaponController : NetworkBehaviour {
                 gunData.projectileSpeed,
                 gunData.damage
             );
-        } else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
+        }
+        else if (proj.TryGetComponent(out ExplosionProjectile ExpProjScript)) {
             ExpProjScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
@@ -361,7 +363,8 @@ public class MainWeaponController : NetworkBehaviour {
                 magicData.damage,
                 direction
             );
-        } else if (proj.TryGetComponent(out DoTArea dotArea)) {
+        }
+        else if (proj.TryGetComponent(out DoTArea dotArea)) {
             int teamID = characterBase?.parameter.TeamID ?? 0;
             Vector3 Direction = transform.forward;
             dotArea.Init(
