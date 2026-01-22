@@ -81,41 +81,59 @@ public class PlayerLocalUIController : NetworkBehaviour {
         interactUI.SetActive(false);
     }
 
-    void Update() {
-        if(!isLocalPlayer)return;
+    public override void OnStartLocalPlayer() {
+        base.OnStartLocalPlayer();
+        Initialize();
+    }
 
-        //表示状態管理関数の呼び出し
+    void Update() {
+        // ローカルプレイヤー以外は一切処理しない
+        if (!isLocalPlayer) return;
+
+        // null ガード（Spawn直後・切断直前対策）
+        if (player == null) return;
+        if (player.parameter == null) return;
+        if (player.weaponController_main == null) return;
+        if (player.weaponController_sub == null) return;
+
+        var mainWeapon = player.weaponController_main.weaponData;
+        if (mainWeapon == null) return;
+
+        // スキル / パッシブ状態更新
         UpdateSkillState();
         UpdatePassiveState();
 
-        //裏バーの更新
+        // 裏バー更新
         UpdateUnderBar();
-        //現在使用している武器タイプで分岐
-        switch (player.weaponController_main.weaponData.type) {
+
+        // 武器タイプ別UI更新
+        switch (mainWeapon.type) {
             case WeaponType.Melee:
-                //近接攻撃に弾数やMPは存在しないので表示を切り替える
+                // 近接は弾数無限表示
                 mainWeaponText[(int)TextIndex.Current].text = "∞";
                 break;
+
             case WeaponType.Gun:
-                //メインウェポンの現在弾倉数を更新
-                mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
+                // 銃は現在弾数表示
+                mainWeaponText[(int)TextIndex.Current].text =
+                    player.weaponController_main.ammo.ToString();
                 break;
+
             case WeaponType.Magic:
-                //所持している武器が魔法であるか確認。
-                if (WeaponDataRegistry.GetWeapon(player.weaponController_main.weaponData.WeaponName) is not MainMagicData magicData) {
-                    #if UNITY_EDITOR
-                    Debug.LogError("所持している魔法の詳細情報を正常に取得できませんでした。");
-                    #endif
-                    return;
+                // 魔法はMPコスト表示
+                if (WeaponDataRegistry.GetWeapon(mainWeapon.WeaponName) is MainMagicData magicData) {
+                    mainWeaponText[(int)TextIndex.Partition].text =
+                        "Cost : " + magicData.MPCost.ToString();
                 }
-                //MP消費量をテキストに反映
-                mainWeaponText[(int) TextIndex.Partition].text = "Cost : " + magicData.MPCost.ToString();
                 break;
         }
-        //現在のMPをテキストに反映
+
+        // MP表示更新
         mpText.text = player.parameter.MP.ToString();
-        //サブウェポンの現在所持数を更新
-        subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();        
+
+        // サブ武器表示更新
+        subWeaponText[(int)TextIndex.Current].text =
+            player.weaponController_sub.currentUses.ToString();
     }
 
     /// <summary>
@@ -204,47 +222,66 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// スキルとパッシブのアイコン、武器の情報の反映
     /// </summary>
     public void LocalUIChanged() {
+        // ローカルプレイヤー以外は処理しない
         if (!isLocalPlayer) return;
-        //MPを必要とする職業かでMPの表示非表示を分ける
-        if (player.weaponController_main.weaponData.type == WeaponType.Magic) {
+
+        // null ガード（Mirrorでは必須）
+        if (player == null) return;
+        if (player.weaponController_main == null) return;
+        if (player.weaponController_sub == null) return;
+
+        var mainWeapon = player.weaponController_main.weaponData;
+        var subWeapon = player.weaponController_sub.subWeaponData;
+
+        if (mainWeapon == null || subWeapon == null) return;
+        if (player.parameter == null) return;
+
+        // MPバーの表示制御
+        if (mainWeapon.type == WeaponType.Magic) {
             mpBar.SetActive(true);
             mpUnderBar.SetActive(true);
-        }
-        else {
+        } else {
             mpBar.SetActive(false);
             mpUnderBar.SetActive(false);
         }
 
-        //ステータス系の初期化
+        // HP / MP UI
         hpText.text = player.parameter.HP.ToString();
         ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
+
         mpText.text = player.parameter.MP.ToString();
         ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
 
-
-        for (int i = 0; i < skill_Icon.Length; i++) {
-            skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
+        // スキル / パッシブアイコン
+        if (player.parameter.equippedSkills != null && player.parameter.equippedSkills.Length > 0) {
+            for (int i = 0; i < skill_Icon.Length; i++) {
+                skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
+            }
         }
-        for (int i = 0; i < passive_Icon.Length; i++) {
-            passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
+
+        if (player.parameter.equippedPassives != null && player.parameter.equippedPassives.Length > 0) {
+            for (int i = 0; i < passive_Icon.Length; i++) {
+                passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
+            }
         }
 
-        mainWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_main.weaponData.weaponName;
-        //プレイヤーの弾倉が存在すればメインウェポンの弾倉UIを有効化する
-        if (player.weaponController_main.weaponData.type == WeaponType.Gun) {
+        // メイン武器UI
+        mainWeaponText[(int)TextIndex.WeaponName].text = mainWeapon.weaponName;
+
+        if (mainWeapon.type == WeaponType.Gun) {
             mainWeaponText[(int)TextIndex.Partition].text = "/";
             mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
-            mainWeaponText[(int)TextIndex.Max].text = player.weaponController_main.weaponData.maxAmmo.ToString();
-        }
-        else {
+            mainWeaponText[(int)TextIndex.Max].text = mainWeapon.maxAmmo.ToString();
+        } else {
             mainWeaponText[(int)TextIndex.Partition].text = "";
             mainWeaponText[(int)TextIndex.Current].text = "";
             mainWeaponText[(int)TextIndex.Max].text = "";
         }
-        //プレイヤーのサブウェポンUIを反映
+
+        // サブ武器UI
         subWeaponText[(int)TextIndex.Current].text = player.weaponController_sub.currentUses.ToString();
-        subWeaponText[(int)TextIndex.Max].text = player.weaponController_sub.subWeaponData.maxUses.ToString();
-        subWeaponText[(int)TextIndex.WeaponName].text = player.weaponController_sub.subWeaponData.WeaponName;
+        subWeaponText[(int)TextIndex.Max].text = subWeapon.maxUses.ToString();
+        subWeaponText[(int)TextIndex.WeaponName].text = subWeapon.WeaponName;
     }
 
     /// <summary>

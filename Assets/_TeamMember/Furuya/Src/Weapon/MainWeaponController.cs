@@ -20,17 +20,20 @@ public class MainWeaponController : NetworkBehaviour {
     private PlayerLocalUIController playerUI;
 
     private void Awake() {
-        base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
         animCon = GetComponent<CharacterAnimationController>();
-        playerUI = characterBase.GetPlayerLocalUI();
     }
 
+
     public override void OnStartLocalPlayer() {
-        // 追加：キラ   弾薬数を最大にする。
-        if (weaponData.type == WeaponType.Gun) {
+        base.OnStartLocalPlayer();
+
+        playerUI = characterBase.GetPlayerLocalUI();
+
+        if (weaponData != null && weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
             ammo = weaponData.maxAmmo;
+            playerUI.LocalUIChanged();
         }
     }
 
@@ -44,7 +47,13 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="_"></param>
     /// <param name="_new"></param>
     private void ChangeWeapon(WeaponData _, WeaponData _new) {
+        if (_new == null) return;
+
         _new.AmmoReset();
+
+        if (!isLocalPlayer) return;
+        if (playerUI == null) return;
+
         playerUI.LocalUIChanged();
     }
 
