@@ -21,10 +21,10 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
-    public override void Awake() {
+    public override void Start() {
 #if DEBUG
         if (TitleManager.instance == null) {
-            base.Awake();
+            base.Start();
             return;
         }
 #endif
