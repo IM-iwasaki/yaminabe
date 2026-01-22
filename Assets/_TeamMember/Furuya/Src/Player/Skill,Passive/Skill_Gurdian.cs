@@ -44,7 +44,8 @@ public class Skill_Gurdian : SkillBase {
             user.transform,
             user.parameter.TeamID,
             SkillDamage,
-            user.parameter.PlayerName
+            user.parameter.PlayerName,
+            user.parameter.playerId
         );
 
         Object.Destroy(hitBox, 0.3f);

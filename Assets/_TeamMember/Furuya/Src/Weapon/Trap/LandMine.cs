@@ -63,7 +63,7 @@ public class LandMine : TrapBase {
             var target = c.GetComponent<CharacterBase>();
             if (target == null) continue;
             if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) continue;
-            target.TakeDamage(damage, ownerName);
+            target.TakeDamage(damage, ownerName, target.parameter.playerId);
         }
 
         RpcPlayEffect(transform.position, explosionEffect);

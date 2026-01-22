@@ -8,6 +8,7 @@ public class SkillHitbox : NetworkBehaviour {
     int attackerTeam;
     int damage;
     string attackerName;
+    int attackerID;
 
     HashSet<CharacterBase> hitTargets = new();
 
@@ -15,12 +16,14 @@ public class SkillHitbox : NetworkBehaviour {
         Transform _owner,
         int _team,
         int _damage,
-        string _name
+        string _name,
+        int _ID
     ) {
         owner = _owner;
         attackerTeam = _team;
         damage = _damage;
         attackerName = _name;
+        attackerID = _ID;
     }
 
     void Update() {
@@ -43,6 +46,6 @@ public class SkillHitbox : NetworkBehaviour {
         if (hitTargets.Contains(target)) return;
         hitTargets.Add(target);
 
-        target.TakeDamage(damage, attackerName);
+        target.TakeDamage(damage, attackerName, attackerID);
     }
 }

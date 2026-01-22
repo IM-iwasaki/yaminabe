@@ -273,7 +273,7 @@ public class MainWeaponController : NetworkBehaviour {
             // 追加：キラ 射程の20％以内なら強制的に当たった扱いにする
             // 変更：キラ meleeData.meleeAngle→allowedAngle
             if (angle <= allowedAngle || dist < 0.2f) {
-                hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName);
+                hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
                 RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
             }
 
@@ -328,6 +328,7 @@ public class MainWeaponController : NetworkBehaviour {
             projScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
                 gunData.hitEffectType,
                 gunData.projectileSpeed,
                 gunData.damage
@@ -337,6 +338,7 @@ public class MainWeaponController : NetworkBehaviour {
             ExpProjScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
                 gunData.hitEffectType,
                 gunData.projectileSpeed,
                 gunData.damage,
@@ -374,6 +376,7 @@ public class MainWeaponController : NetworkBehaviour {
             projScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
                 magicData.magicType,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,
@@ -388,6 +391,7 @@ public class MainWeaponController : NetworkBehaviour {
             dotArea.Init(
                 teamID,
                 characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
                 magicData.projectileSpeed,
                 magicData.damage,
                 Direction

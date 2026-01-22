@@ -159,7 +159,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 被弾・死亡判定関数
     /// </summary>
     [Server]
-    public void TakeDamage(int _damage, string _name) {
+    public void TakeDamage(int _damage, string _name, int _ID) {
         //既に死亡状態かロビー内なら帰る
         if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
 
@@ -184,12 +184,10 @@ public abstract class CharacterBase : NetworkBehaviour {
 
             if (PlayerListManager.Instance != null) {
                 // スコア加算
-                PlayerListManager.Instance.AddScoreByName(_name, 100);
-                PlayerListManager.Instance.AddKill(_name);
+                PlayerListManager.Instance.AddScoreById(_ID, 100);
+                PlayerListManager.Instance.AddKillById(_ID);
             }
         }
-            // キル数加算
-            if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddKill(_name);
     }
 
     [Server]

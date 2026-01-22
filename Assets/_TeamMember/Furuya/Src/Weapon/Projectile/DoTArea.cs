@@ -9,6 +9,7 @@ using UnityEngine;
 
 public class DoTArea : NetworkBehaviour {
     [SyncVar] private int ownerTeamID;
+    private int ID;
     private string ownerName;
     private float lifetime = 5f;
     private Rigidbody rb;
@@ -26,9 +27,10 @@ public class DoTArea : NetworkBehaviour {
     /// <summary>
     /// ’e‚Ì‰Šú‰»i”­Ë‚ÉŒÄ‚Ôj
     /// </summary>
-    public void Init(int teamID, string _name, float _speed, int _damage, Vector3 direction) {
+    public void Init(int teamID, string _name, int _ID, float _speed, int _damage, Vector3 direction) {
         ownerTeamID = teamID;
         ownerName = _name;
+        ID = _ID;
         speed = _speed;
         damage = _damage;
 
@@ -64,7 +66,7 @@ public class DoTArea : NetworkBehaviour {
 
         var character = other.GetComponent<CharacterBase>();
         if (character != null) {
-           character.TakeDamage(damage, ownerName);
+           character.TakeDamage(damage, ownerName, ID);
         }
     }
 
@@ -86,7 +88,7 @@ public class DoTArea : NetworkBehaviour {
 
             var character = other.GetComponent<CharacterBase>();
             if (character != null) {
-                character.TakeDamage(damage, ownerName);
+                character.TakeDamage(damage, ownerName, ID);
             }
         }
     }
