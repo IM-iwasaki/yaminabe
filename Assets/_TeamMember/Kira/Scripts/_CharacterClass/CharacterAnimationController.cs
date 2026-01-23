@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -7,15 +8,31 @@ using UnityEngine;
 public class CharacterAnimationController : NetworkBehaviour {
     //扱うアニメーター
     public Animator anim = null;
+    //ベースアニメーションレイヤーの数
+    [SerializeField]
+    private int BaseAnimLayerCount = 2;
     //現在のアニメーションの文字列
     private string currentAnimation;
+
+    [Server]
+    public void ChangeBaseAnimationLayerWeight(int _layerIndex) {
+        if (anim == null) return;
+        if (anim.Equals(null)) return;
+
+        for (int i = 0; i < BaseAnimLayerCount; i++) {
+            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
+        }
+    }
+
     /// <summary>
     /// アニメーターのレイヤー切り替え
     /// </summary>
     [Server]
-    public void ChangeLayerWeight(int _layerIndex) {
+    public void ChangeWeaponAnimationLayerWeight(int _layerIndex) {
+        if (anim == null) return;
+        if (anim.Equals(null)) return;
         //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
-        for (int i = 1, max = anim.layerCount; i < max; i++) {
+        for (int i = 2, max = anim.layerCount; i < max; i++) {
             anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
     }
@@ -93,13 +110,42 @@ public class CharacterAnimationController : NetworkBehaviour {
         anim.SetTrigger("Dead");
     }
 
-    public void SetNewAnimator(Animator _newAnimator) {
-        anim = _newAnimator;
+    public IEnumerator AddNetworkAnimator(GameObject _skin) {
+        if (!isLocalPlayer) yield break;
+#if false
+        var animator = _skin.GetComponent<Animator>();
+        if (animator == null) yield break;
+        anim = animator;
+        yield return null;
+        if (_skin == null) yield break;
+        var networkAnim = _skin.AddComponent<NetworkAnimator>();
+        yield return null;
 
-        var networkAnim = GetComponentInChildren<NetworkAnimator>();
+        networkAnim.syncDirection = SyncDirection.ClientToServer;
 
-        networkAnim.animator.runtimeAnimatorController = anim.runtimeAnimatorController;
 
+#else
+        // ① Animator を取得
+        var animator = _skin.GetComponent<Animator>();
+        if (animator == null) yield break;
+
+        // ② NetworkIdentity の子階層に入ったことを保証するため 1 フレーム待つ
+        yield return null;
+
+        // ③ Animator の初期化待ち
+        yield return null;
+
+        // ④ NetworkAnimator を追加（この時点で NetworkIdentity が見つかる）
+        var networkAnim = _skin.AddComponent<NetworkAnimator>();
+
+        // ⑤ Awake → Initialize 完了待ち
+        yield return null;
+
+        // ⑥ animator をセット
+        networkAnim.animator = animator;
+        networkAnim.syncDirection = SyncDirection.ClientToServer;
+
+        anim = animator;
+#endif
     }
-
 }
