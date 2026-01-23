@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: -5686997786179355792}
   - component: {fileID: 8790688429599344454}
   - component: {fileID: 53306003606112779}
+  - component: {fileID: 3114236005330367030}
   - component: {fileID: 4739513752236649057}
   m_Layer: 6
   m_Name: TestPlayer
@@ -621,6 +622,23 @@ MonoBehaviour:
   localUIObject: {fileID: 7992546859846387416}
   hpUnderBar_slider: {fileID: 1166887507396106579}
   mpUnderBar_slider: {fileID: 8659353022450162480}
+--- !u!114 &3114236005330367030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3519547391971899168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  clientAuthority: 0
+  animator: {fileID: 8693632831192975952}
 --- !u!114 &4739513752236649057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -633,12 +651,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 577f865d3ecaac24a9b0c8a7e7142f24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   anim: {fileID: 8693632831192975952}
-  baseState: 0
-  activeLayer: 0
 --- !u!1 &4854489468192512913
 GameObject:
   m_ObjectHideFlags: 0

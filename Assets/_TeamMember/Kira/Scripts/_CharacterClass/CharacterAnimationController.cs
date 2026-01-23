@@ -7,55 +7,99 @@ using UnityEngine;
 public class CharacterAnimationController : NetworkBehaviour {
     //扱うアニメーター
     public Animator anim = null;
-    public enum BaseAnimState {
-        IdleBattle01_AR,
-        RunFWD_AR,
-        RunBWD_AR,
-        RunLeft_AR,
-        RunRight_AR,
-        ShootSingleshot_HG01,
-        Dead,
-    }
-
-    public enum UpperAnimStateGunner {
-        BaseLayer,
-        HundGun,
-        AR,
-        RPG,
-        Sniper,
-        Minigun,
-    }
-
-    [SyncVar(hook = nameof(OnBaseStateChanged))]
-    public BaseAnimState baseState = BaseAnimState.IdleBattle01_AR;
-
-    [SyncVar(hook = nameof(OnLayerChanged))]
-    public int activeLayer;
-
-    void OnBaseStateChanged(BaseAnimState _,BaseAnimState _new) {
-        if (!isClient || anim == null) return;
-        anim.Play(_new.ToString(), 0);
-    }
-
-    void OnLayerChanged(int _, int _newLayer) {
-        for(int i = 0,max = anim.layerCount;i < max; i++) {
-            anim.SetLayerWeight(i, i == _newLayer ? 1.0f : 0.0f);
+    //現在のアニメーションの文字列
+    private string currentAnimation;
+    /// <summary>
+    /// アニメーターのレイヤー切り替え
+    /// </summary>
+    [Server]
+    public void ChangeLayerWeight(int _layerIndex) {
+        //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
+        for (int i = 1, max = anim.layerCount; i < max; i++) {
+            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
     }
 
-    [TargetRpc]
-    public void TargetRpcPlayTrigger(NetworkConnection _,string triggerName) {
-        if (!isLocalPlayer) return;
-        anim.SetTrigger(triggerName);
+    /// <summary>
+    /// 移動アニメーションの管理
+    /// </summary>
+    /// <param name="_x"></param>
+    /// <param name="_z"></param>
+    [Command]
+    public void ControllMoveAnimation(float _x, float _z) {
+        ResetRunAnimation();
+        //斜め入力の場合
+        if (_x != 0 && _z != 0) {
+            anim.SetBool("RunL", false);
+            anim.SetBool("RunR", false);
+            if (_z > 0) {
+                currentAnimation = "RunF";
+            }
+            if (_z < 0) {
+                currentAnimation = "RunB";
+            }
+            anim.SetBool(currentAnimation, true);
+            return;
+
+        }
+
+        if (_x > 0 && _z == 0) {
+            currentAnimation = "RunR";
+        }
+        if (_x < 0 && _z == 0) {
+            currentAnimation = "RunL";
+        }
+        if (_x == 0 && _z > 0) {
+            currentAnimation = "RunF";
+        }
+        if (_x == 0 && _z < 0) {
+            currentAnimation = "RunB";
+        }
+        anim.SetBool(currentAnimation, true);
+    }
+
+    /// <summary>
+    /// 移動アニメーションのリセット
+    /// </summary>
+    private void ResetRunAnimation() {
+        anim.SetBool("RunF", false);
+        anim.SetBool("RunR", false);
+        anim.SetBool("RunL", false);
+        anim.SetBool("RunB", false);
+
+        currentAnimation = null;
     }
 
     [Command]
-    public void CmdMove(float _x,float _z) {
-        if (_z > 0) baseState = BaseAnimState.RunFWD_AR;
-        else if (_z < 0) baseState = BaseAnimState.RunBWD_AR;
-        else if (_x > 0) baseState = BaseAnimState.RunLeft_AR;
-        else if (_x < 0) baseState = BaseAnimState.RunRight_AR;
-        //else baseState = BaseAnimState.IdleBattle01_AR;
+    public void CmdResetAnimation() {
+        ResetRunAnimation();
+    }
+
+    /// <summary>
+    /// 追加:タハラ　入力がなくなったらショットアニメーション終了
+    /// </summary>
+    [Command]
+    public void StopShootAnim() {
+        //アニメーション終了
+        anim.SetBool("Shoot", false);
+    }
+
+    /// <summary>
+    /// NetworkAnimatorを使用した結果
+    /// ローカルでの変更によってアニメーション変更がかかるため制作
+    /// </summary>
+    [ClientRpc]
+    public void RpcDeadAnimation() {
+        anim.SetTrigger("Dead");
+    }
+
+    public void SetNewAnimator(Animator _newAnimator) {
+        anim = _newAnimator;
+
+        var networkAnim = GetComponentInChildren<NetworkAnimator>();
+
+        networkAnim.animator.runtimeAnimatorController = anim.runtimeAnimatorController;
+
     }
 
 }

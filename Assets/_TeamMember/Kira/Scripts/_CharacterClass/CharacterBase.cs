@@ -250,7 +250,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         LocalDeadEffect();
         RespawnDelay();
         //アニメーションは全員に反映
-        animCon.TargetRpcPlayTrigger(parameter.netIdentity.connectionToServer,"Dead");
+        animCon.RpcDeadAnimation();
         // スコア計算にここから行きます
         if (TryGetComponent<PlayerCombat>(out var combat)) {
             int victimTeam = parameter.TeamID;

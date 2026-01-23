@@ -133,8 +133,6 @@ public class CharacterActions : NetworkBehaviour {
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, PlayerConst.TURN_SPEED * Time.deltaTime);
         }
 
-        core.animCon.CmdMove(moveDirection.x, moveDirection.z);
-
         // ‹ó’†‚©’nã‚Å‹““®‚ğ•ª‚¯‚é
         Vector3 velocity = rb.velocity;
         Vector3 targetVelocity = new(moveDirection.x * param.moveSpeed, velocity.y, moveDirection.z * param.moveSpeed);
