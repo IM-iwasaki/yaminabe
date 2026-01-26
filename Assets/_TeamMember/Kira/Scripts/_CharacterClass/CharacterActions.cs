@@ -107,7 +107,9 @@ public class CharacterActions : NetworkBehaviour {
         if (param.MP > param.maxMP) param.MP = param.maxMP;
     }
 
-
+    /// <summary>
+    /// 移動処理関数
+    /// </summary>
     private void MoveControl() {
         //移動入力が行われている間は移動中フラグを立てる
         if (input.MoveInput != Vector2.zero) isMoving = true;
@@ -147,6 +149,9 @@ public class CharacterActions : NetworkBehaviour {
         }
     }    
 
+    /// <summary>
+    /// ジャンプ処理関数
+    /// </summary>
     private void JumpControl() {
         // ジャンプ判定
         if (input.isJumpPressed && param.IsGrounded) {
@@ -206,6 +211,9 @@ public class CharacterActions : NetworkBehaviour {
         core.weaponController_main.CmdRequestAttack(shootDir);
     }
 
+    /// <summary>
+    /// スキル発動の中継点
+    /// </summary>
     private void HandleSkill()
     {
         if (!input.SkillTriggered) return;
@@ -214,7 +222,10 @@ public class CharacterActions : NetworkBehaviour {
         StartUseSkill();
     }
 
-    protected void StartUseSkill() {
+    /// <summary>
+    /// スキルの発火
+    /// </summary>
+    private void StartUseSkill() {
         if (isCanSkill) {
             param.equippedSkills[0].Activate(core);
             isCanSkill = false;
@@ -223,6 +234,9 @@ public class CharacterActions : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// インタラクト管理・処理
+    /// </summary>
     private void HandleInteract() {
         if (cameraManager != null && cameraManager.IsCameraTransitioning())
             return;
@@ -247,12 +261,11 @@ public class CharacterActions : NetworkBehaviour {
                 core.localUI.OffLocalUIObject();
                 return;
             }
-
         }
     }
 
     /// <summary>
-    /// Abstruct : スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
+    /// スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
     /// </summary>
     private void AbilityControl() {
         //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)

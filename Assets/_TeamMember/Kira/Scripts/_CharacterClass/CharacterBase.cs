@@ -576,10 +576,10 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region バフ関連変数
 
-    private Coroutine healCoroutine;
-    private Coroutine speedCoroutine;
-    private Coroutine attackCoroutine;
-    private Coroutine damageCutCoroutine;
+    public Coroutine healCoroutine { get; private set;  }
+    public Coroutine speedCoroutine { get; private set; }
+    public Coroutine attackCoroutine { get; private set; }
+    public Coroutine damageCutCoroutine { get; private set; }
 
     [Header("バフに使用するエフェクトデータ")]
     [SerializeField] private EffectData buffEffect;
@@ -691,7 +691,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     [Command]
     public void DamageCut(int _value, float _usingTime) {
-        if (speedCoroutine != null) StopCoroutine(damageCutCoroutine);
+        if (damageCutCoroutine != null) StopCoroutine(damageCutCoroutine);
 
         damageCutCoroutine = StartCoroutine(DamageCutRoutine(_value, _usingTime));
     }

@@ -95,8 +95,6 @@ public class CharacterParameter : NetworkBehaviour{
     public bool IsGrounded { get; private set; }
     //GroundLayer
     public LayerMask GroundLayer { get; private set; }
-    //移動中か
-    //public bool ismoving { get; private set; }
 
     //LocalUIの参照だけ持つ
     private PlayerLocalUIController localUI;
@@ -204,10 +202,16 @@ public class CharacterParameter : NetworkBehaviour{
         defaultMoveSpeed = moveSpeed;
     }
 
+    /// <summary>
+    /// 現在の攻撃力をデフォルトにリセットする
+    /// </summary>
     private void OutDefaultStatus_Attack() {
         attack = defaultAttack;
     }
 
+    /// <summary>
+    /// 現在の速度をデフォルトにリセットする
+    /// </summary>
     public void OutDefaultStatus_MoveSpeed() {
         moveSpeed = defaultMoveSpeed;
     }
@@ -282,7 +286,9 @@ public class CharacterParameter : NetworkBehaviour{
         return direction;
     }
 
-    //近くに味方がいるか判別　古谷
+    /// <summary>
+    /// 近くに味方がいるか判別　古谷
+    /// </summary>
     public void UpdateNearbyAlly(float radius, LayerMask allyLayer) {
         HasNearbyAlly = Physics.CheckSphere(
             transform.position,
