@@ -33,14 +33,16 @@ public class Passive_Gurdian : PassiveBase {
             }
 
             // スキル使用中、速度バフ中以外は速度上昇効果を戻す
-            if(!user.parameter.equippedSkills[0].isSkillUse || user.speedCoroutine == null) {
+            if(!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
                 user.parameter.OutDefaultStatus_MoveSpeed();
             }           
             return;
         }
 
-        // 孤立している → 移動速度UP
-        user.parameter.moveSpeed =
-            Mathf.RoundToInt(user.parameter.defaultMoveSpeed * 1.3f);
+        // スキル使用中、速度バフ中以外は孤立時に速度を増加
+        if(!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
+            user.parameter.moveSpeed =
+        Mathf.RoundToInt(user.parameter.defaultMoveSpeed * 1.3f);
+        }          
     }
 }
