@@ -209,6 +209,8 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="name"></param>
     [Command]
     public void CmdSetWeaponData(string name) {
+        if (!isLocalPlayer) return;
+
         var data = WeaponDataRegistry.GetWeapon(name);
 
         if (!CanUseWeapon(charaterType, data.type)) {
@@ -221,7 +223,8 @@ public class MainWeaponController : NetworkBehaviour {
         playerUI.LocalUIChanged();
         characterBase.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
         //見た目変更
-        characterBase.GetComponent<CharacterAnimationController>().ChangeLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
+        animCon.ChangeBaseAnimationLayerWeight(GenerateJobIndex(charaterType));
+        animCon.ChangeWeaponAnimationLayerWeight(GenerateWeaponIndex(weaponData.weaponName));
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 
@@ -513,19 +516,30 @@ public class MainWeaponController : NetworkBehaviour {
         characterBase.parameter.isReloading = false;
     }
 
+    public int GenerateJobIndex(CharacterEnum.CharaterType _charType) {
+        return _charType switch {
+            CharacterEnum.CharaterType.Gunner or CharacterEnum.CharaterType.Wizard => 0,
+            CharacterEnum.CharaterType.Melee => 1,
+            _ => -1,
+        };
+    }
+
     /// <summary>
-    /// 各役職共通でレイヤーのインデックスを返す
+    /// 武器事のレイヤーのインデックスを返す
     /// </summary>
     /// <param name="_weaponName"></param>
     /// <returns></returns>
     public int GenerateWeaponIndex(string _weaponName) {
         return _weaponName switch {
-            "HandGun" or "Punch" or "FireMagic" or "IceMagic" or "MagicRain" => 1,
-            "Assult" or "BurstAssult" or "Spear" or "IceMagic" or "Katana" or "Lightsaver"
-            or "Knife" or "PizzaCutter" or "Spear" => 2,
-            "RPG" => 3,
-            "Sniper" => 4,
-            "Minigun" => 5,
+            "HandGun" => 2,
+            "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" => 3,
+            "RPG" => 4,
+            "Sniper" => 5,
+            "Minigun" => 6,
+            "Punch"  => 7,
+             "Spear" or "IceMagic" or "Katana" or "Lightsaver"
+             or "Knife" or "PizzaCutter" => 8,
+            
             _ => -1,
         };
     }
