@@ -1155,7 +1155,6 @@ GameObject:
   - component: {fileID: 1644173732893083620}
   - component: {fileID: 3712555363504025346}
   - component: {fileID: 9103814705293747956}
-  - component: {fileID: 1455379629690825076}
   m_Layer: 6
   m_Name: MainPlayer
   m_TagString: Player
@@ -1426,7 +1425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 3457343696
+  _assetId: 3820544063
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -1664,7 +1663,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   clientAuthority: 0
-  animator: {fileID: 1455379629690825076}
+  animator: {fileID: 0}
 --- !u!114 &9103814705293747956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1680,29 +1679,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  anim: {fileID: 1455379629690825076}
+  anim: {fileID: 0}
   BaseAnimLayerCount: 2
---- !u!95 &1455379629690825076
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5071411769833940291}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 9f078227c6f09b54392514bfaa25c741, type: 3}
-  m_Controller: {fileID: 9100000, guid: 59018223f44e04640bffa9d3f7e6de2a, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5360127861277474103
 GameObject:
   m_ObjectHideFlags: 0

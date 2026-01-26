@@ -4,20 +4,36 @@ using UnityEngine;
 
 /// <summary>
 /// プレイヤーのアニメーション管理クラス
+/// NetworkAnimator を使わず、状態同期で制御する
 /// </summary>
 public class CharacterAnimationController : NetworkBehaviour {
-    //扱うアニメーター
+
+    // 現在使用中の Animator（Skin差し替えで更新される）
     public Animator anim = null;
-    //ベースアニメーションレイヤーの数
+
+    // ベースアニメーションレイヤー数
     [SerializeField]
     private int BaseAnimLayerCount = 2;
-    //現在のアニメーションの文字列
-    private string currentAnimation;
 
+    // 移動アニメーション状態
+    public enum MoveAnimState {
+        Idle,
+        RunF,
+        RunB,
+        RunL,
+        RunR
+    }
+
+    // サーバーで管理し、全クライアントに同期される移動状態
+    [SyncVar(hook = nameof(OnMoveAnimChanged))]
+    private MoveAnimState moveState = MoveAnimState.Idle;
+
+    /// <summary>
+    /// ベースアニメーションレイヤーの重みを変更する（サーバー専用）
+    /// </summary>
     [Server]
     public void ChangeBaseAnimationLayerWeight(int _layerIndex) {
         if (anim == null) return;
-        if (anim.Equals(null)) return;
 
         for (int i = 0; i < BaseAnimLayerCount; i++) {
             anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
@@ -25,71 +41,61 @@ public class CharacterAnimationController : NetworkBehaviour {
     }
 
     /// <summary>
-    /// アニメーターのレイヤー切り替え
+    /// 武器アニメーションレイヤーの重みを変更する（サーバー専用）
     /// </summary>
     [Server]
     public void ChangeWeaponAnimationLayerWeight(int _layerIndex) {
         if (anim == null) return;
-        if (anim.Equals(null)) return;
-        //ベースのレイヤーを飛ばし、引数と一致したレイヤーを使うようにする
+
         for (int i = 2, max = anim.layerCount; i < max; i++) {
             anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
     }
 
     /// <summary>
-    /// 移動アニメーションの管理
+    /// 入力値から移動アニメーションを制御する（クライアント→サーバー）
     /// </summary>
-    /// <param name="_x"></param>
-    /// <param name="_z"></param>
     [Command]
     public void ControllMoveAnimation(float _x, float _z) {
-        ResetRunAnimation();
-        //斜め入力の場合
-        if (_x != 0 && _z != 0) {
-            anim.SetBool("RunL", false);
-            anim.SetBool("RunR", false);
-            if (_z > 0) {
-                currentAnimation = "RunF";
-            }
-            if (_z < 0) {
-                currentAnimation = "RunB";
-            }
-            anim.SetBool(currentAnimation, true);
-            return;
-
-        }
-
-        if (_x > 0 && _z == 0) {
-            currentAnimation = "RunR";
-        }
-        if (_x < 0 && _z == 0) {
-            currentAnimation = "RunL";
-        }
-        if (_x == 0 && _z > 0) {
-            currentAnimation = "RunF";
-        }
-        if (_x == 0 && _z < 0) {
-            currentAnimation = "RunB";
-        }
-        anim.SetBool(currentAnimation, true);
+        moveState = CalcMoveState(_x, _z);
     }
 
     /// <summary>
-    /// 移動アニメーションのリセット
+    /// SyncVar の変更を全クライアントで受け取り、Animator に反映
     /// </summary>
-    private void ResetRunAnimation() {
-        anim.SetBool("RunF", false);
-        anim.SetBool("RunR", false);
-        anim.SetBool("RunL", false);
-        anim.SetBool("RunB", false);
-
-        currentAnimation = null;
+    void OnMoveAnimChanged(MoveAnimState oldState, MoveAnimState newState) {
+        ApplyMoveAnimation(newState);
     }
 
+    /// <summary>
+    /// 入力値から移動状態を算出する
+    /// </summary>
+    private MoveAnimState CalcMoveState(float x, float z) {
+        if (x == 0 && z == 0) return MoveAnimState.Idle;
+        if (z > 0) return MoveAnimState.RunF;
+        if (z < 0) return MoveAnimState.RunB;
+        if (x > 0) return MoveAnimState.RunR;
+        return MoveAnimState.RunL;
+    }
+
+    /// <summary>
+    /// Animator に移動アニメーションを反映する
+    /// </summary>
+    private void ApplyMoveAnimation(MoveAnimState state) {
+        if (anim == null) return;
+
+        anim.SetBool("RunF", state == MoveAnimState.RunF);
+        anim.SetBool("RunB", state == MoveAnimState.RunB);
+        anim.SetBool("RunL", state == MoveAnimState.RunL);
+        anim.SetBool("RunR", state == MoveAnimState.RunR);
+    }
+
+    /// <summary>
+    /// 移動アニメーションをリセットする（サーバー）
+    /// </summary>
     [Command]
     public void CmdResetAnimation() {
-        ResetRunAnimation();
+        moveState = MoveAnimState.Idle;
     }
 
     /// <summary>
@@ -97,55 +103,40 @@ public class CharacterAnimationController : NetworkBehaviour {
     /// </summary>
     [Command]
     public void StopShootAnim() {
-        //アニメーション終了
+        RpcStopShootAnim();
+    }
+
+    /// <summary>
+    /// ショットアニメーション停止を全クライアントに反映
+    /// </summary>
+    [ClientRpc]
+    private void RpcStopShootAnim() {
+        if (anim == null) return;
         anim.SetBool("Shoot", false);
     }
 
     /// <summary>
-    /// NetworkAnimatorを使用した結果
-    /// ローカルでの変更によってアニメーション変更がかかるため制作
+    /// 死亡アニメーションを全クライアントで再生
     /// </summary>
     [ClientRpc]
     public void RpcDeadAnimation() {
+        if (anim == null) return;
         anim.SetTrigger("Dead");
     }
 
+    /// <summary>
+    /// Skin変更時に Animator を差し替える
+    /// NetworkAnimator は使わない
+    /// </summary>
     public IEnumerator AddNetworkAnimator(GameObject _skin) {
-        if (!isLocalPlayer) yield break;
-#if false
-        var animator = _skin.GetComponent<Animator>();
-        if (animator == null) yield break;
-        anim = animator;
-        yield return null;
         if (_skin == null) yield break;
-        var networkAnim = _skin.AddComponent<NetworkAnimator>();
-        yield return null;
 
-        networkAnim.syncDirection = SyncDirection.ClientToServer;
-
-
-#else
-        // ① Animator を取得
         var animator = _skin.GetComponent<Animator>();
         if (animator == null) yield break;
 
-        // ② NetworkIdentity の子階層に入ったことを保証するため 1 フレーム待つ
-        yield return null;
-
-        // ③ Animator の初期化待ち
-        yield return null;
-
-        // ④ NetworkAnimator を追加（この時点で NetworkIdentity が見つかる）
-        var networkAnim = _skin.AddComponent<NetworkAnimator>();
-
-        // ⑤ Awake → Initialize 完了待ち
-        yield return null;
-
-        // ⑥ animator をセット
-        networkAnim.animator = animator;
-        networkAnim.syncDirection = SyncDirection.ClientToServer;
-
+        // Animator を即時差し替え
         anim = animator;
-#endif
+
+        yield break;
     }
 }

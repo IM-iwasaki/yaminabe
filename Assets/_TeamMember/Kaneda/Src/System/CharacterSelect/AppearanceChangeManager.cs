@@ -59,8 +59,18 @@ public class AppearanceChangeManager : MonoBehaviour {
         uint netId = player.GetComponent<NetworkIdentity>().netId;
         //  変更したデータを保存する
         AppearanceSyncManager.instance.RecordAppearance(netId, characterCount, skinCount);
-        //追加:タハラ
-        StartCoroutine(player.GetComponent<CharacterAnimationController>().AddNetworkAnimator(characterSkin));
+
+        // ここから下変えましたbyまつお
+
+        // CharacterAnimationController を取得
+        var animController = player.GetComponent<CharacterAnimationController>();
+
+        // 生成した Skin から Animator を取得
+        var animator = characterSkin.GetComponent<Animator>();
+
+        // Animator を直接差し替える（NetworkAnimator 不使用）
+        animController.anim = animator;
+        StartCoroutine(animController.AddNetworkAnimator(characterSkin));
 
     }
 
