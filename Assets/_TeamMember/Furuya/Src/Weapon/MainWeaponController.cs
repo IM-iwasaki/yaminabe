@@ -209,8 +209,6 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="name"></param>
     [Command]
     public void CmdSetWeaponData(string name) {
-        if (!isLocalPlayer) return;
-
         var data = WeaponDataRegistry.GetWeapon(name);
 
         if (!CanUseWeapon(charaterType, data.type)) {
@@ -218,9 +216,11 @@ public class MainWeaponController : NetworkBehaviour {
             return;
         }
 
+        // サーバーで SyncVar を更新
         weaponData = data;
         ammo = weaponData.ammo;
-        playerUI.LocalUIChanged();
+
+        // 見た目・状態は全クライアントで Hook / Rpc で反映される
         characterBase.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
         //見た目変更
         animCon.ChangeBaseAnimationLayerWeight(GenerateJobIndex(charaterType));
