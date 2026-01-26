@@ -8,9 +8,14 @@ using Mirror;
 public class EnemyBaseAI : NetworkBehaviour {
     NavMeshAgent agent;
     Transform target; // 追いかける相手
+    private EnemyBaseStatus status;
 
     void Awake() {
         agent = GetComponent<NavMeshAgent>();
+        status = GetComponent<EnemyBaseStatus>();
+
+        // ステータスの移動速度をNavMeshAgentに反映
+        agent.speed = status.GetMoveSpeed();
     }
 
     public override void OnStartServer() {
