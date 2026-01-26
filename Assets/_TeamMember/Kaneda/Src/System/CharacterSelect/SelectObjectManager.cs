@@ -391,8 +391,6 @@ public class SelectObjectManager : NetworkBehaviour {
         AppearanceChangeManager.instance.PlayerChange(player, networkCharacterCount, networkSkinCount, networkCanChange);
         //  ‘¼‚ÌƒXƒLƒ“‚ğ“¯‚É“Ç‚İ‚Ş
         AppearanceSyncManager.instance.CmdRequestAllStates();
-
-        player.GetComponent<CharacterAnimationController>().SetNewAnimator(player.GetComponentInChildren<Animator>());
     }
     #endregion
 

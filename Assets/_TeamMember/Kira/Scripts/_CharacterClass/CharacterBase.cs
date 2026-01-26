@@ -451,19 +451,37 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_ID"></param>
     [ClientRpc]
     private void RpcChangeWeapon(int _ID) {
+        StartCoroutine(WaitChangeWeapon(_ID));
+    }
+
+    /// <summary>
+    /// ボーン取得のため一フレーム待って武器変更
+    /// </summary>
+    /// <param name="_ID"></param>
+    /// <returns></returns>
+    private IEnumerator WaitChangeWeapon(int _ID) {
+        yield return null;
+        if (animCon.anim == null) yield break;
         Transform handRoot = GetComponent<CharacterAnimationController>().anim.GetBoneTransform(HumanBodyBones.RightHand);
-
-        //今現在持っている武器に新たなメッシュを反映
-        GameObject currentWeapon = handRoot.GetChild(3).gameObject;
-        Destroy(currentWeapon);
-
-        //新たに武器を生成
-        WeaponModelList modelList = FindAnyObjectByType<WeaponModelList>();
-        GameObject newWeapon = Instantiate(modelList.weaponModelList[_ID], handRoot);
-        //魔法の杖の場合
-        if(_ID == 20) {
-            //newWeapon.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+        if (handRoot == null) yield break;
+        // 子が存在するかチェック
+        if (handRoot.childCount > 3) {
+            GameObject currentWeapon = handRoot.GetChild(3).gameObject;
+            if (currentWeapon != null)
+                Destroy(currentWeapon);
         }
+
+        //モデルリストはあるか
+        WeaponModelList modelList = FindAnyObjectByType<WeaponModelList>();
+        if (modelList == null || modelList.weaponModelList == null)
+            yield break;
+
+        //IDが既定範囲内にあるか
+        if (_ID < 0 || _ID >= modelList.weaponModelList.Count)
+            yield break;
+
+        Instantiate(modelList.weaponModelList[_ID], handRoot);
+
     }
     #endregion
 
