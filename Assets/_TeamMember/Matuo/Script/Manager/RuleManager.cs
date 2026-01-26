@@ -284,4 +284,19 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             penaltyScores[teamId] = 0f;
         }
     }
+
+
+    // 追加：岩﨑
+    /// <summary>
+    /// 現在のルールがデスマッチか
+    /// </summary>
+    public bool IsDeathMatch() {
+        return currentRule == GameRuleType.DeathMatch;
+    }
+
+
+
+
+
+
 }

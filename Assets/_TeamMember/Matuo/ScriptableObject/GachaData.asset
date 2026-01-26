@@ -35,34 +35,49 @@ MonoBehaviour:
     itemName: Default
     rarity: 0
     rate: 10
-    resultPrefab: {fileID: 1762018173025169312, guid: 5811f4236f7f88b41b2a1da538566706, type: 3}
-  - characterName: Sam
+    resultPrefab: {fileID: 1762018173025169312, guid: 7e4961c49f87c4546b22eea0c97c3909, type: 3}
+  - characterName: BossBear
     itemName: Default
     rarity: 0
     rate: 10
-    resultPrefab: {fileID: 909545961731707779, guid: 5cacba29a1abb9a4aa2b32001a835a1f, type: 3}
-  - characterName: Mike
+    resultPrefab: {fileID: 909545961731707779, guid: 12e30b5d4edd24c4fb1a6680ad1a7c21, type: 3}
+  - characterName: Yasuke
     itemName: Default
     rarity: 0
     rate: 10
-    resultPrefab: {fileID: 359554459282209763, guid: 586bab38c75b5b147b9c1df83c23142b, type: 3}
+    resultPrefab: {fileID: 359554459282209763, guid: 05cfe51bc12d4f3479a6084c8ffd3287, type: 3}
   - characterName: Jon
     itemName: Default
     rarity: 0
     rate: 10
-    resultPrefab: {fileID: 79219089695756003, guid: 55d87a7c8e027d24fb93e6d6cd2a1e93, type: 3}
+    resultPrefab: {fileID: 79219089695756003, guid: 305fedcca4257d54195c4b1ef41babcf, type: 3}
   rareItems:
   - characterName: Alien
     itemName: Another
     rarity: 1
     rate: 10
     resultPrefab: {fileID: 3108797039877070855, guid: 9147bb052d83cb748a579c1a6451d39e, type: 3}
+  - characterName: BossBear
+    itemName: Ice
+    rarity: 1
+    rate: 10
+    resultPrefab: {fileID: 909545961731707779, guid: 8701c3395e407eb4f93b84f0114d2b7c, type: 3}
+  - characterName: Bob
+    itemName: Another
+    rarity: 1
+    rate: 10
+    resultPrefab: {fileID: 1338158378579552491, guid: 864a22dd80969c24f8eb0238852bb64c, type: 3}
   epicItems:
   - characterName: Chicken
     itemName: Crazy
     rarity: 2
     rate: 10
     resultPrefab: {fileID: 3548868566056176881, guid: 80df7670b3ce0484e934d23878f7de37, type: 3}
+  - characterName: Yasuke
+    itemName: Another
+    rarity: 2
+    rate: 10
+    resultPrefab: {fileID: 359554459282209763, guid: 152c75bc37b1f924ab1fcd00e8cdbb56, type: 3}
   legendaryItems:
   - characterName: Chicken
     itemName: Gold

@@ -141,14 +141,14 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     [Server]
-    private NetworkConnectionToClient GetConnectionByPlayerName(string playerName) {
+    private NetworkConnectionToClient GetConnectionByPlayerName(int playerID) {
         foreach (var conn in NetworkServer.connections.Values) {
             if (conn.identity == null) continue;
 
             var chara = conn.identity.GetComponent<CharacterBase>();
             if (chara == null) continue;
 
-            if (chara.parameter.PlayerName == playerName)
+            if (chara.parameter.playerId == playerID)
                 return conn;
         }
         return null;
@@ -159,7 +159,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 被弾・死亡判定関数
     /// </summary>
     [Server]
-    public void TakeDamage(int _damage, string _name) {
+    public void TakeDamage(int _damage, string _name, int _ID) {
         //既に死亡状態かロビー内なら帰る
         if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
 
@@ -171,7 +171,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         parameter.HP -= (int)damage;
 
         // hitSE 再生
-        PlayHitSE(_name);
+        PlayHitSE(_ID);
 
         if (parameter.HP <= 0) {
             parameter.HP = 0;
@@ -184,23 +184,21 @@ public abstract class CharacterBase : NetworkBehaviour {
 
             if (PlayerListManager.Instance != null) {
                 // スコア加算
-                PlayerListManager.Instance.AddScoreByName(_name, 100);
-                PlayerListManager.Instance.AddKill(_name);
+                PlayerListManager.Instance.AddScoreById(_ID, 100);
+                PlayerListManager.Instance.AddKillById(_ID);
             }
         }
-            // キル数加算
-            if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddKill(_name);
     }
 
     [Server]
-    private void PlayHitSE(string attackerName) {
+    private void PlayHitSE(int attackerID) {
         // 被弾者
         NetworkConnectionToClient victimConn =
             GetComponent<NetworkIdentity>().connectionToClient;
 
         // 攻撃者（名前から取得）
         NetworkConnectionToClient attackerConn =
-            GetConnectionByPlayerName(attackerName);
+            GetConnectionByPlayerName(attackerID);
 
         if (attackerConn != null)
             AudioManager.Instance.CmdPlayUISE("hit", attackerConn);

@@ -54,4 +54,19 @@ public class CaptureArea : NetworkBehaviour {
             RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
         }
     }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

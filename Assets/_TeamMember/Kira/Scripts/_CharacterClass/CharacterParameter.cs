@@ -29,6 +29,8 @@ public class CharacterParameter : NetworkBehaviour{
     //[Header("基本ステータス")]    
     //最大の体力
     public int maxHP { get; protected set; }
+    //最大MP
+    public int maxMP { get; protected set; }
     //現在の体力
     [SyncVar(hook = nameof(ChangeHP))] public int HP;
     //魔法職のみ：攻撃時に消費。時間経過で徐々に回復(攻撃中は回復しない)。
@@ -40,7 +42,7 @@ public class CharacterParameter : NetworkBehaviour{
     //移動速度
     [SyncVar] public int moveSpeed = 5;
     
-    public int maxMP { get; protected set; }
+    
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
@@ -137,6 +139,7 @@ public class CharacterParameter : NetworkBehaviour{
     /// </summary>
      public void StatusInport(GeneralCharacterStatus _inport = null) {
         if (_inport == null) {
+            Debug.Log("ステータス無いで");
             DefaultStatusInport();
             return;
         }
@@ -173,7 +176,8 @@ public class CharacterParameter : NetworkBehaviour{
         var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
         var subWeapon = runtimeStatus.SubWeapon.WeaponName;
 
-        weaponController_main.SetWeaponDataInit(mainWeapon);
+        weaponController_main.CmdSetWeaponData(mainWeapon);
+        //weaponController_main.SetWeaponDataInit(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
     }
 
@@ -188,6 +192,8 @@ public class CharacterParameter : NetworkBehaviour{
         HP = maxHP;
         attack = PlayerConst.DEFAULT_ATTACK;
         moveSpeed = PlayerConst.DEFAULT_MOVESPEED;
+        // デフォルトステータスを代入
+        InDefaultStatus();
     }
 
     /// <summary>
@@ -244,6 +250,8 @@ public class CharacterParameter : NetworkBehaviour{
     /// <param name="_">無名変数</param>
     /// <param name="_new">新たに変更された値(今回でいうとisReloading)</param>
     private void UpdateReloadIcon(bool _, bool _new) {
+        if (!isLocalPlayer) return;
+
         if (_new)
             localUI.StartRotateReloadIcon();
     }

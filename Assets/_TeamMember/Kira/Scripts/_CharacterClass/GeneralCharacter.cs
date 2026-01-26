@@ -10,10 +10,11 @@ public class GeneralCharacter : CharacterBase {
 
     public override void OnStartLocalPlayer() {
         base.OnStartLocalPlayer();
+        if (!isLocalPlayer) return; // 自分だけ表示
 
+        localUI.Initialize();
         localUI.LocalUIChanged();
 
-        if (!isLocalPlayer) return; // 自分だけ表示
         SkillBase skill = parameter.equippedSkills[0];
         PassiveBase passive = parameter.equippedPassives[0];
 
@@ -25,9 +26,6 @@ public class GeneralCharacter : CharacterBase {
 
     public override void OnStartClient() {
         base.OnStartClient();
-
-        localUI.Initialize();
-
 
     }
 
@@ -44,7 +42,7 @@ public class GeneralCharacter : CharacterBase {
 
     public override void Initalize() {
         //HPやフラグ関連などの基礎的な初期化
-        base.Initalize();
+        //base.Initalize();
         //MaxMPが0でなければ最大値で初期化
         if (parameter.maxMP != 0) parameter.MP = parameter.maxMP;
         //弾倉が0でなければ最大値で初期化
@@ -54,6 +52,7 @@ public class GeneralCharacter : CharacterBase {
 
     public override void Respawn() {
         base.Respawn();
+        if (!isLocalPlayer) return;
         //パッシブのセットアップ
         parameter.equippedPassives[0].PassiveSetting();
     }

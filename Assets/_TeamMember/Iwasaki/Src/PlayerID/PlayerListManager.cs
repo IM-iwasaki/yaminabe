@@ -108,6 +108,43 @@ public class PlayerListManager : NetworkBehaviour {
     // ▼ スコア管理
     //==============================================================
 
+    #region IDベース加算（新規）
+
+    // スコア加算（ID指定）
+    [Server]
+    public void AddScoreById(int playerId, int value) {
+        var target = players.Find(p => p.id == playerId);
+        if (target != null) {
+            target.score += value;
+            Debug.Log($"[PlayerListManager] Player{playerId + 1} のスコアを {value} 加算（合計 {target.score}）");
+        }
+    }
+
+    // キル数加算（ID指定）
+    [Server]
+    public void AddKillById(int playerId) {
+        var target = players.Find(p => p.id == playerId);
+        if (target != null) target.kills++;
+    }
+
+    // デス数加算（ID指定）
+    [Server]
+    public void AddDeathById(int playerId) {
+        var target = players.Find(p => p.id == playerId);
+        if (target != null) target.deaths++;
+    }
+
+    #endregion
+
+
+
+
+
+
+
+
+
+
     /// <summary>
     /// 名前からスコアを加算（サーバー専用）
     /// </summary>

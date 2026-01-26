@@ -10,16 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b57f1631f241f3c48a205884bc2b4846, type: 3}
-  m_Name: New General Character Status
+  m_Name: Hacker
   m_EditorClassIdentifier: 
   baseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
-  displayName: 
-  skills: []
-  passives: []
+  displayName: "\u30CF\u30C3\u30AB\u30FC"
+  skills:
+  - {fileID: 11400000, guid: e6daacfcfd2ac404881fcdcb40b25273, type: 2}
+  passives:
+  - {fileID: 11400000, guid: d091c68dfe4b8e94d97a568a84c6902a, type: 2}
   MainWeapon: {fileID: 0}
   SubWeapon: {fileID: 0}
-  chatacterType: 0
+  chatacterType: 2
   maxHPCorrection: 0
-  speedCorrection: 0
+  speedCorrection: 1
   attack: 0
   maxMP: 0

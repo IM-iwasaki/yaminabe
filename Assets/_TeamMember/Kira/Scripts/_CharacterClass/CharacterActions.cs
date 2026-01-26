@@ -12,6 +12,7 @@ public class CharacterActions : NetworkBehaviour {
     private Collider useCollider;
     private string useTag;
     private CameraChangeController cameraManager;
+    private CharacterBase characterBase;
 
     //移動中か
     public bool isMoving { get; private set; } = false;
@@ -180,6 +181,28 @@ public class CharacterActions : NetworkBehaviour {
         param.AttackStartTimeRecord();
         // 武器が攻撃可能かチェックしてサーバー命令を送る(CmdRequestAttack武器種ごとの分岐も側で)
         Vector3 shootDir = core.parameter.GetShootDirection();
+
+        //追加：岩﨑
+        // ===== ハッカーパッシブ判定 =====
+        if (RuleManager.Instance.IsDeathMatch()) {
+
+            CharacterParameter param = core.GetComponent<CharacterParameter>();
+            if (param != null) {
+
+                foreach (PassiveBase passive in param.equippedPassives) {
+
+                    if (passive is Passive_Hacker) {
+
+                        // 25%で弾消費無効
+                        if (Random.value <= 0.25f) {
+                            core.weaponController_main.CmdRequestAttack(shootDir);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         core.weaponController_main.CmdRequestAttack(shootDir);
     }
 

@@ -35,19 +35,25 @@ MonoBehaviour:
     statusData: {fileID: 11400000, guid: 2b2b23650934ee54687ca8d729b424b1, type: 2}
     skins:
     - skinName: Default
-      skinPrefab: {fileID: 1762018173025169312, guid: 5811f4236f7f88b41b2a1da538566706, type: 3}
-  - characterName: Sam
+      skinPrefab: {fileID: 1762018173025169312, guid: 7e4961c49f87c4546b22eea0c97c3909, type: 3}
+    - skinName: Another
+      skinPrefab: {fileID: 1338158378579552491, guid: 864a22dd80969c24f8eb0238852bb64c, type: 3}
+  - characterName: BossBear
     statusData: {fileID: 11400000, guid: 7035a5f9dcc11164293fb4b6184f174a, type: 2}
     skins:
     - skinName: Default
-      skinPrefab: {fileID: 909545961731707779, guid: 5cacba29a1abb9a4aa2b32001a835a1f, type: 3}
-  - characterName: Mike
+      skinPrefab: {fileID: 909545961731707779, guid: 12e30b5d4edd24c4fb1a6680ad1a7c21, type: 3}
+    - skinName: Ice
+      skinPrefab: {fileID: 909545961731707779, guid: 8701c3395e407eb4f93b84f0114d2b7c, type: 3}
+  - characterName: Yasuke
     statusData: {fileID: 11400000, guid: 858d6782e6c183046af5d743d9d5b7e1, type: 2}
     skins:
     - skinName: Default
-      skinPrefab: {fileID: 359554459282209763, guid: 586bab38c75b5b147b9c1df83c23142b, type: 3}
+      skinPrefab: {fileID: 359554459282209763, guid: 05cfe51bc12d4f3479a6084c8ffd3287, type: 3}
+    - skinName: Another
+      skinPrefab: {fileID: 359554459282209763, guid: 152c75bc37b1f924ab1fcd00e8cdbb56, type: 3}
   - characterName: Jon
-    statusData: {fileID: 11400000, guid: 7035a5f9dcc11164293fb4b6184f174a, type: 2}
+    statusData: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
     skins:
     - skinName: Default
-      skinPrefab: {fileID: 79219089695756003, guid: 55d87a7c8e027d24fb93e6d6cd2a1e93, type: 3}
+      skinPrefab: {fileID: 79219089695756003, guid: 305fedcca4257d54195c4b1ef41babcf, type: 3}

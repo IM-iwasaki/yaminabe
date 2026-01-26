@@ -20,18 +20,31 @@ public class MainWeaponController : NetworkBehaviour {
     private PlayerLocalUIController playerUI;
 
     private void Awake() {
-        base.OnStartLocalPlayer();
         characterBase = GetComponent<CharacterBase>();
         animCon = GetComponent<CharacterAnimationController>();
+    }
+
+    public override void OnStartLocalPlayer() {
+        base.OnStartLocalPlayer();
+
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
-    public override void OnStartLocalPlayer() {       
-        // 追加：キラ   弾薬数を最大にする。
+    [Command]
+    public void RequestAmmoReset() {
         if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
             ammo = weaponData.maxAmmo;
+
+            // クライアントのUI更新は ClientRpc で呼べよ by マツオ 
+            RpcUpdateAmmoUI();
         }
+    }
+
+    [ClientRpc]
+    void RpcUpdateAmmoUI() {
+        if (!isLocalPlayer) return; // 自分のUIだけ更新
+        playerUI?.LocalUIChanged();
     }
 
     public void SetCharacterType(CharacterEnum.CharaterType type) {
@@ -44,7 +57,13 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="_"></param>
     /// <param name="_new"></param>
     private void ChangeWeapon(WeaponData _, WeaponData _new) {
+        if (_new == null) return;
+
         _new.AmmoReset();
+
+        if (!isLocalPlayer) return;
+        if (playerUI == null) return;
+
         playerUI.LocalUIChanged();
     }
 
@@ -68,8 +87,12 @@ public class MainWeaponController : NetworkBehaviour {
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.parameter.isReloading) return;
 
-                if (weaponData is GunData gunData)
+                if (weaponData is GunData gunData) {
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                    if (ammo > 0)
+                        ammo--;
+                }
+
                 break;
             case WeaponType.Magic:
                 if (weaponData is MainMagicData magicdata)
@@ -89,11 +112,10 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="direction"></param>
     [Command]
     public void CmdRequestExtraAttack(Vector3 direction) {
-        lastAttackTime = Time.time;
-
         switch (weaponData.type) {
             case WeaponType.Melee:
-                ServerMeleeAttack();
+                if (weaponData is MeleeData meleeData)
+                    StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
                 break;
             case WeaponType.Gun:
                 //弾がなかったら通過不可。かわりにリロードを要求する。
@@ -104,13 +126,19 @@ public class MainWeaponController : NetworkBehaviour {
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.parameter.isReloading) return;
 
-                ServerGunAttack(direction);
+                if (weaponData is GunData gunData) {
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                }
+
                 break;
             case WeaponType.Magic:
-                ServerStartMagicCast(direction);
-                //ServerMagicAttack(direction);
+                if (weaponData is MainMagicData magicdata)
+                    ServerStartMagicCast(direction);
                 break;
         }
+        //アニメーション開始
+        animCon.anim.SetBool("Shoot", true);
+        //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
 
@@ -119,12 +147,11 @@ public class MainWeaponController : NetworkBehaviour {
     /// </summary>
     /// <param name="direction"></param>
     [Command]
-    public void CmdRequestSkillAttack(Vector3 direction,WeaponData skillweapon) {
-        lastAttackTime = Time.time;
-
+    public void CmdRequestSkillAttack(Vector3 direction, WeaponData skillweapon) {
         switch (skillweapon.type) {
             case WeaponType.Melee:
-                ServerMeleeAttack();
+                if (skillweapon is MeleeData meleeData)
+                    StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
                 break;
             case WeaponType.Gun:
                 //弾がなかったら通過不可。かわりにリロードを要求する。
@@ -135,13 +162,18 @@ public class MainWeaponController : NetworkBehaviour {
                 //その他リロード中は射撃できなくする。
                 else if (characterBase.parameter.isReloading) return;
 
-                ServerGunAttack(direction);
+                if (skillweapon is GunData gunData) {
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                }
                 break;
             case WeaponType.Magic:
                 ServerStartMagicCast(direction);
                 //ServerMagicAttack(direction);
                 break;
         }
+        //アニメーション開始
+        animCon.anim.SetBool("Shoot", true);
+        //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
 
@@ -241,12 +273,12 @@ public class MainWeaponController : NetworkBehaviour {
             // 追加：キラ 射程の20％以内なら強制的に当たった扱いにする
             // 変更：キラ meleeData.meleeAngle→allowedAngle
             if (angle <= allowedAngle || dist < 0.2f) {
-                hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName);
+                hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
                 RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
             }
 
         }
-                AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
+        AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
 #if UNITY_EDITOR
         MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
@@ -283,10 +315,6 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not GunData gunData || gunData.projectilePrefab == null)
             return;
 
-        //  追加：キラ  弾薬が必要な場合、弾薬が残っていれば銃の弾薬を消費して通過
-        if (ammo > 0) ammo--;
-        else return;
-
         // 弾をネットワークプールから取得
         GameObject proj = ProjectilePool.Instance.SpawnFromPool(
             gunData.projectilePrefab.name, // プール名で取得
@@ -300,6 +328,7 @@ public class MainWeaponController : NetworkBehaviour {
             projScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
                 gunData.hitEffectType,
                 gunData.projectileSpeed,
                 gunData.damage
@@ -309,6 +338,7 @@ public class MainWeaponController : NetworkBehaviour {
             ExpProjScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
                 gunData.hitEffectType,
                 gunData.projectileSpeed,
                 gunData.damage,
@@ -346,6 +376,7 @@ public class MainWeaponController : NetworkBehaviour {
             projScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
                 magicData.magicType,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,
@@ -360,6 +391,7 @@ public class MainWeaponController : NetworkBehaviour {
             dotArea.Init(
                 teamID,
                 characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
                 magicData.projectileSpeed,
                 magicData.damage,
                 Direction
@@ -376,7 +408,7 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not MainMagicData magicData) return;
 
         //クライアント側にチャージエフェクトを出させる
-        if(magicData.chargeTime > 0)
+        if (magicData.chargeTime > 0)
             RpcPlayChargeEffect(firePoint.position, magicData.chargeEffectType);
         StartCoroutine(CastAfterDelay(direction, magicData));
     }
@@ -489,7 +521,7 @@ public class MainWeaponController : NetworkBehaviour {
     public int GenerateWeaponIndex(string _weaponName) {
         return _weaponName switch {
             "HandGun" or "Punch" or "FireMagic" or "IceMagic" or "MagicRain" => 1,
-            "Assult" or "BurstAssult" or "Spear" or "IceMagic"  or "Katana" or "Lightsaver" 
+            "Assult" or "BurstAssult" or "Spear" or "IceMagic" or "Katana" or "Lightsaver"
             or "Knife" or "PizzaCutter" or "Spear" => 2,
             "RPG" => 3,
             "Sniper" => 4,

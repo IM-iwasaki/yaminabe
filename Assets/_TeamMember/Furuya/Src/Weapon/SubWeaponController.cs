@@ -12,7 +12,11 @@ public class SubWeaponController : NetworkBehaviour {
     [Header("Sub Weapon")]
     public SubWeaponData subWeaponData;
 
-    public int currentUses { get; private set; }
+    [SyncVar(hook = nameof(OnCurrentUsesChanged))]
+    private int currentUses;
+
+    public int CurrentUses => currentUses;
+
     private bool isRecharging;
 
     private CharacterBase characterBase; // チームIDなどを取得するため
@@ -35,6 +39,15 @@ public class SubWeaponController : NetworkBehaviour {
         if (subWeaponData != null)
             currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
     }
+
+    void OnCurrentUsesChanged(int oldValue, int newValue) {
+        // ローカルプレイヤーのUIだけ更新
+        if (!isLocalPlayer) return;
+
+        if (playerUI != null)
+            playerUI.LocalUIChanged();
+    }
+
 
     /// <summary>
     /// UI 操作中などでサブ武器を使えない状態か
@@ -147,12 +160,13 @@ public class SubWeaponController : NetworkBehaviour {
 
         // SmokeGrenade の場合
         if (subWeaponData is SmokeData smokeData && grenadeObj.TryGetComponent(out SmokeGrenade smokeGrenade)) {
-            smokeGrenade.Init(smokeData, teamID, characterBase.parameter.PlayerName, throwDirection);
+            smokeGrenade.Init(smokeData, teamID, characterBase.parameter.playerId, characterBase.parameter.PlayerName, throwDirection);
         }
         // 通常の Grenade の場合
         else if (subWeaponData is GrenadeData grenadeData && grenadeObj.TryGetComponent(out GrenadeBase grenade)) {
             grenade.Init(
                 teamID,
+                 characterBase.parameter.playerId,
                 characterBase.parameter.PlayerName,
                 throwDirection,
                 grenadeData.throwForce,
@@ -203,6 +217,7 @@ public class SubWeaponController : NetworkBehaviour {
                     landMineData.explosionRadius,
                     landMineData.damage,
                     landMineData.canDamageAllies,
+                    characterBase.parameter.playerId,
                     landMineData.useEffectType
                 );
             }

@@ -15,6 +15,7 @@ public class MagicProjectile : NetworkBehaviour {
     private Rigidbody rb;
     private GameObject owner;
     private string ownerName;
+    private int ID;
     private EffectType hitEffectType;
     private bool initialized;
     private float lifetime = 5f;
@@ -22,9 +23,10 @@ public class MagicProjectile : NetworkBehaviour {
     /// <summary>
     /// 弾の初期化（発射時に呼ぶ）
     /// </summary>
-    public void Init(GameObject shooter, string _name, ProjectileType _type, EffectType hitEffect, float _speed, float _initialHeightSpeed, int _damage, Vector3 direction) {
+    public void Init(GameObject shooter, string _name, int _ID, ProjectileType _type, EffectType hitEffect, float _speed, float _initialHeightSpeed, int _damage, Vector3 direction) {
         owner = shooter;
         ownerName = _name;
+        ID = _ID;
         type = _type;
         hitEffectType = hitEffect;
         speed = _speed;
@@ -67,7 +69,7 @@ public class MagicProjectile : NetworkBehaviour {
         if (other.gameObject == owner) return;
 
         if (other.TryGetComponent(out CharacterBase target))
-            target.TakeDamage(damage, ownerName);
+            target.TakeDamage(damage, ownerName, ID);
 
 
         RpcPlayHitEffect(transform.position, hitEffectType);
