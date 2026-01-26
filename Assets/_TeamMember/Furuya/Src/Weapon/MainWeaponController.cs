@@ -101,9 +101,15 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        animCon.anim.SetBool("Shoot", true);
-        //フレーム中攻撃した瞬間にフラグを立てる
+        RpcPlayShootAnimation();
+
         characterBase.parameter.AttackTrigger = true;
+    }
+
+    [ClientRpc]
+    private void RpcPlayShootAnimation() {
+        if (animCon == null || animCon.anim == null) return;
+        animCon.anim.SetBool("Shoot", true);
     }
 
     /// <summary>
