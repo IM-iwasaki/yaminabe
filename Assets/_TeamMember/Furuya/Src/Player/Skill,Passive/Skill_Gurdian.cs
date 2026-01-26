@@ -16,6 +16,8 @@ public class Skill_Gurdian : SkillBase {
     int SkillDamage = 50;
 
     public override void Activate(CharacterBase user) {
+        //フラグを立てる
+        isSkillUse = true;
         //停止
         user.parameter.moveSpeed = 0;
         //被ダメ大幅軽減
@@ -43,6 +45,8 @@ public class Skill_Gurdian : SkillBase {
         int recoveryHP = (user.parameter.maxHP - user.parameter.HP) / 2;
         if (recoveryHP > 50) recoveryHP = 50;
         user.parameter.HP += recoveryHP;
+        //フラグを下ろす
+        isSkillUse = false;
     }
 
     void CreateHitBox(CharacterBase user) {

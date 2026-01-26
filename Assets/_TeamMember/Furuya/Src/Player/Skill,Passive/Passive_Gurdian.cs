@@ -32,8 +32,10 @@ public class Passive_Gurdian : PassiveBase {
                 coolTime = 0;
             }
 
-            // 速度バフを戻す
-            user.parameter.OutDefaultStatus_MoveSpeed();
+            // スキル使用中、速度バフ中以外は速度上昇効果を戻す
+            if(!user.parameter.equippedSkills[0].isSkillUse || user.speedCoroutine == null) {
+                user.parameter.OutDefaultStatus_MoveSpeed();
+            }           
             return;
         }
 
