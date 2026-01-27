@@ -35,7 +35,7 @@ public abstract class EnemyBase : NetworkBehaviour {
     /// 毎フレームのAI更新
     /// </summary>
     [Server]
-    protected abstract void OnUpdateAI();
+    protected virtual void OnUpdateAI() { }
 
     /// <summary>
     /// 攻撃処理
