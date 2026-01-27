@@ -9,6 +9,10 @@ public class GeneralCharacterStatus : CharacterStatus {
     [Header("職業タイプを選択してください。\n・Melee(近接職)\n・Wizard(魔法職)\n・Gunner(間接職)")]
     public CharacterEnum.CharaterType chatacterType;
 
+    //ステータスの割り当て
+    [Tooltip("間接職(Gunner)、魔法職(Wizard)にはAttackが不要のため設定できません。\n" +
+        "近接職(Melee)、間接職(Gunner)にはMPが不要のため設定できません。")]
+
     [Header("体力補正値。\nStatusBase + [maxHPCorrection] の値になります。")]
     [Range(-50, 150)] public int maxHPCorrection = 0;    
     [Header("移動速度補正値。\nStatusBase + [speedCorrection]の値になります。")]

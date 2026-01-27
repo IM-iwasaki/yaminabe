@@ -19,7 +19,8 @@ public abstract class CharacterStatus : ScriptableObject {
 
     //
     // ※SkillBaseとPassiveBaseは配列ですが0番目のみ使用してください。
-    // 　これは拡張性を持たせるためにやっていました。
+    // 　これは拡張性を持たせるためにやっていましたが
+    // 　2つめは実装しない方向性になったので未使用になりました。
     //
 
     public virtual int maxHP => baseStatus.maxHP;
