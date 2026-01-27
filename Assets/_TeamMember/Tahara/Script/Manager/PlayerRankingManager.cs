@@ -7,26 +7,13 @@ using UnityEngine;
 /// プレイヤーのレート管理
 /// 数値の変更を扱う
 /// </summary>
-public class PlayerRankingManager : NetworkBehaviour {
-    /// <summary>
-    /// インスタンス
-    /// </summary>
-    public static PlayerRankingManager instance { get; private set; }
+public class PlayerRankingManager : NetworkSystemObject<PlayerRankingManager> {
     /// <summary>
     /// レートを変更するプレイヤーのデータ
     /// </summary>
     private PlayerData playerData;
 
-
-    private void Awake() {
-        // シングルトンの設定
-        if (instance != null || instance != this) {
-            Destroy(gameObject);
-            return;
-        }
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-
+    public override void Initialize() {
         LoadPlayerData();
     }
 
