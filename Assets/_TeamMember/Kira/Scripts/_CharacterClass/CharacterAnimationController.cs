@@ -27,19 +27,6 @@ public class CharacterAnimationController : NetworkBehaviour {
     // サーバーで管理し、全クライアントに同期される移動状態
     [SyncVar(hook = nameof(OnMoveAnimChanged))]
     private MoveAnimState moveState = MoveAnimState.Idle;
-
-    /// <summary>
-    /// ベースアニメーションレイヤーの重みを変更する（サーバー専用）
-    /// </summary>
-    [TargetRpc]
-    public void ChangeBaseAnimationLayerWeight(NetworkConnection _conn, int _layerIndex) {
-        if (anim == null) return;
-
-        for (int i = 0; i < BaseAnimLayerCount; i++) {
-            anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
-        }
-    }
-
     /// <summary>
     /// 武器アニメーションレイヤーの重みを変更する（サーバー専用）
     /// </summary>
@@ -47,7 +34,7 @@ public class CharacterAnimationController : NetworkBehaviour {
     public void ChangeWeaponAnimationLayerWeight(NetworkConnection _conn, int _layerIndex) {
         if (anim == null) return;
 
-        for (int i = 2, max = anim.layerCount; i < max; i++) {
+        for (int i = 1, max = anim.layerCount; i < max; i++) {
             anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
         }
     }

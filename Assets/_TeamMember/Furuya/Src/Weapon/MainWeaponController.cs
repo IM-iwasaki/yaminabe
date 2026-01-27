@@ -229,7 +229,6 @@ public class MainWeaponController : NetworkBehaviour {
         // 見た目・状態は全クライアントで Hook / Rpc で反映される
         characterBase.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
         //見た目変更
-        animCon.ChangeBaseAnimationLayerWeight(connectionToClient,GenerateJobIndex(charaterType));
         animCon.ChangeWeaponAnimationLayerWeight(connectionToClient,GenerateWeaponIndex(weaponData.weaponName));
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
@@ -522,29 +521,19 @@ public class MainWeaponController : NetworkBehaviour {
         characterBase.parameter.isReloading = false;
     }
 
-    public int GenerateJobIndex(CharacterEnum.CharaterType _charType) {
-        return _charType switch {
-            CharacterEnum.CharaterType.Gunner or CharacterEnum.CharaterType.Wizard => 0,
-            CharacterEnum.CharaterType.Melee => 1,
-            _ => -1,
-        };
-    }
-
     /// <summary>
-    /// 武器事のレイヤーのインデックスを返す
+    /// 武器毎のレイヤーのインデックスを返す
     /// </summary>
     /// <param name="_weaponName"></param>
     /// <returns></returns>
     public int GenerateWeaponIndex(string _weaponName) {
         return _weaponName switch {
-            "HandGun" => 2,
-            "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" => 3,
-            "RPG" => 4,
-            "Sniper" => 5,
-            "Minigun" => 6,
-            "Punch"  => 7,
-             "Spear" or "IceMagic" or "Katana" or "Lightsaver"
-             or "Knife" or "PizzaCutter" => 8,
+            "HandGun" or "revolver" or "Punch" => 1,
+            "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" or "Spear" or "IceMagic" or "Katana" or "Lightsaver"
+             or "Knife" or "PizzaCutter" => 2,
+            "RPG" => 3,
+            "Sniper" => 4,
+            "Minigun" => 5,
             
             _ => -1,
         };
