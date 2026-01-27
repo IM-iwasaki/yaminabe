@@ -20,7 +20,7 @@ public class PlayerRankingManager : NetworkBehaviour {
 
     private void Awake() {
         // ƒVƒ“ƒOƒ‹ƒgƒ“‚Ìİ’è
-        if (instance != null && instance != this) {
+        if (instance != null || instance != this) {
             Destroy(gameObject);
             return;
         }
