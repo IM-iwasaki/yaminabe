@@ -27,6 +27,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     public int bannerNum = 0;
 
+    //各コンポーネントの参照
     public CharacterInput input { get; private set; }
     public CharacterActions action { get; private set; }
     public CharacterParameter parameter { get; private set; }
@@ -114,7 +115,9 @@ public abstract class CharacterBase : NetworkBehaviour {
             PlayerListManager.Instance.RegisterPlayer(this);
         }
     }
-    // 名前をリストから消す
+    /// <summary>
+    /// 名前をリストから消す
+    /// </summary>
     public override void OnStopServer() {
         base.OnStopServer();
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.UnregisterPlayer(this);
@@ -130,6 +133,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     public virtual void Initalize() {
 
     }
+
     /// <summary>
     /// 追加:タハラ クライアント用準備状態切り替え関数
     /// </summary>
@@ -216,7 +220,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     ///--------------------変更:タハラ---------------------
 
     /* なんかサーバーで処理できるようになったのでコマンド経由しなくていいです。
-     * 読み解くにはこれを呼んでください
+     * 読み解くにはこれを読んでください
      * ①サーバーで被ダメージ処理。
      * ②HPが0以下ならTargetRPCで対象にのみ死亡通知。
      * ③TargetRPC内で死亡演出(ローカル)とCommand属性のリスポーン要求。
@@ -316,8 +320,7 @@ public abstract class CharacterBase : NetworkBehaviour {
         Invoke(nameof(ResetHealth), PlayerConst.RESPAWN_TIME + 0.01f);
     }
     /// <summary>
-    /// ローカル上で死亡演出
-    /// 可読性向上のためまとめました
+    /// ローカル上で死亡演出 可読性向上のためまとめました
     /// </summary>
     [TargetRpc]
     private void LocalDeadEffect() {
@@ -335,8 +338,7 @@ public abstract class CharacterBase : NetworkBehaviour {
     }
 
     /// <summary>
-    /// リスポーン関数
-    /// 死亡した対象にのみ通知
+    /// リスポーン関数 死亡した対象にのみ通知
     /// </summary>
     [TargetRpc]
     virtual public void Respawn() {
@@ -392,14 +394,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     #endregion
 
     /// <summary>
-    /// トリガー変数のリセット
-    /// </summary>
-    /*protected void ResetTrigger() {
-        isAttackTrigger = false;
-        isDeadTrigger = false;
-    }*/
-
-    /// <summary>
     /// チーム参加処理(TeamIDを更新)
     /// </summary>
     [Command]
@@ -436,8 +430,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 追加:タハラ
     /// アイテムを取ったクライアントの武器の見た目変更
     /// </summary>
-    /// <param name="_player"></param>
-    /// <param name="_ID"></param>
     [Command]
     public void CmdChangeWeapon(int _ID) {
         RpcChangeWeapon(_ID);
@@ -447,8 +439,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// 追加:タハラ
     /// 全クライアントに見た目変更を指令
     /// </summary>
-    /// <param name="_playerID"></param>
-    /// <param name="_ID"></param>
     [ClientRpc]
     private void RpcChangeWeapon(int _ID) {
         StartCoroutine(WaitChangeWeapon(_ID));
