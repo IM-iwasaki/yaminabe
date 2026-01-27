@@ -10,7 +10,7 @@ public class GeneralCharacterStatus : CharacterStatus {
     public CharacterEnum.CharaterType chatacterType;
 
     [Header("体力補正値。\nStatusBase + [maxHPCorrection] の値になります。")]
-    [Range(-50, 100)] public int maxHPCorrection = 0;    
+    [Range(-50, 150)] public int maxHPCorrection = 0;    
     [Header("移動速度補正値。\nStatusBase + [speedCorrection]の値になります。")]
     [Range(-3, 5)] public int speedCorrection = 0;
     [Header("攻撃力補正値。\n[attack]の値になります。")]

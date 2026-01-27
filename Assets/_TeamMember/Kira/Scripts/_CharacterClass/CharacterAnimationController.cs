@@ -31,8 +31,8 @@ public class CharacterAnimationController : NetworkBehaviour {
     /// <summary>
     /// ベースアニメーションレイヤーの重みを変更する（サーバー専用）
     /// </summary>
-    [Server]
-    public void ChangeBaseAnimationLayerWeight(int _layerIndex) {
+    [TargetRpc]
+    public void ChangeBaseAnimationLayerWeight(NetworkConnection _conn, int _layerIndex) {
         if (anim == null) return;
 
         for (int i = 0; i < BaseAnimLayerCount; i++) {
@@ -43,8 +43,8 @@ public class CharacterAnimationController : NetworkBehaviour {
     /// <summary>
     /// 武器アニメーションレイヤーの重みを変更する（サーバー専用）
     /// </summary>
-    [Server]
-    public void ChangeWeaponAnimationLayerWeight(int _layerIndex) {
+    [TargetRpc]
+    public void ChangeWeaponAnimationLayerWeight(NetworkConnection _conn, int _layerIndex) {
         if (anim == null) return;
 
         for (int i = 2, max = anim.layerCount; i < max; i++) {
@@ -118,7 +118,7 @@ public class CharacterAnimationController : NetworkBehaviour {
     /// <summary>
     /// 死亡アニメーションを全クライアントで再生
     /// </summary>
-    [ClientRpc]
+    [ClientRpc(includeOwner = true)]
     public void RpcDeadAnimation() {
         if (anim == null) return;
         anim.SetTrigger("Dead");

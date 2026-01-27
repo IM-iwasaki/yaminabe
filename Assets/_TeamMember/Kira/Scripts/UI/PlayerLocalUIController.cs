@@ -84,7 +84,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
         // UI参照が揃っていなければ中断
         if (!IsUIReady()) return;
 
-
         LocalUIChanged();
     }
 
@@ -98,7 +97,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
         mpUnderBar_slider.interactable = false;
 
         localUIObject.SetActive(true);
-
 
         mainWeaponReloadIcon.enabled = false;
         interactUI.SetActive(false);
@@ -315,15 +313,15 @@ public class PlayerLocalUIController : NetworkBehaviour {
         hpBar_slider.value = (float)_hp / _maxHP * FIXED_RATIO;
         Debug.Log("value:" + _hp + "/ slider.value:" + hpBar_slider.value);
         //死亡時
-        if (hpBar_slider.value < 1)
+        if (_hp <= 0)
             hpBarImage.gameObject.SetActive(false);
         //2割以下
-        else if (hpBar_slider.value <= _maxHP / 5 && hpBar_slider.value >= 1) {
+        else if (_hp <= _maxHP / 5 && _hp >= 1) {
             hpBarImage.color = Color.red;
             hpText.color = Color.red;
         }
         //5割以下
-        else if (hpBar_slider.value <= _maxHP / 2) {
+        else if (_hp <= _maxHP / 2) {
             hpBarImage.color = Color.yellow;
             hpText.color = Color.yellow;
         }
@@ -348,7 +346,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     }
 
     /// <summary>
-    /// リロードアイコンを1回転させる (float _duration = 1回転するまでにかかる時間 )
+    /// リロードアイコンを1回転させる ( float _duration = 1回転するまでにかかる時間)
     /// </summary>
     public IEnumerator RotateReloadIcon(float _duration) {
         reloadIconRotating = true;
