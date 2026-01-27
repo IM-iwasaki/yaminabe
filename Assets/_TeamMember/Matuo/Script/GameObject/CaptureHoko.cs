@@ -21,6 +21,8 @@ public class CaptureHoko : NetworkBehaviour {
     private float scoreTimer = 0f;
     private bool canBePickedUp = true;
 
+    private bool isActive = true;
+
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
@@ -48,6 +50,9 @@ public class CaptureHoko : NetworkBehaviour {
     /// </summary>
     [Server]
     private void Update() {
+        if (!isActive) return;
+        if (!GameManager.Instance.IsGameRunning()) return;
+
         if (holder != null) {
             Vector3 targetPos = holder.transform.position + Vector3.up * holdHeight;
             transform.position = targetPos;
@@ -129,6 +134,7 @@ public class CaptureHoko : NetworkBehaviour {
     /// </summary>
     [Server]
     public void HandleGameEnd() {
+        isActive = false;
         Drop();
     }
 }
