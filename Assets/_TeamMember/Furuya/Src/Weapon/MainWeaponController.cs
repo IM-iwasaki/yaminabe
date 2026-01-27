@@ -229,7 +229,7 @@ public class MainWeaponController : NetworkBehaviour {
         // 見た目・状態は全クライアントで Hook / Rpc で反映される
         characterBase.GetComponent<GeneralCharacter>().RpcChangeWeapon(weaponData.ID);
         //見た目変更
-        animCon.ChangeWeaponAnimationLayerWeight(connectionToClient, GenerateWeaponIndex(weaponData.weaponName));
+        animCon.SetWeaponLayer(GenerateWeaponIndex(weaponData.weaponName));
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 

@@ -23,11 +23,28 @@ public class CharacterAnimationController : NetworkBehaviour {
     // サーバーで管理し、全クライアントに同期される移動状態
     [SyncVar(hook = nameof(OnMoveAnimChanged))]
     private MoveAnimState moveState = MoveAnimState.Idle;
+
+    [SyncVar(hook = nameof(OnWeaponChanged))]
+    private int layerIndex;
+
+    [Server]
+    public void SetWeaponLayer(int _index) {
+        layerIndex = _index;
+    }
+
+    /// <summary>
+    /// hookで発火させる
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="_new"></param>
+    private void OnWeaponChanged(int _,int _new) {
+        ChangeWeaponAnimationLayerWeight(_new);
+    }
+
     /// <summary>
     /// 武器アニメーションレイヤーの重みを変更する（サーバー専用）
     /// </summary>
-    [TargetRpc]
-    public void ChangeWeaponAnimationLayerWeight(NetworkConnection _conn, int _layerIndex) {
+    public void ChangeWeaponAnimationLayerWeight(int _layerIndex) {
         if (anim == null) return;
 
         for (int i = 1, max = anim.layerCount; i < max; i++) {

@@ -144,7 +144,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         }
 
         SendTeamResultToAll(winnerId);
-        PlayerRankingManager.instance.ApplyRateAllPlayers(winnerId);
+        PlayerRankingManager.Instance.ApplyRateAllPlayers(winnerId);
         GameManager.Instance.EndGame();
     }
 
