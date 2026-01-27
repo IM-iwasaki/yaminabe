@@ -12,7 +12,7 @@ using static TeamData;
 /// <summary>
 /// 全てのキャラクターの基底
 /// </summary>
-public abstract class CharacterBase : NetworkBehaviour {
+public abstract class CharacterBase : CreatureBase {
 
     //コンポーネント情報
     [Header("コンポーネント情報")]
@@ -30,7 +30,6 @@ public abstract class CharacterBase : NetworkBehaviour {
     //各コンポーネントの参照
     public CharacterInput input { get; private set; }
     public CharacterActions action { get; private set; }
-    public CharacterParameter parameter { get; private set; }
     public CharacterAnimationController animCon { get; private set; }
 
 
@@ -48,7 +47,6 @@ public abstract class CharacterBase : NetworkBehaviour {
         rb = GetComponent<Rigidbody>();
         input = GetComponent<CharacterInput>();
         action = GetComponent<CharacterActions>();
-        parameter = GetComponent<CharacterParameter>();
         animCon = GetComponent<CharacterAnimationController>();
 
         //RpcChangeWeapon(weaponController_main.weaponData.ID);
@@ -150,26 +148,12 @@ public abstract class CharacterBase : NetworkBehaviour {
         ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
     }
 
-    [Server]
-    private NetworkConnectionToClient GetConnectionByPlayerName(int playerID) {
-        foreach (var conn in NetworkServer.connections.Values) {
-            if (conn.identity == null) continue;
-
-            var chara = conn.identity.GetComponent<CharacterBase>();
-            if (chara == null) continue;
-
-            if (chara.parameter.playerId == playerID)
-                return conn;
-        }
-        return null;
-    }
-
 
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
     [Server]
-    public void TakeDamage(int _damage, string _name, int _ID) {
+    public override void TakeDamage(int _damage, string _name, int _ID) {
         //既に死亡状態かロビー内なら帰る
         if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
 
@@ -198,23 +182,6 @@ public abstract class CharacterBase : NetworkBehaviour {
                 PlayerListManager.Instance.AddKillById(_ID);
             }
         }
-    }
-
-    [Server]
-    private void PlayHitSE(int attackerID) {
-        // 被弾者
-        NetworkConnectionToClient victimConn =
-            GetComponent<NetworkIdentity>().connectionToClient;
-
-        // 攻撃者（名前から取得）
-        NetworkConnectionToClient attackerConn =
-            GetConnectionByPlayerName(attackerID);
-
-        if (attackerConn != null)
-            AudioManager.Instance.CmdPlayUISE("hit", attackerConn);
-
-        if (victimConn != null)
-            AudioManager.Instance.CmdPlayUISE("hit", victimConn);
     }
 
     /// <summary>
