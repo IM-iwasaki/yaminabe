@@ -33,6 +33,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     public CharacterParameter parameter { get; private set; }
     public CharacterAnimationController animCon { get; private set; }
 
+
+    private bool isInitialize = false;
     #region ～初期化関係関数～
 
     /// <summary>
@@ -57,6 +59,10 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// </summary>
     public override void OnStartLocalPlayer() {
         if (isLocalPlayer) {
+            //二回以上呼ばれても弾くようにする
+            if (isInitialize) return;
+            isInitialize = true;
+
 
             input.Initialize(this);
             action.Initialize(this);
