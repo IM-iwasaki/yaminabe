@@ -178,9 +178,6 @@ public class CustomNetworkManager : NetworkManager {
                 //レートの数値を反映して表示
                 RateDisplay.instance.ChangeRateUI();
             }
-            //初期化
-            character.Initalize();
-
         }
         FadeManager.Instance.StartFadeIn(0.5f);
     }

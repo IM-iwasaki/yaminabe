@@ -143,7 +143,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        animCon.anim.SetBool("Shoot", true);
+        RpcPlayShootAnimation();
         //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
@@ -178,7 +178,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
         }
         //アニメーション開始
-        animCon.anim.SetBool("Shoot", true);
+        RpcPlayShootAnimation();
         //フレーム中攻撃した瞬間にフラグを立てる
         characterBase.parameter.AttackTrigger = true;
     }
@@ -227,9 +227,9 @@ public class MainWeaponController : NetworkBehaviour {
         ammo = weaponData.ammo;
 
         // 見た目・状態は全クライアントで Hook / Rpc で反映される
-        characterBase.GetComponent<CharacterBase>().CmdChangeWeapon(weaponData.ID);
+        characterBase.GetComponent<GeneralCharacter>().RpcChangeWeapon(weaponData.ID);
         //見た目変更
-        animCon.ChangeWeaponAnimationLayerWeight(connectionToClient,GenerateWeaponIndex(weaponData.weaponName));
+        animCon.ChangeWeaponAnimationLayerWeight(connectionToClient, GenerateWeaponIndex(weaponData.weaponName));
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 
@@ -534,7 +534,7 @@ public class MainWeaponController : NetworkBehaviour {
             "RPG" => 3,
             "Sniper" => 4,
             "Minigun" => 5,
-            
+
             _ => -1,
         };
     }

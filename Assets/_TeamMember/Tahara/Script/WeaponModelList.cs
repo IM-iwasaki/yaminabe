@@ -6,4 +6,10 @@ public class WeaponModelList : MonoBehaviour
 {
     [Header("•Ší‚Ìƒ‚ƒfƒ‹ƒŠƒXƒg¦AtoZ")]
     public List<GameObject> weaponModelList;
+
+    public static WeaponModelList instance;
+
+    private void Awake() {
+        instance = this;
+    }
 }

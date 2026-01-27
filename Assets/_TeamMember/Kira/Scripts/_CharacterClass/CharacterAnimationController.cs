@@ -11,10 +11,6 @@ public class CharacterAnimationController : NetworkBehaviour {
     // 現在使用中の Animator（Skin差し替えで更新される）
     public Animator anim = null;
 
-    // ベースアニメーションレイヤー数
-    [SerializeField]
-    private int BaseAnimLayerCount = 2;
-
     // 移動アニメーション状態
     public enum MoveAnimState {
         Idle,

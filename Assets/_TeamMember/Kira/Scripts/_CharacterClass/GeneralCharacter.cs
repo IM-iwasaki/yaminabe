@@ -1,6 +1,8 @@
 //
 //  @file   Second_CharacterClass
 //
+using Mirror;
+
 public class GeneralCharacter : CharacterBase {
 
     protected new void Awake() {

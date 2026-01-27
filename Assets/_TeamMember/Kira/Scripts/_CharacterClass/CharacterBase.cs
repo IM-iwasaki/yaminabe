@@ -450,7 +450,8 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <param name="_playerID"></param>
     /// <param name="_ID"></param>
     [ClientRpc]
-    private void RpcChangeWeapon(int _ID) {
+    public void RpcChangeWeapon(int _ID) {
+        Debug.Log($"RpcChangeWeapon received on {gameObject.name}");
         StartCoroutine(WaitChangeWeapon(_ID));
     }
 
@@ -461,24 +462,29 @@ public abstract class CharacterBase : NetworkBehaviour {
     /// <returns></returns>
     private IEnumerator WaitChangeWeapon(int _ID) {
         yield return null;
-        if (animCon.anim == null) yield break;
+        while (animCon == null || animCon.anim == null) yield return null;
         Transform handRoot = GetComponent<CharacterAnimationController>().anim.GetBoneTransform(HumanBodyBones.RightHand);
-        if (handRoot == null) yield break;
+        while (handRoot == null) yield return null;
         // 子が存在するかチェック
-        if (handRoot.childCount > 3) {
+        if (handRoot.childCount >= 3) {
             GameObject currentWeapon = handRoot.GetChild(3).gameObject;
             if (currentWeapon != null)
                 Destroy(currentWeapon);
         }
 
         //モデルリストはあるか
-        WeaponModelList modelList = FindAnyObjectByType<WeaponModelList>();
-        if (modelList == null || modelList.weaponModelList == null)
-            yield break;
+        while (WeaponModelList.instance == null) {
+            Debug.LogWarning("モデルリストないで");
+            yield return null;
+        }
+        WeaponModelList modelList = WeaponModelList.instance;
 
         //IDが既定範囲内にあるか
-        if (_ID < 0 || _ID >= modelList.weaponModelList.Count)
+        if (_ID < 0 || _ID >= modelList.weaponModelList.Count) {
+            Debug.LogWarning("IDおかしいで");
             yield break;
+        }
+
 
         Instantiate(modelList.weaponModelList[_ID], handRoot);
 
@@ -517,7 +523,7 @@ public abstract class CharacterBase : NetworkBehaviour {
 
     #region チーム管理関連
 
-        /// <summary>
+    /// <summary>
     /// 追加:タハラ プレイヤーの準備状態切り替え
     /// </summary>
     /// <param name="context"></param>
