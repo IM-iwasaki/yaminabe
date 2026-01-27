@@ -39,15 +39,22 @@ public class EnemyAttack : NetworkBehaviour {
 
         foreach (Collider hit in hits) {
 
-            // ★ ここがポイント
             CharacterBase player = hit.GetComponent<CharacterBase>();
             if (player == null) continue;
 
-            // 敵からのダメージ適用
+            // 敵→プレイヤー方向
+            Vector3 dir = (player.transform.position - transform.position).normalized;
+
+            // 前方との角度を取得
+            float angle = Vector3.Angle(transform.forward, dir);
+
+            // 例：前方90度以内（左右45度）
+            if (angle > 45f) continue;
+
             player.TakeDamage(
-                enemyStatus.GetAttack(), // ダメージ量
-                "Enemy",                 // キルログ用名前（仮）
-                -1                       // プレイヤーIDなし
+                enemyStatus.GetAttack(),
+                "Enemy",
+                -1
             );
 
             attackTimer = attackInterval;
