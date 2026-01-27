@@ -37,9 +37,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
         // 試合開始前の初期化
         isGameRunning = false;
 
-        if (gameTimer != null) {
-            gameTimer.ResetTimer();
-        }
+        gameTimer?.ResetTimer();
 
         // ステージ生成
         StageManager.Instance.SpawnStage(stageData, rule);
@@ -50,10 +48,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
                 : RespawnMode.Team
         );
 
-        // ルール設定
-        ruleManager.currentRule = rule;
-
-        // チームスコアとペナルティを RuleManager 側で初期化
+        // ルール設定 & スコア初期化
         ruleManager.InitializeScoresForRule(rule);
 
         // カウントダウン開始
@@ -62,7 +57,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
         // カウントダウン後に実際のゲーム開始
         StartCoroutine(StartGameAfterCountdown(rule));
     }
-
 
     /// <summary>
     /// カウントダウン終了後にゲームを開始する
@@ -85,17 +79,20 @@ public class GameManager : NetworkSystemObject<GameManager> {
             EndGame();
         };
 
-        // タイマー開始（GO! と同時）
+        // タイマー開始（GO!と同時）
         gameTimer.StartTimer();
     }
 
+    /// <summary>
+    /// ホコオブジェクト登録
+    /// </summary>
     [Server]
     public void RegisterHoko(CaptureHoko h) {
         hoko = h;
     }
 
     /// <summary>
-    /// ゲーム終了
+    /// ゲーム終了処理
     /// </summary>
     [Server]
     public void EndGame() {
@@ -104,12 +101,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
         isGameRunning = false;
         gameTimer.StopTimer();
         Cursor.lockState = CursorLockMode.None;
-
-        // 勝敗処理
-        if (ruleManager.currentRule == GameRuleType.DeathMatch)
-            ruleManager.EndDeathMatch();
-        else
-            ruleManager.CheckWinConditionAllTeams();
 
         if (hoko != null)
             hoko.HandleGameEnd();

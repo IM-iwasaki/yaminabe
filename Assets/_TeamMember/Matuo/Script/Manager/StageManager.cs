@@ -52,9 +52,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
-
-        RuleManager.Instance.winningTeams.Clear();
-
+        //RuleManager.Instance.winningTeams.Clear();
     }
 
     /// <summary>

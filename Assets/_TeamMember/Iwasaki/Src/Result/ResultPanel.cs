@@ -124,10 +124,10 @@ public class ResultPanel : NetworkBehaviour {
     // エリアチームスコア表示用関数
     public void SetAreaScores(float redScore, float blueScore) {
         if (areaRedScoreText != null)
-            areaRedScoreText.text = $"Red : {redScore:F0}%";
+            areaRedScoreText.text = $"Red : {redScore:F0}";
 
         if (areaBlueScoreText != null)
-            areaBlueScoreText.text = $"Blue : {blueScore:F0}%";
+            areaBlueScoreText.text = $"Blue : {blueScore:F0}";
     }
 
     // ホコチームスコア表示用関数

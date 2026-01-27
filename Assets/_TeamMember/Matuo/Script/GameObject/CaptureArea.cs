@@ -38,6 +38,7 @@ public class CaptureArea : NetworkBehaviour {
 
     [ServerCallback]
     private void Update() {
+        if (!GameManager.Instance.IsGameRunning()) return; // ← 追加
         if (playersInArea.Count == 0) return;
 
         // 全員同じチームかチェック
@@ -54,19 +55,4 @@ public class CaptureArea : NetworkBehaviour {
             RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
         }
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
