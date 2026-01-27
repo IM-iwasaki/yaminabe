@@ -3,66 +3,72 @@ using UnityEngine.AI;
 using Mirror;
 
 /// <summary>
-/// 敵AI（NavMesh 安全対応・追跡版）
+/// 敵AI（サーバー管理・NavMesh追跡）
 /// </summary>
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyBaseAI : NetworkBehaviour {
-    NavMeshAgent agent;
-    Transform target; // 追いかける相手
-    private EnemyBaseStatus status;
+    private NavMeshAgent agent;
+    private Transform target;               // 追跡対象
+    private EnemyStatus status;          // ステータス管理（NetworkBehaviour）
 
     void Awake() {
+        // コンポーネント取得のみ（状態変更しない）
         agent = GetComponent<NavMeshAgent>();
-        status = GetComponent<EnemyBaseStatus>();
-
-        // ステータスの移動速度をNavMeshAgentに反映
-        agent.speed = status.GetMoveSpeed();
+        status = GetComponent<EnemyStatus>();
     }
 
     public override void OnStartServer() {
-        // サーバーでのみ有効化
+        // NavMeshAgent はサーバーでのみ有効
         agent.enabled = true;
 
-        // NavMesh 上に配置
+        // NavMesh 上に強制配置
         PlaceOnNavMesh();
 
-        // 最初にターゲットを探す
+        // ステータスから移動速度を反映（サーバーのみ）
+        if (status != null) {
+            agent.speed = status.GetMoveSpeed();
+        }
+
+        // 初回ターゲット探索
         target = FindClosestPlayer();
     }
 
+    /// <summary>
+    /// サーバーでのみ実行される Update
+    /// </summary>
+    [ServerCallback]
     void Update() {
-        if (!isServer) return;
-
-        // NavMesh 上にいないなら何もしない
+        // NavMesh に乗っていない場合は何もしない
         if (!agent.isOnNavMesh) return;
 
-        // ターゲットがいなければ再探索
+        // ターゲットが消えたら再探索
         if (target == null) {
             target = FindClosestPlayer();
             return;
         }
 
-        // ★ これが「追いかける」正体
+        // プレイヤーを追跡
         agent.SetDestination(target.position);
     }
 
     /// <summary>
-    /// 一番近いプレイヤーを探す
+    /// 一番近いプレイヤーを探す（サーバー）
     /// </summary>
     Transform FindClosestPlayer() {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
         float minDist = float.MaxValue;
         Transform closest = null;
 
-        foreach (GameObject player in players) {
+        foreach (var conn in NetworkServer.connections.Values) {
+            if (conn.identity == null) continue;
+
             float dist = Vector3.Distance(
                 transform.position,
-                player.transform.position
+                conn.identity.transform.position
             );
 
             if (dist < minDist) {
                 minDist = dist;
-                closest = player.transform;
+                closest = conn.identity.transform;
             }
         }
 
