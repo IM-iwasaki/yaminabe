@@ -113,7 +113,7 @@ public class GameUIManager : MonoBehaviour {
 
         if (isAreaOrHoko) {
             float target = ruleManager.winScores[ruleManager.currentRule];
-            text = $"Remaining\n{score:F0}/{target:F0}";
+            text = $"Count\n{score:F0}/{target:F0}";
         } else {
             text = (teamId == 0 ? "RedTeam" : "BlueTeam") + $": {score:F0}";
         }
