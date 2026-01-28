@@ -106,6 +106,11 @@ public class GachaSystem : MonoBehaviour {
         if (currentPlayer != null) return;
 
         currentPlayer = player;
+
+        var paramater = player.GetComponent<CharacterParameter>();
+
+        paramater.ready = false;
+
         SetGachaState(true);
 
         PlayerWallet.Instance?.ShowMoneyUI();

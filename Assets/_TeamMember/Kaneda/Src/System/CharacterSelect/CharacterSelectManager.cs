@@ -64,7 +64,9 @@ public class CharacterSelectManager : NetworkBehaviour {
         }
         if (currentPlayer != null) return;
         currentPlayer = player;
+        var paramater = player.GetComponent<CharacterParameter>();
 
+        paramater.ready = false;
 
         SetCharacterSelectState(true);
 

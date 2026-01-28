@@ -92,7 +92,7 @@ public abstract class CharacterBase : CreatureBase {
 
             //タハラ
             //準備状態を明示的に初期化。ホストでなければ非準備状態
-            if (isLocalPlayer && !isServer) parameter.ready = false;
+            if (isClient && !isServer) parameter.ready = false;
         }
     }
     public override void OnStartClient() {
