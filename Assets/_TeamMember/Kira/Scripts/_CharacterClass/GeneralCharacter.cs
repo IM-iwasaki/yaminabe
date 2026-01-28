@@ -42,6 +42,7 @@ public class GeneralCharacter : CharacterBase {
         //if (isDead) return;
     }
 
+    [ClientRpc]
     public override void Initalize() {
         //HPやフラグ関連などの基礎的な初期化
         //base.Initalize();
