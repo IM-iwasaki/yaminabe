@@ -12,7 +12,7 @@ public abstract class EnemySkillData : ScriptableObject {
     public float range = 2f;
 
     /// <summary>
-    /// スキル実行（サーバー専用）
+    /// スキル実行
     /// </summary>
     public abstract void Execute(
         GameObject owner,        // 敵自身
