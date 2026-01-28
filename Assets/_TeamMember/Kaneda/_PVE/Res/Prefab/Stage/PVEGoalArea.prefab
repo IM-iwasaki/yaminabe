@@ -32,7 +32,6 @@ Transform:
   - {fileID: 5315167723234925869}
   - {fileID: 458272084441699344}
   - {fileID: 1998482637567704163}
-  - {fileID: 2114194771154201292}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5165349389564288815
@@ -44,7 +43,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 458272084441699344}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,37 +69,6 @@ Transform:
   - {fileID: 6986342969330370895}
   m_Father: {fileID: 5662515021480575238}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5690044026253792441
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2114194771154201292}
-  m_Layer: 0
-  m_Name: Item
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2114194771154201292
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5690044026253792441}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5662515021480575238}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6430253671013745080
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,7 +79,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3854198765471478875}
   - component: {fileID: 7702068758851846815}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -204,7 +172,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5315167723234925869}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Road
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,7 +205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 68777637879152756}
   - component: {fileID: 5006083599715106813}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -330,7 +298,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1998482637567704163}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Decoration
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -436,6 +404,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Light_06 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1830934584402841476, guid: 6562f4260efa9794ab79b2aeb7fddbf0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702455343805611071, guid: 6562f4260efa9794ab79b2aeb7fddbf0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -460,6 +436,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: d34e8533c8de8ec45869f9144584d929, type: 3}
       propertyPath: m_Name
       value: Road Concrete Tile (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: d34e8533c8de8ec45869f9144584d929, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d34e8533c8de8ec45869f9144584d929, type: 3}
       propertyPath: m_LocalScale.x
@@ -617,6 +597,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Light_06
       objectReference: {fileID: 0}
+    - target: {fileID: 1830934584402841476, guid: 6562f4260efa9794ab79b2aeb7fddbf0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702455343805611071, guid: 6562f4260efa9794ab79b2aeb7fddbf0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -698,6 +686,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pallet_001 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1933369618216138569, guid: 5d26ddc07179b3f489081c24a6105cc2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -719,6 +711,10 @@ PrefabInstance:
     - target: {fileID: 4835880532411663303, guid: 801d9eea9415e244597f4813879a83a8, type: 3}
       propertyPath: m_Name
       value: barrel_009
+      objectReference: {fileID: 0}
+    - target: {fileID: 4835880532411663303, guid: 801d9eea9415e244597f4813879a83a8, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5212827595819686269, guid: 801d9eea9415e244597f4813879a83a8, type: 3}
       propertyPath: m_LocalScale.x
@@ -838,6 +834,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: container_002
       objectReference: {fileID: 0}
+    - target: {fileID: 8783900785407465115, guid: 43466d8275f785349a7aa14d0dd9ccce, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -903,6 +903,10 @@ PrefabInstance:
     - target: {fileID: 6352210056808912926, guid: 0ec8ecbdab9789e41b901a7f792bcb1d, type: 3}
       propertyPath: m_Name
       value: hangar_005
+      objectReference: {fileID: 0}
+    - target: {fileID: 6352210056808912926, guid: 0ec8ecbdab9789e41b901a7f792bcb1d, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -982,6 +986,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: barrel_002
       objectReference: {fileID: 0}
+    - target: {fileID: 9044925986235655311, guid: 16df3cb305051794e999020e6dc97c31, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1059,6 +1067,10 @@ PrefabInstance:
     - target: {fileID: 3188342002520034687, guid: 3931824fb78de1444afd74a61c2814a7, type: 3}
       propertyPath: m_Name
       value: hangar_door_003
+      objectReference: {fileID: 0}
+    - target: {fileID: 3188342002520034687, guid: 3931824fb78de1444afd74a61c2814a7, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1138,6 +1150,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pallet_001 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1933369618216138569, guid: 5d26ddc07179b3f489081c24a6105cc2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1215,6 +1231,10 @@ PrefabInstance:
     - target: {fileID: 6393366669694298958, guid: e01e16fc77f5f8f4f8c825e2af2cdd83, type: 3}
       propertyPath: m_Name
       value: barrel_005
+      objectReference: {fileID: 0}
+    - target: {fileID: 6393366669694298958, guid: e01e16fc77f5f8f4f8c825e2af2cdd83, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1294,6 +1314,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pipe_001
       objectReference: {fileID: 0}
+    - target: {fileID: 9207258609410290876, guid: a36a830d9a5a14c4c8a546219268c27e, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1356,6 +1380,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: container_001
       objectReference: {fileID: 0}
+    - target: {fileID: 5247513069162598212, guid: 875eb7f84a0655949974c6a9bfcd982a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1377,6 +1405,14 @@ PrefabInstance:
     - target: {fileID: 89336052473775622, guid: be36a8d8855c59147a3d019a0c228d83, type: 3}
       propertyPath: m_Name
       value: comb_generator_002
+      objectReference: {fileID: 0}
+    - target: {fileID: 89336052473775622, guid: be36a8d8855c59147a3d019a0c228d83, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4419468021131195788, guid: be36a8d8855c59147a3d019a0c228d83, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6796043929599868346, guid: be36a8d8855c59147a3d019a0c228d83, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1421,6 +1457,14 @@ PrefabInstance:
     - target: {fileID: 6796043929599868346, guid: be36a8d8855c59147a3d019a0c228d83, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8242369981065517402, guid: be36a8d8855c59147a3d019a0c228d83, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8849756805170918429, guid: be36a8d8855c59147a3d019a0c228d83, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1500,6 +1544,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: box_025
       objectReference: {fileID: 0}
+    - target: {fileID: 1011181563909760652, guid: 41257ae6aadf99849acf7467782ad80d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1561,6 +1609,10 @@ PrefabInstance:
     - target: {fileID: 3091494320454170963, guid: 67489854576928949864129d4547d68d, type: 3}
       propertyPath: m_Name
       value: container_007
+      objectReference: {fileID: 0}
+    - target: {fileID: 3091494320454170963, guid: 67489854576928949864129d4547d68d, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1640,6 +1692,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pallet_001
       objectReference: {fileID: 0}
+    - target: {fileID: 1933369618216138569, guid: 5d26ddc07179b3f489081c24a6105cc2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1661,6 +1717,10 @@ PrefabInstance:
     - target: {fileID: 7482685900925840353, guid: 8b9062b96b6070744b750c8f1354de24, type: 3}
       propertyPath: m_Name
       value: box_029
+      objectReference: {fileID: 0}
+    - target: {fileID: 7482685900925840353, guid: 8b9062b96b6070744b750c8f1354de24, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7826138507527745883, guid: 8b9062b96b6070744b750c8f1354de24, type: 3}
       propertyPath: m_LocalScale.x
@@ -1739,6 +1799,10 @@ PrefabInstance:
     - target: {fileID: 2867774720900218162, guid: bc981c25d781e7e489d3a4a15365c2e6, type: 3}
       propertyPath: m_Name
       value: ladder_003
+      objectReference: {fileID: 0}
+    - target: {fileID: 2867774720900218162, guid: bc981c25d781e7e489d3a4a15365c2e6, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3208728175973132168, guid: bc981c25d781e7e489d3a4a15365c2e6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1876,6 +1940,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: hangar_005 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6352210056808912926, guid: 0ec8ecbdab9789e41b901a7f792bcb1d, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1953,6 +2021,10 @@ PrefabInstance:
     - target: {fileID: 3188342002520034687, guid: 3931824fb78de1444afd74a61c2814a7, type: 3}
       propertyPath: m_Name
       value: hangar_door_003 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3188342002520034687, guid: 3931824fb78de1444afd74a61c2814a7, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
