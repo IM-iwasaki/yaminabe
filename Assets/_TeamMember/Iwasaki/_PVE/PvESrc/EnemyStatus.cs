@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// 敵ステータス（サーバー管理）
 /// </summary>
-public class EnemyStatus : NetworkBehaviour {
+public class EnemyStatus : CreatureBase {
     [Header("ステータスデータ")]
     public EnemyStatusData statusData;
 
@@ -19,18 +19,37 @@ public class EnemyStatus : NetworkBehaviour {
 
         currentHp = statusData.maxHp;
     }
-
     /// <summary>
-    /// 敵がダメージを受ける（サーバー専用）
+    /// 被弾・死亡判定関数
     /// </summary>
     [Server]
-    public void ReceiveDamage(int damage) {
-        currentHp -= damage;
+    public override void TakeDamage(int _damage, string _name, int _ID) {
+        //既に死亡状態かロビー内なら帰る
+        if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
+
+        //ダメージ倍率を適用
+        float damage = _damage * ((float)parameter.DamageRatio / 100);
+        //ダメージが0以下だったら1に補正する
+        if (damage <= 0) damage = 1;
+        //HPの減算処理
+        currentHp -= (int)damage;
+
+        // hitSE 再生
+        PlayHitSE(_ID);
 
         if (currentHp <= 0) {
+            currentHp = 0;
+
             EnemyDie();
+
+            if (PlayerListManager.Instance != null) {
+                // スコア加算
+                PlayerListManager.Instance.AddScoreById(_ID, 100);
+                PlayerListManager.Instance.AddKillById(_ID);
+            }
         }
     }
+
 
     [Server]
     void EnemyDie() {
