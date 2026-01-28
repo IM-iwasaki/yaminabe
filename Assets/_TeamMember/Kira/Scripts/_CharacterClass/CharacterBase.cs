@@ -291,7 +291,7 @@ public abstract class CharacterBase : CreatureBase {
     private void TargetRespawnDelay() {
         //リスポーン要求
         Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
-        Invoke(nameof(ResetHealth), PlayerConst.RESPAWN_TIME + 0.01f);
+        
     }
     /// <summary>
     /// ローカル上で死亡演出 可読性向上のためまとめました
@@ -304,7 +304,7 @@ public abstract class CharacterBase : CreatureBase {
         FadeManager.Instance.StartFadeOut(2.5f);
     }
 
-    [Server]
+    [Command]
     private void ResetHealth() {
         //ここで体力と死亡状態を戻す
         parameter.HP = parameter.maxHP;
@@ -334,6 +334,7 @@ public abstract class CharacterBase : CreatureBase {
         }
         parameter.StartInvincible();
         LoaclRespawnEffect();
+        ResetHealth();
     }
 
     /// <summary>
