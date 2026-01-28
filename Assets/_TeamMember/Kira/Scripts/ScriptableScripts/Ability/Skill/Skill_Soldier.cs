@@ -12,13 +12,13 @@ public class Skill_Soldier : SkillBase {
     //Å@CT      ÅF20ïb
     //
 
-    readonly float forwardPower = 30.0f;
-    readonly float upPower = 4.0f;
+    readonly float forwardPower = 27.0f;
+    readonly float upPower = 3.5f;
 
 
     public override void Activate(CharacterBase user) {       
         Vector3 attackDir = user.parameter.GetShootDirection();
-        StartExtraAttackDelay(user, 0.02f, 24, attackDir);
+        StartExtraAttackDelay(user, 0.015f, 16, attackDir);
     }
 
     public void StartExtraAttackDelay(CharacterBase user,float delay, int repeatCount, Vector3 dir) {
