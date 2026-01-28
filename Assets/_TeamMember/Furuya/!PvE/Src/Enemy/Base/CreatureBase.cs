@@ -9,7 +9,7 @@ public class CreatureBase : NetworkBehaviour
 
     public CharacterParameter parameter { get; private set; }
 
-    protected void Awake() {
+    protected virtual void Awake() {
         parameter = GetComponent<CharacterParameter>();
     }
 

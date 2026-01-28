@@ -39,10 +39,11 @@ public abstract class CharacterBase : CreatureBase {
     /// <summary>
     /// 初期化をここで行う。
     /// </summary>
-    protected void Awake() {
+    protected override void Awake() {
         //シーン変わったりしても消えないようにする
         DontDestroyOnLoad(gameObject);
 
+        base.Awake();
         //各コンポーネントの参照取得と初期化
         rb = GetComponent<Rigidbody>();
         input = GetComponent<CharacterInput>();
