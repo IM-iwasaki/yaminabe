@@ -5,11 +5,16 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HostSelectUI : MonoBehaviour {
+    public UDPListener listener;
     public Button selectHostButton;
     public bool isSelected = false;
     public UDPListener.UdpMessage selectedHost;
     [SerializeField]
     private Transform UIRoot;
+
+    private void Start() {
+        listener.onHostUpdated += UpdateHost;
+    }
 
     /// <summary>
     /// 見つけたホストを一覧で表示
@@ -21,18 +26,11 @@ public class HostSelectUI : MonoBehaviour {
             //ホストデータをキャプチャ
             var hostData = _host[i];
             //ボタン生成
-            Button createdButton = Instantiate(selectHostButton, UIRoot);
-            if (hostData.gamePlaying) {
-                ColorBlock buttonColor = createdButton.colors;
-                buttonColor.selectedColor = buttonColor.normalColor = buttonColor.disabledColor = buttonColor.highlightedColor = Color.red;
-                createdButton.colors = buttonColor;
-            }
-                
+            var buttonObj = Instantiate(selectHostButton, UIRoot);
+            var hostBuuton = buttonObj.GetComponent<HostButton>();
 
-            //ボタンに表示するホストの名前を変更
-            createdButton.GetComponentInChildren<TextMeshProUGUI>().text = hostData.hostName;
-            //生成したボタンにイベント登録
-            createdButton.onClick.AddListener(() => OnHostButtonClicked(hostData));
+            hostBuuton.Setup(hostData,OnHostButtonClicked);
+                
         }
     }
 
@@ -53,4 +51,15 @@ public class HostSelectUI : MonoBehaviour {
         selectedHost = _host;
         isSelected = true;
     }
+
+    public void UpdateHost(UDPListener.UdpMessage updated) {
+        foreach (Transform child in UIRoot) {
+            var hostButton = child.GetComponent<HostButton>();
+            if (hostButton.hostData.ip == updated.ip) {
+                hostButton.hostData = updated;
+                hostButton.RefreshUI();
+            }
+        }
+    }
+
 }
