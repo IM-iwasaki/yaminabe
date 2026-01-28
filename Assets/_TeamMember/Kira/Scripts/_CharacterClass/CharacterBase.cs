@@ -316,22 +316,26 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [TargetRpc]
     virtual public void Respawn() {
-        //死んでいなかったら即抜け
         if (!parameter.isDead) return;
 
-        ChatManager.Instance.CmdSendSystemMessage("isDead : " + parameter.isDead);
-        //保険で明示的に処理
-        parameter.ChangeHP(parameter.maxHP, parameter.HP);
-        //リスポーン地点に移動させる
-        if (GameManager.Instance.IsGameRunning()) {
-            int currentTeamID = parameter.TeamID;
-            parameter.TeamID = -1;
-            NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-            var RespownPos = GameObject.FindGameObjectsWithTag("NormalRespawnPoint"); ;
-            NTH.CmdTeleport(RespownPos[Random.Range(0, RespownPos.Length)].transform.position, Quaternion.identity);
+        if (!GameManager.Instance.IsGameRunning()) return;
 
-            parameter.TeamID = currentTeamID;
+        var stageManager = StageManager.Instance;
+        if (stageManager == null) return;
+
+        var teamColor = (TeamData.TeamColor)parameter.TeamID;
+        Transform spawnPoint = stageManager.GetSpawnPoint(teamColor);
+
+        if (spawnPoint == null) {
+#if UNITY_EDITOR
+            Debug.LogWarning("スポーン地点が取得できませんでした");
+#endif
+            return;
         }
+
+        NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
+        NTH.CmdTeleport(spawnPoint.position, spawnPoint.rotation);
+
         parameter.StartInvincible();
         LoaclRespawnEffect();
     }
