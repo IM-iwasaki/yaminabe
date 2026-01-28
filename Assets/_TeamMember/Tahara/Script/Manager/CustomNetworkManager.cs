@@ -67,7 +67,8 @@ public class CustomNetworkManager : NetworkManager {
         if (NetworkServer.active) {
             GameObject uiRoot = GameObject.Find("GameUI");
             HostUI host = Instantiate(hostUI,uiRoot.transform);
-            host.Init();
+            hostUI = host;
+            hostUI.Init();
         }
 
     }
@@ -178,6 +179,7 @@ public class CustomNetworkManager : NetworkManager {
                 //レートの数値を反映して表示
                 RateDisplay.instance.ChangeRateUI();
             }
+            character.Initalize();
         }
         FadeManager.Instance.StartFadeIn(0.5f);
     }
