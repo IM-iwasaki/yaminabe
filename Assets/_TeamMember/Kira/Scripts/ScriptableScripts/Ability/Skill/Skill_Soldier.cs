@@ -6,10 +6,10 @@ using UnityEngine;
 public class Skill_Soldier : SkillBase {
 
     //
-    //  スキル名：ラウンドクラッシュ
+    //  スキル名：全力突撃
     //  タイプ　：連続攻撃型
     //  効果    ：前方に突進しながら怒涛の連続攻撃を行う。
-    //　CT      ：20秒
+    //　CT      ：18秒
     //
 
     readonly float forwardPower = 27.0f;

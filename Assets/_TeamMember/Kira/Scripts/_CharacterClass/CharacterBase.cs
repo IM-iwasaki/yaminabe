@@ -668,10 +668,11 @@ public abstract class CharacterBase : CreatureBase {
 
     /// <summary>
     /// 古谷
-    ///  時間まで被ダメを下げておく実行処理(コルーチン)
+    /// 時間まで被ダメを下げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator DamageCutRoutine(int _value, float _duration) {
         parameter.DamageRatio = _value;
+        Debug.Log("被ダメージ倍率変更中");
         yield return new WaitForSeconds(_duration);
         parameter.DamageRatio = 100;
         damageCutCoroutine = null;
