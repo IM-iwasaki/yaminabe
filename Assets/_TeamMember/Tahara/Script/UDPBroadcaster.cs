@@ -96,4 +96,8 @@ public class UDPBroadcaster : MonoBehaviour
         client.Close();
 
     }
+
+    public void SetGamePlaying(bool _isPlaying) {
+        message.gamePlaying = _isPlaying;
+    }
 }
