@@ -14,7 +14,6 @@ public abstract class EnemySkillData : ScriptableObject {
     /// <summary>
     /// スキル実行（サーバー専用）
     /// </summary>
-    [Server]
     public abstract void Execute(
         GameObject owner,        // 敵自身
         EnemyStatus status,      // 敵ステータス
