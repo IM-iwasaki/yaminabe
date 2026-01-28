@@ -31,11 +31,16 @@ public class PlayerCamera : MonoBehaviour {
     public LayerMask pveWallMask;      // カメラを近づける専用レイヤー
     public float minCameraDistance = 0.5f;
 
+    [Header("近距離安定化")]
+    public float closeDistance = 1.2f;
+    public float closeRotationFactor = 0.6f;
+
     private float yaw;                // カメラの水平回転角
     private float pitch;              // カメラの垂直回転角
     private Vector2 lookInput;        // 入力値
     private Vector3 currentOffset;    // 現在のカメラオフセット
     private Vector3 targetOffset;     // 目標オフセット
+    private float currentCameraDistance; // カメラ距離の補間用
 
     // 死亡中のカメラ処理用
     private bool isDeathView = false;   // 死亡視点中か
@@ -55,15 +60,14 @@ public class PlayerCamera : MonoBehaviour {
     /// </summary>
     private readonly Dictionary<Renderer, (float current, float original)> fadingObjects = new();
 
-
     // ズーム・カメラ切替中かどうか
     public bool enableTransparency = true;
-
 
     private void Start() {
         // 初期化
         currentOffset = normalOffset;
         targetOffset = normalOffset;
+        currentCameraDistance = normalOffset.magnitude;
     }
 
     /// <summary>
@@ -128,9 +132,7 @@ public class PlayerCamera : MonoBehaviour {
         pitch = savedPitch;
 
         Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
-        Vector3 targetPos = player.position + rot * currentOffset;
-
-        transform.position = targetPos;
+        transform.position = player.position + rot * currentOffset;
         transform.rotation = rot;
     }
 
@@ -161,39 +163,42 @@ public class PlayerCamera : MonoBehaviour {
         if (isDeathView)
             return;
 
-        // カメラ回転
-        yaw += lookInput.x * rotationSpeed * Time.deltaTime;
-        pitch -= lookInput.y * rotationSpeed * Time.deltaTime;
+        // 入力による回転（近距離で減衰）
+        Vector3 playerPos = player.position + Vector3.up * 1.5f;
+        float camDist = Vector3.Distance(playerPos, transform.position);
+        float rotFactor = camDist < closeDistance ? closeRotationFactor : 1f;
+
+        yaw += lookInput.x * rotationSpeed * rotFactor * Time.deltaTime;
+        pitch -= lookInput.y * rotationSpeed * rotFactor * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-        // 回転情報からオフセットを計算
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
-        targetOffset = rotation * normalOffset;
 
-        // スムーズにオフセットを補間
+        targetOffset = rotation * normalOffset;
         currentOffset = Vector3.Lerp(currentOffset, targetOffset, moveSpeed * Time.deltaTime);
 
-        // プレイヤーの視点位置
-        Vector3 playerPos = player.position + Vector3.up * 1.5f;
+        float targetDistance = currentOffset.magnitude;
 
-        // カメラの最終目標位置
-        Vector3 desiredPos = playerPos + currentOffset;
-
-        // PVEWall 判定（カメラを近づける）
-        if (Physics.Linecast(playerPos, desiredPos, out RaycastHit hit, pveWallMask)) {
-            float dist = Vector3.Distance(playerPos, hit.point);
-            dist = Mathf.Max(dist, minCameraDistance);
-
-            Vector3 dir = (desiredPos - playerPos).normalized;
-            desiredPos = playerPos + dir * dist;
+        if (Physics.Linecast(playerPos, playerPos + currentOffset, out RaycastHit hit, pveWallMask)) {
+            targetDistance = Mathf.Max(minCameraDistance, hit.distance);
         }
 
+        currentCameraDistance = Mathf.Lerp(
+            currentCameraDistance,
+            targetDistance,
+            Time.deltaTime * moveSpeed
+        );
+
+        Vector3 desiredPos = playerPos + currentOffset.normalized * currentCameraDistance;
         transform.position = desiredPos;
+
+        Vector3 sideOffset = player.right * leftOffsetAmount;
+        float sideWeight = Mathf.InverseLerp(closeDistance, closeDistance + 0.5f, currentCameraDistance);
 
         Vector3 lookTarget =
             playerPos +
-            (player.right * leftOffsetAmount) +
-            (Vector3.up * upOffsetAmount);
+            Vector3.up * upOffsetAmount +
+            sideOffset * sideWeight;
 
         transform.LookAt(lookTarget);
 
@@ -211,16 +216,12 @@ public class PlayerCamera : MonoBehaviour {
     public void ResetAllTransparentObjects() {
         foreach (var kv in fadingObjects) {
             if (!kv.Key) continue;
-
             // 元のアルファ値に戻す
             SetRendererAlpha(kv.Key, kv.Value.original);
         }
-
         // 管理リストをクリア
         fadingObjects.Clear();
     }
-
-
 
     /// <summary>
     /// プレイヤーとカメラの間にある障害物を半透明化
@@ -263,9 +264,7 @@ public class PlayerCamera : MonoBehaviour {
             }
 
             var data = fadingObjects[r];
-            float targetAlpha = hitRenderers.Contains(r)
-                ? fadeAlpha
-                : data.original;
+            float targetAlpha = hitRenderers.Contains(r) ? fadeAlpha : data.original;
 
             data.current = Mathf.MoveTowards(
                 data.current,
@@ -284,7 +283,6 @@ public class PlayerCamera : MonoBehaviour {
     /// </summary>
     private float GetRendererAlpha(Renderer rend) {
         if (!rend) return 1f;
-
         // 共有マテリアルではなく個別マテリアルを参照（他プレイヤーへの影響防止）
         Material mat = rend.material;
         if (mat.HasProperty("_BaseColor"))
@@ -300,9 +298,7 @@ public class PlayerCamera : MonoBehaviour {
     private void SetRendererAlpha(Renderer rend, float alpha) {
         if (!rend) return;
 
-        Material mat = rend.material; // 個別インスタンスを取得
-
-        // マテリアルのアルファ値を変更
+        Material mat = rend.material;
         if (mat.HasProperty("_BaseColor")) {
             Color c = mat.GetColor("_BaseColor");
             c.a = alpha;
@@ -312,7 +308,6 @@ public class PlayerCamera : MonoBehaviour {
             c.a = alpha;
             mat.SetColor("_Color", c);
         }
-
         // α値に応じて描画モードを自動的に切り替え
         if (alpha < 0.99f)
             SetMaterialToFade(mat);
@@ -372,7 +367,7 @@ public class PlayerCamera : MonoBehaviour {
                 float dx = (x - 128f) / 128f;
                 float dy = (y - 128f) / 128f;
                 float dist = Mathf.Sqrt(dx * dx + dy * dy);
-                float alpha = Mathf.Clamp01((dist - 0.5f) * 2f); // 中央0→外1
+                float alpha = Mathf.Clamp01((dist - 0.5f) * 2f);
                 tex.SetPixel(x, y, new Color(0f, 0f, 0f, alpha));
             }
         }
