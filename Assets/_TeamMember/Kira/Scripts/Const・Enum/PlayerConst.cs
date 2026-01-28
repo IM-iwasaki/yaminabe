@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class PlayerConst {
     //キャラクターのデフォルト最大体力値
-    public const int DEFAULT_MAXHP = 100;
+    public const int DEFAULT_MAXHP = 90;
     //キャラクターのデフォルト攻撃力値
     public const int DEFAULT_ATTACK = 10;
     //キャラクターのデフォルト移動速度
-    public const int DEFAULT_MOVESPEED = 6;
+    public const int DEFAULT_MOVESPEED = 8;
 
     //キャラクターの旋回速度
     public const float TURN_SPEED = 8.0f;
