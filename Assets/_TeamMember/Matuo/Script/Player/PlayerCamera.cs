@@ -27,6 +27,10 @@ public class PlayerCamera : MonoBehaviour {
     public float fadeAlpha = 0.2f;    // 半透明化時の目標アルファ値
     public float fadeSpeed = 5f;      // 透明化/復元の速度
 
+    [Header("壁衝突（PVEWall用）")]
+    public LayerMask pveWallMask;      // カメラを近づける専用レイヤー
+    public float minCameraDistance = 0.5f;
+
     private float yaw;                // カメラの水平回転角
     private float pitch;              // カメラの垂直回転角
     private Vector2 lookInput;        // 入力値
@@ -138,10 +142,10 @@ public class PlayerCamera : MonoBehaviour {
 
         if (!player) return;
 
-        // 死亡カメラ
+        // 死亡カメラ遷移
         if (isTransitioningToDeathView) {
             transitionProgress += Time.deltaTime / deathCamTransitionTime;
-            float t = Mathf.SmoothStep(0f, 1f, transitionProgress); // イージング
+            float t = Mathf.SmoothStep(0f, 1f, transitionProgress);
 
             transform.position = Vector3.Lerp(transform.position, deathCamTargetPos, t);
             transform.rotation = Quaternion.Slerp(transform.rotation, deathCamTargetRot, t);
@@ -157,10 +161,10 @@ public class PlayerCamera : MonoBehaviour {
         if (isDeathView)
             return;
 
-        // カメラ回転制御
-        yaw += lookInput.x * rotationSpeed * Time.deltaTime; // 水平方向回転
-        pitch -= lookInput.y * rotationSpeed * Time.deltaTime; // 垂直方向回転
-        pitch = Mathf.Clamp(pitch, minPitch, maxPitch); // ピッチ角制限
+        // カメラ回転
+        yaw += lookInput.x * rotationSpeed * Time.deltaTime;
+        pitch -= lookInput.y * rotationSpeed * Time.deltaTime;
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
         // 回転情報からオフセットを計算
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
@@ -174,24 +178,33 @@ public class PlayerCamera : MonoBehaviour {
 
         // カメラの最終目標位置
         Vector3 desiredPos = playerPos + currentOffset;
+
+        // PVEWall 判定（カメラを近づける）
+        if (Physics.Linecast(playerPos, desiredPos, out RaycastHit hit, pveWallMask)) {
+            float dist = Vector3.Distance(playerPos, hit.point);
+            dist = Mathf.Max(dist, minCameraDistance);
+
+            Vector3 dir = (desiredPos - playerPos).normalized;
+            desiredPos = playerPos + dir * dist;
+        }
+
         transform.position = desiredPos;
 
-        // 見るべきターゲット位置
-        Vector3 lookTarget = playerPos + (player.right * leftOffsetAmount) + (Vector3.up * upOffsetAmount);
+        Vector3 lookTarget =
+            playerPos +
+            (player.right * leftOffsetAmount) +
+            (Vector3.up * upOffsetAmount);
+
         transform.LookAt(lookTarget);
 
-        // カメラとプレイヤーの間の障害物を透明化（ローカルプレイヤーのみ）
-        HandleTransparency(playerPos, desiredPos);
-
-        // カメラとプレイヤーの間の障害物を透明化
+        // 透明化処理
         if (enableTransparency) {
             HandleTransparency(playerPos, desiredPos);
-        }
-        else {
-            // 無効中は必ず元に戻す
+        } else {
             ResetAllTransparentObjects();
         }
     }
+
     /// <summary>
     /// すべての半透明オブジェクトを元に戻す
     /// </summary>
@@ -217,14 +230,22 @@ public class PlayerCamera : MonoBehaviour {
         Vector3 dir = playerPos - cameraPos;
         float dist = Vector3.Distance(playerPos, cameraPos);
 
-        // レイキャストで間にある全障害物を取得
-        RaycastHit[] hits = Physics.RaycastAll(cameraPos, dir.normalized, dist, transparentMask);
+        // PVEWall を透明化対象から除外
+        LayerMask maskWithoutPVEWall = transparentMask & ~pveWallMask;
+
+        RaycastHit[] hits = Physics.RaycastAll(
+            cameraPos,
+            dir.normalized,
+            dist,
+            maskWithoutPVEWall
+        );
 
         // 今フレームでヒットしたRendererを記録
         HashSet<Renderer> hitRenderers = new();
         foreach (var hit in hits) {
             Renderer r = hit.collider.GetComponent<Renderer>();
             if (!r) continue;
+
             hitRenderers.Add(r);
 
             // 初回ヒットなら登録
@@ -234,20 +255,25 @@ public class PlayerCamera : MonoBehaviour {
             }
         }
 
-        // 登録済み全オブジェクトのアルファ値を更新
-        List<Renderer> keys = new(fadingObjects.Keys); // 列挙中の変更を避けるためコピー
+        List<Renderer> keys = new(fadingObjects.Keys);
         foreach (Renderer r in keys) {
-            if (!r) { fadingObjects.Remove(r); continue; }
+            if (!r) {
+                fadingObjects.Remove(r);
+                continue;
+            }
 
-            // 現在と元のアルファ値を取得
-            (float current, float original) data = fadingObjects[r];
+            var data = fadingObjects[r];
+            float targetAlpha = hitRenderers.Contains(r)
+                ? fadeAlpha
+                : data.original;
 
-            // 現在ヒット中ならfadeAlphaへ、ヒットしていなければ元に戻す
-            float targetAlpha = hitRenderers.Contains(r) ? fadeAlpha : data.original;
+            data.current = Mathf.MoveTowards(
+                data.current,
+                targetAlpha,
+                Time.deltaTime * fadeSpeed
+            );
 
-            // スムーズに目標アルファへ移行
-            data.current = Mathf.MoveTowards(data.current, targetAlpha, Time.deltaTime * fadeSpeed);
-            SetRendererAlpha(r, data.current); // 実際に透明度を反映
+            SetRendererAlpha(r, data.current);
             fadingObjects[r] = data;
         }
     }
