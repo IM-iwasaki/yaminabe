@@ -66,7 +66,9 @@ public class MagicProjectile : NetworkBehaviour {
     [ServerCallback]
     void OnTriggerEnter(Collider other) {
         if (!initialized || !isServer) return;
-        if (other.gameObject == owner) return;
+        if (other.gameObject == owner ||
+            other.gameObject.tag == "Magic" ||
+            other.gameObject.tag == "Bullet") return;
 
         if (other.TryGetComponent(out CharacterBase target))
             target.TakeDamage(damage, ownerName, ID);
