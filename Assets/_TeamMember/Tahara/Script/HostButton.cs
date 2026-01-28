@@ -23,7 +23,8 @@ public class HostButton : MonoBehaviour {
 
     private void RefreshColor() {
         var colors = button.colors;
-        colors.normalColor = hostData.gamePlaying ? Color.red : Color.white;
+        colors.normalColor = colors.selectedColor = colors.disabledColor = colors.highlightedColor
+            = hostData.gamePlaying ? Color.red : Color.white;
         button.colors = colors;
     }
 }
