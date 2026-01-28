@@ -1423,6 +1423,10 @@ PrefabInstance:
       propertyPath: pveWallMask.m_Bits
       value: 4096
       objectReference: {fileID: 0}
+    - target: {fileID: 5245321708682595989, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
+      propertyPath: closeRotationFactor
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 6562602856469702145, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
