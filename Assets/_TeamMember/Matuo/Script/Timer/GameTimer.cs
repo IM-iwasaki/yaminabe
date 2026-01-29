@@ -80,6 +80,13 @@ public class GameTimer : NetworkBehaviour {
     private void Update() {
         if (!isRunning) return;
 
+        // 無制限モード（limitTime <= 0）の場合は経過時間だけ進めて終了判定なし
+        if (limitTime <= 0f) {
+            elapsedTime += Time.deltaTime;
+            return;
+        }
+
+        // 通常モード
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime >= limitTime) {
@@ -100,5 +107,10 @@ public class GameTimer : NetworkBehaviour {
     [Server]
     public void ClearOnTimerFinished() {
         OnTimerFinished = null;
+    }
+
+    [Server]
+    public void SetLimitTime(float time) {
+        limitTime = time;
     }
 }

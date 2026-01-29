@@ -59,6 +59,27 @@ public class GameManager : NetworkSystemObject<GameManager> {
     }
 
     /// <summary>
+    /// PVEモードスタート
+    /// </summary>
+    [Server]
+    public void StartPve() {
+        isGameRunning = true;
+
+        GameTimer.Instance.ClearOnTimerFinished();
+        GameTimer.Instance.OnTimerFinished += OnPveTimeUp;
+
+        GameTimer.Instance.StartTimer();
+    }
+
+    /// <summary>
+    /// PVEモードのタイムアップ
+    /// </summary>
+    [Server]
+    private void OnPveTimeUp() {
+        EndGame(); // 失敗扱い予定
+    }
+
+    /// <summary>
     /// カウントダウン終了後にゲームを開始する
     /// </summary>
     [Server]
