@@ -47,6 +47,8 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         }
         //チーム決め
         ServerManager.instance.RandomTeamDecide();
+        //プレイヤーの状態を戻す
+        ServerManager.instance.ResetCharacterHPandAmmo();
 
         //フェードアウト
         if (!isChanged) {

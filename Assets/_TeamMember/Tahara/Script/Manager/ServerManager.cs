@@ -98,4 +98,15 @@ public class ServerManager : NetworkBehaviour {
     public void OnToggleChangeAllRandom() {
         isRandom = !isRandom;
     }
+
+    /// <summary>
+    /// ‘Sˆõ‚ÌHPA’e”ó‘Ô‚ğ–ß‚·
+    /// </summary>
+    ///[Server]
+    public void ResetCharacterHPandAmmo() {
+        foreach(var player in connectPlayer) {
+            CharacterBase resetPlayer = player.GetComponent<GeneralCharacter>();
+            resetPlayer.ResetHealth();
+        }
+    }
 }
