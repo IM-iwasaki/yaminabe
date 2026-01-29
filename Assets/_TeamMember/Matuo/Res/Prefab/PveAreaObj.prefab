@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1909135212124995084}
   - component: {fileID: 5479046135522314130}
   - component: {fileID: 985724636388858051}
+  - component: {fileID: -6927161880704647023}
   m_Layer: 10
   m_Name: PveAreaObj
   m_TagString: RuleObject
@@ -72,6 +73,23 @@ MonoBehaviour:
   syncInterval: 0
   scorePerSecond: 1
   areaCollider: {fileID: 5479046135522314130}
+--- !u!114 &-6927161880704647023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6312887888215949329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 172153831
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &3310302861470820868
 PrefabInstance:
   m_ObjectHideFlags: 0
