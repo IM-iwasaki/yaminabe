@@ -12,9 +12,6 @@ public class PVEStageData : ScriptableObject {
     [Header("使用するルール")]
     public GameRuleType rule;
 
-    [Header("勝利条件スコア")]
-    public float targetScore = 50f;
-
     [Header("制限時間（0なら無制限）")]
     public float timeLimit = 180f;
 }
