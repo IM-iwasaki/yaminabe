@@ -70,8 +70,12 @@ public class MagicProjectile : NetworkBehaviour {
             other.gameObject.tag == "Magic" ||
             other.gameObject.tag == "Bullet") return;
 
-        if (other.TryGetComponent(out CharacterBase target))
-            target.TakeDamage(damage, ownerName, ID);
+        if (other.TryGetComponent(out CharacterBase target)) {
+            //チームIDが違ったらダメージを与える
+            if (target.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID)
+                target.TakeDamage(damage, ownerName, ID);
+        }
+
 
 
         RpcPlayHitEffect(transform.position, hitEffectType);
