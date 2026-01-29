@@ -23,6 +23,7 @@ public class CharacterSelectManager : NetworkBehaviour {
     // 選択画面UI
     [Header("UI")]
     [SerializeField] private GameObject selectUI;
+    [SerializeField] private GameObject guideUI;
 
     [Header("セレクトオブジェクト")]
     [SerializeField] private SelectObjectManager selectObj;
@@ -71,8 +72,10 @@ public class CharacterSelectManager : NetworkBehaviour {
         SetCharacterSelectState(true);
 
         // UIを非表示（移動開始前）
-        if (selectUI != null)
+        if (selectUI != null) {
             selectUI.SetActive(false);
+            guideUI.SetActive(false);
+        }
 
         // カメラ移動開始
         if (cameraManager != null && cameraTargetPoint != null) {
@@ -109,8 +112,10 @@ public class CharacterSelectManager : NetworkBehaviour {
         selectObj.ConfirmPlayerChange(currentPlayer);
 
         // UIを非表示（戻る操作開始時）
-        if (selectUI != null)
+        if (selectUI != null) {
             selectUI.SetActive(false);
+            guideUI.SetActive(true);
+        }
 
 
 
