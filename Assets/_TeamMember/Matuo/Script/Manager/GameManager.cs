@@ -12,6 +12,9 @@ public class GameManager : NetworkSystemObject<GameManager> {
     private GameTimer gameTimer;
     private RuleManager ruleManager;
 
+    [SyncVar] private bool isPveMode = false;
+    private PVEStageData currentPveStage;
+
     /// <summary>
     /// 初期化
     /// </summary>
@@ -36,10 +39,15 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         // 試合開始前の初期化
         isGameRunning = false;
-
         gameTimer?.ResetTimer();
 
-        // ステージ生成
+        // PVE分岐
+        if (isPveMode && currentPveStage != null) {
+            StartPveInternal(currentPveStage);
+            return;
+        }
+
+        // PVP処理
         StageManager.Instance.SpawnStage(stageData, rule);
 
         StageManager.Instance.SetRespawnMode(
@@ -53,31 +61,29 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         // カウントダウン開始
         CountdownManager.Instance.SendCountdown(3);
-
-        // カウントダウン後に実際のゲーム開始
         StartCoroutine(StartGameAfterCountdown(rule));
+    }
+
+    [Server]
+    public void SetPveStage(PVEStageData stage) {
+        isPveMode = true;
+        currentPveStage = stage;
     }
 
     /// <summary>
     /// PVEモードスタート
     /// </summary>
     [Server]
-    public void StartPve(PVEStageData stage) {
-        if (isGameRunning) return;
-
-        // ゲーム状態初期化
+    private void StartPveInternal(PVEStageData stage) {
         isGameRunning = false;
-        GameTimer.Instance.ResetTimer();
 
         // PvEステージ生成
         StageManager.Instance.SpawnPveStage(stage);
 
-        // PvE用ルール初期化
-        RuleManager.Instance.InitializeScoresForRule(stage.rule);
-        RuleManager.Instance.winScores[stage.rule] = stage.targetScore;
+        ruleManager.InitializeScoresForRule(stage.rule);
 
-        // タイマー設定
-        GameTimer.Instance.SetLimitTime(stage.timeLimit);
+        gameTimer.ResetTimer();
+        gameTimer.SetLimitTime(stage.timeLimit);
 
         // PvE用ゲーム開始
         StartPveRound();
@@ -142,6 +148,9 @@ public class GameManager : NetworkSystemObject<GameManager> {
         if (!isGameRunning) return;
 
         isGameRunning = false;
+        isPveMode = false;
+        currentPveStage = null;
+
         gameTimer.StopTimer();
         Cursor.lockState = CursorLockMode.None;
 

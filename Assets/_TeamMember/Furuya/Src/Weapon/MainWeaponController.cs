@@ -30,7 +30,7 @@ public class MainWeaponController : NetworkBehaviour {
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
-    [Command]
+    [Server]
     public void RequestAmmoReset() {
         if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
@@ -260,7 +260,7 @@ public class MainWeaponController : NetworkBehaviour {
 
         foreach (var c in hits) {
             var hp = c.GetComponent<CharacterBase>();
-            if (hp == null || !IsValidTarget(hp.gameObject)) continue;
+            if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == characterBase.parameter.TeamID) continue;
 
             // 追加：キラ 対象との距離を計算
             float dist = Vector3.Distance(firePoint.position, c.transform.position);
@@ -405,6 +405,9 @@ public class MainWeaponController : NetworkBehaviour {
                 Direction
                 );
         }
+        else if(proj.TryGetComponent(out EffectHitbox effectHitbox)) {
+            StartCoroutine(ServerCrystalAttack(magicData));
+        }
     }
 
     /// <summary>
@@ -434,6 +437,32 @@ public class MainWeaponController : NetworkBehaviour {
         // SE はここでサーバー再生
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
     }
+
+    [Server]
+    private IEnumerator ServerCrystalAttack(MainMagicData data) {
+        Vector3 origin = transform.position;
+        Vector3 forward = transform.forward;
+
+        for (int i = 0; i < data.stepCount; i++) {
+            Vector3 pos = origin + forward * data.stepDistance * (i + 1);
+
+            // 地面に沿わせる
+            if (Physics.Raycast(pos + Vector3.up, Vector3.down, out RaycastHit hit, 3f)) {
+                pos = hit.point;
+            }
+
+            GameObject hitbox = EffectPool.Instance.GetFromPool(
+                data.projectilePrefab,
+                pos,
+                Quaternion.identity
+            );
+
+            EffectPool.Instance.ReturnToPool(hitbox, data.hitboxLifeTime);
+
+            yield return new WaitForSeconds(data.stepInterval);
+        }
+    }
+
 
     // --- チャージエフェクト再生 ---
     [ClientRpc]

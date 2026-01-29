@@ -105,8 +105,10 @@ public class ServerManager : NetworkBehaviour {
     ///[Server]
     public void ResetCharacterHPandAmmo() {
         foreach(var player in connectPlayer) {
-            CharacterBase resetPlayer = player.GetComponent<GeneralCharacter>();
+            CharacterBase resetPlayer = player.GetComponent<CharacterBase>();
             resetPlayer.ResetHealth();
+            MainWeaponController mainWeaponController = player.GetComponent<MainWeaponController>();
+            mainWeaponController.RequestAmmoReset();
         }
     }
 }

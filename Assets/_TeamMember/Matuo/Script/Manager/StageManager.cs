@@ -75,6 +75,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
+        SetRespawnMode(RespawnMode.Team);
     }
 
     /// <summary>

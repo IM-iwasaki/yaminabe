@@ -72,7 +72,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   scorePerSecond: 1
+  targetScore: 10
   areaCollider: {fileID: 5479046135522314130}
+  onClearedEvents: []
 --- !u!114 &-6927161880704647023
 MonoBehaviour:
   m_ObjectHideFlags: 0

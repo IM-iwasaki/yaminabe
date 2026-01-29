@@ -73,6 +73,9 @@ public abstract class CharacterBase : CreatureBase {
             PlayerCamera playerCamera = camera.GetComponent<PlayerCamera>();
             playerCamera.enabled = true;
 
+            AudioListener listener = GetComponentInChildren<AudioListener>();
+            listener.enabled = true;
+
             PlayerData data = PlayerSaveData.Load();
             if (!string.IsNullOrEmpty(data.playerName)) {
                 CmdSetPlayerName(data.playerName);
