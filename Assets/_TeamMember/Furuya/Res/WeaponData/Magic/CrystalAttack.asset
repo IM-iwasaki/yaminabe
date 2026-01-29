@@ -10,22 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3744319c5a4bea645a75fd9293b7d8ca, type: 3}
-  m_Name: Skill_Quasar
+  m_Name: CrystalAttack
   m_EditorClassIdentifier: 
-  weaponName: 
+  weaponName: CrystalAttack
   type: 2
-  damage: 50
-  cooldown: 0
+  damage: 40
+  cooldown: 0.5
   ID: 0
   muzzleFlashType: 0
   hitEffectType: 2
   maxAmmo: 0
   reloadTime: 0
-  projectilePrefab: {fileID: 4429989267956055002, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+  projectilePrefab: {fileID: 8524352568393916313, guid: 45d3ddb55c3772e469a5f06dcdc91e9d, type: 3}
   projectileSpeed: 0
-  MPCost: 0
+  MPCost: 10
   chargeEffectType: 0
   chargeTime: 0
-  magicType: 1
+  magicType: 0
   initialHeightSpeed: 0
   se: 1
+  stepCount: 6
+  stepDistance: 1.2
+  stepInterval: 0.08
+  hitboxLifeTime: 0.25
