@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8322acdfd608e9349b83be1234911788, type: 3}
   m_Name: TestEnemyStatus
   m_EditorClassIdentifier: 
+  enemyName: "\u30C6\u30B9\u30C8\u30A8\u30CD\u30DF\u30FC"
+  description: "\u30C6\u30B9\u30C8\u306E\u305F\u3081\u306E\u5974"
   maxHp: 100
   attack: 10
   moveSpeed: 3.5
