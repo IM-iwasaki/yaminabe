@@ -225,7 +225,7 @@ public abstract class CharacterBase : CreatureBase {
         //不具合防止のためフラグをいろいろ下ろす。
 
         //ローカルで死亡演出
-        LocalDeadEffect();
+        TargetDeadEffect();
         RespawnDelay();
         //アニメーションは全員に反映
         animCon.RpcDeadAnimation();
@@ -291,21 +291,21 @@ public abstract class CharacterBase : CreatureBase {
     private void TargetRespawnDelay() {
         //リスポーン要求
         Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
-        
+        Invoke(nameof(TargetRespawnEffect), PlayerConst.RESPAWN_TIME);
     }
     /// <summary>
     /// ローカル上で死亡演出 可読性向上のためまとめました
     /// </summary>
     [TargetRpc]
-    private void LocalDeadEffect() {
+    private void TargetDeadEffect() {
         //カメラを暗くする
         gameObject.GetComponentInChildren<PlayerCamera>().EnterDeathView();
         //フェードアウトさせる
         FadeManager.Instance.StartFadeOut(2.5f);
     }
 
-    [Command]
-    private void ResetHealth() {
+    [Server]
+    public void ResetHealth() {
         //ここで体力と死亡状態を戻す
         parameter.HP = parameter.maxHP;
         parameter.isDead = false;
@@ -314,7 +314,7 @@ public abstract class CharacterBase : CreatureBase {
     /// <summary>
     /// リスポーン関数 死亡した対象にのみ通知
     /// </summary>
-    [TargetRpc]
+    [Server]
     virtual public void Respawn() {
         if (!parameter.isDead) return;
 
@@ -334,10 +334,9 @@ public abstract class CharacterBase : CreatureBase {
         }
 
         NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-        NTH.CmdTeleport(spawnPoint.position, spawnPoint.rotation);
+        NTH.ServerTeleport(spawnPoint.position, spawnPoint.rotation);
 
         parameter.StartInvincible();
-        LoaclRespawnEffect();
         ResetHealth();
     }
 
@@ -345,7 +344,8 @@ public abstract class CharacterBase : CreatureBase {
     /// ローカル上での演出
     /// 可読性向上のためまとめました
     /// </summary>
-    private void LoaclRespawnEffect() {
+    [TargetRpc]
+    private void TargetRespawnEffect() {
         //カメラを明るくする
         gameObject.GetComponentInChildren<PlayerCamera>().ExitDeathView();
         //フェードインさせる
