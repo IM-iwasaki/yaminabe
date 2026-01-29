@@ -28,6 +28,9 @@ public class StageManager : NetworkSystemObject<StageManager> {
     public GameObject hokoPrefab;
     private GameObject currentRuleObject;
 
+    [Header("PVE用AreaPrefab")]
+    public GameObject pveAreaPrefab;
+
     protected override void Awake() {
         base.Awake();
     }
@@ -76,6 +79,30 @@ public class StageManager : NetworkSystemObject<StageManager> {
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
         SetRespawnMode(RespawnMode.Team);
+
+        SpawnPveAreas();
+    }
+
+    /// <summary>
+    /// PVE用エリア生成
+    /// </summary>
+    [Server]
+    private void SpawnPveAreas() {
+        var spawnPoints = currentStageInstance
+            .GetComponentsInChildren<AreaSpawnPoint>(true);
+
+        foreach (var sp in spawnPoints) {
+            var areaObj = Instantiate(
+                pveAreaPrefab,
+                sp.transform.position,
+                sp.transform.rotation
+            );
+
+            NetworkServer.Spawn(areaObj);
+
+            var area = areaObj.GetComponent<CaptureAreaPVE>();
+            area.Initialize(sp);
+        }
     }
 
     /// <summary>
