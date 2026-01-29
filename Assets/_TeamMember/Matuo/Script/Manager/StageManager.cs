@@ -8,6 +8,9 @@ using System.Collections.Generic;
 public class StageManager : NetworkSystemObject<StageManager> {
     [Header("ステージ一覧")]
     public List<StageData> stages = new();
+    [Header("PvEステージ一覧")]
+    public List<PVEStageData> pveStages = new();
+
     public CaptureHoko currentHoko;
 
     private GameObject currentStageInstance;
@@ -53,6 +56,34 @@ public class StageManager : NetworkSystemObject<StageManager> {
         // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
         //RuleManager.Instance.winningTeams.Clear();
+    }
+    /// <summary>
+    /// PVE用のステージ生成
+    /// </summary>
+    /// <param name="stage"></param>
+    [Server]
+    public void SpawnPveStage(PVEStageData stage) {
+        if (stage == null || stage.stagePrefab == null) return;
+
+        // 既存ステージ削除
+        if (currentStageInstance != null)
+            NetworkServer.Destroy(currentStageInstance);
+
+        // ステージ生成
+        currentStageInstance = Instantiate(stage.stagePrefab);
+        ApplyRuleObjects(stage.rule);
+        NetworkServer.Spawn(currentStageInstance);
+
+        RegisterRespawnPoints(currentStageInstance);
+
+        // PvE用初期化
+        RuleManager.Instance.InitializeScoresForRule(stage.rule);
+        RuleManager.Instance.winScores[stage.rule] = stage.targetScore;
+
+        GameTimer.Instance.ResetTimer();
+        GameTimer.Instance.SetLimitTime(stage.timeLimit);
+
+        GameManager.Instance.StartPve();
     }
 
     /// <summary>
