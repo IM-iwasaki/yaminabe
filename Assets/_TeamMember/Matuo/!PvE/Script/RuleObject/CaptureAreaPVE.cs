@@ -11,8 +11,7 @@ public class CaptureAreaPVE : NetworkBehaviour {
     public float targetScore = 10f;
     public Collider areaCollider;
 
-    [Header("このエリア突破時に実行するイベント(イベントオブジェクトはエリアの子にして)")]
-    [SerializeField]
+    [Header("このエリア突破時に実行するイベント")]
     private List<PVEStageEvent> onClearedEvents = new();
 
     private float currentScore = 0f;
@@ -26,6 +25,20 @@ public class CaptureAreaPVE : NetworkBehaviour {
             areaCollider = GetComponent<Collider>();
 
         areaCollider.isTrigger = true;
+    }
+
+    [Server]
+    public void Initialize(AreaSpawnPoint spawnPoint) {
+        targetScore = spawnPoint.targetScore;
+        onClearedEvents.Clear();
+
+        foreach (var prefab in spawnPoint.eventPrefabs) {
+            if (prefab == null) continue;
+
+            var evt = Instantiate(prefab, transform);
+            NetworkServer.Spawn(evt.gameObject);
+            onClearedEvents.Add(evt);
+        }
     }
 
     [ServerCallback]
