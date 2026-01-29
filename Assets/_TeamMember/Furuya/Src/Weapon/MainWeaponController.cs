@@ -260,7 +260,7 @@ public class MainWeaponController : NetworkBehaviour {
 
         foreach (var c in hits) {
             var hp = c.GetComponent<CharacterBase>();
-            if (hp == null || !IsValidTarget(hp.gameObject)) continue;
+            if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == characterBase.parameter.TeamID) continue;
 
             // 追加：キラ 対象との距離を計算
             float dist = Vector3.Distance(firePoint.position, c.transform.position);

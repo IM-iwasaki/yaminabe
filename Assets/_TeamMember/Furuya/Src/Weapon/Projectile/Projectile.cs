@@ -44,6 +44,7 @@ public class Projectile : NetworkBehaviour {
 
         if (other.TryGetComponent<NetworkIdentity>(out var identity)) {
             if (identity.TryGetComponent(out CharacterBase target)) {
+                if (target.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID)
                 target.TakeDamage(damage, ownerName, ID);
             }
         }
