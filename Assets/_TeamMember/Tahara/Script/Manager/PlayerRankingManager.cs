@@ -29,7 +29,7 @@ public class PlayerRankingManager : NetworkSystemObject<PlayerRankingManager> {
     /// </summary>
     /// <param name="_teamID"></param>
     [Server]
-    public int CalculatePersonalRate(NetworkConnectionToClient _conn,int _winnerTeamID) {
+    public int CalculatePersonalRate(NetworkConnectionToClient _conn, int _winnerTeamID) {
         //プレイヤーを取得
         var playerObj = _conn.identity;
         int addRate;
@@ -56,12 +56,12 @@ public class PlayerRankingManager : NetworkSystemObject<PlayerRankingManager> {
         List<NetworkConnectionToClient> playerConn = new List<NetworkConnectionToClient>();
         foreach (var addConn in ServerManager.instance.connectPlayer) {
             if (addConn == null || addConn.connectionToClient == null) continue;
-            
+
             playerConn.Add(addConn.connectionToClient);
         }
         //全員に対してレート加算&保存を通知
         foreach (var player in playerConn) {
-            int addRate = CalculatePersonalRate(player,_winnerTeamID);
+            int addRate = CalculatePersonalRate(player, _winnerTeamID);
             AddAndSaveRate(player, addRate);
         }
     }
@@ -71,6 +71,7 @@ public class PlayerRankingManager : NetworkSystemObject<PlayerRankingManager> {
     /// </summary>
     /// <param name="_newRate"></param>
     private void SavePlayerData(int _newRate) {
+        if (!isServer) return;
         playerData.currentRate = _newRate;
         PlayerSaveData.Save(playerData);
     }
@@ -79,7 +80,6 @@ public class PlayerRankingManager : NetworkSystemObject<PlayerRankingManager> {
     /// 計算したレートをデータに加え、保存までを対象に通知
     /// </summary>
     /// <param name="_addRate">加える値</param>
-    [TargetRpc]
     private void AddAndSaveRate(NetworkConnectionToClient _winnerConn, int _addRate) {
         SavePlayerData(playerData.currentRate + _addRate);
         //テスト
