@@ -119,6 +119,11 @@ public abstract class CharacterBase : CreatureBase {
         if (isServer && PlayerListManager.Instance != null) {
             PlayerListManager.Instance.RegisterPlayer(this);
         }
+        //カネダ
+        //準備完了か否かをリストUIとして表示する
+        if (PlayerListUIManager.Instance != null) {
+            PlayerListUIManager.Instance.UpdatePlayerList();
+        }
     }
     /// <summary>
     /// 名前をリストから消す
@@ -126,6 +131,11 @@ public abstract class CharacterBase : CreatureBase {
     public override void OnStopServer() {
         base.OnStopServer();
         if (PlayerListManager.Instance != null) PlayerListManager.Instance.UnregisterPlayer(this);
+        //カネダ
+        //準備完了か否かをリストUIとして表示する
+        if (PlayerListUIManager.Instance != null) {
+            PlayerListUIManager.Instance.UpdatePlayerList();
+        }
     }
 
     #endregion
@@ -147,6 +157,12 @@ public abstract class CharacterBase : CreatureBase {
         if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName) return;
         parameter.ready = !parameter.ready;
         ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
+
+        //カネダ
+        //準備完了か否かをリストUIとして表示する
+        if (PlayerListUIManager.Instance != null) {
+            PlayerListUIManager.Instance.UpdatePlayerList();
+        }
     }
 
 
@@ -505,6 +521,11 @@ public abstract class CharacterBase : CreatureBase {
             else {
                 parameter.ready = !parameter.ready;
                 ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
+                //カネダ
+                //準備完了か否かをリストUIとして表示する
+                if (PlayerListUIManager.Instance != null) {
+                    PlayerListUIManager.Instance.UpdatePlayerList();
+                }
             }
         }
     }

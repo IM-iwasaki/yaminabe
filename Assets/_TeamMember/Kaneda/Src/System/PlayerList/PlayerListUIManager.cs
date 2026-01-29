@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,18 +8,33 @@ public class PlayerListUIManager : MonoBehaviour
 {
     public static PlayerListUIManager Instance;
 
+    /// <summary>
+    /// シーンにあるサーバーマネージャー
+    /// </summary>
+    [SerializeField]
+    private ServerManager server = null;
+
     [Header("生成させるプレイヤーリストプレハブ")]
     [SerializeField] private GameObject playerListUI;
 
+    [Header("親ルート取得")]
+    [SerializeField] private GameObject playerListRoot;
+
     private void Awake() {
         Instance = this;
+        playerListRoot.SetActive(false);
+    }
+
+    //  ホストだけ表示するUI
+    public void ShowUI() {
+        playerListRoot.SetActive(true);
     }
 
     /// <summary>
     /// プレイヤーリストの更新
     /// </summary>
     /// <param name="server"></param>
-    public void UpdatePlayerList(ServerManager server) {
+    public void UpdatePlayerList() {
         //  一度プレイヤーリストを初期化
         ResetPlayerList();
         //  プレイヤー1人1人のプレハブを作成
@@ -26,11 +42,11 @@ public class PlayerListUIManager : MonoBehaviour
             //  キャラクターパラメータの情報をキャッシュ
             CharacterParameter player = conn.GetComponent<CharacterParameter>();
             //  子オブジェクトとして生成
-            Instantiate(playerListUI, transform);
+            GameObject nameText = Instantiate(playerListUI, playerListRoot.transform);
             //  プレイヤーの名前をセット
-            playerListUI.GetComponent<TextMeshPro>().SetText(player.PlayerName);
+            nameText.GetComponent<TextMeshProUGUI>().SetText(player.PlayerName);
             //  チェックボックス判定
-            CanReadyPlayerUI(player);
+            CanReadyPlayerUI(player, nameText);
         }
 
     }
@@ -39,8 +55,8 @@ public class PlayerListUIManager : MonoBehaviour
     /// プレイヤーが準備完了か否かをUIで見せる
     /// </summary>
     /// <param name="player"></param>
-    private void CanReadyPlayerUI(CharacterParameter player) {
-        Transform checkBox = playerListUI.transform.GetChild(0);
+    public void CanReadyPlayerUI(CharacterParameter player, GameObject nameText) {
+        Transform checkBox = nameText.transform.GetChild(0);
         checkBox.gameObject.SetActive(player.ready);
     }
 
@@ -48,7 +64,7 @@ public class PlayerListUIManager : MonoBehaviour
     /// プレイヤーリストのリセット
     /// </summary>
     private void ResetPlayerList() {
-        DestroyAllChildren(transform);
+        DestroyAllChildren(playerListRoot.transform);
     }
 
     /// <summary>

@@ -33,6 +33,9 @@ public class ServerManager : NetworkBehaviour {
         for (int i = 0; i < teamMax; i++) {
             teams.Add(new TeamData());
         }
+
+        PlayerListUIManager.Instance?.ShowUI();
+
     }
 
     /// <summary>
