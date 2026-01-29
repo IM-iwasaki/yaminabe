@@ -18,11 +18,12 @@ public class UDPListener : MonoBehaviour {
 
     public List<UdpMessage> discoveredHosts = new List<UdpMessage>();
 
+    public event Action<UdpMessage> onHostUpdated;
     /// <summary>
     /// 受信するメッセージ
     /// </summary>
     [System.Serializable]
-    public struct UdpMessage{
+    public struct UdpMessage {
         public string ip;
         public int port;
         public string gameName;
@@ -44,8 +45,11 @@ public class UDPListener : MonoBehaviour {
 
         if (messageQueue.TryDequeue(out UdpMessage msg)) {
             //同一IPは一つのみ登録
-            if (!discoveredHosts.Contains(msg))
+            if (!discoveredHosts.Contains(msg)) {
                 discoveredHosts.Add(msg);
+                onHostUpdated?.Invoke(msg);
+            }
+
             isGetIP = true;
         }
     }
