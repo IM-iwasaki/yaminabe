@@ -1,0 +1,7 @@
+using Mirror;
+
+public abstract class PVEStageEvent : NetworkBehaviour {
+
+    // ŽÀ‘•ƒNƒ‰ƒX‘¤‚Å [Server] ‚ð•t‚¯‚é
+    public abstract void Execute();
+}

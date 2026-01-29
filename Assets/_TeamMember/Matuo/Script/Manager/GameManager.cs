@@ -74,7 +74,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         // PvE用ルール初期化
         RuleManager.Instance.InitializeScoresForRule(stage.rule);
-        RuleManager.Instance.winScores[stage.rule] = stage.targetScore;
 
         // タイマー設定
         GameTimer.Instance.SetLimitTime(stage.timeLimit);

@@ -2,18 +2,24 @@ using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
 
-/// <summary>
-/// PvE用エリア制圧オブジェクト
-/// プレイヤーがいるとスコア加算、敵は無視
-/// </summary>
 [RequireComponent(typeof(Collider))]
 public class CaptureAreaPVE : NetworkBehaviour {
-    [Header("エリア設定")]
+
+    [Header("スコアが増える間隔")]
     public float scorePerSecond = 1f;
+    [Header("突破に必要なスコア")]
+    public float targetScore = 10f;
     public Collider areaCollider;
 
-    private HashSet<CharacterBase> playersInArea = new();
+    [Header("このエリア突破時に実行するイベント(イベントオブジェクトはエリアの子にして)")]
+    [SerializeField]
+    private List<PVEStageEvent> onClearedEvents = new();
+
+    private float currentScore = 0f;
     private float timer = 0f;
+
+    private HashSet<CharacterBase> playersInArea = new();
+    private bool cleared = false;
 
     private void Awake() {
         if (areaCollider == null)
@@ -38,14 +44,34 @@ public class CaptureAreaPVE : NetworkBehaviour {
 
     [ServerCallback]
     private void Update() {
+        if (cleared) return;
         if (!GameManager.Instance.IsGameRunning()) return;
         if (playersInArea.Count == 0) return;
 
         timer += Time.deltaTime;
         if (timer >= 1f) {
             timer = 0f;
-            int teamId = 0; // プレイヤー固定チーム
-            RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
+            currentScore += scorePerSecond;
+
+            if (currentScore >= targetScore) {
+                CompleteArea();
+            }
         }
+    }
+
+    [Server]
+    private void CompleteArea() {
+        if (cleared) return;
+        cleared = true;
+
+        foreach (var e in onClearedEvents) {
+            if (e != null)
+                e.Execute();
+        }
+
+        // 突破済み表現（どれか選ぶ）
+        areaCollider.enabled = false;
+        // gameObject.SetActive(false);
+        // NetworkServer.Destroy(gameObject);
     }
 }
