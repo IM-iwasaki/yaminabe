@@ -30,7 +30,6 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
     protected override void Awake() {
         base.Awake();
-
     }
 
     /// <summary>
@@ -74,16 +73,8 @@ public class StageManager : NetworkSystemObject<StageManager> {
         ApplyRuleObjects(stage.rule);
         NetworkServer.Spawn(currentStageInstance);
 
+        // リスポーン地点登録
         RegisterRespawnPoints(currentStageInstance);
-
-        // PvE用初期化
-        RuleManager.Instance.InitializeScoresForRule(stage.rule);
-        RuleManager.Instance.winScores[stage.rule] = stage.targetScore;
-
-        GameTimer.Instance.ResetTimer();
-        GameTimer.Instance.SetLimitTime(stage.timeLimit);
-
-        GameManager.Instance.StartPve();
     }
 
     /// <summary>

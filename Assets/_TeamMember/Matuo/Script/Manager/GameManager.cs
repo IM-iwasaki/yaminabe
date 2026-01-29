@@ -62,7 +62,29 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// PVEモードスタート
     /// </summary>
     [Server]
-    public void StartPve() {
+    public void StartPve(PVEStageData stage) {
+        if (isGameRunning) return;
+
+        // ゲーム状態初期化
+        isGameRunning = false;
+        GameTimer.Instance.ResetTimer();
+
+        // PvEステージ生成
+        StageManager.Instance.SpawnPveStage(stage);
+
+        // PvE用ルール初期化
+        RuleManager.Instance.InitializeScoresForRule(stage.rule);
+        RuleManager.Instance.winScores[stage.rule] = stage.targetScore;
+
+        // タイマー設定
+        GameTimer.Instance.SetLimitTime(stage.timeLimit);
+
+        // PvE用ゲーム開始
+        StartPveRound();
+    }
+
+    [Server]
+    private void StartPveRound() {
         isGameRunning = true;
 
         GameTimer.Instance.ClearOnTimerFinished();
