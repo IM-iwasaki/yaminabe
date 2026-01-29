@@ -30,7 +30,7 @@ public class MainWeaponController : NetworkBehaviour {
         playerUI = characterBase.GetPlayerLocalUI();
     }
 
-    [Command]
+    [Server]
     public void RequestAmmoReset() {
         if (weaponData.type == WeaponType.Gun) {
             weaponData.AmmoReset();
