@@ -9,6 +9,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     public string lobbySceneName;
     public string gameSceneName;
     public string titleSceneName;
+    public string pveSceneName;
 
     /// <summary>
     /// シーン遷移が行われたかどうか
@@ -24,6 +25,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
+        //メッセージ送信クラスにゲーム状態を更新させる
         FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
 
         //ここで準備完了かどうか判定を取って全員準備完了ならゲームシーンに移動
@@ -63,6 +65,19 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(lobbySceneName);
             FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(false);
+        }
+    }
+
+    /// <summary>
+    /// 特定のシーンに全員を移行する
+    /// </summary>
+    [Server]
+    public void LoadPvESceneForAll() {
+        if (!isChanged) {
+            isChanged = true;
+            FadeManager.Instance.StartFadeOut(0.5f);
+            NetworkSceneTransitionSystem.Instance.ChangeScene(pveSceneName);
+            FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
         }
     }
 
