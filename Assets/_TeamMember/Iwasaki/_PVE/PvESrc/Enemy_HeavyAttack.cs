@@ -18,7 +18,7 @@ public class EnemyTestSkill : EnemySkillData {
     /// </summary>
     public override void Execute(
         GameObject owner,
-        EnemyStatus status,
+        EnemyStatusBase status,
         Transform target
     ) {
         Debug.Log("ÉXÉLÉã");

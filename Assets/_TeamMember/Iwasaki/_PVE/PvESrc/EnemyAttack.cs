@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class EnemyAttack : NetworkBehaviour {
 
-    private EnemyStatus enemyStatus;
+    private EnemyStatusBase enemyStatus;
     private EnemySkillController skillController;
 
     [SerializeField] private float attackRange = 1.5f;
@@ -14,12 +14,12 @@ public class EnemyAttack : NetworkBehaviour {
 
     [Header("スキル発動確率")]
     [Range(0f, 1f)]
-    [SerializeField] private float skillUseRate = 0.3f; // 30%でスキル
+    [SerializeField] private float skillUseRate = 0.5f; // 50%でスキル
 
     private float attackTimer;
 
     void Awake() {
-        enemyStatus = GetComponent<EnemyStatus>();
+        enemyStatus = GetComponent<EnemyStatusBase>();
         skillController = GetComponent<EnemySkillController>();
     }
 
@@ -62,7 +62,7 @@ public class EnemyAttack : NetworkBehaviour {
                 Random.value < skillUseRate) {
 
                 usedSkill =
-                    skillController.TryUseAnySkill(player.transform);
+                    skillController.TryUseSkill(player.transform);
             }
 
             // スキルを使わなかった場合は通常攻撃

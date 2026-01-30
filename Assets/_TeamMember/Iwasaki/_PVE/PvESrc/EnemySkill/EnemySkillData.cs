@@ -11,16 +11,16 @@ public abstract class EnemySkillData : ScriptableObject {
     [TextArea(5, 4)]
     public string description;         // スキル説明
 
-    [Header("挙動設定")]
+    [Header("共通設定")]
     public float cooldown = 3f;        // クールタイム
-    public float range = 2f;           // 有効距離
-
+    [Range(0f, 1f)]
+    public float useRate = 1f;        // 発動確率（今は100%、これはスキル抽選時の発動確立）
     /// <summary>
     /// スキル実行（サーバーから呼ばれる想定）
     /// </summary>
     public abstract void Execute(
         GameObject owner,        // 敵自身
-        EnemyStatus status,      // 敵ステータス
+        EnemyStatusBase status,      // 敵ステータス
         Transform target         // 対象プレイヤー
     );
 }

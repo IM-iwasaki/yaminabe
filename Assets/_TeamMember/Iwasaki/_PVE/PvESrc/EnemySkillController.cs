@@ -3,19 +3,18 @@ using Mirror;
 using System.Collections.Generic;
 
 /// <summary>
-/// 敵スキル管理クラス
+/// 敵スキル管理（確率＆クールタイム制御）
 /// </summary>
 public class EnemySkillController : NetworkBehaviour {
 
     [SerializeField]
     private List<EnemySkillData> skills = new();
-
+    [Header("上から抽選されます")]
     private Dictionary<EnemySkillData, float> cooldownTimers = new();
-
-    private EnemyStatus status;
+    private EnemyStatusBase status;
 
     void Awake() {
-        status = GetComponent<EnemyStatus>();
+        status = GetComponent<EnemyStatusBase>();
 
         foreach (var skill in skills) {
             cooldownTimers[skill] = 0f;
@@ -32,35 +31,29 @@ public class EnemySkillController : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 使用可能なスキルをランダムで1つ実行
+    /// 確率判定込みでスキル使用を試みる
     /// </summary>
-    /// <returns>スキルを使えたか</returns>
+    /// <returns>スキルを使ったか</returns>
     [Server]
-    public bool TryUseAnySkill(Transform target) {
-
-        // 使用可能なスキルを抽出
-        List<EnemySkillData> usableSkills = new();
+    public bool TryUseSkill(Transform target) {
 
         foreach (var skill in skills) {
-            if (cooldownTimers[skill] <= 0f) {
-                usableSkills.Add(skill);
-            }
+
+            // クールタイム中は不可
+            if (cooldownTimers[skill] > 0f) continue;
+
+            // 確率判定
+            if (Random.value > skill.useRate) continue;
+
+            // スキル実行
+            skill.Execute(gameObject, status, target);
+
+            // クールタイムリセット
+            cooldownTimers[skill] = skill.cooldown;
+
+            return true; // 1回使ったら終了
         }
 
-        // 使えるスキルがなければ失敗
-        if (usableSkills.Count == 0)
-            return false;
-
-        // ランダムで1つ選択
-        EnemySkillData selected =
-            usableSkills[Random.Range(0, usableSkills.Count)];
-
-        // 実行
-        selected.Execute(gameObject, status, target);
-
-        // クールタイムリセット
-        cooldownTimers[selected] = selected.cooldown;
-
-        return true;
+        return false;
     }
 }
