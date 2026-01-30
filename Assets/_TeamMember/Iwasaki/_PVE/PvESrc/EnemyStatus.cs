@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class EnemyStatus : CreatureBase {
     [Header("ステータスデータ")]
-    public EnemyStatusData statusData;
+    public EnemyBaseData statusData;
 
     [SyncVar]
     private int currentHp;

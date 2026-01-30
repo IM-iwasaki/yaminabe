@@ -4,7 +4,7 @@ using UnityEngine;
 /// 敵ステータスのデータ定義
 /// </summary>
 [CreateAssetMenu(menuName = "Enemy/Status")]
-public class EnemyStatusData : ScriptableObject {
+public class EnemyBaseData : ScriptableObject {
 
     [Header("エネミー名")]
     public string enemyName;          // 敵の名前
