@@ -274,12 +274,7 @@ public class CharacterParameter : NetworkBehaviour{
 
         // カメラ中心から遠方の目標点を決める（壁は無視）
         Ray camRay = cam.ScreenPointToRay(screenCenter);
-        Vector3 aimPoint;/* = camRay.GetPoint(30f)*/ // 30m先に仮のターゲット
-        if (Physics.Raycast(camRay, out RaycastHit camHit, 100.0f))
-            aimPoint = camHit.point;
-        else
-            aimPoint = camRay.GetPoint(100.0f);
-
+        Vector3 aimPoint = camRay.GetPoint(30f); // 30m先に仮のターゲット
         // firePoint から aimPoint 方向にレイを飛ばして壁判定
         Vector3 direction = (aimPoint - firePoint.position).normalized;
         if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 1.0f)) {
