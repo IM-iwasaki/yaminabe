@@ -80,8 +80,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
         // PvEステージ生成
         StageManager.Instance.SpawnPveStage(stage);
 
-        ruleManager.InitializeScoresForRule(stage.rule);
-
         gameTimer.ResetTimer();
         gameTimer.SetLimitTime(stage.timeLimit);
 

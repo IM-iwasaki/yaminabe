@@ -73,7 +73,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // ステージ生成
         currentStageInstance = Instantiate(stage.stagePrefab);
-        ApplyRuleObjects(stage.rule);
+        ApplyRuleObjectsForPVE(stage.rulesToSpawn);
         NetworkServer.Spawn(currentStageInstance);
 
         // リスポーン地点登録
@@ -102,6 +102,38 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
             var area = areaObj.GetComponent<CaptureAreaPVE>();
             area.Initialize(sp);
+        }
+    }
+
+    /// <summary>
+    /// PVE用のルールオブジェクト生成
+    /// </summary>
+    /// <param name="rules"></param>
+    [Server]
+    public void ApplyRuleObjectsForPVE(List<GameRuleType> rules) {
+        // 既存のルールオブジェクト削除
+        var exist = GameObject.FindGameObjectsWithTag("RuleObject");
+        foreach (var obj in exist) NetworkServer.Destroy(obj);
+
+        currentRuleObject = null;
+        currentHoko = null;
+
+        foreach (var rule in rules) {
+            if (rule == GameRuleType.DeathMatch) continue;
+
+            GameObject prefab = null;
+            switch (rule) {
+                case GameRuleType.Area: prefab = areaPrefab; break;
+                case GameRuleType.Hoko: prefab = hokoPrefab; break;
+            }
+            if (prefab == null) continue;
+
+            var obj = Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
+            obj.tag = "RuleObject";
+            NetworkServer.Spawn(obj);
+
+            if (rule == GameRuleType.Hoko)
+                currentHoko = obj.GetComponent<CaptureHoko>();
         }
     }
 
