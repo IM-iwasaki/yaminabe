@@ -12,6 +12,19 @@ public class EffectHitbox : NetworkBehaviour {
     // ‘ÎÛ‚²‚Æ‚Ìƒqƒbƒg‰ñ”
     private Dictionary<CharacterBase, int> hitCountMap = new Dictionary<CharacterBase, int>();
 
+    public override void OnStartServer() {
+        hitCountMap.Clear();
+    }
+
+    [Server]
+    public void Init(int _damage, string _ownerName, int _id) {
+        damage = _damage;
+        ownerName = _ownerName;
+        ID = _id;
+
+        hitCountMap.Clear();
+    }
+
     [ServerCallback]
     private void OnTriggerEnter(Collider other) {
         if (!other.TryGetComponent(out CharacterBase target))
