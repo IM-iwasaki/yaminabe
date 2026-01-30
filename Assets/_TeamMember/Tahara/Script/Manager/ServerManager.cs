@@ -18,8 +18,11 @@ public class ServerManager : NetworkBehaviour {
 
     [System.NonSerialized] public bool isRandom = false;
     private void Awake() {
+        if (instance != null && instance != this) {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
-
         DontDestroyOnLoad(gameObject);
     }
 
