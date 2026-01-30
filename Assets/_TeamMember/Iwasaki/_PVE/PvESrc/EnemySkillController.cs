@@ -61,4 +61,17 @@ public class EnemySkillController : NetworkBehaviour {
         // クールタイムをリセット
         cooldownTimers[skill] = skill.cooldown;
     }
+
+
+    /// <summary>
+    /// デフォルトで使用するスキルを取得
+    /// （今は先頭の1つを返すだけ）
+    /// </summary>
+    public EnemySkillData GetDefaultSkill() {
+        if (skills == null || skills.Count == 0) return null;
+        return skills[0];
+    }
+
+
+
 }

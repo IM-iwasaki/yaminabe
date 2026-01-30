@@ -25,10 +25,10 @@ public class EnemyStatus : CreatureBase {
     [Server]
     public override void TakeDamage(int _damage, string _name, int _ID) {
         //既に死亡状態かロビー内なら帰る
-        if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
-
+        // if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
+        Debug.Log("被弾");
         //ダメージ倍率を適用
-        float damage = _damage * ((float)parameter.DamageRatio / 100);
+        float damage = _damage;
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理

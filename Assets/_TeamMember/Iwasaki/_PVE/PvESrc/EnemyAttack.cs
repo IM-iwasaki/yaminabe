@@ -2,32 +2,41 @@ using Mirror;
 using UnityEngine;
 
 /// <summary>
-/// 敵の攻撃処理（サーバー専用）
+/// 敵の攻撃処理（通常攻撃 ＋ スキル切り替え）
+/// ・サーバー専用
+/// ・スキルが設定されていれば優先して使用
 /// </summary>
 public class EnemyAttack : NetworkBehaviour {
 
     private EnemyStatus enemyStatus;
+    private EnemySkillController skillController;
 
+    [Header("通常攻撃設定")]
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private float attackInterval = 1.0f;
+
+    [Header("使用スキル（任意）")]
+    [SerializeField] private EnemySkillData specialSkill;
+    // ここに ScriptableObject のスキルを設定する
 
     private float attackTimer;
 
     void Awake() {
         enemyStatus = GetComponent<EnemyStatus>();
+        skillController = GetComponent<EnemySkillController>();
     }
 
     void Update() {
         if (!isServer) return;
 
         attackTimer -= Time.deltaTime;
-        if (attackTimer > 0) return;
+        if (attackTimer > 0f) return;
 
         TryAttackPlayer();
     }
 
     /// <summary>
-    /// プレイヤー攻撃判定
+    /// プレイヤーを検知して攻撃 or スキル使用
     /// </summary>
     [Server]
     void TryAttackPlayer() {
@@ -42,15 +51,17 @@ public class EnemyAttack : NetworkBehaviour {
             CharacterBase player = hit.GetComponent<CharacterBase>();
             if (player == null) continue;
 
-            // 敵→プレイヤー方向
-            Vector3 dir = (player.transform.position - transform.position).normalized;
+            // スキル優先
+            if (skillController != null) {
+                skillController.TryUseSkill(
+                    skillController.GetDefaultSkill(), // 仮
+                    player.transform
+                );
+                attackTimer = attackInterval;
+                return;
+            }
 
-            // 前方との角度を取得
-            float angle = Vector3.Angle(transform.forward, dir);
-
-            // 例：前方90度以内（左右45度）
-            if (angle > 45f) continue;
-
+            // 通常攻撃
             player.TakeDamage(
                 enemyStatus.GetAttack(),
                 "Enemy",
@@ -61,6 +72,7 @@ public class EnemyAttack : NetworkBehaviour {
             return;
         }
     }
+
 
 #if UNITY_EDITOR
     void OnDrawGizmosSelected() {
