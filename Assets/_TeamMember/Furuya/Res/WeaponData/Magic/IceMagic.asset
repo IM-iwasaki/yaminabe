@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: IceMagic
   type: 2
   damage: 70
-  cooldown: 1.1
+  cooldown: 0.9
   ID: 7
   muzzleFlashType: 2
   hitEffectType: 2
@@ -25,7 +25,11 @@ MonoBehaviour:
   projectileSpeed: 25
   MPCost: 10
   chargeEffectType: 2
-  chargeTime: 1
+  chargeTime: 0.9
   magicType: 0
   initialHeightSpeed: 0
   se: 1
+  stepCount: 6
+  stepDistance: 1.2
+  stepInterval: 0.08
+  hitboxLifeTime: 0.25
