@@ -422,7 +422,7 @@ public abstract class CharacterBase : CreatureBase {
         player.parameter.TeamID = newTeam;
         //ログを表示
         ChatManager.Instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
-        
+
         //カネダ
         //チームカラーを反映させるために設置
         if (PlayerListUIManager.Instance != null) {
@@ -456,7 +456,12 @@ public abstract class CharacterBase : CreatureBase {
     /// <returns></returns>
     private IEnumerator WaitChangeWeapon(int _ID) {
         yield return null;
-        while (animCon == null || animCon.anim == null) yield return null;
+        float timeout = 3f;
+        while ((animCon == null || animCon.anim == null) && timeout > 0.0f) {
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+        if (timeout <= 0.0f) yield break;
         Transform handRoot = GetComponent<CharacterAnimationController>().anim.GetBoneTransform(HumanBodyBones.RightHand);
         while (handRoot == null) yield return null;
         // 子が存在するかチェック
@@ -464,6 +469,7 @@ public abstract class CharacterBase : CreatureBase {
             GameObject currentWeapon = handRoot.GetChild(3).gameObject;
             if (currentWeapon != null)
                 Destroy(currentWeapon);
+            yield return null;
         }
 
         //モデルリストはあるか
@@ -581,7 +587,7 @@ public abstract class CharacterBase : CreatureBase {
 
     #region バフ関連変数
 
-    public Coroutine healCoroutine { get; private set;  }
+    public Coroutine healCoroutine { get; private set; }
     public Coroutine speedCoroutine { get; private set; }
     public Coroutine attackCoroutine { get; private set; }
     public Coroutine damageCutCoroutine { get; private set; }
