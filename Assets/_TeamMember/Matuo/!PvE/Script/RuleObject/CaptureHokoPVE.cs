@@ -27,9 +27,9 @@ public class CaptureHokoPVE : NetworkBehaviour {
         if (holder != null) return;
 
         var player = other.GetComponent<CharacterBase>();
-        //if (player != null && !player.HasHoko()) { // プレイヤーは一度に1個のみ
-        //    TryPickup(player.netIdentity);
-        //}
+        if (player != null && !player.HasHoko()) { // プレイヤーは一度に1個のみ
+            TryPickup(player.netIdentity);
+        }
     }
 
     [Server]
@@ -38,7 +38,7 @@ public class CaptureHokoPVE : NetworkBehaviour {
         holder = player;
 
         var p = player.GetComponent<CharacterBase>();
-        //p.SetHoldingHoko(true);
+        p.SetHoldingHoko(true);
     }
 
     [ServerCallback]
@@ -55,7 +55,7 @@ public class CaptureHokoPVE : NetworkBehaviour {
         if (holder == null) return;
 
         var player = holder.GetComponent<CharacterBase>();
-        //player.SetHoldingHoko(false);
+        player.SetHoldingHoko(false);
 
         holder = null;
     }
