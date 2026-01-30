@@ -18,7 +18,12 @@ public class ServerManager : NetworkBehaviour {
 
     [System.NonSerialized] public bool isRandom = false;
     private void Awake() {
+        if(instance != null) {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
+        
 
         DontDestroyOnLoad(gameObject);
     }
@@ -105,13 +110,14 @@ public class ServerManager : NetworkBehaviour {
     /// <summary>
     /// ‘Sˆõ‚ÌHPA’e”ó‘Ô‚ğ–ß‚·
     /// </summary>
-    ///[Server]
-    public void ResetCharacterHPandAmmo() {
+    [Server]
+    public void ResetCharacterStatus() {
         foreach(var player in connectPlayer) {
             CharacterBase resetPlayer = player.GetComponent<CharacterBase>();
             resetPlayer.ResetHealth();
             MainWeaponController mainWeaponController = player.GetComponent<MainWeaponController>();
             mainWeaponController.RequestAmmoReset();
+            resetPlayer.parameter.ResetStatus();
         }
     }
 }
