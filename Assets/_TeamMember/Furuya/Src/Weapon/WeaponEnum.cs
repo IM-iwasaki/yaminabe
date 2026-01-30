@@ -49,6 +49,7 @@ public enum ProjectileType {
     Linear,
     Parabola,
     DoT,
+    GroundLine,
 }
 
 public enum EffectHitboxPattern {
