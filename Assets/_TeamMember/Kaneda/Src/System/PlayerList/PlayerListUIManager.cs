@@ -52,8 +52,8 @@ public class PlayerListUIManager : MonoBehaviour
             CharacterParameter player = conn.GetComponent<CharacterParameter>();
             //  子オブジェクトとして生成
             GameObject nameText = Instantiate(playerListUI, playerListRoot.transform);
-            //  プレイヤーの名前をセット
-            nameText.GetComponent<TextMeshProUGUI>().SetText(player.PlayerName);
+            //  プレイヤーの名前をチームカラー含めセット]
+            ChangePlayerTextAndColor(player, nameText);
             //  チェックボックス判定
             CanReadyPlayerUI(player, nameText);
         }
@@ -67,6 +67,31 @@ public class PlayerListUIManager : MonoBehaviour
     public void CanReadyPlayerUI(CharacterParameter player, GameObject nameText) {
         Transform checkBox = nameText.transform.GetChild(0);
         checkBox.gameObject.SetActive(player.ready);
+    }
+
+    /// <summary>
+    /// テキストをプレイヤーのチームの色に変更する
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="nameText"></param>
+    private void ChangePlayerTextAndColor(CharacterParameter player, GameObject nameText) {
+        //  名前を入れる
+        TextMeshProUGUI text = nameText.GetComponent<TextMeshProUGUI>();
+        text.SetText(player.PlayerName);
+        switch (player.TeamID) {
+            //  未所属
+            case -1:
+                text.color = Color.white;
+                break;
+            //  赤チーム
+            case 0:
+                text.color = Color.red;
+                break;
+            //  青チーム
+            case 1:
+                text.color = Color.blue;
+                break;
+        }
     }
 
     /// <summary>
