@@ -26,6 +26,9 @@ public abstract class CharacterBase : CreatureBase {
     public MainWeaponController weaponController_main;
     public SubWeaponController weaponController_sub;
 
+    // ホコを持っているか判定(PVE用)
+    [SyncVar] private bool isHoldingHoko = false;
+
     public int bannerNum = 0;
 
     private List<Coroutine> buffList = new List<Coroutine>();
@@ -487,6 +490,13 @@ public abstract class CharacterBase : CreatureBase {
         Instantiate(modelList.weaponModelList[_ID], handRoot);
 
     }
+
+    // ホコを持っているか判定の切り替え用
+    public bool HasHoko() => isHoldingHoko;
+
+    [Server]
+    public void SetHoldingHoko(bool value) => isHoldingHoko = value;
+
     #endregion
 
     #region 入力受付・入力実行・判定関数
