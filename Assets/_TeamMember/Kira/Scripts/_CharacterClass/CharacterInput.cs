@@ -168,6 +168,8 @@ public class CharacterInput : NetworkBehaviour {
     #region ŠeŽí“ü—Í
 
     public void OnMove(InputAction.CallbackContext ctx) {
+        if (!core.parameter.canMove) return;
+
         MoveInput = ctx.ReadValue<Vector2>();
 
         float moveX = MoveInput.x;

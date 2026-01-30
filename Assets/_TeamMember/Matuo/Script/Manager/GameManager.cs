@@ -112,10 +112,19 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// </summary>
     [Server]
     private IEnumerator StartGameAfterCountdown(GameRuleType rule) {
+        foreach (var player in ServerManager.instance.connectPlayer) {
+            GeneralCharacter currentPlayer = player.GetComponent<GeneralCharacter>();
+            if (currentPlayer.parameter.canMove)
+                currentPlayer.parameter.canMove = false;
+        }
         yield return new WaitForSeconds(4f);
 
         isGameRunning = true;
-
+        foreach (var player in ServerManager.instance.connectPlayer) {
+            GeneralCharacter currentPlayer = player.GetComponent<GeneralCharacter>();
+            if (!currentPlayer.parameter.canMove)
+                currentPlayer.parameter.canMove = true;
+        }
         // 前試合のイベントを破棄
         gameTimer.ClearOnTimerFinished();
 
