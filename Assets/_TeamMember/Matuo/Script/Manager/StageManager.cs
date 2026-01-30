@@ -31,6 +31,9 @@ public class StageManager : NetworkSystemObject<StageManager> {
     [Header("PVE用AreaPrefab")]
     public GameObject pveAreaPrefab;
 
+    [Header("PVE用HokoPrefab")]
+    public GameObject pveHokoPrefab;
+
     protected override void Awake() {
         base.Awake();
     }
@@ -81,6 +84,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
         SetRespawnMode(RespawnMode.Team);
 
         SpawnPveAreas();
+        SpawnPveHokos();
     }
 
     /// <summary>
@@ -102,6 +106,31 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
             var area = areaObj.GetComponent<CaptureAreaPVE>();
             area.Initialize(sp);
+        }
+    }
+
+    /// <summary>
+    /// PVE用ホコをスポーンする
+    /// </summary>
+    [Server]
+    private void SpawnPveHokos() {
+        var spawnPoints = currentStageInstance
+            .GetComponentsInChildren<HokoSpawnPoint>(true);
+
+        foreach (var sp in spawnPoints) {
+            for (int i = 0; i < sp.spawnCount; i++) {
+
+                Vector3 offset = Random.insideUnitSphere * 0.5f;
+                offset.y = 0f;
+
+                var hoko = Instantiate(
+                    pveHokoPrefab,
+                    sp.transform.position + offset,
+                    Quaternion.identity
+                );
+
+                NetworkServer.Spawn(hoko);
+            }
         }
     }
 
