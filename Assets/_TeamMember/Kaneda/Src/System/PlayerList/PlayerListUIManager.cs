@@ -8,10 +8,7 @@ public class PlayerListUIManager : MonoBehaviour
 {
     public static PlayerListUIManager Instance;
 
-    /// <summary>
-    /// シーンにあるサーバーマネージャー
-    /// </summary>
-    [SerializeField]
+    //  サーバーマネージャーを取得
     private ServerManager server = null;
 
     [Header("生成させるプレイヤーリストプレハブ")]
@@ -30,7 +27,12 @@ public class PlayerListUIManager : MonoBehaviour
     }
 
     private void Start() {
-        if (HostUI.isVisibleUI) ShowUI();
+        server = ServerManager.instance;
+
+        Debug.Log($"[PlayerListUI] server instanceID={server.GetInstanceID()} scene={server.gameObject.scene.name}");
+        Debug.Log($"connectPlayer Count = {server.connectPlayer.Count}");
+
+        if (NetworkServer.active && NetworkClient.active) ShowUI();
         UpdatePlayerList();
     }
 
@@ -44,12 +46,14 @@ public class PlayerListUIManager : MonoBehaviour
     /// </summary>
     /// <param name="server"></param>
     public void UpdatePlayerList() {
+        //  現在のコネクト数をログに流す
+        Debug.Log($"connectPlayer Count = {server.connectPlayer.Count}");
         //  一度プレイヤーリストを初期化
         ResetPlayerList();
         //  プレイヤー1人1人のプレハブを作成
         foreach (var conn in server.connectPlayer) {
             //  キャラクターパラメータの情報をキャッシュ
-            CharacterParameter player = conn.GetComponent<CharacterParameter>();
+            var player = conn.GetComponent<CharacterParameter>();
             //  子オブジェクトとして生成
             GameObject nameText = Instantiate(playerListUI, playerListRoot.transform);
             //  プレイヤーの名前をチームカラー含めセット]
