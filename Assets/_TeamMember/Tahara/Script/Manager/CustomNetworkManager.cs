@@ -152,7 +152,7 @@ public class CustomNetworkManager : NetworkManager {
         //ゲームシーンに遷移したならゲームスタート
         if (sceneName == GameSceneManager.Instance.gameSceneName) {
             int stageIndex = Mathf.Abs(hostUI.stageIndex % StageManager.Instance.stages.Count);
-            GameManager.Instance.StartGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
+            GameManager.Instance.StartPvpGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
             // 全クライアントに送る
             CountdownManager.Instance.SendCountdown(3);
         }
