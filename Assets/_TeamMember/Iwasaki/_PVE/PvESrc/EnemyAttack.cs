@@ -2,22 +2,19 @@ using Mirror;
 using UnityEngine;
 
 /// <summary>
-/// 敵の攻撃処理（通常攻撃 ＋ スキル切り替え）
-/// ・サーバー専用
-/// ・スキルが設定されていれば優先して使用
+/// 敵の攻撃処理（通常攻撃 or スキルを選択）
 /// </summary>
 public class EnemyAttack : NetworkBehaviour {
 
     private EnemyStatus enemyStatus;
     private EnemySkillController skillController;
 
-    [Header("通常攻撃設定")]
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private float attackInterval = 1.0f;
 
-    [Header("使用スキル（任意）")]
-    [SerializeField] private EnemySkillData specialSkill;
-    // ここに ScriptableObject のスキルを設定する
+    [Header("スキル発動確率")]
+    [Range(0f, 1f)]
+    [SerializeField] private float skillUseRate = 0.3f; // 30%でスキル
 
     private float attackTimer;
 
@@ -36,7 +33,7 @@ public class EnemyAttack : NetworkBehaviour {
     }
 
     /// <summary>
-    /// プレイヤーを検知して攻撃 or スキル使用
+    /// プレイヤーが範囲内にいれば攻撃
     /// </summary>
     [Server]
     void TryAttackPlayer() {
@@ -46,33 +43,41 @@ public class EnemyAttack : NetworkBehaviour {
             attackRange
         );
 
-        foreach (Collider hit in hits) {
+        foreach (var hit in hits) {
 
             CharacterBase player = hit.GetComponent<CharacterBase>();
             if (player == null) continue;
 
-            // スキル優先
-            if (skillController != null) {
-                skillController.TryUseSkill(
-                    skillController.GetDefaultSkill(), // 仮
-                    player.transform
-                );
-                attackTimer = attackInterval;
-                return;
+            // 前方判定
+            Vector3 dir =
+                (player.transform.position - transform.position).normalized;
+            float angle = Vector3.Angle(transform.forward, dir);
+            if (angle > 45f) continue;
+
+            // ---------- 攻撃方法の選択 ----------
+            bool usedSkill = false;
+
+            // スキルがあり、確率判定に成功したらスキル
+            if (skillController != null &&
+                Random.value < skillUseRate) {
+
+                usedSkill =
+                    skillController.TryUseAnySkill(player.transform);
             }
 
-            // 通常攻撃
-            player.TakeDamage(
-                enemyStatus.GetAttack(),
-                "Enemy",
-                -1
-            );
+            // スキルを使わなかった場合は通常攻撃
+            if (!usedSkill) {
+                player.TakeDamage(
+                    enemyStatus.GetAttack(),
+                    "Enemy",
+                    -1
+                );
+            }
 
             attackTimer = attackInterval;
             return;
         }
     }
-
 
 #if UNITY_EDITOR
     void OnDrawGizmosSelected() {
