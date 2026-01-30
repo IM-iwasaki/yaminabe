@@ -21,7 +21,7 @@ MonoBehaviour:
   MainWeapon: {fileID: 11400000, guid: 6b9112fb89833394eaa2d89cd923ddde, type: 2}
   SubWeapon: {fileID: 11400000, guid: 8fa2c4c5f7650b747899e553f2c38e25, type: 2}
   chatacterType: 1
-  maxHPCorrection: 100
-  speedCorrection: 0
+  maxHPCorrection: 150
+  speedCorrection: -1
   attack: 0
-  maxMP: 60
+  maxMP: 100
