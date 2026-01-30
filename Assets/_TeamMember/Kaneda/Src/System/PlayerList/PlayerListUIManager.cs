@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class PlayerListUIManager : MonoBehaviour
-{
+public class PlayerListUIManager : MonoBehaviour {
     public static PlayerListUIManager Instance;
 
     //  サーバーマネージャーを取得
+    [SerializeField]
     private ServerManager server = null;
 
     [Header("生成させるプレイヤーリストプレハブ")]
@@ -27,7 +27,7 @@ public class PlayerListUIManager : MonoBehaviour
     }
 
     private void Start() {
-        server = ServerManager.instance;
+        if (server == null) server = ServerManager.instance;
 
         Debug.Log($"[PlayerListUI] server instanceID={server.GetInstanceID()} scene={server.gameObject.scene.name}");
         Debug.Log($"connectPlayer Count = {server.connectPlayer.Count}");
@@ -48,6 +48,10 @@ public class PlayerListUIManager : MonoBehaviour
     public void UpdatePlayerList() {
         //  現在のコネクト数をログに流す
         Debug.Log($"connectPlayer Count = {server.connectPlayer.Count}");
+        //  エラー落ち処理
+        if (server == null) return;
+        if (server.connectPlayer == null) return;
+        if (server.connectPlayer.Count == 0) return;
         //  一度プレイヤーリストを初期化
         ResetPlayerList();
         //  プレイヤー1人1人のプレハブを作成
