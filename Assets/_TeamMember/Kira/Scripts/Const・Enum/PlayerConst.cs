@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class PlayerConst {
     //キャラクターのデフォルト最大体力値
     public const int DEFAULT_MAXHP = 90;

@@ -70,6 +70,9 @@ public class CharacterActions : NetworkBehaviour {
         AbilityControl();
     }
 
+    /// <summary>
+    /// ‰Šú‰»
+    /// </summary>
     public void Initialize(CharacterBase core) {
         this.core = core;
         param = core.parameter;

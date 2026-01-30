@@ -1,13 +1,6 @@
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.InputSystem;
-using UnityEngine.SocialPlatforms;
-using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
-using UnityEngine.Windows;
-using UnityEngine.InputSystem.LowLevel;
 
 /// <summary>
 /// Characterの変数管理
@@ -87,7 +80,8 @@ public class CharacterParameter : NetworkBehaviour{
     public bool AttackTrigger = false;
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0.0f;
-    
+
+    public bool canMove = true;
     //スキル使用後経過時間
     [System.NonSerialized] public float skillAfterTime = 0.0f;
     
@@ -103,6 +97,9 @@ public class CharacterParameter : NetworkBehaviour{
 
     #endregion
 
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public void Initialize(CharacterBase core) {
         //自身だけ
         if (!isLocalPlayer) return;
@@ -260,6 +257,9 @@ public class CharacterParameter : NetworkBehaviour{
             localUI.StartRotateReloadIcon();
     }
 
+    /// <summary>
+    /// 最後に攻撃した時間を取得する
+    /// </summary>
     public void AttackStartTimeRecord() {
         if (!isLocalPlayer) return;
         attackStartTime = Time.time;
@@ -274,11 +274,15 @@ public class CharacterParameter : NetworkBehaviour{
 
         // カメラ中心から遠方の目標点を決める（壁は無視）
         Ray camRay = cam.ScreenPointToRay(screenCenter);
-        Vector3 aimPoint = camRay.GetPoint(30f); // 30m先に仮のターゲット
+        Vector3 aimPoint;/* = camRay.GetPoint(30f)*/ // 30m先に仮のターゲット
+        if (Physics.Raycast(camRay, out RaycastHit camHit, 100.0f))
+            aimPoint = camHit.point;
+        else
+            aimPoint = camRay.GetPoint(100.0f);
 
         // firePoint から aimPoint 方向にレイを飛ばして壁判定
         Vector3 direction = (aimPoint - firePoint.position).normalized;
-        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 50f)) {
+        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, 1.0f)) {
             // 壁や床に当たればその位置に補正
             return (hit.point - firePoint.position).normalized;
         }

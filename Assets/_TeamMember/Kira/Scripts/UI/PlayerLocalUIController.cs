@@ -279,7 +279,9 @@ public class PlayerLocalUIController : NetworkBehaviour {
         }
     }
 
-
+    /// <summary>
+    /// UI‚ª³í‚Éæ“¾‚Å‚«‚é‚©Šm”F‚·‚éŠÖ”
+    /// </summary>
     private bool IsUIReady() {
         return
             mpBar != null &&
