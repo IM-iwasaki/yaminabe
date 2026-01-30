@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: FireMagic
   type: 2
   damage: 50
-  cooldown: 0.4
+  cooldown: 0.33
   ID: 7
   muzzleFlashType: 1
   hitEffectType: 1
@@ -29,3 +29,7 @@ MonoBehaviour:
   magicType: 1
   initialHeightSpeed: 8
   se: 0
+  stepCount: 6
+  stepDistance: 1.2
+  stepInterval: 0.08
+  hitboxLifeTime: 0.25
