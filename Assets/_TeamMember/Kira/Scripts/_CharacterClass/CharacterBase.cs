@@ -422,6 +422,12 @@ public abstract class CharacterBase : CreatureBase {
         player.parameter.TeamID = newTeam;
         //ログを表示
         ChatManager.Instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
+        
+        //カネダ
+        //チームカラーを反映させるために設置
+        if (PlayerListUIManager.Instance != null) {
+            PlayerListUIManager.Instance.UpdatePlayerList();
+        }
     }
 
     /// <summary>
