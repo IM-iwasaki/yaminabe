@@ -1,62 +1,115 @@
-using UnityEngine;
 using Mirror;
+using UnityEngine;
+using System.Collections.Generic;
 
+/// <summary>
+/// PVE用ホコ
+/// ・プレイヤーは同時に1つしか持てない
+/// ・CollectPointに入ったら回収済みになり拾えない
+/// </summary>
 [RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Rigidbody))]
 public class CaptureHokoPVE : NetworkBehaviour {
-    [Header("追従速度")]
-    public float followSpeed = 5f;
 
-    [SyncVar(hook = nameof(OnHolderChanged))]
-    public NetworkIdentity holder;
+    [Header("ホコ設定")]
+    public float holdHeight = 1.2f;
 
-    private Rigidbody rb;
+    // 今誰が持っているか
+    [SyncVar]
+    private NetworkIdentity holder;
+
+    // CollectPointに納品されたか
+    [SyncVar]
+    private bool isCollected = false;
+
     private Collider col;
+    private Rigidbody rb;
+
+    /// <summary>
+    /// サーバー上で誰がホコを持っているかを一元管理
+    /// </summary>
+    private static Dictionary<NetworkIdentity, CaptureHokoPVE> holderMap = new();
 
     private void Awake() {
-        rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
+        rb = GetComponent<Rigidbody>();
         col.isTrigger = true;
     }
 
-    private void OnHolderChanged(NetworkIdentity oldHolder, NetworkIdentity newHolder) {
-        rb.isKinematic = newHolder != null;
+    public override void OnStopServer() {
+        base.OnStopServer();
+        if (holder != null && holderMap.ContainsKey(holder))
+            holderMap.Remove(holder);
+    }
+
+    private void Update() {
+        if (!isServer) return;
+
+        if (holder != null) {
+            Vector3 pos = holder.transform.position + Vector3.up * holdHeight;
+            transform.position = pos;
+            transform.rotation = holder.transform.rotation;
+        }
+    }
+
+    /// <summary>
+    /// 今拾える状態か？
+    /// </summary>
+    [Server]
+    public bool CanBePickedUp() {
+        return !isCollected && holder == null;
     }
 
     [ServerCallback]
     private void OnTriggerEnter(Collider other) {
-        if (holder != null) return;
+        if (!CanBePickedUp()) return;
 
         var player = other.GetComponent<CharacterBase>();
-        if (player != null && !player.HasHoko()) { // プレイヤーは一度に1個のみ
-            TryPickup(player.netIdentity);
-        }
+        if (player == null || player.netIdentity == null) return;
+
+        // すでに別のホコを持っているなら拾えない
+        if (holderMap.ContainsKey(player.netIdentity))
+            return;
+
+        Pickup(player.netIdentity);
     }
 
+    /// <summary>
+    /// ホコを拾う
+    /// </summary>
     [Server]
-    public void TryPickup(NetworkIdentity player) {
-        if (holder != null) return;
+    private void Pickup(NetworkIdentity player) {
         holder = player;
-
-        var p = player.GetComponent<CharacterBase>();
-        p.SetHoldingHoko(true);
+        holderMap[player] = this;
+        rb.isKinematic = true;
     }
 
-    [ServerCallback]
-    private void Update() {
-        if (holder == null || !GameManager.Instance.IsGameRunning()) return;
-
-        var player = holder.GetComponent<CharacterBase>();
-        transform.position = Vector3.Lerp(transform.position, player.transform.position + Vector3.up * 1.2f, followSpeed * Time.deltaTime);
-        transform.rotation = player.transform.rotation;
-    }
-
+    /// <summary>
+    /// ホコを落とす（CollectPoint納品時にも使用）
+    /// </summary>
     [Server]
-    public void Drop() {
+    private void Drop() {
         if (holder == null) return;
 
-        var player = holder.GetComponent<CharacterBase>();
-        player.SetHoldingHoko(false);
-
+        holderMap.Remove(holder);
         holder = null;
+        rb.isKinematic = false;
+    }
+
+    /// <summary>
+    /// CollectPointに納品された
+    /// </summary>
+    [Server]
+    public void MarkCollected() {
+        if (isCollected) return;
+
+        isCollected = true;
+
+        // 持っていたら解除
+        Drop();
+
+        // 完全に拾えなくする
+        col.enabled = false;
+        rb.isKinematic = true;
     }
 }
