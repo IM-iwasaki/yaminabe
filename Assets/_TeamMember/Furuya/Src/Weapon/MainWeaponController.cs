@@ -406,7 +406,7 @@ public class MainWeaponController : NetworkBehaviour {
                 );
         }
         else if(proj.TryGetComponent(out EffectHitbox effectHitbox)) {
-            StartCoroutine(ServerCrystalAttack(magicData));
+            ServerCrystalAttack(magicData);
         }
     }
 
@@ -439,43 +439,35 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     [Server]
-    private IEnumerator ServerCrystalAttack(MainMagicData data) {
+    private void ServerCrystalAttack(MainMagicData data) {
         Vector3 origin = transform.position;
+
         Vector3 forward = transform.forward;
         forward.y = 0;
         forward.Normalize();
 
-        for (int i = 0; i < data.stepCount; i++) {
-            Vector3 pos = origin + forward * data.stepDistance * (i + 1);
+        Quaternion rot = Quaternion.LookRotation(forward);
 
-            // 地面取得
-            Vector3 normal = Vector3.up;
-            if (Physics.Raycast(pos + Vector3.up, Vector3.down, out RaycastHit hit, 3f)) {
-                pos = hit.point;
-                normal = hit.normal;
-            }
+        GameObject hitbox = EffectPool.Instance.GetFromPool(
+            data.projectilePrefab,
+            origin,
+            rot
+        );
 
-            Quaternion rot = Quaternion.LookRotation(forward, normal);
-
-            GameObject hitbox = EffectPool.Instance.GetFromPool(
-                data.projectilePrefab,
-                pos,
-                rot
+        if (hitbox.TryGetComponent(out EffectHitbox eh)) {
+            eh.Init(
+                data.damage,
+                characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
+                forward,
+                data.stepDistance * data.stepCount, // 最大距離
+                data.hitboxLifeTime
             );
-
-            if (hitbox.TryGetComponent(out EffectHitbox eh)) {
-                eh.Init(
-                    data.damage,
-                    characterBase.parameter.PlayerName,
-                    characterBase.parameter.playerId
-                );
-            }
-
-            EffectPool.Instance.ReturnToPool(hitbox, data.hitboxLifeTime);
-
-            yield return new WaitForSeconds(data.stepInterval);
         }
+
+        EffectPool.Instance.ReturnToPool(hitbox, data.hitboxLifeTime);
     }
+
 
 
     // --- チャージエフェクト再生 ---
