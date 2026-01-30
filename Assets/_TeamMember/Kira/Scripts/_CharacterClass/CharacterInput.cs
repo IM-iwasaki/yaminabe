@@ -167,6 +167,9 @@ public class CharacterInput : NetworkBehaviour {
 
     #region 各種入力
 
+    /// <summary>
+    /// 移動入力
+    /// </summary>
     public void OnMove(InputAction.CallbackContext ctx) {
         MoveInput = ctx.ReadValue<Vector2>();
 
@@ -179,6 +182,8 @@ public class CharacterInput : NetworkBehaviour {
     /// ジャンプ
     /// </summary>
     public void OnJump(InputAction.CallbackContext context) {
+        //TODO:ホコを持っていたら弾く
+
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && core.parameter.IsGrounded) {
             isJumpPressed = true;
@@ -187,6 +192,9 @@ public class CharacterInput : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// 攻撃入力
+    /// </summary>
     public void OnAttack(InputAction.CallbackContext ctx) {
         //死亡していたら攻撃できない
         if (core.parameter.isDead || !isLocalPlayer) return;
