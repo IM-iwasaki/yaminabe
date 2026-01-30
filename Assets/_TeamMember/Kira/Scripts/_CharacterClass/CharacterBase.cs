@@ -1,5 +1,6 @@
 ﻿using Mirror;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -26,6 +27,9 @@ public abstract class CharacterBase : CreatureBase {
     public SubWeaponController weaponController_sub;
 
     public int bannerNum = 0;
+
+    private List<Coroutine> buffList = new List<Coroutine>();
+    private List<Coroutine> debuffList = new List<Coroutine>();
 
     //各コンポーネントの参照
     public CharacterInput input { get; private set; }
@@ -579,7 +583,7 @@ public abstract class CharacterBase : CreatureBase {
 
     #endregion
 
-    #region バフ関連変数
+    #region バフ関連
 
     public Coroutine healCoroutine { get; private set;  }
     public Coroutine speedCoroutine { get; private set; }
@@ -703,10 +707,11 @@ public abstract class CharacterBase : CreatureBase {
 
     /// <summary>
     /// 古谷
-    ///  時間まで被ダメを下げておく実行処理(コルーチン)
+    /// 時間まで被ダメを下げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator DamageCutRoutine(int _value, float _duration) {
         parameter.DamageRatio = _value;
+        Debug.Log("被ダメージ倍率変更中");
         yield return new WaitForSeconds(_duration);
         parameter.DamageRatio = 100;
         damageCutCoroutine = null;
@@ -783,4 +788,42 @@ public abstract class CharacterBase : CreatureBase {
     #endregion
 
     #endregion
+}
+
+/// <summary>
+/// パラメータ種別の列挙体
+/// </summary>
+public enum ParamaterType {
+    HP = 0,
+    MP,
+    Attack,
+    defence,
+    moveSpeed,
+    damageRate,
+}
+
+/// <summary>
+/// バフ管理用クラス
+/// </summary>
+[System.Serializable]
+public class TemporaryBuff {
+
+    /// <summary>
+    /// 効果種別
+    /// </summary>
+    public ParamaterType type;
+    /// <summary>
+    /// 効果値
+    /// </summary>
+    public int amount;
+    /// <summary>
+    /// 効果時間
+    /// </summary>
+    public float duration;
+
+    public TemporaryBuff(ParamaterType type, int amount, float duration) {
+        this.type = type;
+        this.amount = amount;
+        this.duration = duration;
+    }
 }

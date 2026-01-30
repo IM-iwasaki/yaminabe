@@ -1,13 +1,6 @@
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.InputSystem;
-using UnityEngine.SocialPlatforms;
-using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
-using UnityEngine.Windows;
-using UnityEngine.InputSystem.LowLevel;
 
 /// <summary>
 /// Character‚Ì•Ï”ŠÇ—
@@ -104,6 +97,9 @@ public class CharacterParameter : NetworkBehaviour{
 
     #endregion
 
+    /// <summary>
+    /// ‰Šú‰»
+    /// </summary>
     public void Initialize(CharacterBase core) {
         //©g‚¾‚¯
         if (!isLocalPlayer) return;
@@ -261,6 +257,9 @@ public class CharacterParameter : NetworkBehaviour{
             localUI.StartRotateReloadIcon();
     }
 
+    /// <summary>
+    /// ÅŒã‚ÉUŒ‚‚µ‚½ŠÔ‚ğæ“¾‚·‚é
+    /// </summary>
     public void AttackStartTimeRecord() {
         if (!isLocalPlayer) return;
         attackStartTime = Time.time;

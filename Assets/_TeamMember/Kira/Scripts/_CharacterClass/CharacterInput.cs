@@ -167,6 +167,9 @@ public class CharacterInput : NetworkBehaviour {
 
     #region Šeí“ü—Í
 
+    /// <summary>
+    /// ˆÚ“®“ü—Í
+    /// </summary>
     public void OnMove(InputAction.CallbackContext ctx) {
         if (!core.parameter.canMove) return;
 
@@ -181,6 +184,8 @@ public class CharacterInput : NetworkBehaviour {
     /// ƒWƒƒƒ“ƒv
     /// </summary>
     public void OnJump(InputAction.CallbackContext context) {
+        //TODO:ƒzƒR‚ğ‚Á‚Ä‚¢‚½‚ç’e‚­
+
         // ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½uŠÔ‚¾‚¯”½‰‚³‚¹‚é
         if (context.performed && core.parameter.IsGrounded) {
             isJumpPressed = true;
@@ -189,6 +194,9 @@ public class CharacterInput : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// UŒ‚“ü—Í
+    /// </summary>
     public void OnAttack(InputAction.CallbackContext ctx) {
         //€–S‚µ‚Ä‚¢‚½‚çUŒ‚‚Å‚«‚È‚¢
         if (core.parameter.isDead || !isLocalPlayer) return;
