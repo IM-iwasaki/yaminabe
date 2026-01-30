@@ -29,25 +29,22 @@ public class GameManager : NetworkSystemObject<GameManager> {
     }
 
     /// <summary>
-    /// ゲーム開始（準備フェーズ）
+    /// PVPゲーム開始
     /// </summary>
     /// <param name="rule">開始するルールタイプ</param>
     /// <param name="stageData">生成するステージのステージデータ</param>
     [Server]
-    public void StartGame(GameRuleType rule, StageData stageData) {
+    public void StartPvpGame(GameRuleType rule, StageData stageData) {
         if (isGameRunning) return;
 
         // 試合開始前の初期化
         isGameRunning = false;
+        isPveMode = false;
+        currentPveStage = null;
+
         gameTimer?.ResetTimer();
 
-        // PVE分岐
-        if (isPveMode && currentPveStage != null) {
-            StartPveInternal(currentPveStage);
-            return;
-        }
-
-        // PVP処理
+        // ステージ生成
         StageManager.Instance.SpawnStage(stageData, rule);
 
         StageManager.Instance.SetRespawnMode(
@@ -56,7 +53,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
                 : RespawnMode.Team
         );
 
-        // ルール設定 & スコア初期化
+        // PVPのみルールスコア初期化
         ruleManager.InitializeScoresForRule(rule);
 
         // カウントダウン開始
@@ -64,18 +61,19 @@ public class GameManager : NetworkSystemObject<GameManager> {
         StartCoroutine(StartGameAfterCountdown(rule));
     }
 
-    [Server]
-    public void SetPveStage(PVEStageData stage) {
-        isPveMode = true;
-        currentPveStage = stage;
-    }
-
     /// <summary>
-    /// PVEモードスタート
+    /// PVEゲーム開始
     /// </summary>
     [Server]
-    private void StartPveInternal(PVEStageData stage) {
+    public void StartPveGame(PVEStageData stage) {
+        if (isGameRunning) return;
+        if (stage == null) return;
+
+        isPveMode = true;
+        currentPveStage = stage;
+
         isGameRunning = false;
+        gameTimer.ResetTimer();
 
         // PvEステージ生成
         StageManager.Instance.SpawnPveStage(stage);
@@ -85,6 +83,12 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         // PvE用ゲーム開始
         StartPveRound();
+    }
+
+    [Server]
+    public void SetPveStage(PVEStageData stage) {
+        isPveMode = true;
+        currentPveStage = stage;
     }
 
     [Server]
