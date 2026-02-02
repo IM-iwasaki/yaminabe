@@ -2,6 +2,7 @@ using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
 using static TeamData;
+using System.Linq;
 /// <summary>
 /// ServerManager
 /// サーバー側での処理を管理するクラス
@@ -47,49 +48,33 @@ public class ServerManager : NetworkBehaviour {
     /// <param name="_allRandomTeam"></param>
     private void JoinRandomTeam(bool _allRandomTeam = false) {
         //チームに所属していない人を抜き出す
-        List<NetworkIdentity> notInTeamPlayer = new List<NetworkIdentity>();
-        foreach (var player in connectPlayer) {
-            if (player.GetComponent<GeneralCharacter>().parameter.TeamID != -1)
-                continue;
-            notInTeamPlayer.Add(player);
-        }
-
+        List<NetworkIdentity> allPlayers = new List<NetworkIdentity>(connectPlayer);
         //全員ランダムver
-        if(_allRandomTeam) {
-            if (teams.Capacity != 0) {
-                //まずはチームを全てリセット
-                foreach (var resetTeam in teams) {
-                    for (int i = 0, max = resetTeam.teamPlayerList.Count; i < max; i++) {
-                        resetTeam.teamPlayerList[i].GetComponent<GeneralCharacter>().parameter.TeamID = -1;
-                        notInTeamPlayer.Add(resetTeam.teamPlayerList[i]);
-                    }
-                    resetTeam.teamPlayerList.Clear();
-                }
-            }
-            teams = new List<TeamData>(TEAMMATE_MAX);
-            //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
-            for (int i = 0; i < (int)TeamColor.ColorMax; i++) {
-                TeamData newTeam = new TeamData();
-                teams.Add(newTeam);
-            }
-        }
-        for (int i = 0, max = notInTeamPlayer.Count; i < max; i++) {
-            var player = notInTeamPlayer[i];
-            int teamIndex = Random.Range(0, teams.Count);
-            //チームが既定の人数を超えていたら一個次のチームに入れる(チームの最後尾なら先頭のチームに加入)
-            if (teams[teamIndex].teamPlayerList.Count >= TEAMMATE_MAX) {
-                teams[(teamIndex + 1) % teams.Count].teamPlayerList.Add(player);
-                teamIndex = (teamIndex + 1) % teams.Count;
-            }
-            //それ以外はランダムに振り分ける
-            else {
-                teams[teamIndex].teamPlayerList.Add(player);
-            }
-            //プレイヤーのチームIDを設定
-            player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
-            ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<GeneralCharacter>().parameter.PlayerName + " is " + teamIndex + "Team");
+        if (_allRandomTeam) {
+            foreach (var player in allPlayers)
+                player.GetComponent<GeneralCharacter>().parameter.TeamID = -1;
         }
 
+        //未所属プレイヤーを抽出
+        List<NetworkIdentity> noTeamPlayer = allPlayers.Where(p => p.GetComponent<GeneralCharacter>().parameter.TeamID == -1).ToList();
+
+        teams = new List<TeamData>();
+        //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
+        for (int i = 0; i < (int)TeamColor.ColorMax; i++) {
+            teams.Add(new TeamData());
+        }
+
+        //未所属プレイヤーをシャッフル
+        noTeamPlayer = noTeamPlayer.OrderBy(x => Random.value).ToList();
+
+        //均等に割り振り
+        int teamIndex = 0;
+        foreach(var player in noTeamPlayer) {
+            teams[teamIndex].teamPlayerList.Add(player);
+            player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
+
+            teamIndex = (teamIndex + 1) % teams.Count;
+        }
     }
     /// <summary>
     /// ランダムチーム生成
@@ -108,12 +93,13 @@ public class ServerManager : NetworkBehaviour {
     /// <summary>
     /// 全員のHP、弾数状態を戻す
     /// </summary>
-    ///[Server]
+    [Server]
     public void ResetCharacterHPandAmmo() {
-        foreach(var player in connectPlayer) {
-            CharacterBase resetPlayer = player.GetComponent<CharacterBase>();
+        foreach (var player in connectPlayer) {
+            GeneralCharacter resetPlayer = player.GetComponent<GeneralCharacter>();
             resetPlayer.ResetHealth();
             MainWeaponController mainWeaponController = player.GetComponent<MainWeaponController>();
+            mainWeaponController.ServerResetMainWeapon(resetPlayer.parameter.runtimeStatus);
             mainWeaponController.RequestAmmoReset();
         }
     }

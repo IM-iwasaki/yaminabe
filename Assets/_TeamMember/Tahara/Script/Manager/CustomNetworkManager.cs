@@ -164,13 +164,6 @@ public class CustomNetworkManager : NetworkManager {
             NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
             if (sceneName == GameSceneManager.Instance.gameSceneName) {
-
-                //各リスポーン地点に転送
-                if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch) {
-                    teamID = -1;
-                    character.parameter.TeamID = teamID;
-                }
-                    
                 var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)teamID);
                 startPos.ServerTeleport(RespawnPos[Random.Range(0, RespawnPos.Count)].position, Quaternion.identity);
             }
