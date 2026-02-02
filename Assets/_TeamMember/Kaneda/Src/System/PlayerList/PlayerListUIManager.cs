@@ -8,7 +8,6 @@ public class PlayerListUIManager : MonoBehaviour {
     public static PlayerListUIManager Instance;
 
     //  サーバーマネージャーを取得
-    [SerializeField]
     private ServerManager server = null;
 
     [Header("生成させるプレイヤーリストプレハブ")]
@@ -26,13 +25,19 @@ public class PlayerListUIManager : MonoBehaviour {
         playerListRoot.SetActive(false);
     }
 
-    private void Start() {
+    private IEnumerator Start() {
+        // ServerManager の唯一インスタンスを待つ
+        while (ServerManager.instance == null) {
+            yield return null;
+        }
         if (server == null) server = ServerManager.instance;
 
-        Debug.Log($"[PlayerListUI] server instanceID={server.GetInstanceID()} scene={server.gameObject.scene.name}");
-        Debug.Log($"connectPlayer Count = {server.connectPlayer.Count}");
+        // サーバー起動を待つ
+        while (!NetworkServer.active) {
+            yield return null;
+        }
 
-        if (NetworkServer.active && NetworkClient.active) ShowUI();
+        if (NetworkClient.active) ShowUI();
         UpdatePlayerList();
     }
 
@@ -46,12 +51,11 @@ public class PlayerListUIManager : MonoBehaviour {
     /// </summary>
     /// <param name="server"></param>
     public void UpdatePlayerList() {
-        //  現在のコネクト数をログに流す
-        Debug.Log($"connectPlayer Count = {server.connectPlayer.Count}");
         //  エラー落ち処理
         if (server == null) return;
         if (server.connectPlayer == null) return;
-        if (server.connectPlayer.Count == 0) return;
+        //  現在のコネクト数をログに流す
+        Debug.Log($"connectPlayer Count = {server.connectPlayer.Count}");
         //  一度プレイヤーリストを初期化
         ResetPlayerList();
         //  プレイヤー1人1人のプレハブを作成
