@@ -53,7 +53,7 @@ public class MainWeaponController : NetworkBehaviour {
 
     public void ServerResetMainWeapon(GeneralCharacterStatus _status) {
         weaponData = _status.MainWeapon;
-        characterBase.RpcChangeWeapon(weaponData.ID);
+        CmdSetWeaponData(weaponData.name);
     }
 
     /// <summary>
@@ -179,7 +179,6 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Magic:
                 ServerStartMagicCast(direction);
-                //ServerMagicAttack(direction);
                 break;
         }
         //アニメーション開始
@@ -195,23 +194,6 @@ public class MainWeaponController : NetworkBehaviour {
     bool CanAttack() {
         // サブ武器も別クールダウンを持たせる場合は拡張可能
         return weaponData != null && Time.time >= lastAttackTime + weaponData.cooldown;
-    }
-
-    /// <summary>
-    /// 初期化のタイミングの武器セット
-    /// </summary>
-    /// <param name="name"></param>
-    public void SetWeaponDataInit(string name) {
-        var data = WeaponDataRegistry.GetWeapon(name);
-
-        if (!CanUseWeapon(charaterType, data.type)) {
-            Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
-            return;
-        }
-
-        weaponData = data;
-        ammo = weaponData.ammo;
-        playerUI.LocalUIChanged();
     }
 
     /// <summary>
@@ -266,30 +248,8 @@ public class MainWeaponController : NetworkBehaviour {
         foreach (var c in hits) {
             var hp = c.GetComponent<CharacterBase>();
             if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == characterBase.parameter.TeamID) continue;
-
-            // 追加：キラ 対象との距離を計算
-            float dist = Vector3.Distance(firePoint.position, c.transform.position);
-            // 追加：キラ 攻撃有効範囲をキャッシュ
-            float allowedAngle = meleeData.meleeAngle;
-
-
-            // 対象との方向ベクトル
-            Vector3 dir = (c.transform.position - firePoint.position).normalized;
-
-            // forwardとの角度を計算
-            float angle = Vector3.Angle(forward, dir);
-
-            // 追加：キラ 射程の30％以内なら攻撃有効範囲を広げる
-            if (dist < meleeData.range * 0.3f) {
-                allowedAngle *= 1.5f;  // 今回の処理では判定が50％甘くなる
-            }
-            // 追加：キラ 射程の20％以内なら強制的に当たった扱いにする
-            // 変更：キラ meleeData.meleeAngle→allowedAngle
-            if (angle <= allowedAngle || dist < 0.2f) {
-                hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
-                RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
-            }
-
+            hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
+            RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
 #if UNITY_EDITOR

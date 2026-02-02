@@ -74,6 +74,8 @@ public class MagicProjectile : NetworkBehaviour {
             //チームIDが違ったらダメージを与える
             if (target.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID)
                 target.TakeDamage(damage, ownerName, ID);
+            else if (target.parameter.TeamID == -1)
+                target.TakeDamage(damage, ownerName, ID);
         }
 
 
