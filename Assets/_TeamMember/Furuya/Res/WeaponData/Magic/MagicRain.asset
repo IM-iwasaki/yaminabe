@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: MagicRain
   type: 2
-  damage: 20
+  damage: 40
   cooldown: 1
   ID: 7
   muzzleFlashType: 0
@@ -29,3 +29,7 @@ MonoBehaviour:
   magicType: 2
   initialHeightSpeed: 5
   se: 2
+  stepCount: 6
+  stepDistance: 1.2
+  stepInterval: 0.08
+  hitboxLifeTime: 0.25
