@@ -11,7 +11,7 @@ public class CharacterParameter : NetworkBehaviour{
     [Header("インポートするステータス")]
     [SerializeField]GeneralCharacterStatus inputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
-    GeneralCharacterStatus runtimeStatus;
+    public GeneralCharacterStatus runtimeStatus { get; private set; }
     public SkillBase[] equippedSkills{ get; private set; }
     public PassiveBase[] equippedPassives{ get; private set; }
 
@@ -174,7 +174,7 @@ public class CharacterParameter : NetworkBehaviour{
         weaponController_main.CmdSetWeaponData(mainWeapon);
         //weaponController_main.SetWeaponDataInit(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
-    }
+     }
 
     /// <summary>
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する

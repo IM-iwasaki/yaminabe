@@ -51,6 +51,11 @@ public class MainWeaponController : NetworkBehaviour {
         charaterType = type;
     }
 
+    public void ServerResetMainWeapon(GeneralCharacterStatus _status) {
+        weaponData = _status.MainWeapon;
+        characterBase.RpcChangeWeapon(weaponData.ID);
+    }
+
     /// <summary>
     /// 武器チェンジ後処理
     /// </summary>

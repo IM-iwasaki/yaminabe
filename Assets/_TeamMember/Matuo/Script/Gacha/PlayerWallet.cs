@@ -3,6 +3,7 @@ using TMPro;
 using System;
 using System.Collections;
 using UnityEngine.UI;
+using Mirror;
 
 /// <summary>
 /// プレイヤーのお金を管理するクラス
@@ -55,7 +56,10 @@ public class PlayerWallet : MonoBehaviour {
         if (currentMoney < 0) currentMoney = 0;
 
         OnMoneyChanged?.Invoke(currentMoney);
+#if !UNITY_EDITOR
         SaveMoney();
+#endif
+
 
         UpdateMoneyText();
         ShowFloatingMoney(amount);

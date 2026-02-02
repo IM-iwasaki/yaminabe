@@ -170,6 +170,8 @@ public class ResultPanel : NetworkBehaviour {
             RuleManager.Instance?.Initialize();
             GameManager.Instance.EndGame();
             GameSceneManager.Instance.LoadGameSceneForAll();
+            //プレイヤーの状態を戻す
+            ServerManager.instance.ResetCharacterHPandAmmo();
             resultManager.HideResult(); // 仮: UI削除のみ（再戦処理は後で追加）
         }
     }
