@@ -70,8 +70,7 @@ public class CharacterInput : NetworkBehaviour {
         InteractTriggered = false;
         isJumpPressed = false;
 
-        if (core != null)
-            core.parameter.AttackTrigger = false;
+        if (core != null) core.parameter.AttackTrigger = false;
     }
 
     #region InputSystem ‹¤’Êƒnƒ“ƒhƒ‰
@@ -198,8 +197,11 @@ public class CharacterInput : NetworkBehaviour {
     /// UŒ‚“ü—Í
     /// </summary>
     public void OnAttack(InputAction.CallbackContext ctx) {
-        //€–S‚µ‚Ä‚¢‚½‚çUŒ‚‚Å‚«‚È‚¢
-        if (core.parameter.isDead || !isLocalPlayer) return;
+        //€–S‚µ‚Ä‚¢‚½‚çƒtƒ‰ƒO‚ğ‰º‚µ‚ÄUŒ‚‚Å‚«‚È‚­‚·‚é
+        if (core.parameter.isDead || !isLocalPlayer) {
+            AttackPressed = false;
+            return;
+        }
 
         //“ü—Íƒ^ƒCƒv‚Å•ªŠò
         switch (ctx.phase) {

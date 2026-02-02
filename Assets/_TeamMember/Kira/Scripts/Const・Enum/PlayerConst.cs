@@ -1,3 +1,6 @@
+/// <summary>
+/// プレイヤー関連の基本定数
+/// </summary>
 public class PlayerConst {
     //キャラクターのデフォルト最大体力値
     public const int DEFAULT_MAXHP = 90;
@@ -22,4 +25,16 @@ public class PlayerConst {
     public const float RESPAWN_TIME = 3.0f;
     //リスポーン後の無敵時間
     public const float RESPAWN_INVINCIBLE_TIME = 3.0f;
+}
+
+/// <summary>
+/// パラメータ種別の列挙体
+/// </summary>
+public enum ParamaterType {
+    HP = 0,
+    MP,
+    Attack,
+    defence,
+    moveSpeed,
+    damageRate,
 }
