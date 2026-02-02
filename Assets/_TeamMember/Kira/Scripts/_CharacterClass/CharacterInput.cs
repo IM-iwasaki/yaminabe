@@ -170,7 +170,8 @@ public class CharacterInput : NetworkBehaviour {
     /// 移動入力
     /// </summary>
     public void OnMove(InputAction.CallbackContext ctx) {
-        if (!core.parameter.canMove) return;
+        //移動できない状態、または死亡中なら帰る
+        if (!core.parameter.canMove || core.parameter.isDead) return;
 
         MoveInput = ctx.ReadValue<Vector2>();
 
@@ -183,8 +184,6 @@ public class CharacterInput : NetworkBehaviour {
     /// ジャンプ
     /// </summary>
     public void OnJump(InputAction.CallbackContext context) {
-        //TODO:ホコを持っていたら弾く
-
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && core.parameter.IsGrounded) {
             isJumpPressed = true;
