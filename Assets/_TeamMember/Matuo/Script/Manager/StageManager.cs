@@ -194,7 +194,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
         if (prefab == null)
             return;
 
-        currentRuleObject = Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
+        currentRuleObject = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
         currentRuleObject.tag = "RuleObject";
         NetworkServer.Spawn(currentRuleObject);
 
