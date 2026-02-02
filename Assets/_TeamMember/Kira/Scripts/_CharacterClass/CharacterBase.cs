@@ -31,9 +31,6 @@ public abstract class CharacterBase : CreatureBase {
 
     public int bannerNum = 0;
 
-    private List<Coroutine> buffList = new List<Coroutine>();
-    private List<Coroutine> debuffList = new List<Coroutine>();
-
     //各コンポーネントの参照
     public CharacterInput input { get; private set; }
     public CharacterActions action { get; private set; }
@@ -804,18 +801,6 @@ public abstract class CharacterBase : CreatureBase {
     #endregion
 
     #endregion
-}
-
-/// <summary>
-/// パラメータ種別の列挙体
-/// </summary>
-public enum ParamaterType {
-    HP = 0,
-    MP,
-    Attack,
-    defence,
-    moveSpeed,
-    damageRate,
 }
 
 /// <summary>
