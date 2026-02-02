@@ -4,9 +4,9 @@ using UnityEngine;
 /// <summary>
 /// 敵ステータス（サーバー管理）
 /// </summary>
-public class EnemyStatus : CreatureBase {
+public class EnemyStatusBase : CreatureBase {
     [Header("ステータスデータ")]
-    public EnemyBaseData statusData;
+    public EnemyStatusBaseData statusData;
 
     [SyncVar]
     private int currentHp;

@@ -3,75 +3,57 @@ using Mirror;
 using System.Collections.Generic;
 
 /// <summary>
-/// 敵スキル管理クラス
-/// ・スキルのクールタイム管理
-/// ・サーバー上でのみスキル実行を許可
+/// 敵スキル管理（確率＆クールタイム制御）
 /// </summary>
 public class EnemySkillController : NetworkBehaviour {
 
     [SerializeField]
     private List<EnemySkillData> skills = new();
-    // この敵が使用可能なスキル一覧（ScriptableObject）
-
+    [Header("上から抽選されます")]
     private Dictionary<EnemySkillData, float> cooldownTimers = new();
-    // 各スキルごとの残りクールタイム管理用
-
-    private EnemyStatus status;
-    // 敵のステータス参照（攻撃力など取得用）
+    private EnemyStatusBase status;
 
     void Awake() {
-        // 敵ステータスを取得
-        status = GetComponent<EnemyStatus>();
+        status = GetComponent<EnemyStatusBase>();
 
-        // すべてのスキルのクールタイムを初期化
         foreach (var skill in skills) {
             cooldownTimers[skill] = 0f;
         }
     }
 
     void Update() {
-        // クールタイムの更新はサーバーのみで行う
         if (!isServer) return;
 
-        // 各スキルのクールタイムを減算
+        // クールタイム更新
         foreach (var skill in skills) {
             cooldownTimers[skill] -= Time.deltaTime;
         }
     }
 
     /// <summary>
-    /// スキル使用要求（サーバー専用）
-    /// ・クールタイムが残っていない場合のみ実行
-    /// ・実際の処理内容は EnemySkillData 側に委譲
+    /// 確率判定込みでスキル使用を試みる
     /// </summary>
-    /// <param name="skill">使用するスキル</param>
-    /// <param name="target">攻撃対象（主にプレイヤー）</param>
+    /// <returns>スキルを使ったか</returns>
     [Server]
-    public void TryUseSkill(EnemySkillData skill, Transform target) {
+    public bool TryUseSkill(Transform target) {
 
-        // 管理対象外のスキルは無視
-        if (!cooldownTimers.ContainsKey(skill)) return;
+        foreach (var skill in skills) {
 
-        // クールタイム中なら使用不可
-        if (cooldownTimers[skill] > 0f) return;
+            // クールタイム中は不可
+            if (cooldownTimers[skill] > 0f) continue;
 
-        // スキル実行
-        skill.Execute(gameObject, status, target);
+            // 確率判定
+            if (Random.value > skill.useRate) continue;
 
-        // クールタイムをリセット
-        cooldownTimers[skill] = skill.cooldown;
+            // スキル実行
+            skill.Execute(gameObject, status, target);
+
+            // クールタイムリセット
+            cooldownTimers[skill] = skill.cooldown;
+
+            return true; // 1回使ったら終了
+        }
+
+        return false;
     }
-
-
-    /// <summary>
-    /// デフォルトで使用するスキルを取得
-    /// （今は先頭の1つを返すだけ）
-    /// </summary>
-    public EnemySkillData GetDefaultSkill() {
-        if (skills == null || skills.Count == 0) return null;
-        return skills[0];
-    }
-
-
-
 }

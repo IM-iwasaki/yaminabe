@@ -9,12 +9,12 @@ using Mirror;
 public class EnemyBaseAI : NetworkBehaviour {
     private NavMeshAgent agent;
     private Transform target;               // 追跡対象
-    private EnemyStatus status;          // ステータス管理（NetworkBehaviour）
+    private EnemyStatusBase status;          // ステータス管理（NetworkBehaviour）
 
     void Awake() {
         // コンポーネント取得のみ（状態変更しない）
         agent = GetComponent<NavMeshAgent>();
-        status = GetComponent<EnemyStatus>();
+        status = GetComponent<EnemyStatusBase>();
     }
 
     public override void OnStartServer() {
