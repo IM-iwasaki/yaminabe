@@ -94,13 +94,12 @@ public class ServerManager : NetworkBehaviour {
     /// ‘Sˆõ‚ÌHPA’e”ó‘Ô‚ğ–ß‚·
     /// </summary>
     [Server]
-    public void ResetCharacterHPandAmmo() {
+    public void ResetCharacterStatus() {
         foreach (var player in connectPlayer) {
             GeneralCharacter resetPlayer = player.GetComponent<GeneralCharacter>();
+            resetPlayer.parameter.StatusInport(resetPlayer.parameter.runtimeStatus);
+            //–œ‚ªˆê‚Ì€–Só‘Ô‰ğœ
             resetPlayer.ResetHealth();
-            MainWeaponController mainWeaponController = player.GetComponent<MainWeaponController>();
-            mainWeaponController.ServerResetMainWeapon(resetPlayer.parameter.runtimeStatus);
-            mainWeaponController.RequestAmmoReset();
         }
     }
 }
