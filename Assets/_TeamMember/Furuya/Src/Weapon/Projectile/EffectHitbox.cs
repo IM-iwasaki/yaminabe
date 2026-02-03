@@ -6,11 +6,9 @@ using Mirror;
 [RequireComponent(typeof(SphereCollider))]
 public class EffectHitbox : NetworkBehaviour {
 
-    [Header("Damage")]
     [SerializeField] private int damage = 10;
     [SerializeField] private int maxHitPerTarget = 2;
 
-    [Header("Motion")]
     [SerializeField] private float moveSpeed = 6f;
     [SerializeField] private float startRadius = 0.5f;
     [SerializeField] private float endRadius = 4f;
@@ -20,12 +18,11 @@ public class EffectHitbox : NetworkBehaviour {
 
     private Vector3 forward;
     private float maxDistance;
-    private Vector3 startPosition;
     private float lifeTime;
 
+    private Vector3 startPosition;
     private SphereCollider sphereCollider;
 
-    // 対象ごとのヒット回数
     private Dictionary<CharacterBase, int> hitCountMap = new();
 
     public override void OnStartServer() {
@@ -34,16 +31,15 @@ public class EffectHitbox : NetworkBehaviour {
         hitCountMap.Clear();
     }
 
-    // ★ 霜踏み用 Init
     [Server]
     public void Init(
-     int _damage,
-     string _ownerName,
-     int _id,
-     Vector3 _forward,
-     float _maxDistance,
-     float _lifeTime
- ) {
+        int _damage,
+        string _ownerName,
+        int _id,
+        Vector3 _forward,
+        float _maxDistance,
+        float _lifeTime
+    ) {
         damage = _damage;
         ownerName = _ownerName;
         ID = _id;
@@ -60,24 +56,31 @@ public class EffectHitbox : NetworkBehaviour {
         StartCoroutine(MoveAndExpand());
     }
 
-    // HitBox の本体挙動
     [Server]
     private IEnumerator MoveAndExpand() {
         float elapsed = 0f;
 
-        while (elapsed < lifeTime) {
-            float t = elapsed / lifeTime;
-
-            // 前方移動
+        while (true) {
             transform.position += forward * moveSpeed * Time.deltaTime;
 
-            // 半径拡大（Wi-Fi波形）
+            float traveled = Vector3.Distance(startPosition, transform.position);
+            float t = traveled / maxDistance;
+
             sphereCollider.radius = Mathf.Lerp(startRadius, endRadius, t);
+
+            if (traveled >= maxDistance)
+                break;
+
+            if (elapsed >= lifeTime)
+                break;
 
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        EffectPool.Instance.ReturnToPool(gameObject, 0.01f);
     }
+
 
     [ServerCallback]
     private void OnTriggerEnter(Collider other) {
@@ -91,7 +94,8 @@ public class EffectHitbox : NetworkBehaviour {
             return;
 
         target.TakeDamage(damage, ownerName, ID);
-
         hitCountMap[target] = hitCount + 1;
     }
+
+
 }

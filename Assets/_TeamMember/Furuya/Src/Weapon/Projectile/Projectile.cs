@@ -41,11 +41,13 @@ public class Projectile : NetworkBehaviour {
     void OnTriggerEnter(Collider other) {
         if (!initialized || !isServer) return;
         if (other.gameObject == owner) return;
+        if (other.TryGetComponent<DoTArea>(out _)) return;
+
 
         if (other.TryGetComponent<NetworkIdentity>(out var identity)) {
             if (identity.TryGetComponent(out CharacterBase target)) {
                 if (target.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID)
-                target.TakeDamage(damage, ownerName, ID);
+                    target.TakeDamage(damage, ownerName, ID);
             }
         }
 

@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -11,14 +12,30 @@ public class EnemyStatusBase : CreatureBase {
     [SyncVar]
     private int currentHp;
 
+    // 死亡通知（Spawner / Pool が受け取る）
+    public Action<EnemyStatusBase> onDeath;
+
+
+
     public override void OnStartServer() {
         if (statusData == null) {
             Debug.LogError($"{name} に EnemyStatusData が設定されていません");
             return;
         }
 
+        ResetStatus();
+    }
+
+    /// <summary>
+    /// ステータス初期化（プール再利用時にも呼ぶ）
+    /// </summary>
+    [Server]
+    public void ResetStatus() {
         currentHp = statusData.maxHp;
     }
+
+
+
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
@@ -53,6 +70,8 @@ public class EnemyStatusBase : CreatureBase {
 
     [Server]
     void EnemyDie() {
+        // 「死んだよ」と通知するだけ
+        onDeath?.Invoke(this);
         NetworkServer.Destroy(gameObject);
     }
 

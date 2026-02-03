@@ -18,7 +18,7 @@ public class MagicProjectile : NetworkBehaviour {
     private int ID;
     private EffectType hitEffectType;
     private bool initialized;
-    private float lifetime = 5f;
+    [SerializeField]private float lifetime = 5f;
 
     /// <summary>
     /// 弾の初期化（発射時に呼ぶ）
@@ -42,6 +42,24 @@ public class MagicProjectile : NetworkBehaviour {
             if (type == ProjectileType.Parabola) {
                 rb.useGravity = true;
                 rb.velocity = direction * speed + Vector3.up * initialHeightSpeed;
+            }
+            else if (type == ProjectileType.GroundLine) {
+                rb.useGravity = false;
+
+                // 水平向き
+                Vector3 forward = direction;
+                forward.y = 0;
+                forward.Normalize();
+
+                // 床に吸着
+                Vector3 pos = transform.position;
+                if (Physics.Raycast(pos + Vector3.up, Vector3.down, out RaycastHit hit, 5f)) {
+                    transform.position = hit.point;
+                    transform.rotation = Quaternion.LookRotation(forward, hit.normal);
+                }
+                else {
+                    transform.rotation = Quaternion.LookRotation(forward);
+                }
             }
             else {
                 rb.useGravity = false;
@@ -67,19 +85,33 @@ public class MagicProjectile : NetworkBehaviour {
     void OnTriggerEnter(Collider other) {
         if (!initialized || !isServer) return;
         if (other.gameObject == owner ||
-            other.gameObject.tag == "Magic" ||
-            other.gameObject.tag == "Bullet") return;
+            other.CompareTag("Magic")) return;
 
-        if (other.TryGetComponent(out CharacterBase target)) {
-            //チームIDが違ったらダメージを与える
-            if (target.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID)
+        // GroundLine は床に当たっても消さない
+        if (type == ProjectileType.GroundLine) {
+            // キャラ以外は無視
+            if (!other.TryGetComponent(out CharacterBase target))
+                return;
+
+            // チーム判定
+            if (target.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID
+                || target.parameter.TeamID == -1) {
                 target.TakeDamage(damage, ownerName, ID);
+            }
+
+            RpcPlayHitEffect(transform.position, hitEffectType);
+            return; //消さない
         }
 
-
+        // ---- 既存 Projectile 用 ----
+        if (other.TryGetComponent(out CharacterBase targetNormal)) {
+            if (targetNormal.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID
+                || targetNormal.parameter.TeamID == -1) {
+                targetNormal.TakeDamage(damage, ownerName, ID);
+            }
+        }
 
         RpcPlayHitEffect(transform.position, hitEffectType);
-
         Deactivate();
     }
 

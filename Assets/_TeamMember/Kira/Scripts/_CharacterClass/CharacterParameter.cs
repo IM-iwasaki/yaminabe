@@ -172,7 +172,6 @@ public class CharacterParameter : NetworkBehaviour{
         var subWeapon = runtimeStatus.SubWeapon.WeaponName;
 
         weaponController_main.CmdSetWeaponData(mainWeapon);
-        //weaponController_main.SetWeaponDataInit(mainWeapon);
         weaponController_sub.SetWeaponData(subWeapon);
      }
 
@@ -242,6 +241,21 @@ public class CharacterParameter : NetworkBehaviour{
             Debug.LogWarning("UIが存在しないため、MP更新処理をスキップしました。");
 #endif
         }
+    }
+
+    /// <summary>
+    /// 追加 マツオ :クライアントMP回復用
+    /// </summary>
+    /// <param name="value"></param>
+    [Command]
+    public void CmdRecoverMP(int value) {
+        if (isDead) return;
+
+        MP += value;
+
+        // 上限補正
+        if (MP > maxMP)
+            MP = maxMP;
     }
 
     /// <summary>
