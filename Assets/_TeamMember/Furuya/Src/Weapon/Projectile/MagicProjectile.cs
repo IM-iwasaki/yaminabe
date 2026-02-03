@@ -73,6 +73,14 @@ public class MagicProjectile : NetworkBehaviour {
             StopAllCoroutines();
             StartCoroutine(AutoDisable()); // 自動で非アクティブ化
         }
+
+        // エフェクト再初期化（必須）
+        var particles = GetComponentsInChildren<ParticleSystem>(true);
+        foreach (var ps in particles) {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Play();
+        }
+
     }
 
     void FixedUpdate() {
@@ -138,6 +146,18 @@ public class MagicProjectile : NetworkBehaviour {
         else
             NetworkServer.Destroy(gameObject);
     }
+
+    [Server]
+    public void HideImmediately() {
+        StartCoroutine(HideNextFrame());
+    }
+
+    [Server]
+    private IEnumerator HideNextFrame() {
+        yield return null; // 1フレーム待つ
+        ProjectilePool.Instance.DespawnToPool(gameObject);
+    }
+
 
     /// <summary>
     /// クライアントエフェクト表示

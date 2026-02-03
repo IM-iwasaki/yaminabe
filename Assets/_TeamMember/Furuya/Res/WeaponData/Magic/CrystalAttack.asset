@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: CrystalAttack
   type: 2
-  damage: 40
-  cooldown: 0.5
+  damage: 80
+  cooldown: 1
   ID: 0
   muzzleFlashType: 0
   hitEffectType: 2
@@ -29,7 +29,3 @@ MonoBehaviour:
   magicType: 3
   initialHeightSpeed: 0
   se: 1
-  stepCount: 1
-  stepDistance: 0
-  stepInterval: 0
-  hitboxLifeTime: 0

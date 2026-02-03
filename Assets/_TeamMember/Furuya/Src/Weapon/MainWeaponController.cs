@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
 using System.Collections;
+using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -392,8 +393,6 @@ public class MainWeaponController : NetworkBehaviour {
 
         // 発射エフェクト (チャージ停止＆マズルフラッシュ)
         RpcCastMagic(firePoint.position, magicData.muzzleFlashType);
-
-        //Vector3 dir = characterBase.parameter.GetShootDirection();
 
         // 弾の生成
         ServerMagicAttack(direction);

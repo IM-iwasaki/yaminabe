@@ -188,8 +188,9 @@ public abstract class CharacterBase : CreatureBase {
         //HPの減算処理
         parameter.HP -= (int)damage;
 
-        // hitSE 再生
-        PlayHitSE(_ID);
+        if(_ID != -1)
+            // hitSE 再生
+            PlayHitSE(_ID);
 
         if (parameter.HP <= 0) {
             parameter.HP = 0;
@@ -200,7 +201,7 @@ public abstract class CharacterBase : CreatureBase {
 
             Dead(_name);
 
-            if (PlayerListManager.Instance != null) {
+            if (PlayerListManager.Instance != null || _ID != -1) {
                 // スコア加算
                 PlayerListManager.Instance.AddScoreById(_ID, 100);
                 PlayerListManager.Instance.AddKillById(_ID);
@@ -238,7 +239,6 @@ public abstract class CharacterBase : CreatureBase {
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
         //死亡フラグをたててHPを0にしておく
         parameter.isDead = true;
-        ChatManager.Instance.CmdSendSystemMessage(_name + " is Dead!!");
         //死亡トリガーを発火
         parameter.StartDeadTrigger();
         //バフ全解除
