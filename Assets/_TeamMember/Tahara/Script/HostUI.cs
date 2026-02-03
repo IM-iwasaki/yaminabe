@@ -40,6 +40,12 @@ public class HostUI : NetworkBehaviour {
     /// </summary>
     [SerializeField]
     private Button gameStartButton = null;
+    /// <summary>
+    /// PvEボタン
+    /// </summary>
+    [SerializeField]
+    private Button PvEButton = null;
+
 
     public void Init() {
         uiRootObject = GameObject.Find("Background");
@@ -49,7 +55,11 @@ public class HostUI : NetworkBehaviour {
         }
         rule.text = ruleNames[ruleIndex];
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
-        
+
+        // PvE開始
+        if (PvEButton != null && GameSceneManager.Instance != null) {
+            PvEButton.onClick.AddListener( GameSceneManager.Instance.LoadPvESceneForAll);
+        }
     }
 
     /// <summary>
