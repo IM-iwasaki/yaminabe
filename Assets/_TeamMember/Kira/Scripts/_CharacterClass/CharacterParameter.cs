@@ -257,6 +257,46 @@ public class CharacterParameter : NetworkBehaviour{
         if (MP > maxMP)
             MP = maxMP;
     }
+    /// <summary>
+    /// 追加　マツオ : サーバー側から呼んで武器を初期装備に戻す
+    /// </summary>
+    [Server]
+    public void ResetWeaponToDefault() {
+        // メイン武器とサブ武器の参照を取得
+        var weaponControllerMain = GetComponent<MainWeaponController>();
+        var weaponControllerSub = GetComponent<SubWeaponController>();
+
+        if (runtimeStatus == null || weaponControllerMain == null || weaponControllerSub == null)
+            return;
+
+        // 初期装備名を取得
+        string mainWeaponName = runtimeStatus.MainWeapon.WeaponName;
+        string subWeaponName = runtimeStatus.SubWeapon.WeaponName;
+
+        // サーバー側で武器データを設定
+        weaponControllerMain.CmdSetWeaponData(mainWeaponName);
+        weaponControllerSub.SetWeaponData(subWeaponName);
+
+        // クライアント側にも反映
+        RpcUpdateWeaponOnClient(mainWeaponName, subWeaponName);
+    }
+
+    /// <summary>
+    /// 追加　マツオ : クライアント用武器を初期装備に戻す
+    /// </summary>
+    [ClientRpc]
+    private void RpcUpdateWeaponOnClient(string mainWeaponName, string subWeaponName) {
+        if (!isLocalPlayer) return;
+
+        var weaponControllerMain = GetComponent<MainWeaponController>();
+        var weaponControllerSub = GetComponent<SubWeaponController>();
+
+        if (weaponControllerMain != null)
+            weaponControllerMain.CmdSetWeaponData(mainWeaponName);
+
+        if (weaponControllerSub != null)
+            weaponControllerSub.SetWeaponData(subWeaponName);
+    }
 
     /// <summary>
     /// リロードアイコンの処理を発火
