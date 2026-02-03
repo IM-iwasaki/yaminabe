@@ -62,6 +62,45 @@ public class StageManager : NetworkSystemObject<StageManager> {
         RegisterRespawnPoints(currentStageInstance);
         //RuleManager.Instance.winningTeams.Clear();
     }
+
+    /// <summary>
+    /// 古谷　ルールごとのオブジェクト生成
+    /// </summary>
+    [Server]
+    void ApplyRuleObjects(GameRuleType rule) {
+        // 既存のルールオブジェクトをタグで検索して削除
+        var exist = GameObject.FindGameObjectsWithTag("RuleObject");
+        foreach (var obj in exist) {
+            NetworkServer.Destroy(obj);
+        }
+
+        currentRuleObject = null;
+        currentHoko = null; // 古い参照はクリア
+
+        // DeathMatch の場合は生成なし
+        if (rule == GameRuleType.DeathMatch)
+            return;
+
+        // 作るプレハブを選ぶ
+        GameObject prefab = null;
+        switch (rule) {
+            case GameRuleType.Area: prefab = areaPrefab; break;
+            case GameRuleType.Hoko: prefab = hokoPrefab; break;
+        }
+
+        if (prefab == null)
+            return;
+
+        currentRuleObject = Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
+        currentRuleObject.tag = "RuleObject";
+        NetworkServer.Spawn(currentRuleObject);
+
+        // Hoko なら CaptureHoko コンポーネントを保持
+        if (rule == GameRuleType.Hoko) {
+            currentHoko = currentRuleObject.GetComponent<CaptureHoko>();
+        }
+    }
+
     /// <summary>
     /// PVE用のステージ生成
     /// </summary>
@@ -96,11 +135,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
             .GetComponentsInChildren<AreaSpawnPoint>(true);
 
         foreach (var sp in spawnPoints) {
-            var areaObj = Instantiate(
-                pveAreaPrefab,
-                sp.transform.position,
-                sp.transform.rotation
-            );
+            var areaObj = Instantiate(pveAreaPrefab,sp.transform.position,sp.transform.rotation);
 
             NetworkServer.Spawn(areaObj);
 
@@ -123,11 +158,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
                 Vector3 offset = Random.insideUnitSphere * 0.5f;
                 offset.y = 0f;
 
-                var hoko = Instantiate(
-                    pveHokoPrefab,
-                    sp.transform.position + offset,
-                    Quaternion.identity
-                );
+                var hoko = Instantiate(pveHokoPrefab,sp.transform.position + offset,Quaternion.identity);
 
                 NetworkServer.Spawn(hoko);
             }
@@ -141,7 +172,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     [Server]
     public void ApplyRuleObjectsForPVE(List<GameRuleType> rules) {
         // 既存のルールオブジェクト削除
-        var exist = GameObject.FindGameObjectsWithTag("RuleObject");
+        var exist = GameObject.FindGameObjectsWithTag("PVERuleObject");
         foreach (var obj in exist) NetworkServer.Destroy(obj);
 
         currentRuleObject = null;
@@ -152,57 +183,19 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
             GameObject prefab = null;
             switch (rule) {
-                case GameRuleType.Area: prefab = areaPrefab; break;
-                case GameRuleType.Hoko: prefab = hokoPrefab; break;
+                case GameRuleType.Area: prefab = pveAreaPrefab; break;
+                case GameRuleType.Hoko: prefab = pveHokoPrefab; break;
             }
             if (prefab == null) continue;
 
             var obj = Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
-            obj.tag = "RuleObject";
+            obj.tag = "PVERuleObject";
             NetworkServer.Spawn(obj);
 
             if (rule == GameRuleType.Hoko)
                 currentHoko = obj.GetComponent<CaptureHoko>();
         }
-    }
-
-    /// <summary>
-    /// 古谷　ルールごとのオブジェクト生成
-    /// </summary>
-    [Server]
-    void ApplyRuleObjects(GameRuleType rule) {
-        // 既存のルールオブジェクトをタグで検索して削除
-        var exist = GameObject.FindGameObjectsWithTag("RuleObject");
-        foreach (var obj in exist) {
-            NetworkServer.Destroy(obj);
-        }
-
-        currentRuleObject = null;
-        currentHoko = null; // 古い参照はクリア
-
-        // DeathMatch の場合は生成なし
-        if (rule == GameRuleType.DeathMatch)
-            return;
-
-        // 作るプレハブを選ぶ
-        GameObject prefab = null;
-        switch (rule) {
-            case GameRuleType.Area: prefab = areaPrefab; break;
-            case GameRuleType.Hoko: prefab = hokoPrefab; break;
-        }
-
-        if (prefab == null)
-            return;
-
-        currentRuleObject = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
-        currentRuleObject.tag = "RuleObject";
-        NetworkServer.Spawn(currentRuleObject);
-
-        // Hoko なら CaptureHoko コンポーネントを保持
-        if (rule == GameRuleType.Hoko) {
-            currentHoko = currentRuleObject.GetComponent<CaptureHoko>();
-        }
-    }
+    }  
 
     /// <summary>
     /// ステージ内のリスポーン地点をタグから登録

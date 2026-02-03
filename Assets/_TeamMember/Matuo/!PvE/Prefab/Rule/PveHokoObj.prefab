@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 6650102238680275545}
   - component: {fileID: 2440843089928859057}
   - component: {fileID: 7734420524631187945}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: PveHokoObj
-  m_TagString: HokoObject
+  m_TagString: PVERuleObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 9153195026797928847}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -169,8 +169,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  followSpeed: 5
-  holder: {fileID: 0}
+  holdHeight: 1.2
 --- !u!1001 &1220684603443200012
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -179,9 +178,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5240677697087624910}
     m_Modifications:
+    - target: {fileID: 100000, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 100008, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 100010, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
       propertyPath: m_Name
       value: HolyEffect5
+      objectReference: {fileID: 0}
+    - target: {fileID: 100010, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 100012, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 53d5cd0c91ad11346bcce516a4acf972, type: 3}
       propertyPath: m_LocalScale.x
@@ -389,6 +416,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5240677697087624910}
     m_Modifications:
+    - target: {fileID: 225381731489972172, guid: 2b09f35966ddbb141ac4c3b9cc87a873, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 3775495376216996870, guid: 2b09f35966ddbb141ac4c3b9cc87a873, type: 3}
       propertyPath: m_LocalScale.x
       value: 700
@@ -448,6 +479,10 @@ PrefabInstance:
     - target: {fileID: 4552736415808186044, guid: 2b09f35966ddbb141ac4c3b9cc87a873, type: 3}
       propertyPath: m_Name
       value: Crown01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552736415808186044, guid: 2b09f35966ddbb141ac4c3b9cc87a873, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
