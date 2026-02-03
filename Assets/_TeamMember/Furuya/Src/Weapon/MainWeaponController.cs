@@ -246,7 +246,17 @@ public class MainWeaponController : NetworkBehaviour {
         // プレイヤーの前方ベクトル（視線や武器の向き）
         Vector3 forward = firePoint.forward;
 
+
+
         foreach (var c in hits) {
+            Vector3 toTarget = (c.transform.position - firePoint.position).normalized;
+            float dot = Vector3.Dot(forward, toTarget);
+            
+            float angle = meleeData.meleeAngle;
+            float threshold = Mathf.Cos(angle * Mathf.Deg2Rad);
+            //角度チェック
+            if (dot < threshold) continue;
+
             var hp = c.GetComponent<CharacterBase>();
             if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == characterBase.parameter.TeamID) continue;
             hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
@@ -254,7 +264,7 @@ public class MainWeaponController : NetworkBehaviour {
         }
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
 #if UNITY_EDITOR
-        MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
+        MeleeAttackDebugArc.Create(firePoint.position, forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
     }
 
