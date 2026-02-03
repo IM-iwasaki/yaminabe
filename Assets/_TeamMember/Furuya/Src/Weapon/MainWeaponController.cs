@@ -370,9 +370,6 @@ public class MainWeaponController : NetworkBehaviour {
                 Direction
                 );
         }
-        else if(proj.TryGetComponent(out EffectHitbox effectHitbox)) {
-            ServerCrystalAttack(magicData);
-        }
     }
 
     /// <summary>
@@ -404,38 +401,6 @@ public class MainWeaponController : NetworkBehaviour {
         // SE はここでサーバー再生
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
     }
-
-    [Server]
-    private void ServerCrystalAttack(MainMagicData data) {
-        Vector3 origin = transform.position;
-
-        Vector3 forward = transform.forward;
-        forward.y = 0;
-        forward.Normalize();
-
-        Quaternion rot = Quaternion.LookRotation(forward);
-
-        GameObject hitbox = EffectPool.Instance.GetFromPool(
-            data.projectilePrefab,
-            origin,
-            rot
-        );
-
-        if (hitbox.TryGetComponent(out EffectHitbox eh)) {
-            eh.Init(
-                data.damage,
-                characterBase.parameter.PlayerName,
-                characterBase.parameter.playerId,
-                forward,
-                data.stepDistance * data.stepCount, // 最大距離
-                data.hitboxLifeTime
-            );
-        }
-
-        EffectPool.Instance.ReturnToPool(hitbox, data.hitboxLifeTime);
-    }
-
-
 
     // --- チャージエフェクト再生 ---
     [ClientRpc]

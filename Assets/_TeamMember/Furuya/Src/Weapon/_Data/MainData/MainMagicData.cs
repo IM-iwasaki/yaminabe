@@ -22,12 +22,4 @@ public class MainMagicData : WeaponData {
 
     [Header("Audio Effects")]
     public MagicSEType se;
-
-
-    //‘š“¥‚İê—p
-    [Header("For Skills")]
-    public int stepCount = 6;
-    public float stepDistance = 1.2f;
-    public float stepInterval = 0.08f;
-    public float hitboxLifeTime = 0.25f;
 }
