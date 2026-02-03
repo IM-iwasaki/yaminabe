@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 5479046135522314130}
   - component: {fileID: 985724636388858051}
   - component: {fileID: -6927161880704647023}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: PveAreaObj
-  m_TagString: RuleObject
+  m_TagString: PVERuleObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -106,6 +106,10 @@ PrefabInstance:
     - target: {fileID: 3961908560708135281, guid: d07e76ca352441a47862acb04eb73157, type: 3}
       propertyPath: m_Name
       value: decal_002
+      objectReference: {fileID: 0}
+    - target: {fileID: 3961908560708135281, guid: d07e76ca352441a47862acb04eb73157, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 4445147891973370827, guid: d07e76ca352441a47862acb04eb73157, type: 3}
       propertyPath: m_LocalScale.x
