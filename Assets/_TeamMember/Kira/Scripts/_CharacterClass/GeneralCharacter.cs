@@ -40,6 +40,12 @@ public class GeneralCharacter : CharacterBase {
 
         //死んでいたら以降の処理は行わない。
         //if (isDead) return;
+
+        //バフデバフの処理
+        //TODO:ここに処理を書く。
+        for(int index = 0 ; index < temporaryBuffs.Count - 1 ; index++) {
+
+        }
     }
 
     [ClientRpc]

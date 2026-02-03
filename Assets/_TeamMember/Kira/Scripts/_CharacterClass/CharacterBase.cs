@@ -31,6 +31,8 @@ public abstract class CharacterBase : CreatureBase {
 
     public int bannerNum = 0;
 
+    protected List<List<TemporaryBuff>> temporaryBuffs = new List<List<TemporaryBuff>>();
+
     //各コンポーネントの参照
     public CharacterInput input { get; private set; }
     public CharacterActions action { get; private set; }
@@ -626,6 +628,8 @@ public abstract class CharacterBase : CreatureBase {
     public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
+        temporaryBuffs[(int)ParamaterType.HP].Add(new TemporaryBuff(ParamaterType.HP,_value,_usingTime));
+
         //  エフェクト再生
         PlayEffect(HEAL_BUFF_EFFECT);
 
@@ -816,13 +820,13 @@ public class TemporaryBuff {
     /// <summary>
     /// 効果値
     /// </summary>
-    public int amount;
+    public float amount;
     /// <summary>
     /// 効果時間
     /// </summary>
     public float duration;
 
-    public TemporaryBuff(ParamaterType type, int amount, float duration) {
+    public TemporaryBuff(ParamaterType type, float amount, float duration) {
         this.type = type;
         this.amount = amount;
         this.duration = duration;
