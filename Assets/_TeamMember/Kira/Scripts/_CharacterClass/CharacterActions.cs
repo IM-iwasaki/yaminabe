@@ -97,17 +97,13 @@ public class CharacterActions : NetworkBehaviour {
     /// MPを回復する
     /// </summary>
     void MPRegeneration() {
-        //攻撃してから短い間を置く。
+        // 攻撃直後は回復しない
         if (Time.time <= param.attackStartTime + 0.2f) return;
-        //基本回復量は1
+
         int MPHealValue = 1;
-        //移動していないときは回復量+2
         if (!isMoving) MPHealValue += 2;
 
-        //MP回復
-        param.MP += MPHealValue;
-        //最大値を超えたら補正する
-        if (param.MP > param.maxMP) param.MP = param.maxMP;
+        param.CmdRecoverMP(MPHealValue);
     }
 
     /// <summary>

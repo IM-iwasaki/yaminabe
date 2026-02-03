@@ -244,6 +244,21 @@ public class CharacterParameter : NetworkBehaviour{
     }
 
     /// <summary>
+    /// 追加 マツオ :クライアントMP回復用
+    /// </summary>
+    /// <param name="value"></param>
+    [Command]
+    public void CmdRecoverMP(int value) {
+        if (isDead) return;
+
+        MP += value;
+
+        // 上限補正
+        if (MP > maxMP)
+            MP = maxMP;
+    }
+
+    /// <summary>
     /// リロードアイコンの処理を発火
     /// hook関数で呼び出す
     /// </summary>
