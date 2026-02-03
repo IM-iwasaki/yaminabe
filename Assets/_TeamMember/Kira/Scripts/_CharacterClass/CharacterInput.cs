@@ -170,13 +170,17 @@ public class CharacterInput : NetworkBehaviour {
     /// 移動入力
     /// </summary>
     public void OnMove(InputAction.CallbackContext ctx) {
-        //移動できない状態、または死亡中なら帰る
-        if (!core.parameter.canMove || core.parameter.isDead) return;
+        //移動できない状態なら帰る
+        if (!core.parameter.canMove) return;
 
         MoveInput = ctx.ReadValue<Vector2>();
 
         float moveX = MoveInput.x;
         float moveZ = MoveInput.y;
+
+        //死亡中は移動ベクトルを0にする
+        if (core.parameter.isDead) MoveInput = Vector2.zero; 
+
         animCon.ControllMoveAnimation(moveX, moveZ);
     }
 
