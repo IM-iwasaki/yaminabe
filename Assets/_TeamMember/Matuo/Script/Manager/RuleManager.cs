@@ -8,6 +8,7 @@ using System.Collections.Generic;
 /// </summary>
 public class RuleManager : NetworkSystemObject<RuleManager> {
     public Dictionary<int, float> teamScores = new(); // チームスコア
+    [SyncVar(hook = nameof(OnRuleChanged))]
     public GameRuleType currentRule = GameRuleType.Area;
 
     public Dictionary<GameRuleType, float> winScores = new() {
@@ -43,6 +44,16 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     public void SetInitialScore(int teamId, float value) {
         teamScores[teamId] = value;
         RpcUpdateScore(teamId, value);
+    }
+
+    /// <summary>
+    /// ルール変更をクライアントに送る
+    /// </summary>
+    /// <param name="oldRule"></param>
+    /// <param name="newRule"></param>
+    private void OnRuleChanged(GameRuleType oldRule, GameRuleType newRule) {
+        // クライアント側で UI を更新
+        GameUIManager.Instance?.UpdateUI();
     }
 
     /// <summary>

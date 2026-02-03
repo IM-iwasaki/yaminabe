@@ -73,7 +73,7 @@ public class GameUIManager : MonoBehaviour {
     /// <summary>
     /// タイマーとスコアのUIを更新
     /// </summary>
-    private void UpdateUI() {
+    public void UpdateUI() {
         float remaining = gameTimer.GetRemainingTime();
         timerText.text =
             $"{Mathf.FloorToInt(remaining / 60f):00}:{Mathf.FloorToInt(remaining % 60f):00}";
