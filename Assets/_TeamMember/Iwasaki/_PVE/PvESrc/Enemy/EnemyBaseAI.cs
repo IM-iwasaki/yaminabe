@@ -1,51 +1,34 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Mirror;
-using System.Collections;
 
 /// <summary>
-/// 敵AI（サーバー管理・NavMesh追跡）
+/// 敵AI（サーバー管理・NavMesh 追跡）
 /// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyBaseAI : NetworkBehaviour {
-    private NavMeshAgent agent;
-    private Transform target;               // 追跡対象
-    private EnemyStatusBase status;          // ステータス管理
+
+    private NavMeshAgent agent;      // NavMesh 移動制御
+    private Transform target;        // 追跡対象プレイヤー
+    private EnemyStatusBase status;  // ステータス管理（速度など）
 
     void Awake() {
-        // 参照取得のみ（ここでは有効化しない）
+        // 参照取得のみ（ここでは移動処理はしない）
         agent = GetComponent<NavMeshAgent>();
         status = GetComponent<EnemyStatusBase>();
 
-        // NavMesh 完成前に動かないよう無効化
+        // 念のため無効化（Server 開始時に有効化）
         agent.enabled = false;
     }
 
     public override void OnStartServer() {
-        // サーバーで NavMesh 完成待ちを開始
-        StartCoroutine(WaitForNavMeshAndInitialize());
-    }
-
-    /// <summary>
-    /// NavMesh が使用可能になるまで待ってから初期化する
-    /// </summary>
-    IEnumerator WaitForNavMeshAndInitialize() {
-        // NavMesh が生成され、かつ自分の足元に存在するまで待つ
-        while (!NavMesh.SamplePosition(
-            transform.position,
-            out _,
-            2.0f,
-            NavMesh.AllAreas)) {
-            yield return null; // 1フレーム待機
-        }
-
-        // NavMesh が確認できたら Agent を有効化
+        // サーバーでのみ NavMeshAgent を有効化
         agent.enabled = true;
 
         // NavMesh 上に補正配置
         PlaceOnNavMesh();
 
-        // ステータス反映
+        // ステータスから移動速度を反映
         if (status != null) {
             agent.speed = status.GetMoveSpeed();
         }
@@ -59,7 +42,7 @@ public class EnemyBaseAI : NetworkBehaviour {
     /// </summary>
     [ServerCallback]
     void Update() {
-        // 初期化前 or NavMesh から外れている場合は何もしない
+        // NavMesh に乗っていない場合は処理しない（安全装置）
         if (!agent.enabled || !agent.isOnNavMesh) return;
 
         // ターゲットが消えたら再探索
@@ -97,7 +80,9 @@ public class EnemyBaseAI : NetworkBehaviour {
     }
 
     /// <summary>
-    /// NavMesh 上に補正配置
+    /// NavMesh 上に補正配置する
+    /// ・初期配置ズレ対策
+    /// ・スポーン事故防止
     /// </summary>
     void PlaceOnNavMesh() {
         NavMeshHit hit;
@@ -107,10 +92,11 @@ public class EnemyBaseAI : NetworkBehaviour {
             out hit,
             2.0f,
             NavMesh.AllAreas)) {
+
             transform.position = hit.position;
         }
         else {
-            Debug.LogError("NavMesh が見つかりません");
+            Debug.LogError("NavMesh が見つかりません（敵初期位置不正）");
         }
     }
 }
