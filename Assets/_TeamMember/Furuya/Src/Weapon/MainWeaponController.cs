@@ -396,10 +396,10 @@ public class MainWeaponController : NetworkBehaviour {
         // 発射エフェクト (チャージ停止＆マズルフラッシュ)
         RpcCastMagic(firePoint.position, magicData.muzzleFlashType);
 
-        Vector3 dir = characterBase.parameter.GetShootDirection();
+        //Vector3 dir = characterBase.parameter.GetShootDirection();
 
         // 弾の生成
-        ServerMagicAttack(dir);
+        ServerMagicAttack(direction);
 
         // SE はここでサーバー再生
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);

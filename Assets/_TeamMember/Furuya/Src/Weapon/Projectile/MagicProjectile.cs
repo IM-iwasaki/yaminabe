@@ -67,8 +67,7 @@ public class MagicProjectile : NetworkBehaviour {
     void OnTriggerEnter(Collider other) {
         if (!initialized || !isServer) return;
         if (other.gameObject == owner ||
-            other.gameObject.tag == "Magic" ||
-            other.gameObject.tag == "Bullet") return;
+            other.gameObject.tag == "Magic") return;
 
         if (other.TryGetComponent(out CharacterBase target)) {
             //チームIDが違ったらダメージを与える
@@ -77,8 +76,6 @@ public class MagicProjectile : NetworkBehaviour {
             else if (target.parameter.TeamID == -1)
                 target.TakeDamage(damage, ownerName, ID);
         }
-
-
 
         RpcPlayHitEffect(transform.position, hitEffectType);
 
