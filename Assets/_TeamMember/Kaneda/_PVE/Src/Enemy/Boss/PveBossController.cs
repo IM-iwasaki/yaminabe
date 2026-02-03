@@ -14,6 +14,7 @@ public class PveBossController : NetworkBehaviour
         Attack
     }
     public BossState State { get; private set; }
+
     //  ボスのステータス
     private EnemyStatusBase status;
 
@@ -35,7 +36,9 @@ public class PveBossController : NetworkBehaviour
     private void Update() {
         if (!isServer) return;
 
-
+        if(State != BossState.Attack) {
+            attackTimer += Time.deltaTime;
+        }
     }
 
     /// <summary>
