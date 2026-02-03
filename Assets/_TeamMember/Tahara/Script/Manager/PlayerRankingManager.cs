@@ -81,7 +81,11 @@ public class PlayerRankingManager : NetworkSystemObject<PlayerRankingManager> {
     /// </summary>
     /// <param name="_addRate">加える値</param>
     private void AddAndSaveRate(NetworkConnectionToClient _winnerConn, int _addRate) {
-        SavePlayerData(playerData.currentRate + _addRate);
+        int resultRate = playerData.currentRate + _addRate;
+        if (resultRate <= 0)
+            resultRate = 0;
+
+        SavePlayerData(resultRate);
         //テスト
         //ChatManager.instance.CmdSendSystemMessage($"{playerData.playerName}'s Rate : {playerData.currentRate}");
     }

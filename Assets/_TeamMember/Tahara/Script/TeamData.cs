@@ -16,4 +16,5 @@ public class TeamData{
     }
     public List<NetworkIdentity> teamPlayerList = new List<NetworkIdentity>(TEAMMATE_MAX);
     public const int TEAMMATE_MAX = 3;
+    public bool isFullTeam;
 }

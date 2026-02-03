@@ -62,14 +62,23 @@ public class ServerManager : NetworkBehaviour {
         //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
         for (int i = 0; i < (int)TeamColor.ColorMax; i++) {
             teams.Add(new TeamData());
+            //チームリストを作り直したので既にチーム所属済みなら同じチームに設定しなおし(Redから入れ始めるので)
+            foreach (var player in allPlayers) {
+                if (player.GetComponent<GeneralCharacter>().parameter.TeamID == i) {
+                    teams[i].teamPlayerList.Add(player);
+                }
+                if (teams[i].teamPlayerList.Count == TEAMMATE_MAX)
+                    teams[i].isFullTeam = true;
+            }
         }
 
         //未所属プレイヤーをシャッフル
         noTeamPlayer = noTeamPlayer.OrderBy(x => Random.value).ToList();
-
-        //均等に割り振り
         int teamIndex = 0;
-        foreach(var player in noTeamPlayer) {
+        //均等に割り振り
+        if (teams[(int)TeamColor.Red].teamPlayerList.Count > teams[(int)TeamColor.Blue].teamPlayerList.Count)
+            teamIndex = 1;
+        foreach (var player in noTeamPlayer) {
             teams[teamIndex].teamPlayerList.Add(player);
             player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
 
