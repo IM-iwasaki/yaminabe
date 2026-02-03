@@ -193,11 +193,20 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
             currentUIRoot = null;
             currentResultPanel = null;
 
-            // ===== リザルト中フラグOFF =====
-            IsResultShowing = false;
-
             // カーソルを元に戻す
             Cursor.lockState = CursorLockMode.Locked;
         }
+    }
+
+    /// <summary>
+    /// リザルトフラグ用
+    /// </summary>
+    public static void ResetResultFlag() {
+        IsResultShowing = false;
+    }
+
+    [ClientRpc]
+    public void RpcResetResultFlag() {
+        ResetResultFlag(); // インスタンスメソッドを呼ぶ
     }
 }
