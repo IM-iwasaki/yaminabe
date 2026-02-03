@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Mirror;
+using System.Collections;
 
 /// <summary>
 /// 敵AI（サーバー管理・NavMesh追跡）
@@ -9,22 +10,42 @@ using Mirror;
 public class EnemyBaseAI : NetworkBehaviour {
     private NavMeshAgent agent;
     private Transform target;               // 追跡対象
-    private EnemyStatusBase status;          // ステータス管理（NetworkBehaviour）
+    private EnemyStatusBase status;          // ステータス管理
 
     void Awake() {
-        // コンポーネント取得のみ（状態変更しない）
+        // 参照取得のみ（ここでは有効化しない）
         agent = GetComponent<NavMeshAgent>();
         status = GetComponent<EnemyStatusBase>();
+
+        // NavMesh 完成前に動かないよう無効化
+        agent.enabled = false;
     }
 
     public override void OnStartServer() {
-        // NavMeshAgent はサーバーでのみ有効
+        // サーバーで NavMesh 完成待ちを開始
+        StartCoroutine(WaitForNavMeshAndInitialize());
+    }
+
+    /// <summary>
+    /// NavMesh が使用可能になるまで待ってから初期化する
+    /// </summary>
+    IEnumerator WaitForNavMeshAndInitialize() {
+        // NavMesh が生成され、かつ自分の足元に存在するまで待つ
+        while (!NavMesh.SamplePosition(
+            transform.position,
+            out _,
+            2.0f,
+            NavMesh.AllAreas)) {
+            yield return null; // 1フレーム待機
+        }
+
+        // NavMesh が確認できたら Agent を有効化
         agent.enabled = true;
 
-        // NavMesh 上に強制配置
+        // NavMesh 上に補正配置
         PlaceOnNavMesh();
 
-        // ステータスから移動速度を反映（サーバーのみ）
+        // ステータス反映
         if (status != null) {
             agent.speed = status.GetMoveSpeed();
         }
@@ -38,8 +59,8 @@ public class EnemyBaseAI : NetworkBehaviour {
     /// </summary>
     [ServerCallback]
     void Update() {
-        // NavMesh に乗っていない場合は何もしない
-        if (!agent.isOnNavMesh) return;
+        // 初期化前 or NavMesh から外れている場合は何もしない
+        if (!agent.enabled || !agent.isOnNavMesh) return;
 
         // ターゲットが消えたら再探索
         if (target == null) {
