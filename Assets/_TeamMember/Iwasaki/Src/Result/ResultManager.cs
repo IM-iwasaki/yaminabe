@@ -107,9 +107,11 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         // ===== リザルト中フラグON =====
         IsResultShowing = true;
 
-        // カーソル表示
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // ホストのみカーソル表示
+        if (NetworkServer.active && NetworkClient.active) {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
 
         // プレハブを生成
         GameObject ui = Instantiate(resultUIPrefab);
