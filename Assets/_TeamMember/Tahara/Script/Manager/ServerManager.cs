@@ -109,6 +109,9 @@ public class ServerManager : NetworkBehaviour {
             resetPlayer.parameter.StatusInport(resetPlayer.parameter.runtimeStatus);
             //万が一の死亡状態解除
             resetPlayer.ResetHealth();
+            // 追加 マツオ : 武器リセット用
+            var param = player.GetComponent<GeneralCharacter>().parameter;
+            param.ResetWeaponToDefault();
         }
     }
 }
