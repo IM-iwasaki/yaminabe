@@ -52,17 +52,19 @@ public class PveBossSearchController : NetworkBehaviour
         if (!isServer) return;
         //  誰も離脱していない場合はスキップ
         if (exitTimers.Count == 0) return;
+        //  一度KeyをListに避難させる
+        List<Transform> keys = new List<Transform>(exitTimers.Keys);
         //  削除予定リスト
         List<Transform> removeList = new List<Transform>();
         //  何秒離れているか見る
-        foreach(var pair in exitTimers) {
-            exitTimers[pair.Key] += Time.deltaTime;
+        foreach (var key in keys) {
+            exitTimers[key] += Time.deltaTime;
 
-            if (exitTimers[pair.Key] >= leaveGraceTime)
-                removeList.Add(pair.Key);
+            if (exitTimers[key] >= leaveGraceTime)
+                removeList.Add(key);
         }
         //  削除リストの中身を消す
-        foreach(var t in removeList) {
+        foreach (var t in removeList) {
             exitTimers.Remove(t);
             targets.Remove(t);
         }
