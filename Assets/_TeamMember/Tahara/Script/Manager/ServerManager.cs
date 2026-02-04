@@ -79,6 +79,12 @@ public class ServerManager : NetworkBehaviour {
         if (teams[(int)TeamColor.Red].teamPlayerList.Count > teams[(int)TeamColor.Blue].teamPlayerList.Count)
             teamIndex = 1;
         foreach (var player in noTeamPlayer) {
+            //所属しようとするチームが満員なら
+            if (teams[teamIndex].isFullTeam) {
+                //全員空いてるチームにぶち込む
+                teams[(teamIndex + 1) % teams.Count].teamPlayerList.Add(player);
+                continue;
+            }
             teams[teamIndex].teamPlayerList.Add(player);
             player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
 
