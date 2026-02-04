@@ -20,6 +20,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
     private HashSet<CharacterBase> playersInArea = new();
     private bool cleared = false;
 
+    private AreaClearCondition clearCondition;
+
     private void Awake() {
         if (areaCollider == null)
             areaCollider = GetComponent<Collider>();
@@ -30,8 +32,9 @@ public class CaptureAreaPVE : NetworkBehaviour {
     [Server]
     public void Initialize(AreaSpawnPoint spawnPoint) {
         targetScore = spawnPoint.targetScore;
-        onClearedEvents.Clear();
+        clearCondition = spawnPoint.clearCondition;
 
+        onClearedEvents.Clear();
         foreach (var evt in spawnPoint.events) {
             if (evt == null) continue;
             onClearedEvents.Add(evt);
@@ -56,7 +59,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
     private void Update() {
         if (cleared) return;
         if (!GameManager.Instance.IsGameRunning()) return;
-        if (playersInArea.Count == 0) return;
+
+        if (!CanIncreaseScore()) return;
 
         timer += Time.deltaTime;
         if (timer >= 1f) {
@@ -69,6 +73,26 @@ public class CaptureAreaPVE : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// l””»’è—p
+    /// </summary>
+    [Server]
+    private bool CanIncreaseScore() {
+        if (playersInArea.Count == 0)
+            return false;
+
+        switch (clearCondition) {
+            case AreaClearCondition.AnyPlayer:
+                return true;
+
+            case AreaClearCondition.AllPlayers:
+                return playersInArea.Count >= ServerManager.instance.connectPlayer.Count;
+
+            default:
+                return false;
+        }
+    }
+
     [Server]
     private void CompleteArea() {
         if (cleared) return;
@@ -76,10 +100,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
 
         RpcExecuteEvents();
 
-        // “Ë”jÏ‚İ•\Œ»
+        // “Ë”j
         areaCollider.enabled = false;
-        // gameObject.SetActive(false);
-        // NetworkServer.Destroy(gameObject);
     }
 
     [ClientRpc]
