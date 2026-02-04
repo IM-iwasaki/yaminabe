@@ -15,12 +15,12 @@ MonoBehaviour:
   weaponName: RPG
   type: 1
   damage: 500
-  cooldown: 1
+  cooldown: 0
   ID: 5
   muzzleFlashType: 0
-  hitEffectType: 4
+  hitEffectType: 5
   maxAmmo: 1
-  reloadTime: 1
+  reloadTime: 2
   projectilePrefab: {fileID: 1010106222350519036, guid: 852cab755ea70894d8d5a763a13d6625, type: 3}
   projectileSpeed: 20
   explosionRange: 5
