@@ -22,23 +22,39 @@ public class PveBossController : NetworkBehaviour
     [SerializeField] private float attackCooltime = 3.0f;
     [Header("ボスの索敵範囲")]
     [SerializeField] private float searchRadius = 3.0f;
+    [Header("ボスのフェーズ")]
+    [SerializeField] private bool isPhase = false;
 
     //  攻撃クールタイムを計るタイマー
     private float attackTimer;
+
+    //  参照コンポーネント
+    private PveBossSearchController search;
+    private PveBossMoveController move;
+    private PveBossAttackController attack;
+
+    //  現在のターゲット
+    private Transform targetPlayer;
 
     /// <summary>
     /// 初期化、コンポーネントを取得
     /// </summary>
     void Awake() {
         status = GetComponent<EnemyStatusBase>();
+        search = GetComponent<PveBossSearchController>();
+        move = GetComponent<PveBossMoveController>();
+        attack = GetComponent<PveBossAttackController>();
     }
 
     private void Update() {
+        //  server以外で処理しない
         if (!isServer) return;
-
+        //  攻撃状態以外でタイマーを進める
         if(State != BossState.Attack) {
             attackTimer += Time.deltaTime;
         }
+
+
     }
 
     /// <summary>
@@ -49,5 +65,7 @@ public class PveBossController : NetworkBehaviour
     public void ChageState(BossState state) {
         State = state;
     }
+
+
 
 }
