@@ -74,7 +74,8 @@ public class PveBossController : NetworkBehaviour
         }
         else {
             ChangeState(BossState.Move);
-            //  ˆÚ“®‚ğ‚·‚éŠÖ”‚ğŒÄ‚Ô
+            move.Resume();
+            move.MoveToTarget(currentTarget, status.statusData.moveSpeed);
         }
     }
 
@@ -90,7 +91,7 @@ public class PveBossController : NetworkBehaviour
         bossState = state;
         //  •ÏX‚µ‚½Û‚ÉUŒ‚’†‚È‚çˆÚ“®‚ğ~‚ß‚é
         if(bossState == BossState.Attack) {
-            //move
+            move.Stop();
         }
     }
 
@@ -123,6 +124,7 @@ public class PveBossController : NetworkBehaviour
     /// UŒ‚‚ªI‚í‚Á‚½‚çŒÄ‚Ô
     /// </summary>
     public void EndAttack() {
+        move.Resume();
         ChangeState(BossState.Idle);
     }
 

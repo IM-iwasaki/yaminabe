@@ -428,6 +428,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 5882030365112788893, guid: f7950c952185ada499f651043ef740f7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2547,6 +2551,7 @@ GameObject:
   - component: {fileID: 6707469240352857833}
   - component: {fileID: 6707469240352857837}
   - component: {fileID: 6707469240352857836}
+  - component: {fileID: 6707469240352857839}
   - component: {fileID: 6707469240352857832}
   m_Layer: 0
   m_Name: CrazyBoss
@@ -37647,6 +37652,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 3661504673
       objectReference: {fileID: 0}
+    - target: {fileID: 2211598136514956738, guid: fb5904d33b469324ca18487565ec0fa0, type: 3}
+      propertyPath: sceneId
+      value: 3738585811
+      objectReference: {fileID: 0}
     - target: {fileID: 3042347831295132091, guid: fb5904d33b469324ca18487565ec0fa0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -37962,7 +37971,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7282702568230938224}
@@ -38194,6 +38203,22 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 3
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6707469240352857839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3548868566029654397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebb10b224b41c3a459da45c0ce179df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  rotateSpeed: 10
 --- !u!1001 &6736918268281782124
 PrefabInstance:
   m_ObjectHideFlags: 0
