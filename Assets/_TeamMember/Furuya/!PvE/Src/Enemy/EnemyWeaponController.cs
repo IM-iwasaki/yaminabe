@@ -1,7 +1,6 @@
 using UnityEngine;
 using Mirror;
 using System.Collections;
-using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -172,23 +171,5 @@ public class EnemyWeaponController : NetworkBehaviour {
 
     bool IsValidTarget(GameObject obj) {
         return obj != gameObject; // 自分以外
-    }
-
-    /// <summary>
-    /// 武器毎のレイヤーのインデックスを返す
-    /// </summary>
-    /// <param name="_weaponName"></param>
-    /// <returns></returns>
-    public int GenerateWeaponIndex(string _weaponName) {
-        return _weaponName switch {
-            "HandGun" or "revolver" or "Punch" => 1,
-            "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" or "Spear" or "IceMagic" or "Katana" or "Lightsaver"
-             or "Knife" or "PizzaCutter" => 2,
-            "RPG" => 3,
-            "Sniper" => 4,
-            "Minigun" => 5,
-
-            _ => -1,
-        };
     }
 }
