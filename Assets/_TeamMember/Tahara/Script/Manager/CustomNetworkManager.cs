@@ -156,6 +156,9 @@ public class CustomNetworkManager : NetworkManager {
             // 全クライアントに送る
             CountdownManager.Instance.SendCountdown(3);
         }
+        else if (sceneName == GameSceneManager.Instance.pveSceneName) {
+            GameManager.Instance.StartPveGameFromList(random: true); // falseにすれば順番
+        }
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
         foreach (var conn in serverManager.connectPlayer) {
             //必要な変数をキャッシュ

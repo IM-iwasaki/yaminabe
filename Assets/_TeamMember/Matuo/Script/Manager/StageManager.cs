@@ -14,6 +14,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     public CaptureHoko currentHoko;
 
     private GameObject currentStageInstance;
+    private int currentPveIndex = 0;
     // リスポーン地点
     [SerializeField] private readonly SyncList<Transform> normalRespawnPoints = new();
     [SerializeField] private readonly SyncList<Transform> redRespawnPoints = new();
@@ -102,6 +103,24 @@ public class StageManager : NetworkSystemObject<StageManager> {
     }
 
     /// <summary>
+    /// PVEステージの生成順番取得用
+    /// </summary>
+    /// <param name="random"></param>
+    /// <returns></returns>
+    [Server]
+    public PVEStageData GetNextPveStage(bool random) {
+        if (pveStages.Count == 0) return null;
+
+        if (random) {
+            return pveStages[Random.Range(0, pveStages.Count)];
+        }
+
+        var stage = pveStages[currentPveIndex];
+        currentPveIndex = (currentPveIndex + 1) % pveStages.Count;
+        return stage;
+    }
+
+    /// <summary>
     /// PVE用のステージ生成
     /// </summary>
     /// <param name="stage"></param>
@@ -115,7 +134,6 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // ステージ生成
         currentStageInstance = Instantiate(stage.stagePrefab);
-        ApplyRuleObjectsForPVE(stage.rulesToSpawn);
         NetworkServer.Spawn(currentStageInstance);
 
         // リスポーン地点登録
@@ -131,8 +149,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// </summary>
     [Server]
     private void SpawnPveAreas() {
-        var spawnPoints = currentStageInstance
-            .GetComponentsInChildren<AreaSpawnPoint>(true);
+        var spawnPoints = currentStageInstance.GetComponentsInChildren<AreaSpawnPoint>(true);
 
         foreach (var sp in spawnPoints) {
             var areaObj = Instantiate(pveAreaPrefab,sp.transform.position,sp.transform.rotation);
@@ -149,8 +166,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     /// </summary>
     [Server]
     private void SpawnPveHokos() {
-        var spawnPoints = currentStageInstance
-            .GetComponentsInChildren<HokoSpawnPoint>(true);
+        var spawnPoints = currentStageInstance.GetComponentsInChildren<HokoSpawnPoint>(true);
 
         foreach (var sp in spawnPoints) {
             for (int i = 0; i < sp.spawnCount; i++) {
@@ -164,38 +180,6 @@ public class StageManager : NetworkSystemObject<StageManager> {
             }
         }
     }
-
-    /// <summary>
-    /// PVE用のルールオブジェクト生成
-    /// </summary>
-    /// <param name="rules"></param>
-    [Server]
-    public void ApplyRuleObjectsForPVE(List<GameRuleType> rules) {
-        // 既存のルールオブジェクト削除
-        var exist = GameObject.FindGameObjectsWithTag("PVERuleObject");
-        foreach (var obj in exist) NetworkServer.Destroy(obj);
-
-        currentRuleObject = null;
-        currentHoko = null;
-
-        foreach (var rule in rules) {
-            if (rule == GameRuleType.DeathMatch) continue;
-
-            GameObject prefab = null;
-            switch (rule) {
-                case GameRuleType.Area: prefab = pveAreaPrefab; break;
-                case GameRuleType.Hoko: prefab = pveHokoPrefab; break;
-            }
-            if (prefab == null) continue;
-
-            var obj = Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
-            obj.tag = "PVERuleObject";
-            NetworkServer.Spawn(obj);
-
-            if (rule == GameRuleType.Hoko)
-                currentHoko = obj.GetComponent<CaptureHoko>();
-        }
-    }  
 
     /// <summary>
     /// ステージ内のリスポーン地点をタグから登録

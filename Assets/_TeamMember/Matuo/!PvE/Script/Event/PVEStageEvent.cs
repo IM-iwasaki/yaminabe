@@ -1,7 +1,5 @@
-using Mirror;
+using UnityEngine;
 
-public abstract class PVEStageEvent : NetworkBehaviour {
-
-    // ŽÀ‘•ƒNƒ‰ƒX‘¤‚Å [Server] ‚ð•t‚¯‚é
+public abstract class PVEStageEvent : MonoBehaviour {
     public abstract void Execute();
 }

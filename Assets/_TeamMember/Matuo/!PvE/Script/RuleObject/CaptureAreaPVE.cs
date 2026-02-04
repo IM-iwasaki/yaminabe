@@ -32,11 +32,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
         targetScore = spawnPoint.targetScore;
         onClearedEvents.Clear();
 
-        foreach (var prefab in spawnPoint.eventPrefabs) {
-            if (prefab == null) continue;
-
-            var evt = Instantiate(prefab, transform);
-            NetworkServer.Spawn(evt.gameObject);
+        foreach (var evt in spawnPoint.events) {
+            if (evt == null) continue;
             onClearedEvents.Add(evt);
         }
     }
@@ -77,14 +74,19 @@ public class CaptureAreaPVE : NetworkBehaviour {
         if (cleared) return;
         cleared = true;
 
+        RpcExecuteEvents();
+
+        // 突破済み表現
+        areaCollider.enabled = false;
+        // gameObject.SetActive(false);
+        // NetworkServer.Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    private void RpcExecuteEvents() {
         foreach (var e in onClearedEvents) {
             if (e != null)
                 e.Execute();
         }
-
-        // 突破済み表現（どれか選ぶ）
-        areaCollider.enabled = false;
-        // gameObject.SetActive(false);
-        // NetworkServer.Destroy(gameObject);
     }
 }
