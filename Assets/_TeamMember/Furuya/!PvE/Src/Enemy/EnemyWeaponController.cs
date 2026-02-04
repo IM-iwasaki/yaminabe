@@ -7,6 +7,7 @@ using System.Collections;
 /// </summary>
 public class EnemyWeaponController : NetworkBehaviour {
     public WeaponData weaponData;           // メイン武器
+    public WeaponData SkillWeaponData;
     public Transform firePoint;
     private GameObject activeChargeFx;
     private EnemyStatusBase enemyBase;
@@ -22,6 +23,17 @@ public class EnemyWeaponController : NetworkBehaviour {
             if (weaponData is MeleeData meleeData)
                 StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
             else if (weaponData is MainMagicData magicData)
+                ServerStartMagicCast(direction);
+        }
+    }
+
+    // --- 攻撃リクエスト ---
+    [Command]
+    public void CmdRequestSkill(Vector3 direction) {
+        if (SkillWeaponData.type == WeaponType.Enemy) {
+            if (SkillWeaponData is MeleeData meleeData)
+                StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
+            else if (SkillWeaponData is MainMagicData magicData)
                 ServerStartMagicCast(direction);
         }
     }
