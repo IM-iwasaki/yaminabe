@@ -134,7 +134,7 @@ public class SubWeaponController : NetworkBehaviour {
     /// </summary>
     /// <param name="name"></param>
     //[Command]
-    public void SetWeaponData(string name) {
+    public void SetSubWeaponData(string name) {
         var data = WeaponDataRegistry.GetSubWeapon(name);
 
         subWeaponData = data;
