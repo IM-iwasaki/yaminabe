@@ -96,7 +96,7 @@ public class MainWeaponController : NetworkBehaviour {
                 if (weaponData is GunData gunData) {
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                     if (ammo > 0)
-                        ammo--;
+                        ammo -= gunData.multiShot;
                 }
 
                 break;
