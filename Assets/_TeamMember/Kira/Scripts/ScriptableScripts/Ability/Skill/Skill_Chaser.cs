@@ -28,7 +28,9 @@ public class Skill_Chaser : SkillBase {
     }
 
     public override void SkillEffectUpdate(CharacterBase user) {
-        intervalDelay = user.weaponController_main.weaponData.cooldown / 2;
+        if (user.weaponController_main.weaponData is not MainMagicData magicData)
+            return;
+            intervalDelay = magicData.cooldown / 2;
 
         //使用中か確認、効果中は時間を計測
         if(isSkillUse) {
@@ -47,7 +49,7 @@ public class Skill_Chaser : SkillBase {
             }
 
             //攻撃した瞬間にMP消費を相殺
-            if (user.parameter.AttackTrigger) user.parameter.MP += 4;
+            if (user.parameter.AttackTrigger) user.parameter.MP += magicData.MPCost;
         }       
     }
 

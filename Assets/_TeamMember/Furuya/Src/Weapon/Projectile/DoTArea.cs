@@ -28,7 +28,7 @@ public class DoTArea : NetworkBehaviour {
     /// <summary>
     /// ’e‚Ì‰Šú‰»i”­Ë‚ÉŒÄ‚Ôj
     /// </summary>
-    public void Init(int teamID, string _name, int _ID, EffectType hitEffect, float _speed, int _damage, Vector3 direction) {
+    public void Init(int teamID, string _name, int _ID, EffectType hitEffect, float _speed, int _damage) {
         ownerTeamID = teamID;
         ownerName = _name;
         ID = _ID;

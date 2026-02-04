@@ -348,11 +348,32 @@ public class MainWeaponController : NetworkBehaviour {
         if (characterBase.parameter.MP < magicData.MPCost) return;
         characterBase.parameter.MP -= magicData.MPCost;
 
-        GameObject proj = ProjectilePool.Instance.SpawnFromPool(
+        GameObject proj;
+
+        if (magicData.magicType == ProjectileType.DoT) {
+            Vector3 spawnPos = transform.position;
+            Quaternion rot = Quaternion.identity;
+
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f)) {
+                spawnPos = hit.point;
+                rot = Quaternion.LookRotation(transform.forward, hit.normal);
+            }
+
+            proj = ProjectilePool.Instance.SpawnFromPool(
+                magicData.projectilePrefab.name,
+                spawnPos,
+                rot
+            );
+
+        }
+        else {
+            proj = ProjectilePool.Instance.SpawnFromPool(
             magicData.projectilePrefab.name,
             firePoint.position,
             Quaternion.LookRotation(direction)
-        );
+            );
+        }
+        
 
         if (proj == null) return;
 
@@ -371,15 +392,13 @@ public class MainWeaponController : NetworkBehaviour {
         }
         else if (proj.TryGetComponent(out DoTArea dotArea)) {
             int teamID = characterBase?.parameter.TeamID ?? 0;
-            Vector3 Direction = transform.forward;
             dotArea.Init(
                 teamID,
                 characterBase.parameter.PlayerName,
                 characterBase.parameter.playerId,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,
-                magicData.damage,
-                Direction
+                magicData.damage
                 );
         }
     }

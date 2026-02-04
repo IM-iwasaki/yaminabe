@@ -3,7 +3,7 @@ using Mirror;
 using System.Collections;
 
 /// <summary>
-/// メイン武器コントローラー
+/// 敵用武器コントローラー
 /// </summary>
 public class EnemyWeaponController : NetworkBehaviour {
     public WeaponData weaponData;           // メイン武器
@@ -96,8 +96,7 @@ public class EnemyWeaponController : NetworkBehaviour {
                 -1,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,
-                magicData.damage,
-                Direction
+                magicData.damage
                 );
         }
     }

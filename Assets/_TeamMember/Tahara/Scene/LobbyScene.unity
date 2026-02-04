@@ -2502,10 +2502,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 549607917205571446, guid: e71691b3404b46e4a974de60fdba7b78, type: 3}
-      propertyPath: allWeaponData.Array.data[21]
-      value: 
-      objectReference: {fileID: 11400000, guid: 0f7647991c2e54244ac3b78ea50a4a61, type: 2}
     - target: {fileID: 2146062183756680490, guid: e71691b3404b46e4a974de60fdba7b78, type: 3}
       propertyPath: m_Name
       value: WeaponDataRegistry
@@ -5561,7 +5557,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2550a6a2b53ace849ac901eba2bb3969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  server: {fileID: 261839327}
   playerListUI: {fileID: 2457168148211963580, guid: 25cb5a1cfc4938f42ba1339580d61631, type: 3}
   playerListRoot: {fileID: 911098320}
 --- !u!224 &1772222029 stripped
@@ -5796,7 +5791,7 @@ PrefabInstance:
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: spawnPrefabs.Array.data[62]
       value: 
-      objectReference: {fileID: 3156866507962234106, guid: a18d328b1b40b9a45a5e1b7ccbf5e5fa, type: 3}
+      objectReference: {fileID: 4025044562685867901, guid: b5e68ae4341d49b4fa3cb220bc7ad5c4, type: 3}
     - target: {fileID: 8116109016544477545, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Name
       value: CustomNetworkManager
