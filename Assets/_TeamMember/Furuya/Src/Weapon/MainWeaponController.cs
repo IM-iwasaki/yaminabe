@@ -96,7 +96,7 @@ public class MainWeaponController : NetworkBehaviour {
                 if (weaponData is GunData gunData) {
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                     if (ammo > 0)
-                        ammo--;
+                        ammo -= gunData.multiShot;
                 }
 
                 break;
@@ -257,7 +257,7 @@ public class MainWeaponController : NetworkBehaviour {
             //角度チェック
             if (dot < threshold) continue;
 
-            var hp = c.GetComponent<CharacterBase>();
+            var hp = c.GetComponent<CreatureBase>();
             if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == characterBase.parameter.TeamID) continue;
             hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
@@ -376,6 +376,7 @@ public class MainWeaponController : NetworkBehaviour {
                 teamID,
                 characterBase.parameter.PlayerName,
                 characterBase.parameter.playerId,
+                magicData.hitEffectType,
                 magicData.projectileSpeed,
                 magicData.damage,
                 Direction

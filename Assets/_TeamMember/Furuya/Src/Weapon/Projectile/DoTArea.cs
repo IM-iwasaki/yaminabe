@@ -11,6 +11,7 @@ public class DoTArea : NetworkBehaviour {
     [SyncVar] private int ownerTeamID;
     private int ID;
     private string ownerName;
+    private EffectType hitEffectType;
     private float lifetime = 5f;
     private Rigidbody rb;
     private float speed = 20f;
@@ -27,10 +28,11 @@ public class DoTArea : NetworkBehaviour {
     /// <summary>
     /// 弾の初期化（発射時に呼ぶ）
     /// </summary>
-    public void Init(int teamID, string _name, int _ID, float _speed, int _damage, Vector3 direction) {
+    public void Init(int teamID, string _name, int _ID, EffectType hitEffect, float _speed, int _damage, Vector3 direction) {
         ownerTeamID = teamID;
         ownerName = _name;
         ID = _ID;
+        hitEffectType = hitEffect;
         speed = _speed;
         damage = _damage;
 
@@ -86,9 +88,10 @@ public class DoTArea : NetworkBehaviour {
         if (timers[other.gameObject] >= interval) {
             timers[other.gameObject] = 0f;
 
-            var character = other.GetComponent<CharacterBase>();
+            var character = other.GetComponent<CreatureBase>();
             if (character != null) {
                 character.TakeDamage(damage, ownerName, ID);
+                RpcPlayHitEffect(character.transform.position, hitEffectType);
             }
         }
     }
@@ -122,5 +125,21 @@ public class DoTArea : NetworkBehaviour {
             ProjectilePool.Instance.DespawnToPool(gameObject);
         else
             NetworkServer.Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// クライアントエフェクト表示
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="effectType"></param>
+    [ClientRpc(includeOwner = true)]
+    void RpcPlayHitEffect(Vector3 pos, EffectType effectType) {
+
+        GameObject prefab = EffectPoolRegistry.Instance.GetHitEffect(effectType);
+        if (prefab != null) {
+            var fx = EffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
+            fx.SetActive(true);
+            EffectPool.Instance.ReturnToPool(fx, 1.5f);
+        }
     }
 }

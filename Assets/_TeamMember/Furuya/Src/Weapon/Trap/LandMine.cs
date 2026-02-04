@@ -63,7 +63,7 @@ public class LandMine : TrapBase {
 
         var hits = Physics.OverlapSphere(transform.position, explosionRadius, LayerMask.GetMask("Character"));
         foreach (var c in hits) {
-            var target = c.GetComponent<CharacterBase>();
+            var target = c.GetComponent<CreatureBase>();
             if (target == null) continue;
             if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) continue;
             target.TakeDamage(damage, ownerName, ID);

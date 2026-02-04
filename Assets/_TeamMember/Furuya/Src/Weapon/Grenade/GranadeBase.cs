@@ -67,7 +67,7 @@ public class GrenadeBase : NetworkBehaviour {
 
         Collider[] hits = Physics.OverlapSphere(pos, explosionRadius, bombLayer);
         foreach (var c in hits) {
-            var target = c.GetComponent<CharacterBase>();
+            var target = c.GetComponent<CreatureBase>();
             if (target == null) continue;
             if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) continue;
 
