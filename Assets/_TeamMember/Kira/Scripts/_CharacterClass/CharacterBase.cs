@@ -188,7 +188,7 @@ public abstract class CharacterBase : CreatureBase {
         //HPの減算処理
         parameter.HP -= (int)damage;
 
-        if(_ID != -1)
+        if (_ID != -1)
             // hitSE 再生
             PlayHitSE(_ID);
 
@@ -468,12 +468,11 @@ public abstract class CharacterBase : CreatureBase {
         if (timeout <= 0.0f) yield break;
         Transform handRoot = GetComponent<CharacterAnimationController>().anim.GetBoneTransform(HumanBodyBones.RightHand);
         while (handRoot == null) yield return null;
+        Transform weaponRoot = handRoot.Find("WeaponRoot");
+
         // 子が存在するかチェック
-        if (handRoot.childCount >= 3) {
-            GameObject currentWeapon = handRoot.GetChild(3).gameObject;
-            if (currentWeapon != null)
-                Destroy(currentWeapon);
-            yield return null;
+        foreach(Transform child in weaponRoot) {
+            Destroy(child.gameObject);
         }
 
         //モデルリストはあるか
@@ -490,8 +489,9 @@ public abstract class CharacterBase : CreatureBase {
         }
 
 
-        Instantiate(modelList.weaponModelList[_ID], handRoot);
+        Instantiate(modelList.weaponModelList[_ID], weaponRoot);
 
+        animCon.SetWeaponLayer(weaponController_main.GenerateWeaponIndex(weaponController_main.weaponData.weaponName));
     }
 
     // ホコを持っているか判定の切り替え用
