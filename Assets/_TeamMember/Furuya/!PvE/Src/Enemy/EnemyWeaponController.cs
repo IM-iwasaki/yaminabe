@@ -9,9 +9,7 @@ using static UnityEngine.UI.GridLayoutGroup;
 public class EnemyWeaponController : NetworkBehaviour {
     public WeaponData weaponData;           // メイン武器
     public Transform firePoint;
-
     private GameObject activeChargeFx;
-
     private EnemyStatusBase enemyBase;
 
     private void Awake() {
@@ -169,16 +167,6 @@ public class EnemyWeaponController : NetworkBehaviour {
         if (prefab != null) {
             var fx = EffectPool.Instance.GetFromPool(prefab, pos, transform.rotation);
             EffectPool.Instance.ReturnToPool(fx, 1.5f);
-        }
-    }
-
-    // --- クライアントでマズルフラッシュ再生 ---
-    [ClientRpc]
-    void RpcPlayMuzzleFlash(Vector3 pos, EffectType type) {
-        GameObject prefab = EffectPoolRegistry.Instance.GetMuzzleFlash(type);
-        if (prefab != null) {
-            var fx = EffectPool.Instance.GetFromPool(prefab, pos, transform.rotation);
-            EffectPool.Instance.ReturnToPool(fx, 0.8f);
         }
     }
 
