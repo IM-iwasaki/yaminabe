@@ -13,20 +13,18 @@ public class PveBossController : NetworkBehaviour
         Move,
         Attack
     }
-    public BossState State { get; private set; }
+    public BossState bossState { get; private set; }
 
     //  ボスのステータス
     private EnemyStatusBase status;
 
     [Header("ボスの攻撃クールタイム")]
     [SerializeField] private float attackCooltime = 3.0f;
-    [Header("ボスの索敵範囲")]
-    [SerializeField] private float searchRadius = 3.0f;
     [Header("ボスのフェーズ")]
     [SerializeField] private bool isPhase = false;
 
     //  攻撃クールタイムを計るタイマー
-    private float attackTimer;
+    private float attackTimer = 0;
 
     //  参照コンポーネント
     private PveBossSearchController search;
@@ -34,7 +32,7 @@ public class PveBossController : NetworkBehaviour
     private PveBossAttackController attack;
 
     //  現在のターゲット
-    private Transform targetPlayer;
+    private Transform currentTarget;
 
     /// <summary>
     /// 初期化、コンポーネントを取得
@@ -50,11 +48,34 @@ public class PveBossController : NetworkBehaviour
         //  server以外で処理しない
         if (!isServer) return;
         //  攻撃状態以外でタイマーを進める
-        if(State != BossState.Attack) {
+        if(bossState != BossState.Attack) {
             attackTimer += Time.deltaTime;
         }
+        //  ターゲットの候補をリストに格納
+        List<Transform> targets = search.GetTargets();
+        //  ターゲット候補がいなければIdle
+        if (targets.Count == 0) {
+            currentTarget = null;
+            ChangeState(BossState.Idle);
+            return;
+        }
+        //  ターゲットが未設定または無効化されていたら再抽選
+        if(currentTarget == null || !targets.Contains(currentTarget)) {
+            currentTarget = SelectRandomTarget(targets);
+        }
 
-
+        //  攻撃可能判定を取る
+        bool canAttack = CanAttack(attackTimer, bossState, currentTarget);
+        //  攻撃可能判定がTrueなら攻撃、Falseなら移動
+        if (canAttack) {
+            ChangeState(BossState.Attack);
+            attackTimer = 0;
+            //  攻撃をする関数を呼ぶ
+        }
+        else {
+            ChangeState(BossState.Move);
+            //  移動をする関数を呼ぶ
+        }
     }
 
     /// <summary>
@@ -62,10 +83,47 @@ public class PveBossController : NetworkBehaviour
     /// </summary>
     /// <param name="state"></param>
     [Server]
-    public void ChageState(BossState state) {
-        State = state;
+    public void ChangeState(BossState state) {
+        //  同じなら変更しない
+        if(bossState == state) return;
+        //  状態更新
+        bossState = state;
+        //  変更した際に攻撃中なら移動を止める
+        if(bossState == BossState.Attack) {
+            //move
+        }
     }
 
+    /// <summary>
+    /// ターゲットを抽選する
+    /// </summary>
+    /// <returns></returns>
+    private Transform SelectRandomTarget(List<Transform> targets) {
+        int index = Random.Range(0, targets.Count);
+        return targets[index];
+    }
 
+    /// <summary>
+    /// 攻撃可能かどうかを判定する
+    /// </summary>
+    /// <param name="timer"></param>
+    /// <param name="state"></param>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    private bool CanAttack(float timer, BossState state,Transform target) {
+        if(timer >= attackCooltime && 
+            state != BossState.Attack && 
+            target != null) {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 攻撃が終わったら呼ぶ
+    /// </summary>
+    public void EndAttack() {
+        ChangeState(BossState.Idle);
+    }
 
 }
