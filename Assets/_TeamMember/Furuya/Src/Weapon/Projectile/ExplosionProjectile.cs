@@ -95,7 +95,7 @@ public class ExplosionProjectile : NetworkBehaviour {
 
         Collider[] hits = Physics.OverlapSphere(pos, radius, bombLayer);
         foreach (var c in hits) {
-            var target = c.GetComponent<CharacterBase>();
+            var target = c.GetComponent<CreatureBase>();
             if (target == null) continue;
 
             target.TakeDamage(damage, ownerName, ID);

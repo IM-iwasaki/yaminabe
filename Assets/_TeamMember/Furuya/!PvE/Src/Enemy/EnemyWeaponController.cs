@@ -18,10 +18,10 @@ public class EnemyWeaponController : NetworkBehaviour {
     // --- 攻撃リクエスト ---
     [Command]
     public void CmdRequestAttack(Vector3 direction) {
-        if(weaponData.type == WeaponType.Enemy) {
+        if (weaponData.type == WeaponType.Enemy) {
             if (weaponData is MeleeData meleeData)
                 StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
-            else if(weaponData is MainMagicData magicData)
+            else if (weaponData is MainMagicData magicData)
                 ServerStartMagicCast(direction);
         }
     }
@@ -94,6 +94,7 @@ public class EnemyWeaponController : NetworkBehaviour {
                 teamID,
                 "Boss",
                 -1,
+                magicData.hitEffectType,
                 magicData.projectileSpeed,
                 magicData.damage,
                 Direction

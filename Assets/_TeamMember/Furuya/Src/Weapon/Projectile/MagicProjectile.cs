@@ -98,11 +98,11 @@ public class MagicProjectile : NetworkBehaviour {
         // GroundLine は床に当たっても消さない
         if (type == ProjectileType.GroundLine) {
             // キャラ以外は無視
-            if (!other.TryGetComponent(out CharacterBase target))
+            if (!other.TryGetComponent(out CreatureBase target))
                 return;
 
             // チーム判定
-            if (target.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID
+            if (target.parameter.TeamID != owner.GetComponent<CreatureBase>().parameter.TeamID
                 || target.parameter.TeamID == -1) {
                 target.TakeDamage(damage, ownerName, ID);
             }
@@ -112,8 +112,8 @@ public class MagicProjectile : NetworkBehaviour {
         }
 
         // ---- 既存 Projectile 用 ----
-        if (other.TryGetComponent(out CharacterBase targetNormal)) {
-            if (targetNormal.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID
+        if (other.TryGetComponent(out CreatureBase targetNormal)) {
+            if (targetNormal.parameter.TeamID != owner.GetComponent<CreatureBase>().parameter.TeamID
                 || targetNormal.parameter.TeamID == -1) {
                 targetNormal.TakeDamage(damage, ownerName, ID);
             }

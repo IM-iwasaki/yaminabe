@@ -63,6 +63,7 @@ public enum EffectType {
     Default,
     Fire,
     Ice,
+    Water,
     Lightning,
     Explosion,
     Smoke,
