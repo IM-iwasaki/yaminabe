@@ -468,9 +468,12 @@ public abstract class CharacterBase : CreatureBase {
         if (timeout <= 0.0f) yield break;
         Transform handRoot = GetComponent<CharacterAnimationController>().anim.GetBoneTransform(HumanBodyBones.RightHand);
         while (handRoot == null) yield return null;
+        //武器専用ルートを探す
         Transform weaponRoot = handRoot.Find("WeaponRoot");
-
-        // 子が存在するかチェック
+        //見つかるまで待つ
+        while (weaponRoot == null) yield return null;
+            
+        // 武器ルートに子が存在していれば全て削除
         foreach(Transform child in weaponRoot) {
             Destroy(child.gameObject);
         }
@@ -487,7 +490,6 @@ public abstract class CharacterBase : CreatureBase {
             Debug.LogWarning("IDおかしいで");
             yield break;
         }
-
 
         Instantiate(modelList.weaponModelList[_ID], weaponRoot);
 
