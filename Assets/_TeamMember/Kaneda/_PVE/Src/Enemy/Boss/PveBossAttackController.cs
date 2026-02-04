@@ -1,18 +1,33 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PveBossAttackController : MonoBehaviour
+public class PveBossAttackController : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    //  UŒ‚’†‚©‚Ç‚¤‚©
+    public bool isAttacking {  get; private set; }
+
+    private PveBossController boss;
+
+    private void Awake() {
+        boss = GetComponent<PveBossController>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    [Server]
+    public bool TryAttack(Transform target) {
+        //  UŒ‚’†‚È‚ç–³‹
+        if(isAttacking) return false;
+
+        //  ƒ^[ƒQƒbƒg‚ª‚¢‚È‚¯‚ê‚Î–³Œø
+        if(target == null) return false;
+
+
+
+        //  UŒ‚ŠJn
+        isAttacking = true;
+
+        return true;
     }
+
 }
