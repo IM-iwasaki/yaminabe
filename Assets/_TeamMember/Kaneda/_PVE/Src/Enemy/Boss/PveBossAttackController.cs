@@ -9,9 +9,11 @@ public class PveBossAttackController : NetworkBehaviour
     public bool isAttacking {  get; private set; }
 
     private PveBossController boss;
+    private EnemyWeaponController weapon;
 
     private void Awake() {
         boss = GetComponent<PveBossController>();
+        weapon = GetComponent<EnemyWeaponController>();
     }
 
     [Server]

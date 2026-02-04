@@ -17,8 +17,8 @@ public class EnemyWeaponController : NetworkBehaviour {
     }
 
     // --- 攻撃リクエスト ---
-    [Command]
-    public void CmdRequestAttack(Vector3 direction) {
+    [Server]
+    public void ServerRequestAttack(Vector3 direction) {
         if (weaponData.type == WeaponType.Enemy) {
             if (weaponData is MeleeData meleeData)
                 StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
@@ -28,8 +28,8 @@ public class EnemyWeaponController : NetworkBehaviour {
     }
 
     // --- 攻撃リクエスト ---
-    [Command]
-    public void CmdRequestSkill(Vector3 direction) {
+    [Server]
+    public void ServerRequestSkill(Vector3 direction) {
         if (SkillWeaponData.type == WeaponType.Enemy) {
             if (SkillWeaponData is MeleeData meleeData)
                 StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
