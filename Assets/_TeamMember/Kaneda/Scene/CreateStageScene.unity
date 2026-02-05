@@ -202,6 +202,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4643524021186226990, guid: 9995190aeedd3444a969f7ef18b25cb2, type: 3}
   m_PrefabInstance: {fileID: 3379104176357506068}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &870002538
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 870002539}
+  m_Layer: 0
+  m_Name: FirePos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &870002539
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 870002538}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6190239496884591572}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &883574824 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4643524021186226990, guid: 9995190aeedd3444a969f7ef18b25cb2, type: 3}
@@ -2552,6 +2583,8 @@ GameObject:
   - component: {fileID: 6707469240352857837}
   - component: {fileID: 6707469240352857836}
   - component: {fileID: 6707469240352857839}
+  - component: {fileID: 6707469240352857841}
+  - component: {fileID: 6707469240352857840}
   - component: {fileID: 6707469240352857832}
   m_Layer: 0
   m_Name: CrazyBoss
@@ -37977,6 +38010,7 @@ Transform:
   - {fileID: 7282702568230938224}
   - {fileID: 8811290602704092674}
   - {fileID: 5482045500493166200}
+  - {fileID: 870002539}
   - {fileID: 4025044562244413461}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -38219,6 +38253,42 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   rotateSpeed: 10
+--- !u!114 &6707469240352857840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3548868566029654397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 747e56b323c27f145afdd49b3824b18a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  weaponData: {fileID: 11400000, guid: 9be6957018023624689c1dc2b1e24c3f, type: 2}
+  SkillWeaponData: {fileID: 11400000, guid: 9be6957018023624689c1dc2b1e24c3f, type: 2}
+  firePoint: {fileID: 870002539}
+--- !u!114 &6707469240352857841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3548868566029654397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ab65853ca415704b80b640a735f6ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  bossAttack:
+  - {fileID: 11400000, guid: 5fba39e4b515c974c80b2c614fd959f3, type: 2}
+  - {fileID: 11400000, guid: 5fba39e4b515c974c80b2c614fd959f3, type: 2}
 --- !u!1001 &6736918268281782124
 PrefabInstance:
   m_ObjectHideFlags: 0

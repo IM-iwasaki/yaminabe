@@ -32,7 +32,7 @@ public class PveBossController : NetworkBehaviour
     private PveBossAttackController attack;
 
     //  現在のターゲット
-    private Transform currentTarget;
+    public Transform currentTarget { get; private set; }
 
     /// <summary>
     /// 初期化、コンポーネントを取得
@@ -70,7 +70,7 @@ public class PveBossController : NetworkBehaviour
         if (canAttack) {
             ChangeState(BossState.Attack);
             attackTimer = 0;
-            //  攻撃をする関数を呼ぶ
+            attack.TryAttack(currentTarget);
         }
         else {
             ChangeState(BossState.Move);
@@ -128,6 +128,7 @@ public class PveBossController : NetworkBehaviour
     /// 攻撃が終わったら呼ぶ
     /// </summary>
     public void EndAttack() {
+        attack.EndAttack();
         move.Resume();
         ChangeState(BossState.Idle);
     }
