@@ -1,6 +1,8 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
+using UnityEngine.AI;
 
 /// <summary>
 /// ステージ生成とリスポーン地点管理
@@ -142,6 +144,34 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         SpawnPveAreas();
         SpawnPveHokos();
+
+        BakePveGroundNavMesh(currentStageInstance);
+    }
+
+    private void BakePveGroundNavMesh(GameObject stageRoot) {
+        // PVEGround タグだけを対象
+        var grounds = stageRoot.GetComponentsInChildren<Transform>(true);
+        int bakedCount = 0;
+
+        foreach (var go in grounds) {
+            if (!go.CompareTag("PVEGround"))
+                continue;
+
+            // NavMeshSurface がなければ追加
+            var surface = go.GetComponent<NavMeshSurface>();
+            if (surface == null) {
+                surface = go.gameObject.AddComponent<NavMeshSurface>();
+            }
+
+            surface.collectObjects = CollectObjects.Children;
+            surface.useGeometry = NavMeshCollectGeometry.RenderMeshes;
+
+            // Bake
+            surface.BuildNavMesh();
+            bakedCount++;
+        }
+
+        Debug.Log($"DynamicNavMeshBaker: {bakedCount} 個の PVEGround をBakeしました");
     }
 
     /// <summary>

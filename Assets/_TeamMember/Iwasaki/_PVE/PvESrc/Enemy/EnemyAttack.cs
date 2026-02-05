@@ -1,88 +1,88 @@
-using Mirror;
-using UnityEngine;
+//using Mirror;
+//using UnityEngine;
 
-/// <summary>
-/// 敵の攻撃処理（通常攻撃 or スキルを選択）
-/// </summary>
-public class EnemyAttack : NetworkBehaviour {
+///// <summary>
+///// 敵の攻撃処理（通常攻撃 or スキルを選択）
+///// </summary>
+//public class EnemyAttack : NetworkBehaviour {
 
-    private EnemyStatusBase enemyStatus;
-    private EnemySkillController skillController;
+//    private EnemyStatusBase enemyStatus;
+//    private EnemySkillController skillController;
 
-    [SerializeField] private float attackRange = 1.5f;
-    [SerializeField] private float attackInterval = 1.0f;
+//    [SerializeField] private float attackRange = 1.5f;
+//    [SerializeField] private float attackInterval = 1.0f;
 
-    [Header("スキル発動確率")]
-    [Range(0f, 1f)]
-    [SerializeField] private float skillUseRate = 0.5f; // 50%でスキル
+//    [Header("スキル発動確率")]
+//    [Range(0f, 1f)]
+//    [SerializeField] private float skillUseRate = 0.5f; // 50%でスキル
 
-    private float attackTimer;
+//    private float attackTimer;
 
-    void Awake() {
-        enemyStatus = GetComponent<EnemyStatusBase>();
-        skillController = GetComponent<EnemySkillController>();
-    }
+//    void Awake() {
+//        enemyStatus = GetComponent<EnemyStatusBase>();
+//        skillController = GetComponent<EnemySkillController>();
+//    }
 
-    void Update() {
-        if (!isServer) return;
+//    void Update() {
+//        if (!isServer) return;
 
-        attackTimer -= Time.deltaTime;
-        if (attackTimer > 0f) return;
+//        attackTimer -= Time.deltaTime;
+//        if (attackTimer > 0f) return;
 
-        TryAttackPlayer();
-    }
+//        TryAttackPlayer();
+//    }
 
-    /// <summary>
-    /// プレイヤーが範囲内にいれば攻撃
-    /// </summary>
-    [Server]
-    void TryAttackPlayer() {
+//    /// <summary>
+//    /// プレイヤーが範囲内にいれば攻撃
+//    /// </summary>
+//    [Server]
+//    void TryAttackPlayer() {
 
-        Collider[] hits = Physics.OverlapSphere(
-            transform.position,
-            attackRange
-        );
+//        Collider[] hits = Physics.OverlapSphere(
+//            transform.position,
+//            attackRange
+//        );
 
-        foreach (var hit in hits) {
+//        foreach (var hit in hits) {
 
-            CharacterBase player = hit.GetComponent<CharacterBase>();
-            if (player == null) continue;
+//            CharacterBase player = hit.GetComponent<CharacterBase>();
+//            if (player == null) continue;
 
-            // 前方判定
-            Vector3 dir =
-                (player.transform.position - transform.position).normalized;
-            float angle = Vector3.Angle(transform.forward, dir);
-            if (angle > 45f) continue;
+//            // 前方判定
+//            Vector3 dir =
+//                (player.transform.position - transform.position).normalized;
+//            float angle = Vector3.Angle(transform.forward, dir);
+//            if (angle > 45f) continue;
 
-            // ---------- 攻撃方法の選択 ----------
-            bool usedSkill = false;
+//            // ---------- 攻撃方法の選択 ----------
+//            bool usedSkill = false;
 
-            // スキルがあり、確率判定に成功したらスキル
-            if (skillController != null &&
-                Random.value < skillUseRate) {
+//            // スキルがあり、確率判定に成功したらスキル
+//            if (skillController != null &&
+//                Random.value < skillUseRate) {
 
-                usedSkill =
-                    skillController.TryUseSkill(player.transform);
-            }
+//                usedSkill =
+//                    skillController.TryUseSkill(player.transform);
+//            }
 
-            // スキルを使わなかった場合は通常攻撃
-            if (!usedSkill) {
-                player.TakeDamage(
-                    enemyStatus.GetAttack(),
-                    "Enemy",
-                    -1
-                );
-            }
+//            // スキルを使わなかった場合は通常攻撃
+//            if (!usedSkill) {
+//                player.TakeDamage(
+//                    enemyStatus.GetAttack(),
+//                    "Enemy",
+//                    -1
+//                );
+//            }
 
-            attackTimer = attackInterval;
-            return;
-        }
-    }
+//            attackTimer = attackInterval;
+//            return;
+//        }
+//    }
 
-#if UNITY_EDITOR
-    void OnDrawGizmosSelected() {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-    }
-#endif
-}
+//#if UNITY_EDITOR
+//    void OnDrawGizmosSelected() {
+//        Gizmos.color = Color.red;
+//        Gizmos.DrawWireSphere(transform.position, attackRange);
+//    }
+//#endif
+//}
