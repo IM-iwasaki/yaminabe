@@ -136,7 +136,7 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
-        if (newSceneName == GameSceneManager.Instance.gameSceneName) {
+        if (newSceneName == GameSceneManager.Instance.gameSceneName || newSceneName == GameSceneManager.Instance.pveSceneName) {
             if (HostUI.isVisibleUI)
                 HostUI.ShowOrHideUI();
             GameSceneManager.Instance.ResetIsChangedScene();
