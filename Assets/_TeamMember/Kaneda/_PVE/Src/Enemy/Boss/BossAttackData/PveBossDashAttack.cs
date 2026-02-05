@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "PveBoss/BossAttack/DashAttack")]
 public class PveBossDashAttack : PveBossAttackData {
 
-    [Header("ダッシュする距離")]
-    [SerializeField] private float dashDistance = 10.0f;
-    [Header("ダッシュするときの速度")]
+    [Header("突進する時間")]
+    [SerializeField] private float dashDuration = 15.0f;
+    [Header("突進するときの速度")]
     [SerializeField] private float dashSpeed = 10.0f;
     [Header("多段ヒット設定")]
     [SerializeField] private float hitInterval = 0.3f;
+
 
     /// <summary>
     /// 攻撃を実際に処理する
@@ -52,32 +54,49 @@ public class PveBossDashAttack : PveBossAttackData {
     PveBossController boss,
     EnemyWeaponController weapon,
     Vector3 dir) {
-        //  距離を取得
-        Vector3 start = boss.transform.position;
-        Vector3 end = start + dir * dashDistance;
+        //  Rigidbodyを取得
+        Rigidbody rb = boss.GetComponent<Rigidbody>();
+        if (rb == null) {
+            boss.EndAttack();
+            yield break;
+        }
 
-        float t = 0f;
-        float duration = dashDistance / dashSpeed;
+        float elapsed = 0f;
+        float hitTimer = 0f;
 
-        float hitTime = 0f;
+        while (elapsed < dashDuration) {
+            float delta = Time.deltaTime;
+            elapsed += delta;
+            hitTimer += delta;
 
-        while (t < duration) {
-            t += Time.deltaTime;
-            hitTime += Time.deltaTime;
-            //  移動
-            boss.transform.position = Vector3.Lerp(start, end, t / duration);
-            //  攻撃がヒットするか
-            if (hitTime >= hitInterval) {
-                //  ヒットタイマーリセット
-                hitTime = 0f;
-                // 突進後に攻撃（ヒット判定）
+            Vector3 nextPos =
+                rb.position + dir * dashSpeed * delta;
+
+            
+            rb.MovePosition(nextPos);
+
+            //  ヒット制御
+            if (hitTimer >= hitInterval) {
                 weapon.ServerRequestAttack(dir);
+                hitTimer = 0f;
             }
 
             yield return null;
         }
 
-        // 攻撃終了
+        //  突進後停止処理
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        // 物理を一旦止める
+        rb.isKinematic = true;
+
+        // 1フレーム待つ（重要）
+        yield return null;
+
+        // 通常状態に戻す
+        rb.isKinematic = false;
+
         boss.EndAttack();
     }
 }

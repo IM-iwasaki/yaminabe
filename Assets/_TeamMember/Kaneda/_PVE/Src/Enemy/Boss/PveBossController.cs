@@ -47,10 +47,13 @@ public class PveBossController : NetworkBehaviour
     private void Update() {
         //  server以外で処理しない
         if (!isServer) return;
+
+        //  攻撃中は何もしない
+        if (bossState == BossState.Attack) return;
+
         //  攻撃状態以外でタイマーを進める
-        if(bossState != BossState.Attack) {
-            attackTimer += Time.deltaTime;
-        }
+        attackTimer += Time.deltaTime;
+
         //  ターゲットの候補をリストに格納
         List<Transform> targets = search.GetTargets();
         //  ターゲット候補がいなければIdle
@@ -68,6 +71,7 @@ public class PveBossController : NetworkBehaviour
         bool canAttack = CanAttack(attackTimer, bossState, currentTarget);
         //  攻撃可能判定がTrueなら攻撃、Falseなら移動
         if (canAttack) {
+            Debug.Log("Bossの攻撃");
             ChangeState(BossState.Attack);
             attackTimer = 0;
             attack.TryAttack(currentTarget);
