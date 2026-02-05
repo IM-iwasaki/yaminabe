@@ -20,8 +20,6 @@ public class PveBossController : NetworkBehaviour
 
     [Header("ボスの攻撃クールタイム")]
     [SerializeField] private float attackCooltime = 3.0f;
-    [Header("ボスのフェーズ")]
-    [SerializeField] private bool isPhase = false;
 
     //  攻撃クールタイムを計るタイマー
     private float attackTimer = 0;
@@ -31,8 +29,11 @@ public class PveBossController : NetworkBehaviour
     private PveBossMoveController move;
     private PveBossAttackController attack;
 
+    //  ボスのアニメーション
+    private Animator anim;
+
     //  現在のターゲット
-    private Transform currentTarget;
+    public Transform currentTarget { get; private set; }
 
     /// <summary>
     /// 初期化、コンポーネントを取得
@@ -42,15 +43,19 @@ public class PveBossController : NetworkBehaviour
         search = GetComponent<PveBossSearchController>();
         move = GetComponent<PveBossMoveController>();
         attack = GetComponent<PveBossAttackController>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update() {
         //  server以外で処理しない
         if (!isServer) return;
+
+        //  攻撃中は何もしない
+        if (bossState == BossState.Attack) return;
+
         //  攻撃状態以外でタイマーを進める
-        if(bossState != BossState.Attack) {
-            attackTimer += Time.deltaTime;
-        }
+        attackTimer += Time.deltaTime;
+
         //  ターゲットの候補をリストに格納
         List<Transform> targets = search.GetTargets();
         //  ターゲット候補がいなければIdle
@@ -68,9 +73,10 @@ public class PveBossController : NetworkBehaviour
         bool canAttack = CanAttack(attackTimer, bossState, currentTarget);
         //  攻撃可能判定がTrueなら攻撃、Falseなら移動
         if (canAttack) {
+            Debug.Log("Bossの攻撃");
             ChangeState(BossState.Attack);
             attackTimer = 0;
-            //  攻撃をする関数を呼ぶ
+            attack.TryAttack(currentTarget);
         }
         else {
             ChangeState(BossState.Move);
@@ -88,13 +94,21 @@ public class PveBossController : NetworkBehaviour
         if(bossState == state) return;
         //  状態更新
         bossState = state;
-        //  変更した際に攻撃中なら移動を止める
+        //  変更した際に状態ごとに変更を加える
         switch (bossState) {
-            case BossState.Attack:
-                move.Stop();
+            case BossState.Idle:
+                anim.SetBool("Attack", false);
+                anim.SetBool("Run", false);
                 break;
             case BossState.Move:
+                anim.SetBool("Attack", false);
+                anim.SetBool("Run", true);
                 move.Resume();
+                break;
+            case BossState.Attack:
+                anim.SetBool("Attack", true);
+                anim.SetBool("Run", false);
+                move.Stop();
                 break;
         }
     }
@@ -128,6 +142,7 @@ public class PveBossController : NetworkBehaviour
     /// 攻撃が終わったら呼ぶ
     /// </summary>
     public void EndAttack() {
+        attack.EndAttack();
         move.Resume();
         ChangeState(BossState.Idle);
     }

@@ -25,7 +25,7 @@ public class CharacterAnimationController : NetworkBehaviour {
     private MoveAnimState moveState = MoveAnimState.Idle;
 
     [SyncVar(hook = nameof(OnWeaponChanged))]
-    private int layerIndex;
+    private int layerIndex = 0;
 
     [Server]
     public void SetWeaponLayer(int _index) {
@@ -49,6 +49,7 @@ public class CharacterAnimationController : NetworkBehaviour {
 
         for (int i = 1, max = anim.layerCount; i < max; i++) {
             anim.SetLayerWeight(i, i == _layerIndex ? 1.0f : 0.0f);
+            Debug.LogWarning(anim.GetLayerName(i) + ":Weight " + anim.GetLayerWeight(i));
         }
     }
 
