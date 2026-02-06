@@ -177,7 +177,11 @@ public class PlayerListManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void ResetAllScores() {
-        foreach (var p in players) p.score = 0;
+        foreach (var p in players) {
+            p.score = 0;   // スコアリセット
+            p.kills = 0;   // キル数リセット
+            p.deaths = 0;  // デス数リセット
+        }
         Debug.Log("[PlayerListManager] 全スコアをリセットしました");
     }
     #endregion
