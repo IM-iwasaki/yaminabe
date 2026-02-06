@@ -148,7 +148,7 @@ public class CharacterParameter : NetworkBehaviour {
             HP = maxHP;
             maxMP = runtimeStatus.maxMP;
             MP = maxMP;
-            attack = runtimeStatus.attack + (PlayerWallet.Instance.GetMoney() / 500);
+            attack = runtimeStatus.attack + (PlayerWallet.Instance.GetMoney() / 1000);
             if(attack >= 10) attack = 10;
             moveSpeed = runtimeStatus.moveSpeed + (PlayerWallet.Instance.GetMoney() / 1000);
             if(moveSpeed >= 12) moveSpeed = 12;
