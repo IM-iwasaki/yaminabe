@@ -104,7 +104,7 @@ public abstract class CharacterBase : CreatureBase {
     }
     public override void OnStartClient() {
         if (isLocalPlayer) base.OnStartClient();
-        parameter.StatusInport();
+        //parameter.StatusInport();
         // ここを追加：クライアント側で TeamGlowManager に登録
         if (TeamGlowManager.Instance != null) {
             TeamGlowManager.Instance.RegisterPlayer(this);
