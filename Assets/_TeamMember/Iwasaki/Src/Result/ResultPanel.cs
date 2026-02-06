@@ -195,6 +195,7 @@ public class ResultPanel : NetworkBehaviour {
             GameSceneManager.Instance.LoadLobbySceneForAll();
             ServerManager.instance.ResetCharacterStatus();
             resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
+            PlayerListManager.Instance.ResetAllScores();
         }         
     }
 }
