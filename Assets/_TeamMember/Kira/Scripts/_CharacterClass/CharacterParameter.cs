@@ -108,7 +108,7 @@ public class CharacterParameter : NetworkBehaviour {
         StatusInport(inputStatus);
 
         // "Ground" という名前のレイヤーを取得してマスク化
-        GroundLayer = LayerMask.GetMask("Ground");
+        GroundLayer = LayerMask.GetMask("Ground", "PVEGround");
 
         localUI = core.GetComponent<PlayerLocalUIController>();
 
