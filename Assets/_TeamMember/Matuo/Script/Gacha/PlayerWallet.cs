@@ -195,7 +195,7 @@ public class PlayerWallet : MonoBehaviour {
     /// </summary>
     private void UpdateMoneyText() {
         if (moneyText == null) return;
-        moneyText.text = $"Money: {currentMoney}";
+        moneyText.text = $"{currentMoney} G";
     }
 
     #region ëùå∏UI
