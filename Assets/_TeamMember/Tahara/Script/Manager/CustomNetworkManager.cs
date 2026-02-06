@@ -95,6 +95,9 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnServerAddPlayer(NetworkConnectionToClient _conn) {
 
         GameObject player = Instantiate(playerPrefab);
+        var characterData = FindAnyObjectByType<AppearanceChangeManager>().data.characters[0];
+
+        player.GetComponent<GeneralCharacter>().parameter.StatusInport(characterData.statusData);
         NetworkServer.AddPlayerForConnection(_conn, player);
         if (!serverManager.connectPlayer.Contains(_conn.identity))
             serverManager.connectPlayer.Add(_conn.identity);

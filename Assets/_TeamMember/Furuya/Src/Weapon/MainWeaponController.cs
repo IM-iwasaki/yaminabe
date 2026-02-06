@@ -14,7 +14,7 @@ public class MainWeaponController : NetworkBehaviour {
 
     private GameObject activeChargeFx;
 
-    private CharacterEnum.CharaterType charaterType;
+    public CharacterEnum.CharaterType charaterType { get; private set; }
 
     private CharacterBase characterBase; // 名前を取得するため
     private CharacterAnimationController animCon;
@@ -207,6 +207,7 @@ public class MainWeaponController : NetworkBehaviour {
 
         if (!CanUseWeapon(charaterType, data.type)) {
             Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
+            AudioManager.Instance.CmdPlayUISE("武器取得失敗");
             return;
         }
 
@@ -218,6 +219,9 @@ public class MainWeaponController : NetworkBehaviour {
         characterBase.GetComponent<GeneralCharacter>().RpcChangeWeapon(weaponData.ID);
         //見た目変更
         animCon.SetWeaponLayer(GenerateWeaponIndex(weaponData.weaponName));
+        //効果音を流す
+        AudioManager.Instance.CmdPlayUISE("武器取得");
+
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 

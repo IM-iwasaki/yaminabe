@@ -472,9 +472,9 @@ public abstract class CharacterBase : CreatureBase {
         Transform weaponRoot = handRoot.Find("WeaponRoot");
         //見つかるまで待つ
         while (weaponRoot == null) yield return null;
-            
+
         // 武器ルートに子が存在していれば全て削除
-        foreach(Transform child in weaponRoot) {
+        foreach (Transform child in weaponRoot) {
             Destroy(child.gameObject);
         }
 
@@ -510,7 +510,9 @@ public abstract class CharacterBase : CreatureBase {
     /// 追加:タハラ UI表示
     /// </summary>
     public void OnShowHostUI(InputAction.CallbackContext context) {
-        if (!isServer || !isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
+        if (!isServer || !isLocalPlayer 
+            || SceneManager.GetActiveScene().name == "GameScene" 
+            || SceneManager.GetActiveScene().name == "PvEScene") return;
         if (context.started) {
             if (CameraMenu.isOpen)
                 CameraMenu.ToggleMenu();
