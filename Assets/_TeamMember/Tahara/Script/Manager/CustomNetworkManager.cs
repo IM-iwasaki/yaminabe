@@ -163,9 +163,10 @@ public class CustomNetworkManager : NetworkManager {
             GameManager.Instance.StartPveGameFromList(random: true); // falseにすれば順番
         }
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
-        foreach (var conn in serverManager.connectPlayer) {
+        foreach (var playerObj in serverManager.connectPlayer) {
             //必要な変数をキャッシュ
-            GeneralCharacter character = conn.GetComponent<GeneralCharacter>();
+            GeneralCharacter character = playerObj.GetComponent<GeneralCharacter>();
+            var conn = playerObj.connectionToClient;
             int teamID = character.parameter.TeamID;
             NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
@@ -180,6 +181,7 @@ public class CustomNetworkManager : NetworkManager {
                 startPos.ServerTeleport(respawnPos, Quaternion.identity);
                 //レートの数値を反映して表示
                 RateDisplay.instance.ChangeRateUI();
+                character.parameter.TargetSkillUIUpdate(conn);
             }
         }
         FadeManager.Instance.StartFadeIn(0.5f);

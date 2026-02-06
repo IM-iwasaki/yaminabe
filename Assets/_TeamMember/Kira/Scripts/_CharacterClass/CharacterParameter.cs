@@ -175,6 +175,14 @@ public class CharacterParameter : NetworkBehaviour {
         weaponController_sub.SetSubWeaponData(subWeapon);
     }
 
+    [TargetRpc]
+    public void TargetSkillUIUpdate(NetworkConnectionToClient _conn) {
+        SkillDisplayer.Instance.SetSkillUI(equippedSkills[0].skillName
+            , equippedSkills[0].skillDescription
+            , equippedPassives[0].passiveName
+            , equippedPassives[0].passiveDescription);
+    }
+
     /// <summary>
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する
     /// </summary>
