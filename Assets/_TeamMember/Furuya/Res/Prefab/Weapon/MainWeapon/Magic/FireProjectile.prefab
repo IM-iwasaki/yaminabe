@@ -4940,6 +4940,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  lifetime: 5
 --- !u!114 &4923632743300769805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14797,7 +14798,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8564710893106290400
 Transform:
   m_ObjectHideFlags: 0
@@ -24532,7 +24533,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6631252818774183284
 Transform:
   m_ObjectHideFlags: 0

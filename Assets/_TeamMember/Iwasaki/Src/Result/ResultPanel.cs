@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
-using UnityEditor.Experimental.GraphView;
 
 /// <summary>
 /// リザルト画面の勝敗表示およびボタン操作を制御するクラス。
@@ -193,7 +192,6 @@ public class ResultPanel : NetworkBehaviour {
             //プレイヤーの状態を戻す
             ServerManager.instance.ResetCharacterStatus();
             GameSceneManager.Instance.LoadLobbySceneForAll();
-            ServerManager.instance.ResetCharacterStatus();
             resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
         }         
     }
