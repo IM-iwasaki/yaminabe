@@ -35,6 +35,9 @@ public class CharacterParameter : NetworkBehaviour {
     //ˆÚ“®‘¬“x
     [SyncVar] public int moveSpeed = 5;
 
+    //•Ï“®’l
+    [SyncVar] public float[] fluctuation;
+
 
     //‚Á‚Ä‚¢‚é•Ší‚Ì•¶š—ñ
     public string currentWeapon { get; protected set; }

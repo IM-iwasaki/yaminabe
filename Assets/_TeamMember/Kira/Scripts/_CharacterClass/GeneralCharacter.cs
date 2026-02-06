@@ -36,14 +36,14 @@ public class GeneralCharacter : CharacterBase {
 
         parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
 
-        //RespawnControl();    
-
-        //死んでいたら以降の処理は行わない。
-        //if (isDead) return;
+        //RespawnControl();
 
         //バフデバフの処理
         //TODO:ここに処理を書く。
-        for(int index = 0 ; index < temporaryBuffs.Count - 1 ; index++) {
+        for(int paramIndex = 0 ; paramIndex < (int)ParamaterType.max ; paramIndex++) {
+            //nullだったり要素がなかったりしたらとばす
+            if(temporaryBuffs[paramIndex] == null || temporaryBuffs[paramIndex].Count == 0) continue;
+            for (int )
 
         }
     }

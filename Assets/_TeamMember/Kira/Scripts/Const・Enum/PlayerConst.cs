@@ -37,4 +37,5 @@ public enum ParamaterType {
     defence,
     moveSpeed,
     damageRate,
+    max,
 }
