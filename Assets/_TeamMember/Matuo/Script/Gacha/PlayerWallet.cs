@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using UnityEngine.UI;
 using Mirror;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// プレイヤーのお金を管理するクラス
@@ -41,7 +42,27 @@ public class PlayerWallet : MonoBehaviour {
 
         // 起動時にはUIを生成しない
         LoadMoney();
-    }  
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDestroy() {
+        if (Instance == this) {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        if (scene.name == "LobbyScene") {
+            // Lobbyでは常時表示
+            ShowMoneyUI();
+            keepMoneyUIVisible = true;
+        } else {
+            // Lobby以外では通常挙動に戻す
+            keepMoneyUIVisible = false;
+            HideMoneyUI();
+        }
+    }
 
     /// <summary>
     /// 現在の所持金を取得
