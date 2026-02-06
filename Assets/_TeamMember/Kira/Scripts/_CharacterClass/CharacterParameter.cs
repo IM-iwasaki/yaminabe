@@ -133,21 +133,42 @@ public class CharacterParameter : NetworkBehaviour {
     /// ステータスのインポート
     /// </summary>
     public void StatusInport(GeneralCharacterStatus _inport = null) {
-        if (_inport == null) {
-            Debug.Log("ステータス無いで");
-            DefaultStatusInport();
-            return;
+        if (_inport.displayName == "ミリオネア") {
+            if (_inport == null) {
+                Debug.Log("ステータス無いで");
+                DefaultStatusInport();
+                return;
+            }
+
+            inputStatus = _inport;
+
+            runtimeStatus = _inport;
+            maxHP = runtimeStatus.maxHP + (PlayerWallet.Instance.GetMoney() / 100);
+            if(maxHP >= 1000) maxHP = 1000;
+            HP = maxHP;
+            maxMP = runtimeStatus.maxMP;
+            MP = maxMP;
+            attack = runtimeStatus.attack;
+            moveSpeed = runtimeStatus.moveSpeed + (PlayerWallet.Instance.GetMoney() / 1000);
+            if(moveSpeed >= 12) moveSpeed = 12;
         }
+        else {
+            if (_inport == null) {
+                Debug.Log("ステータス無いで");
+                DefaultStatusInport();
+                return;
+            }
 
-        inputStatus = _inport;
+            inputStatus = _inport;
 
-        runtimeStatus = _inport;
-        maxHP = runtimeStatus.maxHP;
-        HP = maxHP;
-        maxMP = runtimeStatus.maxMP;
-        MP = maxMP;
-        attack = runtimeStatus.attack;
-        moveSpeed = runtimeStatus.moveSpeed;
+            runtimeStatus = _inport;
+            maxHP = runtimeStatus.maxHP;
+            HP = maxHP;
+            maxMP = runtimeStatus.maxMP;
+            MP = maxMP;
+            attack = runtimeStatus.attack;
+            moveSpeed = runtimeStatus.moveSpeed;
+        }
         equippedSkills = runtimeStatus.skills;
         equippedPassives = runtimeStatus.passives;
         /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */
