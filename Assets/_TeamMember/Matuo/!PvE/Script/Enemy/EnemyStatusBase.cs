@@ -11,9 +11,12 @@ public class EnemyStatusBase : CreatureBase {
     public EnemyStatusBaseData statusData;    // 敵のステータスデータ
     public EnemyParameter enemyParameter { get; private set; }
 
+    private EnemyHealthView healthView;
+
     protected override void Awake() {
         base.Awake(); // 必要なら
         enemyParameter = GetComponent<EnemyParameter>();
+        healthView = GetComponent<EnemyHealthView>();
     }
 
     public override void OnStartServer() {
@@ -33,10 +36,24 @@ public class EnemyStatusBase : CreatureBase {
         // 共通ダメージ処理（HP減算・SE・スコア加算）
         base.TakeDamage(damage, attackerName, attackerID);
 
+        RpcUpdateView(damage);
+
         // HPが0以下なら死亡
         if (parameter.HP <= 0) {
             Die();
         }
+    }
+
+    /// <summary>
+    /// ダメージテキスト、HPUI表示用
+    /// </summary>
+    /// <param name="damage"></param>
+    [ClientRpc]
+    private void RpcUpdateView(int damage) {
+        if (healthView == null) return;
+
+        healthView.UpdateHP(parameter.HP);
+        healthView.ShowDamage(damage);
     }
 
     /// <summary>
