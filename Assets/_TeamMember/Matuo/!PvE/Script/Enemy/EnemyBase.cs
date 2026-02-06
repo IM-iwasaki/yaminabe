@@ -18,6 +18,10 @@ public class EnemyBase : NetworkBehaviour {
 
     private Transform target;              // 現在のターゲット（プレイヤー）
 
+    [Header("多段ヒット設定")]
+    [SerializeField] private float hitInterval = 0.5f;
+    private float hitTimer = 0.0f;
+
     /// <summary>
     /// サーバー開始時の初期化
     /// </summary>
@@ -44,24 +48,29 @@ public class EnemyBase : NetworkBehaviour {
     /// 毎フレームのAI更新（サーバーのみ）
     /// </summary>
     [ServerCallback]
-private void Update() {
+    private void Update() {
 
-    // status や parameter が null の場合もガード
-    if (target == null)
-        return;
+        // status や parameter が null の場合もガード
+        if (target == null)
+            return;
 
-    float distance = Vector3.Distance(transform.position, target.position);
+        float distance = Vector3.Distance(transform.position, target.position);
 
-    if (distance > agent.stoppingDistance) {
-        agent.isStopped = false;
-        agent.SetDestination(target.position);
+        if (distance > agent.stoppingDistance) {
+            agent.isStopped = false;
+            agent.SetDestination(target.position);
+        }
+        else {
+            agent.isStopped = true;
+            Vector3 direction = (target.position - transform.position).normalized;
+
+            hitTimer += Time.deltaTime;
+            if(hitTimer >= hitInterval) {
+                hitTimer = 0.0f;
+                weapon.ServerRequestAttack(direction);
+            }
+        }
     }
-    else {
-        agent.isStopped = true;
-        Vector3 direction = (target.position - transform.position).normalized;
-        weapon.ServerRequestAttack(direction);
-    }
-}
 
 
     /// <summary>
