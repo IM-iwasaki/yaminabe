@@ -11,7 +11,7 @@ public class PveBossDashAttack : PveBossAttackData {
     [Header("突進するときの速度")]
     [SerializeField] private float dashSpeed = 25.0f;
     [Header("多段ヒット設定")]
-    [SerializeField] private float hitInterval = 0.3f;
+    [SerializeField] private float hitInterval = 0.2f;
 
 
     /// <summary>
