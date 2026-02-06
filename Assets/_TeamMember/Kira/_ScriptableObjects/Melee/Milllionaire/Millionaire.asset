@@ -10,14 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b57f1631f241f3c48a205884bc2b4846, type: 3}
-  m_Name: New General Character Status
+  m_Name: Millionaire
   m_EditorClassIdentifier: 
   baseStatus: {fileID: 11400000, guid: f012a476ea76ab444a2d836e63008b37, type: 2}
-  displayName: 
-  skills: []
-  passives: []
-  MainWeapon: {fileID: 0}
-  SubWeapon: {fileID: 0}
+  displayName: "\u30DF\u30EA\u30AA\u30CD\u30A2"
+  skills:
+  - {fileID: 11400000, guid: 1e2dac8c21a5ebe4b995bfeaf1536426, type: 2}
+  passives:
+  - {fileID: 11400000, guid: c6893291512ea68478b8f923bde70045, type: 2}
+  MainWeapon: {fileID: 11400000, guid: e234c8a8d5e928341ac10601cc2ab490, type: 2}
+  SubWeapon: {fileID: 11400000, guid: 8fa2c4c5f7650b747899e553f2c38e25, type: 2}
   chatacterType: 0
   maxHPCorrection: 0
   speedCorrection: 0
