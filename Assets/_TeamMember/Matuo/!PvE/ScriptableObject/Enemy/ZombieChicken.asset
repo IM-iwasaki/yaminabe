@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8322acdfd608e9349b83be1234911788, type: 3}
+  m_Name: ZombieChicken
+  m_EditorClassIdentifier: 
+  enemyName: "\u30BE\u30F3\u30D3\u30C1\u30AD\u30F3"
+  enemyPrefab: {fileID: 3548868566056176881, guid: 747f0dd193ff66f4f84fa9c80481e42f, type: 3}
+  description: 
+  maxHp: 100
+  attack: 10
+  moveSpeed: 3.5
+  acceleration: 50
+  angularSpeed: 720
+  stoppingDistance: 1.2

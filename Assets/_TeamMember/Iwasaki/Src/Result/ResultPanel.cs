@@ -166,12 +166,13 @@ public class ResultPanel : NetworkBehaviour {
             //  アイテムスポナーの自動リスポーン機能を停止
             ItemSpawnManager.Instance.ResetSpawnPoint();
 
-            // スコア初期化
+            // 初期化
+            resultManager.RpcResetResultFlag();
             RuleManager.Instance?.Initialize();
             GameManager.Instance.EndGame();
-            GameSceneManager.Instance.LoadGameSceneForAll();
             //プレイヤーの状態を戻す
-            ServerManager.instance.ResetCharacterHPandAmmo();
+            ServerManager.instance.ResetCharacterStatus();
+            GameSceneManager.Instance.LoadGameSceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（再戦処理は後で追加）
         }
     }
@@ -184,9 +185,12 @@ public class ResultPanel : NetworkBehaviour {
         if (NetworkServer.active && resultManager != null) {
             //  アイテムスポナーの自動リスポーン機能を停止
             ItemSpawnManager.Instance.ResetSpawnPoint();
-            // スコア初期化
+            // 初期化
+            resultManager.RpcResetResultFlag();
             RuleManager.Instance?.Initialize();
             GameManager.Instance.EndGame();
+            //プレイヤーの状態を戻す
+            ServerManager.instance.ResetCharacterStatus();
             GameSceneManager.Instance.LoadLobbySceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
         }         

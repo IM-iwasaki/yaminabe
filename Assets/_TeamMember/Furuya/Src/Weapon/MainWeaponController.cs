@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
 using System.Collections;
+using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -95,7 +96,7 @@ public class MainWeaponController : NetworkBehaviour {
                 if (weaponData is GunData gunData) {
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                     if (ammo > 0)
-                        ammo--;
+                        ammo -= gunData.multiShot;
                 }
 
                 break;
@@ -245,15 +246,25 @@ public class MainWeaponController : NetworkBehaviour {
         // プレイヤーの前方ベクトル（視線や武器の向き）
         Vector3 forward = firePoint.forward;
 
+
+
         foreach (var c in hits) {
-            var hp = c.GetComponent<CharacterBase>();
+            Vector3 toTarget = (c.transform.position - firePoint.position).normalized;
+            float dot = Vector3.Dot(forward, toTarget);
+            
+            float angle = meleeData.meleeAngle;
+            float threshold = Mathf.Cos(angle * Mathf.Deg2Rad);
+            //角度チェック
+            if (dot < threshold) continue;
+
+            var hp = c.GetComponent<CreatureBase>();
             if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == characterBase.parameter.TeamID) continue;
             hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
 #if UNITY_EDITOR
-        MeleeAttackDebugArc.Create(firePoint.position, firePoint.forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
+        MeleeAttackDebugArc.Create(firePoint.position, forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
     }
 
@@ -337,11 +348,32 @@ public class MainWeaponController : NetworkBehaviour {
         if (characterBase.parameter.MP < magicData.MPCost) return;
         characterBase.parameter.MP -= magicData.MPCost;
 
-        GameObject proj = ProjectilePool.Instance.SpawnFromPool(
+        GameObject proj;
+
+        if (magicData.magicType == ProjectileType.DoT) {
+            Vector3 spawnPos = transform.position;
+            Quaternion rot = Quaternion.identity;
+
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f)) {
+                spawnPos = hit.point;
+                rot = Quaternion.LookRotation(transform.forward, hit.normal);
+            }
+
+            proj = ProjectilePool.Instance.SpawnFromPool(
+                magicData.projectilePrefab.name,
+                spawnPos,
+                rot
+            );
+
+        }
+        else {
+            proj = ProjectilePool.Instance.SpawnFromPool(
             magicData.projectilePrefab.name,
             firePoint.position,
             Quaternion.LookRotation(direction)
-        );
+            );
+        }
+        
 
         if (proj == null) return;
 
@@ -360,18 +392,14 @@ public class MainWeaponController : NetworkBehaviour {
         }
         else if (proj.TryGetComponent(out DoTArea dotArea)) {
             int teamID = characterBase?.parameter.TeamID ?? 0;
-            Vector3 Direction = transform.forward;
             dotArea.Init(
                 teamID,
                 characterBase.parameter.PlayerName,
                 characterBase.parameter.playerId,
+                magicData.hitEffectType,
                 magicData.projectileSpeed,
-                magicData.damage,
-                Direction
+                magicData.damage
                 );
-        }
-        else if(proj.TryGetComponent(out EffectHitbox effectHitbox)) {
-            ServerCrystalAttack(magicData);
         }
     }
 
@@ -396,46 +424,12 @@ public class MainWeaponController : NetworkBehaviour {
         // 発射エフェクト (チャージ停止＆マズルフラッシュ)
         RpcCastMagic(firePoint.position, magicData.muzzleFlashType);
 
-        //Vector3 dir = characterBase.parameter.GetShootDirection();
-
         // 弾の生成
         ServerMagicAttack(direction);
 
         // SE はここでサーバー再生
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);
     }
-
-    [Server]
-    private void ServerCrystalAttack(MainMagicData data) {
-        Vector3 origin = transform.position;
-
-        Vector3 forward = transform.forward;
-        forward.y = 0;
-        forward.Normalize();
-
-        Quaternion rot = Quaternion.LookRotation(forward);
-
-        GameObject hitbox = EffectPool.Instance.GetFromPool(
-            data.projectilePrefab,
-            origin,
-            rot
-        );
-
-        if (hitbox.TryGetComponent(out EffectHitbox eh)) {
-            eh.Init(
-                data.damage,
-                characterBase.parameter.PlayerName,
-                characterBase.parameter.playerId,
-                forward,
-                data.stepDistance * data.stepCount, // 最大距離
-                data.hitboxLifeTime
-            );
-        }
-
-        EffectPool.Instance.ReturnToPool(hitbox, data.hitboxLifeTime);
-    }
-
-
 
     // --- チャージエフェクト再生 ---
     [ClientRpc]
@@ -531,11 +525,10 @@ public class MainWeaponController : NetworkBehaviour {
     public int GenerateWeaponIndex(string _weaponName) {
         return _weaponName switch {
             "HandGun" or "revolver" or "Punch" => 1,
-            "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" or "Spear" or "IceMagic" or "Katana" or "Lightsaver"
-             or "Knife" or "PizzaCutter" => 2,
-            "RPG" => 3,
-            "Sniper" => 4,
-            "Minigun" => 5,
+            "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" or "Spear" or "IceMagic" => 2,
+            "RPG"  or "Katana"=> 3,
+            "Sniper" or "Knife" or "PizzaCutter"=> 4,
+            "Minigun" or "Lightsaver"=> 5,
 
             _ => -1,
         };

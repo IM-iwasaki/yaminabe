@@ -49,27 +49,27 @@ public class Skill_Gurdian : SkillBase {
         isSkillUse = false;
     }
 
-    void CreateHitBox(CharacterBase user) {
+    //void CreateHitBox(CharacterBase user) {
 
-        GameObject hitBox = new GameObject("SkillHitbox");
+    //    GameObject hitBox = new GameObject("SkillHitbox");
 
-        hitBox.transform.position =
-            user.transform.position + user.transform.forward * 1.0f;
-        hitBox.transform.rotation = user.transform.rotation;
+    //    hitBox.transform.position =
+    //        user.transform.position + user.transform.forward * 1.0f;
+    //    hitBox.transform.rotation = user.transform.rotation;
 
-        SphereCollider col = hitBox.AddComponent<SphereCollider>();
-        col.isTrigger = true;
-        col.radius = 1.5f;
+    //    SphereCollider col = hitBox.AddComponent<SphereCollider>();
+    //    col.isTrigger = true;
+    //    col.radius = 1.5f;
 
-        SkillHitbox hb = hitBox.AddComponent<SkillHitbox>();
-        hb.Initialize(
-            user.transform,
-            user.parameter.TeamID,
-            SkillDamage,
-            user.parameter.PlayerName,
-            user.parameter.playerId
-        );
+    //    SkillHitbox hb = hitBox.AddComponent<SkillHitbox>();
+    //    hb.Initialize(
+    //        user.transform,
+    //        user.parameter.TeamID,
+    //        SkillDamage,
+    //        user.parameter.PlayerName,
+    //        user.parameter.playerId
+    //    );
 
-        Object.Destroy(hitBox, 0.3f);
-    }
+    //    Object.Destroy(hitBox, 0.3f);
+    //}
 }

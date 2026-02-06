@@ -18,7 +18,7 @@ public class MagicProjectile : NetworkBehaviour {
     private int ID;
     private EffectType hitEffectType;
     private bool initialized;
-    private float lifetime = 5f;
+    [SerializeField]private float lifetime = 5f;
 
     /// <summary>
     /// 弾の初期化（発射時に呼ぶ）
@@ -43,6 +43,24 @@ public class MagicProjectile : NetworkBehaviour {
                 rb.useGravity = true;
                 rb.velocity = direction * speed + Vector3.up * initialHeightSpeed;
             }
+            else if (type == ProjectileType.GroundLine) {
+                rb.useGravity = false;
+
+                // 水平向き
+                Vector3 forward = direction;
+                forward.y = 0;
+                forward.Normalize();
+
+                // 床に吸着
+                Vector3 pos = transform.position;
+                if (Physics.Raycast(pos + Vector3.up, Vector3.down, out RaycastHit hit, 5f)) {
+                    transform.position = hit.point;
+                    transform.rotation = Quaternion.LookRotation(forward, hit.normal);
+                }
+                else {
+                    transform.rotation = Quaternion.LookRotation(forward);
+                }
+            }
             else {
                 rb.useGravity = false;
                 rb.velocity = direction * speed;
@@ -55,6 +73,14 @@ public class MagicProjectile : NetworkBehaviour {
             StopAllCoroutines();
             StartCoroutine(AutoDisable()); // 自動で非アクティブ化
         }
+
+        // エフェクト再初期化（必須）
+        var particles = GetComponentsInChildren<ParticleSystem>(true);
+        foreach (var ps in particles) {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Play();
+        }
+
     }
 
     void FixedUpdate() {
@@ -67,18 +93,33 @@ public class MagicProjectile : NetworkBehaviour {
     void OnTriggerEnter(Collider other) {
         if (!initialized || !isServer) return;
         if (other.gameObject == owner ||
-            other.gameObject.tag == "Magic") return;
+            other.CompareTag("Magic")) return;
 
-        if (other.TryGetComponent(out CharacterBase target)) {
-            //チームIDが違ったらダメージを与える
-            if (target.parameter.TeamID != owner.GetComponent<GeneralCharacter>().parameter.TeamID)
+        // GroundLine は床に当たっても消さない
+        if (type == ProjectileType.GroundLine) {
+            // キャラ以外は無視
+            if (!other.TryGetComponent(out CreatureBase target))
+                return;
+
+            // チーム判定
+            if (target.parameter.TeamID != owner.GetComponent<CreatureBase>().parameter.TeamID
+                || target.parameter.TeamID == -1) {
                 target.TakeDamage(damage, ownerName, ID);
-            else if (target.parameter.TeamID == -1)
-                target.TakeDamage(damage, ownerName, ID);
+            }
+
+            RpcPlayHitEffect(transform.position, hitEffectType);
+            return; //消さない
+        }
+
+        // ---- 既存 Projectile 用 ----
+        if (other.TryGetComponent(out CreatureBase targetNormal)) {
+            if (targetNormal.parameter.TeamID != owner.GetComponent<CreatureBase>().parameter.TeamID
+                || targetNormal.parameter.TeamID == -1) {
+                targetNormal.TakeDamage(damage, ownerName, ID);
+            }
         }
 
         RpcPlayHitEffect(transform.position, hitEffectType);
-
         Deactivate();
     }
 
@@ -105,6 +146,18 @@ public class MagicProjectile : NetworkBehaviour {
         else
             NetworkServer.Destroy(gameObject);
     }
+
+    [Server]
+    public void HideImmediately() {
+        StartCoroutine(HideNextFrame());
+    }
+
+    [Server]
+    private IEnumerator HideNextFrame() {
+        yield return null; // 1フレーム待つ
+        ProjectilePool.Instance.DespawnToPool(gameObject);
+    }
+
 
     /// <summary>
     /// クライアントエフェクト表示

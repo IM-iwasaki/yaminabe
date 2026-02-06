@@ -5,15 +5,15 @@ using System.Linq;
 /// <summary>
 /// Characterの変数管理
 /// </summary>
-public class CharacterParameter : NetworkBehaviour{
+public class CharacterParameter : NetworkBehaviour {
     #region ～キャラクターデータ管理変数～
 
     [Header("インポートするステータス")]
-    [SerializeField]GeneralCharacterStatus inputStatus;
+    [SerializeField] GeneralCharacterStatus inputStatus;
     //CharacterStatusをキャッシュ(ScriptableObjectを書き換えないための安全策)
     public GeneralCharacterStatus runtimeStatus { get; private set; }
-    public SkillBase[] equippedSkills{ get; private set; }
-    public PassiveBase[] equippedPassives{ get; private set; }
+    public SkillBase[] equippedSkills { get; private set; }
+    public PassiveBase[] equippedPassives { get; private set; }
 
     #endregion
 
@@ -34,8 +34,8 @@ public class CharacterParameter : NetworkBehaviour{
     [SyncVar] public float attack;
     //移動速度
     [SyncVar] public int moveSpeed = 5;
-    
-    
+
+
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
@@ -48,7 +48,7 @@ public class CharacterParameter : NetworkBehaviour{
     [SyncVar] public int playerId = -1;
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
-    
+
     public float defaultAttack { get; protected set; }
     public int defaultMoveSpeed { get; protected set; }
 
@@ -60,9 +60,9 @@ public class CharacterParameter : NetworkBehaviour{
     #region Transform系変数
 
     //足元のTransform
-    [SerializeField]public Transform footPoint;
+    [SerializeField] public Transform footPoint;
     //射撃位置
-    [SerializeField]private Transform firePoint;
+    [SerializeField] private Transform firePoint;
 
     #endregion
 
@@ -84,7 +84,7 @@ public class CharacterParameter : NetworkBehaviour{
     public bool canMove = true;
     //スキル使用後経過時間
     [System.NonSerialized] public float skillAfterTime = 0.0f;
-    
+
     //接地しているか
     public bool IsGrounded { get; private set; }
     //GroundLayer
@@ -111,10 +111,10 @@ public class CharacterParameter : NetworkBehaviour{
         int groundLayerIndex = LayerMask.NameToLayer("Ground");
         GroundLayer = 1 << groundLayerIndex;
 
-        localUI = core.GetComponent<PlayerLocalUIController>();        
+        localUI = core.GetComponent<PlayerLocalUIController>();
 
         isDead = false;
-        isInvincible = false;        
+        isInvincible = false;
         respownAfterTime = 0;
         attackStartTime = 0;
         skillAfterTime = 0;
@@ -132,7 +132,7 @@ public class CharacterParameter : NetworkBehaviour{
     /// <summary>
     /// ステータスのインポート
     /// </summary>
-     public void StatusInport(GeneralCharacterStatus _inport = null) {
+    public void StatusInport(GeneralCharacterStatus _inport = null) {
         if (_inport == null) {
             Debug.Log("ステータス無いで");
             DefaultStatusInport();
@@ -150,7 +150,7 @@ public class CharacterParameter : NetworkBehaviour{
         moveSpeed = runtimeStatus.moveSpeed;
         equippedSkills = runtimeStatus.skills;
         equippedPassives = runtimeStatus.passives;
-        /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */        
+        /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */
         Debug.Log("ステータス、パッシブ、スキルのインポートを行いました。\n" +
             "インポートしたステータス... キャラクター:" + runtimeStatus.displayName + "　maxHP:" + maxHP + "　attack:" + attack + "　moveSpeed:" + moveSpeed + "\n" +
             "インポートしたパッシブ..." + string.Join(", ", equippedPassives.Where(i => i != null).Select(i => i.passiveName)) +
@@ -172,8 +172,8 @@ public class CharacterParameter : NetworkBehaviour{
         var subWeapon = runtimeStatus.SubWeapon.WeaponName;
 
         weaponController_main.CmdSetWeaponData(mainWeapon);
-        weaponController_sub.SetWeaponData(subWeapon);
-     }
+        weaponController_sub.SetSubWeaponData(subWeapon);
+    }
 
     /// <summary>
     /// StatusInportでnullが発生した時にデフォルトの値で初期化する
@@ -256,6 +256,46 @@ public class CharacterParameter : NetworkBehaviour{
         // 上限補正
         if (MP > maxMP)
             MP = maxMP;
+    }
+    /// <summary>
+    /// 追加　マツオ : サーバー側から呼んで武器を初期装備に戻す
+    /// </summary>
+    [Server]
+    public void ResetWeaponToDefault() {
+        // メイン武器とサブ武器の参照を取得
+        var weaponControllerMain = GetComponent<MainWeaponController>();
+        var weaponControllerSub = GetComponent<SubWeaponController>();
+
+        if (runtimeStatus == null || weaponControllerMain == null || weaponControllerSub == null)
+            return;
+
+        // 初期装備名を取得
+        string mainWeaponName = runtimeStatus.MainWeapon.WeaponName;
+        string subWeaponName = runtimeStatus.SubWeapon.WeaponName;
+
+        // サーバー側で武器データを設定
+        weaponControllerMain.CmdSetWeaponData(mainWeaponName);
+        weaponControllerSub.SetSubWeaponData(subWeaponName);
+
+        // クライアント側にも反映
+        RpcUpdateWeaponOnClient(mainWeaponName, subWeaponName);
+    }
+
+    /// <summary>
+    /// 追加　マツオ : クライアント用武器を初期装備に戻す
+    /// </summary>
+    [ClientRpc]
+    private void RpcUpdateWeaponOnClient(string mainWeaponName, string subWeaponName) {
+        if (!isLocalPlayer) return;
+
+        var weaponControllerMain = GetComponent<MainWeaponController>();
+        var weaponControllerSub = GetComponent<SubWeaponController>();
+
+        if (weaponControllerMain != null)
+            weaponControllerMain.CmdSetWeaponData(mainWeaponName);
+
+        if (weaponControllerSub != null)
+            weaponControllerSub.SetSubWeaponData(subWeaponName);
     }
 
     /// <summary>

@@ -170,9 +170,6 @@ public class CharacterInput : NetworkBehaviour {
     /// ˆÚ“®“ü—Í
     /// </summary>
     public void OnMove(InputAction.CallbackContext ctx) {
-        //ˆÚ“®‚Å‚«‚È‚¢ó‘Ô‚È‚ç‹A‚é
-        if (!core.parameter.canMove) return;
-
         MoveInput = ctx.ReadValue<Vector2>();
 
         float moveX = MoveInput.x;

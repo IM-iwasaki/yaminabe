@@ -107,9 +107,11 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         // ===== リザルト中フラグON =====
         IsResultShowing = true;
 
-        // カーソル表示
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // ホストのみカーソル表示
+        if (NetworkServer.active && NetworkClient.active) {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
 
         // プレハブを生成
         GameObject ui = Instantiate(resultUIPrefab);
@@ -191,11 +193,20 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
             currentUIRoot = null;
             currentResultPanel = null;
 
-            // ===== リザルト中フラグOFF =====
-            IsResultShowing = false;
-
             // カーソルを元に戻す
             Cursor.lockState = CursorLockMode.Locked;
         }
+    }
+
+    /// <summary>
+    /// リザルトフラグ用
+    /// </summary>
+    public static void ResetResultFlag() {
+        IsResultShowing = false;
+    }
+
+    [ClientRpc]
+    public void RpcResetResultFlag() {
+        ResetResultFlag(); // インスタンスメソッドを呼ぶ
     }
 }

@@ -190,8 +190,9 @@ public abstract class CharacterBase : CreatureBase {
         //HPの減算処理
         parameter.HP -= (int)damage;
 
-        // hitSE 再生
-        PlayHitSE(_ID);
+        if (_ID != -1)
+            // hitSE 再生
+            PlayHitSE(_ID);
 
         if (parameter.HP <= 0) {
             parameter.HP = 0;
@@ -202,7 +203,7 @@ public abstract class CharacterBase : CreatureBase {
 
             Dead(_name);
 
-            if (PlayerListManager.Instance != null) {
+            if (PlayerListManager.Instance != null || _ID != -1) {
                 // スコア加算
                 PlayerListManager.Instance.AddScoreById(_ID, 100);
                 PlayerListManager.Instance.AddKillById(_ID);
@@ -240,7 +241,6 @@ public abstract class CharacterBase : CreatureBase {
         //isLocalPlayerはサーバー処理に不必要らしいので消しました byタハラ
         //死亡フラグをたててHPを0にしておく
         parameter.isDead = true;
-        ChatManager.Instance.CmdSendSystemMessage(_name + " is Dead!!");
         //死亡トリガーを発火
         parameter.StartDeadTrigger();
         //バフ全解除
@@ -470,12 +470,14 @@ public abstract class CharacterBase : CreatureBase {
         if (timeout <= 0.0f) yield break;
         Transform handRoot = GetComponent<CharacterAnimationController>().anim.GetBoneTransform(HumanBodyBones.RightHand);
         while (handRoot == null) yield return null;
-        // 子が存在するかチェック
-        if (handRoot.childCount >= 3) {
-            GameObject currentWeapon = handRoot.GetChild(3).gameObject;
-            if (currentWeapon != null)
-                Destroy(currentWeapon);
-            yield return null;
+        //武器専用ルートを探す
+        Transform weaponRoot = handRoot.Find("WeaponRoot");
+        //見つかるまで待つ
+        while (weaponRoot == null) yield return null;
+            
+        // 武器ルートに子が存在していれば全て削除
+        foreach(Transform child in weaponRoot) {
+            Destroy(child.gameObject);
         }
 
         //モデルリストはあるか
@@ -491,9 +493,9 @@ public abstract class CharacterBase : CreatureBase {
             yield break;
         }
 
+        Instantiate(modelList.weaponModelList[_ID], weaponRoot);
 
-        Instantiate(modelList.weaponModelList[_ID], handRoot);
-
+        animCon.SetWeaponLayer(weaponController_main.GenerateWeaponIndex(weaponController_main.weaponData.weaponName));
     }
 
     // ホコを持っているか判定の切り替え用

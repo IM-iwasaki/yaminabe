@@ -62,14 +62,29 @@ public class ServerManager : NetworkBehaviour {
         //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
         for (int i = 0; i < (int)TeamColor.ColorMax; i++) {
             teams.Add(new TeamData());
+            //チームリストを作り直したので既にチーム所属済みなら同じチームに設定しなおし(Redから入れ始めるので)
+            foreach (var player in allPlayers) {
+                if (player.GetComponent<GeneralCharacter>().parameter.TeamID == i) {
+                    teams[i].teamPlayerList.Add(player);
+                }
+                if (teams[i].teamPlayerList.Count == TEAMMATE_MAX)
+                    teams[i].isFullTeam = true;
+            }
         }
 
         //未所属プレイヤーをシャッフル
         noTeamPlayer = noTeamPlayer.OrderBy(x => Random.value).ToList();
-
-        //均等に割り振り
         int teamIndex = 0;
-        foreach(var player in noTeamPlayer) {
+        //均等に割り振り
+        if (teams[(int)TeamColor.Red].teamPlayerList.Count > teams[(int)TeamColor.Blue].teamPlayerList.Count)
+            teamIndex = 1;
+        foreach (var player in noTeamPlayer) {
+            //所属しようとするチームが満員なら
+            if (teams[teamIndex].isFullTeam) {
+                //全員空いてるチームにぶち込む
+                teams[(teamIndex + 1) % teams.Count].teamPlayerList.Add(player);
+                continue;
+            }
             teams[teamIndex].teamPlayerList.Add(player);
             player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
 
@@ -94,13 +109,15 @@ public class ServerManager : NetworkBehaviour {
     /// 全員のHP、弾数状態を戻す
     /// </summary>
     [Server]
-    public void ResetCharacterHPandAmmo() {
+    public void ResetCharacterStatus() {
         foreach (var player in connectPlayer) {
             GeneralCharacter resetPlayer = player.GetComponent<GeneralCharacter>();
+            resetPlayer.parameter.StatusInport(resetPlayer.parameter.runtimeStatus);
+            //万が一の死亡状態解除
             resetPlayer.ResetHealth();
-            MainWeaponController mainWeaponController = player.GetComponent<MainWeaponController>();
-            mainWeaponController.ServerResetMainWeapon(resetPlayer.parameter.runtimeStatus);
-            mainWeaponController.RequestAmmoReset();
+            // 追加 マツオ : 武器リセット用
+            var param = player.GetComponent<GeneralCharacter>().parameter;
+            param.ResetWeaponToDefault();
         }
     }
 }

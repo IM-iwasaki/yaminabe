@@ -20,6 +20,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
     private HashSet<CharacterBase> playersInArea = new();
     private bool cleared = false;
 
+    private AreaClearCondition clearCondition;
+
     private void Awake() {
         if (areaCollider == null)
             areaCollider = GetComponent<Collider>();
@@ -30,13 +32,11 @@ public class CaptureAreaPVE : NetworkBehaviour {
     [Server]
     public void Initialize(AreaSpawnPoint spawnPoint) {
         targetScore = spawnPoint.targetScore;
+        clearCondition = spawnPoint.clearCondition;
+
         onClearedEvents.Clear();
-
-        foreach (var prefab in spawnPoint.eventPrefabs) {
-            if (prefab == null) continue;
-
-            var evt = Instantiate(prefab, transform);
-            NetworkServer.Spawn(evt.gameObject);
+        foreach (var evt in spawnPoint.events) {
+            if (evt == null) continue;
             onClearedEvents.Add(evt);
         }
     }
@@ -59,7 +59,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
     private void Update() {
         if (cleared) return;
         if (!GameManager.Instance.IsGameRunning()) return;
-        if (playersInArea.Count == 0) return;
+
+        if (!CanIncreaseScore()) return;
 
         timer += Time.deltaTime;
         if (timer >= 1f) {
@@ -72,19 +73,42 @@ public class CaptureAreaPVE : NetworkBehaviour {
         }
     }
 
+    /// <summary>
+    /// 人数判定用
+    /// </summary>
+    [Server]
+    private bool CanIncreaseScore() {
+        if (playersInArea.Count == 0)
+            return false;
+
+        switch (clearCondition) {
+            case AreaClearCondition.AnyPlayer:
+                return true;
+
+            case AreaClearCondition.AllPlayers:
+                return playersInArea.Count >= ServerManager.instance.connectPlayer.Count;
+
+            default:
+                return false;
+        }
+    }
+
     [Server]
     private void CompleteArea() {
         if (cleared) return;
         cleared = true;
 
+        RpcExecuteEvents();
+
+        // 突破
+        areaCollider.enabled = false;
+    }
+
+    [ClientRpc]
+    private void RpcExecuteEvents() {
         foreach (var e in onClearedEvents) {
             if (e != null)
                 e.Execute();
         }
-
-        // 突破済み表現（どれか選ぶ）
-        areaCollider.enabled = false;
-        // gameObject.SetActive(false);
-        // NetworkServer.Destroy(gameObject);
     }
 }

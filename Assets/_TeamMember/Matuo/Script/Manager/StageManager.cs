@@ -1,6 +1,8 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
+using UnityEngine.AI;
 
 /// <summary>
 /// ステージ生成とリスポーン地点管理
@@ -14,6 +16,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     public CaptureHoko currentHoko;
 
     private GameObject currentStageInstance;
+    private int currentPveIndex = 0;
     // リスポーン地点
     [SerializeField] private readonly SyncList<Transform> normalRespawnPoints = new();
     [SerializeField] private readonly SyncList<Transform> redRespawnPoints = new();
@@ -62,109 +65,6 @@ public class StageManager : NetworkSystemObject<StageManager> {
         RegisterRespawnPoints(currentStageInstance);
         //RuleManager.Instance.winningTeams.Clear();
     }
-    /// <summary>
-    /// PVE用のステージ生成
-    /// </summary>
-    /// <param name="stage"></param>
-    [Server]
-    public void SpawnPveStage(PVEStageData stage) {
-        if (stage == null || stage.stagePrefab == null) return;
-
-        // 既存ステージ削除
-        if (currentStageInstance != null)
-            NetworkServer.Destroy(currentStageInstance);
-
-        // ステージ生成
-        currentStageInstance = Instantiate(stage.stagePrefab);
-        ApplyRuleObjectsForPVE(stage.rulesToSpawn);
-        NetworkServer.Spawn(currentStageInstance);
-
-        // リスポーン地点登録
-        RegisterRespawnPoints(currentStageInstance);
-        SetRespawnMode(RespawnMode.Team);
-
-        SpawnPveAreas();
-        SpawnPveHokos();
-    }
-
-    /// <summary>
-    /// PVE用エリア生成
-    /// </summary>
-    [Server]
-    private void SpawnPveAreas() {
-        var spawnPoints = currentStageInstance
-            .GetComponentsInChildren<AreaSpawnPoint>(true);
-
-        foreach (var sp in spawnPoints) {
-            var areaObj = Instantiate(
-                pveAreaPrefab,
-                sp.transform.position,
-                sp.transform.rotation
-            );
-
-            NetworkServer.Spawn(areaObj);
-
-            var area = areaObj.GetComponent<CaptureAreaPVE>();
-            area.Initialize(sp);
-        }
-    }
-
-    /// <summary>
-    /// PVE用ホコをスポーンする
-    /// </summary>
-    [Server]
-    private void SpawnPveHokos() {
-        var spawnPoints = currentStageInstance
-            .GetComponentsInChildren<HokoSpawnPoint>(true);
-
-        foreach (var sp in spawnPoints) {
-            for (int i = 0; i < sp.spawnCount; i++) {
-
-                Vector3 offset = Random.insideUnitSphere * 0.5f;
-                offset.y = 0f;
-
-                var hoko = Instantiate(
-                    pveHokoPrefab,
-                    sp.transform.position + offset,
-                    Quaternion.identity
-                );
-
-                NetworkServer.Spawn(hoko);
-            }
-        }
-    }
-
-    /// <summary>
-    /// PVE用のルールオブジェクト生成
-    /// </summary>
-    /// <param name="rules"></param>
-    [Server]
-    public void ApplyRuleObjectsForPVE(List<GameRuleType> rules) {
-        // 既存のルールオブジェクト削除
-        var exist = GameObject.FindGameObjectsWithTag("RuleObject");
-        foreach (var obj in exist) NetworkServer.Destroy(obj);
-
-        currentRuleObject = null;
-        currentHoko = null;
-
-        foreach (var rule in rules) {
-            if (rule == GameRuleType.DeathMatch) continue;
-
-            GameObject prefab = null;
-            switch (rule) {
-                case GameRuleType.Area: prefab = areaPrefab; break;
-                case GameRuleType.Hoko: prefab = hokoPrefab; break;
-            }
-            if (prefab == null) continue;
-
-            var obj = Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
-            obj.tag = "RuleObject";
-            NetworkServer.Spawn(obj);
-
-            if (rule == GameRuleType.Hoko)
-                currentHoko = obj.GetComponent<CaptureHoko>();
-        }
-    }
 
     /// <summary>
     /// 古谷　ルールごとのオブジェクト生成
@@ -194,13 +94,120 @@ public class StageManager : NetworkSystemObject<StageManager> {
         if (prefab == null)
             return;
 
-        currentRuleObject = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+        currentRuleObject = Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
         currentRuleObject.tag = "RuleObject";
         NetworkServer.Spawn(currentRuleObject);
 
         // Hoko なら CaptureHoko コンポーネントを保持
         if (rule == GameRuleType.Hoko) {
             currentHoko = currentRuleObject.GetComponent<CaptureHoko>();
+        }
+    }
+
+    /// <summary>
+    /// PVEステージの生成順番取得用
+    /// </summary>
+    /// <param name="random"></param>
+    /// <returns></returns>
+    [Server]
+    public PVEStageData GetNextPveStage(bool random) {
+        if (pveStages.Count == 0) return null;
+
+        if (random) {
+            return pveStages[Random.Range(0, pveStages.Count)];
+        }
+
+        var stage = pveStages[currentPveIndex];
+        currentPveIndex = (currentPveIndex + 1) % pveStages.Count;
+        return stage;
+    }
+
+    /// <summary>
+    /// PVE用のステージ生成
+    /// </summary>
+    /// <param name="stage"></param>
+    [Server]
+    public void SpawnPveStage(PVEStageData stage) {
+        if (stage == null || stage.stagePrefab == null) return;
+
+        // 既存ステージ削除
+        if (currentStageInstance != null)
+            NetworkServer.Destroy(currentStageInstance);
+
+        // ステージ生成
+        currentStageInstance = Instantiate(stage.stagePrefab);
+        NetworkServer.Spawn(currentStageInstance);
+
+        // リスポーン地点登録
+        RegisterRespawnPoints(currentStageInstance);
+        SetRespawnMode(RespawnMode.Team);
+
+        SpawnPveAreas();
+        SpawnPveHokos();
+
+        BakePveGroundNavMesh(currentStageInstance);
+    }
+
+    private void BakePveGroundNavMesh(GameObject stageRoot) {
+        // PVEGround タグだけを対象
+        var grounds = stageRoot.GetComponentsInChildren<Transform>(true);
+        int bakedCount = 0;
+
+        foreach (var go in grounds) {
+            if (!go.CompareTag("PVEGround"))
+                continue;
+
+            // NavMeshSurface がなければ追加
+            var surface = go.GetComponent<NavMeshSurface>();
+            if (surface == null) {
+                surface = go.gameObject.AddComponent<NavMeshSurface>();
+            }
+
+            surface.collectObjects = CollectObjects.Children;
+            surface.useGeometry = NavMeshCollectGeometry.RenderMeshes;
+
+            // Bake
+            surface.BuildNavMesh();
+            bakedCount++;
+        }
+
+        Debug.Log($"DynamicNavMeshBaker: {bakedCount} 個の PVEGround をBakeしました");
+    }
+
+    /// <summary>
+    /// PVE用エリア生成
+    /// </summary>
+    [Server]
+    private void SpawnPveAreas() {
+        var spawnPoints = currentStageInstance.GetComponentsInChildren<AreaSpawnPoint>(true);
+
+        foreach (var sp in spawnPoints) {
+            var areaObj = Instantiate(pveAreaPrefab,sp.transform.position,sp.transform.rotation);
+
+            NetworkServer.Spawn(areaObj);
+
+            var area = areaObj.GetComponent<CaptureAreaPVE>();
+            area.Initialize(sp);
+        }
+    }
+
+    /// <summary>
+    /// PVE用ホコをスポーンする
+    /// </summary>
+    [Server]
+    private void SpawnPveHokos() {
+        var spawnPoints = currentStageInstance.GetComponentsInChildren<HokoSpawnPoint>(true);
+
+        foreach (var sp in spawnPoints) {
+            for (int i = 0; i < sp.spawnCount; i++) {
+
+                Vector3 offset = Random.insideUnitSphere * 0.5f;
+                offset.y = 0f;
+
+                var hoko = Instantiate(pveHokoPrefab,sp.transform.position + offset,Quaternion.identity);
+
+                NetworkServer.Spawn(hoko);
+            }
         }
     }
 

@@ -63,6 +63,7 @@ public enum EffectType {
     Default,
     Fire,
     Ice,
+    Water,
     Lightning,
     Explosion,
     Smoke,
@@ -93,6 +94,7 @@ public enum WeaponType {
     Melee,
     Gun,
     Magic,
+    Enemy,
 }
 
 public enum SubWeaponType {

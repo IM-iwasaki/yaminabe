@@ -1,6 +1,6 @@
-using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 敵スキル管理（確率＆クールタイム制御）

@@ -62,6 +62,20 @@ public class GameManager : NetworkSystemObject<GameManager> {
     }
 
     /// <summary>
+    /// PVEゲーム開始前の準備
+    /// </summary>
+    /// <param name="random"></param>
+    [Server]
+    public void StartPveGameFromList(bool random = false) {
+        if (isGameRunning) return;
+
+        var stage = StageManager.Instance.GetNextPveStage(random);
+        if (stage == null) return;
+
+        StartPveGame(stage);
+    }
+
+    /// <summary>
     /// PVEゲーム開始
     /// </summary>
     [Server]
