@@ -71,6 +71,11 @@ public class CharacterSelectManager : NetworkBehaviour {
 
         SetCharacterSelectState(true);
 
+        // キャラ選択中は所持金UIを非表示
+        if (PlayerWallet.Instance != null) {
+            PlayerWallet.Instance.HideMoneyUI();
+        }
+
         // UIを非表示（移動開始前）
         if (selectUI != null) {
             selectUI.SetActive(false);
@@ -116,8 +121,10 @@ public class CharacterSelectManager : NetworkBehaviour {
             selectUI.SetActive(false);
             guideUI.SetActive(true);
         }
-
-
+        // LobbySceneなら所持金UIを再表示
+        if (PlayerWallet.Instance != null) {
+            PlayerWallet.Instance.ShowMoneyUI();
+        }
 
         // カメラを戻す
         if (cameraManager != null)
