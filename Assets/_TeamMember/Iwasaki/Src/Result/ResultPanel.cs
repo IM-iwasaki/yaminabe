@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
-using UnityEditor.Experimental.GraphView;
 
 /// <summary>
 /// リザルト画面の勝敗表示およびボタン操作を制御するクラス。
