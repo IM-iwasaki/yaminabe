@@ -1,8 +1,4 @@
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
 
 public class CreatureBase : NetworkBehaviour
 {

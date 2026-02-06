@@ -20,8 +20,6 @@ public class PveBossController : NetworkBehaviour
 
     [Header("ボスの攻撃クールタイム")]
     [SerializeField] private float attackCooltime = 3.0f;
-    [Header("ボスのフェーズ")]
-    [SerializeField] private bool isPhase = false;
 
     //  攻撃クールタイムを計るタイマー
     private float attackTimer = 0;
@@ -30,6 +28,9 @@ public class PveBossController : NetworkBehaviour
     private PveBossSearchController search;
     private PveBossMoveController move;
     private PveBossAttackController attack;
+
+    //  ボスのアニメーション
+    private Animator anim;
 
     //  現在のターゲット
     public Transform currentTarget { get; private set; }
@@ -42,6 +43,7 @@ public class PveBossController : NetworkBehaviour
         search = GetComponent<PveBossSearchController>();
         move = GetComponent<PveBossMoveController>();
         attack = GetComponent<PveBossAttackController>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update() {
@@ -92,13 +94,21 @@ public class PveBossController : NetworkBehaviour
         if(bossState == state) return;
         //  状態更新
         bossState = state;
-        //  変更した際に攻撃中なら移動を止める
+        //  変更した際に状態ごとに変更を加える
         switch (bossState) {
-            case BossState.Attack:
-                move.Stop();
+            case BossState.Idle:
+                anim.SetBool("Attack", false);
+                anim.SetBool("Run", false);
                 break;
             case BossState.Move:
+                anim.SetBool("Attack", false);
+                anim.SetBool("Run", true);
                 move.Resume();
+                break;
+            case BossState.Attack:
+                anim.SetBool("Attack", true);
+                anim.SetBool("Run", false);
+                move.Stop();
                 break;
         }
     }

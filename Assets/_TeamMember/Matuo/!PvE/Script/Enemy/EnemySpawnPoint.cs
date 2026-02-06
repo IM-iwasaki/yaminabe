@@ -1,0 +1,26 @@
+using UnityEngine;
+
+/// <summary>
+/// シーン上に配置する敵スポーンポイント
+/// </summary>
+public class EnemySpawnPoint : MonoBehaviour {
+
+    [Header("生成する敵データ")]
+    public EnemyStatusBaseData enemyStatus;     // 敵データ
+
+    [Header("スポーン制限")]
+    public int maxSpawnCount = 5;               // このスポナーから同時に湧ける最大数
+    [HideInInspector]
+    public int currentSpawnCount = 0;           // 現在このスポナーから湧いている数
+
+    [Header("起動条件")]
+    public float activateRadius = 20f;          // プレイヤー検知距離
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected() {
+        // 起動範囲をScene上で可視化
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, activateRadius);
+    }
+#endif
+}

@@ -11,6 +11,12 @@ public class PveBossMoveController : NetworkBehaviour
 
     //  移動可能かどうか
     private bool canMove = false;
+    //  Rigidbody取得
+    private Rigidbody rb;
+
+    private void Awake() {
+        rb = GetComponent<Rigidbody>();
+    }
 
     /// <summary>
     /// ターゲットに向かって移動する
@@ -38,10 +44,17 @@ public class PveBossMoveController : NetworkBehaviour
     /// <param name="targetPos"></param>
     /// <param name="moveSpeed"></param>
     private void BossMove(Vector3 targetPos, float moveSpeed) {
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            targetPos,
-            moveSpeed * Time.deltaTime);
+        Vector3 dir = targetPos - rb.position;
+        dir.y = 0f;
+
+        if (dir.sqrMagnitude < 0.001f) return;
+
+        dir.Normalize();
+
+        Vector3 nextPos =
+            rb.position + dir * moveSpeed * Time.deltaTime;
+
+        rb.MovePosition(nextPos);
     }
     
     /// <summary>
