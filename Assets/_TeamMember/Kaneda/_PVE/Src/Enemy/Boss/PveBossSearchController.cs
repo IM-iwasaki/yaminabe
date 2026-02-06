@@ -15,9 +15,11 @@ public class PveBossSearchController : NetworkBehaviour
     [SerializeField] private float leaveGraceTime = 3.0f;
     [Header("ボスの索敵範囲")]
     [SerializeField] private float searchRadius = 3.0f;
+    [Header("索敵コライダー")]
+    [SerializeField] private SphereCollider col;
 
     private void Awake() {
-        SphereCollider col = GetComponent<SphereCollider>();
+        col = col.GetComponent<SphereCollider>();
         col.radius = searchRadius;
     }
 
