@@ -2,13 +2,10 @@ using UnityEngine;
 using TMPro;
 using System;
 using System.Collections;
-using UnityEngine.UI;
-using Mirror;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// プレイヤーのお金を管理するクラス
-/// シングルトン構造でゲーム全体から参照可能
+/// プレイヤーの所持金を管理するクラス
 /// </summary>
 public class PlayerWallet : MonoBehaviour {
     // シングルトン
@@ -21,44 +18,55 @@ public class PlayerWallet : MonoBehaviour {
     [SerializeField] private int currentMoney;
 
     /// <summary>
-    /// 所持金が変化したときに呼ばれるイベント
+    /// 所持金が変化した時に通知されるイベント
     /// </summary>
     public event Action<int> OnMoneyChanged;
 
-    // UI用
+    [Header("所持金UI（Prefab）")]
+    [SerializeField] private GameObject moneyUIPrefab; // Inspectorで設定する
+
+    // 生成されたUIの参照
     private Canvas moneyCanvas;
     private TextMeshProUGUI moneyText;
 
-    // ガチャ中など、所持金UIを常時表示するかどうか
+    /// <summary>
+    /// 常時表示するかどうか（Lobbyなど）
+    /// </summary>
     private bool keepMoneyUIVisible = false;
 
     private void Awake() {
+        // シングルトン処理
         if (Instance != null && Instance != this) {
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // 起動時にはUIを生成しない
+        // セーブデータから所持金をロード
         LoadMoney();
 
+        // シーンロードイベント登録
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDestroy() {
-        if (Instance == this) {
+        // イベント解除
+        if (Instance == this)
             SceneManager.sceneLoaded -= OnSceneLoaded;
-        }
     }
 
+    /// <summary>
+    /// シーンロード時の処理
+    /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
         if (scene.name == "LobbyScene") {
             // Lobbyでは常時表示
             ShowMoneyUI();
             keepMoneyUIVisible = true;
         } else {
-            // Lobby以外では通常挙動に戻す
+            // それ以外のシーンでは非表示
             keepMoneyUIVisible = false;
             HideMoneyUI();
         }
@@ -70,11 +78,12 @@ public class PlayerWallet : MonoBehaviour {
     public int GetMoney() => currentMoney;
 
     /// <summary>
-    /// お金を追加する（マイナスも可）
+    /// 所持金を増減させる（マイナス可）
     /// </summary>
     public void AddMoney(int amount) {
         currentMoney += amount;
-        if (currentMoney < 0) currentMoney = 0;
+        if (currentMoney < 0)
+            currentMoney = 0;
 
         OnMoneyChanged?.Invoke(currentMoney);
         SaveMoney();
@@ -84,17 +93,18 @@ public class PlayerWallet : MonoBehaviour {
     }
 
     /// <summary>
-    /// 指定した金額を支払う
+    /// 指定金額を支払う
     /// </summary>
     public bool SpendMoney(int amount) {
         if (amount <= 0) return false;
         if (currentMoney < amount) return false;
 
         currentMoney -= amount;
-        if (currentMoney < 0) currentMoney = 0;
+        if (currentMoney < 0)
+            currentMoney = 0;
 
         OnMoneyChanged?.Invoke(currentMoney);
-        PlayerItemManager.Instance?.UpdateMoney(currentMoney);
+        SaveMoney();
 
         UpdateMoneyText();
         ShowFloatingMoney(-amount);
@@ -103,7 +113,7 @@ public class PlayerWallet : MonoBehaviour {
     }
 
     /// <summary>
-    /// 所持金のリセット
+    /// 所持金を初期値にリセット
     /// </summary>
     public void ResetMoney() {
         currentMoney = startMoney;
@@ -113,7 +123,7 @@ public class PlayerWallet : MonoBehaviour {
     }
 
     /// <summary>
-    /// 所持金のセーブ
+    /// 所持金をセーブ
     /// </summary>
     private void SaveMoney() {
         var data = PlayerSaveData.Load();
@@ -122,7 +132,7 @@ public class PlayerWallet : MonoBehaviour {
     }
 
     /// <summary>
-    /// セーブされている所持金のロード
+    /// 所持金をロード
     /// </summary>
     private void LoadMoney() {
         var data = PlayerSaveData.Load();
@@ -131,73 +141,66 @@ public class PlayerWallet : MonoBehaviour {
     }
 
     /// <summary>
-    /// ガチャ開始時に所持金UIを表示
+    /// 所持金UIを表示
     /// </summary>
     public void ShowMoneyUI() {
         CreateMoneyUI();
         keepMoneyUIVisible = true;
         UpdateMoneyText();
-        moneyText.gameObject.SetActive(true);
+
+        if (moneyText != null)
+            moneyText.gameObject.SetActive(true);
     }
 
     /// <summary>
-    /// ガチャ終了時に所持金UIを非表示
+    /// 所持金UIを非表示
     /// </summary>
     public void HideMoneyUI() {
         keepMoneyUIVisible = false;
+
         if (moneyText != null)
             moneyText.gameObject.SetActive(false);
     }
-    #region 所持金UI
+
     /// <summary>
-    /// 所持金表示用CanvasとTMP Textを生成
+    /// 所持金UIをプレハブから生成
     /// </summary>
     private void CreateMoneyUI() {
         // 既に生成済みなら何もしない
         if (moneyCanvas != null) return;
 
-        // Canvas作成
-        GameObject canvasGO = new GameObject("MoneyCanvas");
-        moneyCanvas = canvasGO.AddComponent<Canvas>();
-        moneyCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvasGO.AddComponent<CanvasScaler>();
-        canvasGO.AddComponent<GraphicRaycaster>();
-        DontDestroyOnLoad(canvasGO);
+        if (moneyUIPrefab == null) {
+            Debug.LogError("MoneyUIPrefab が Inspector に設定されていません");
+            return;
+        }
 
-        // TMP Text作成
-        GameObject textGO = new GameObject("MoneyText");
-        textGO.transform.SetParent(canvasGO.transform);
-        moneyText = textGO.AddComponent<TextMeshProUGUI>();
-        moneyText.fontSize = 72;
-        moneyText.alignment = TextAlignmentOptions.TopLeft;
-        moneyText.color = Color.yellow;
+        // プレハブ生成
+        GameObject ui = Instantiate(moneyUIPrefab);
+        DontDestroyOnLoad(ui);
 
-        // 左上に固定
-        RectTransform rt = moneyText.rectTransform;
-        rt.anchorMin = new Vector2(0, 1);
-        rt.anchorMax = new Vector2(0, 1);
-        rt.pivot = new Vector2(0, 1);
-        rt.anchoredPosition = new Vector2(10, -10);
+        // 参照取得
+        moneyCanvas = ui.GetComponentInChildren<Canvas>();
+        moneyText = ui.GetComponentInChildren<TextMeshProUGUI>();
 
-        // 横幅固定で改行しない
-        moneyText.enableWordWrapping = false;
+        if (moneyText == null)
+            Debug.LogError("MoneyText (TextMeshProUGUI) がプレハブ内に存在しません");
 
-        // 最初は非表示
-        moneyText.gameObject.SetActive(false);
+        // 初期状態は非表示
+        if (moneyText != null)
+            moneyText.gameObject.SetActive(false);
     }
 
     /// <summary>
-    /// 所持金テキストの更新
+    /// 所持金テキストを更新
     /// </summary>
     private void UpdateMoneyText() {
         if (moneyText == null) return;
         moneyText.text = $"Money: {currentMoney}";
     }
-    #endregion
 
     #region 増減UI
     /// <summary>
-    /// フローティング表示（±○○）
+    /// 所持金増減時のフローティング表示
     /// </summary>
     private void ShowFloatingMoney(int amount) {
         if (moneyText == null) return;
@@ -207,30 +210,28 @@ public class PlayerWallet : MonoBehaviour {
         floatGO.transform.SetParent(moneyText.transform.parent, false);
 
         TextMeshProUGUI floatText = floatGO.AddComponent<TextMeshProUGUI>();
-        floatText.fontSize = 72;
+        floatText.fontSize = moneyText.fontSize;
         floatText.alignment = TextAlignmentOptions.TopLeft;
 
         string sign = amount > 0 ? "+" : "";
         floatText.text = $"{sign}{amount}";
-
         floatText.color = amount > 0 ? Color.yellow : Color.red;
 
         RectTransform rt = floatText.rectTransform;
 
-        // 所持金UIの幅に応じて右へ自動オフセット
+        // 所持金テキストの右側に表示
         float offsetX = moneyText.preferredWidth + 20f;
         rt.anchorMin = moneyText.rectTransform.anchorMin;
         rt.anchorMax = moneyText.rectTransform.anchorMax;
         rt.pivot = moneyText.rectTransform.pivot;
         rt.anchoredPosition =
-            moneyText.rectTransform.anchoredPosition
-            + new Vector2(offsetX, -20f);
+            moneyText.rectTransform.anchoredPosition + new Vector2(offsetX, -20f);
 
         StartCoroutine(FloatingAnimation(floatText));
     }
 
     /// <summary>
-    /// フローティングアニメーション
+    /// フローティングアニメーション（上昇＋フェードアウト）
     /// </summary>
     private IEnumerator FloatingAnimation(TextMeshProUGUI text) {
         float duration = 1.5f;
@@ -243,7 +244,7 @@ public class PlayerWallet : MonoBehaviour {
             timer += Time.deltaTime;
             float t = timer / duration;
 
-            // 上に移動
+            // 上方向へ移動
             text.rectTransform.anchoredPosition =
                 startPos + Vector2.up * 60f * t;
 

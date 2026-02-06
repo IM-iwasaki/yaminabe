@@ -1923,6 +1923,10 @@ PrefabInstance:
       propertyPath: startMoney
       value: 300
       objectReference: {fileID: 0}
+    - target: {fileID: 3998622791416689954, guid: 3b92195e83d3cf14a9ab686e7f002542, type: 3}
+      propertyPath: moneyUIPrefab
+      value: 
+      objectReference: {fileID: 8775268020157596419, guid: da15598d66371614ba847faea7397a89, type: 3}
     - target: {fileID: 7443725360219777553, guid: 3b92195e83d3cf14a9ab686e7f002542, type: 3}
       propertyPath: m_Name
       value: PlayerWallet
