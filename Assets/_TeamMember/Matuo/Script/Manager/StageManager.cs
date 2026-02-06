@@ -160,7 +160,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         surface.collectObjects = CollectObjects.Children;
         surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-        surface.layerMask = LayerMask.GetMask("PVEGround");
+        surface.layerMask = LayerMask.GetMask("PVEGround", "PVEWall");
 
         surface.BuildNavMesh();
     }

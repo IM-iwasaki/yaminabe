@@ -22,6 +22,9 @@ public class EnemyBase : NetworkBehaviour {
     [SerializeField] private float hitInterval = 0.5f;
     private float hitTimer = 0.0f;
 
+    [Header("攻撃判定用レイヤー")]
+    [SerializeField] private LayerMask wallLayer = default; // PVEWall を指定
+
     /// <summary>
     /// サーバー開始時の初期化
     /// </summary>
@@ -35,10 +38,10 @@ public class EnemyBase : NetworkBehaviour {
         var data = status.statusData;
 
         // NavMeshAgent 設定
-        agent.speed = data.moveSpeed;                  // 移動速度
-        agent.acceleration = data.acceleration;        // 加速
-        agent.angularSpeed = data.angularSpeed;        // 旋回速度
-        agent.stoppingDistance = data.stoppingDistance;// 攻撃開始距離
+        agent.speed = data.moveSpeed;
+        agent.acceleration = data.acceleration;
+        agent.angularSpeed = data.angularSpeed;
+        agent.stoppingDistance = data.stoppingDistance;
 
         // 定期的にターゲットを探す
         InvokeRepeating(nameof(SearchTarget), 0f, searchInterval);
@@ -50,7 +53,6 @@ public class EnemyBase : NetworkBehaviour {
     [ServerCallback]
     private void Update() {
 
-        // status や parameter が null の場合もガード
         if (target == null)
             return;
 
@@ -59,19 +61,25 @@ public class EnemyBase : NetworkBehaviour {
         if (distance > agent.stoppingDistance) {
             agent.isStopped = false;
             agent.SetDestination(target.position);
-        }
-        else {
-            agent.isStopped = true;
-            Vector3 direction = (target.position - transform.position).normalized;
+        } else {
+            // 壁チェック
+            if (!Physics.Linecast(transform.position, target.position, wallLayer)) {
+                agent.isStopped = true;
 
-            hitTimer += Time.deltaTime;
-            if(hitTimer >= hitInterval) {
-                hitTimer = 0.0f;
-                weapon.ServerRequestAttack(direction);
+                Vector3 direction = (target.position - transform.position).normalized;
+
+                hitTimer += Time.deltaTime;
+                if (hitTimer >= hitInterval) {
+                    hitTimer = 0.0f;
+                    weapon.ServerRequestAttack(direction);
+                }
+            } else {
+                // 壁があるので攻撃はせず移動を続ける
+                agent.isStopped = false;
+                agent.SetDestination(target.position);
             }
         }
     }
-
 
     /// <summary>
     /// 一番近い生存プレイヤーを探す
