@@ -13,4 +13,6 @@ public class EnemyParameter : NetworkBehaviour {
 
     [SyncVar]
     public bool isDead = false;
+
+    [SyncVar] public int TeamID = -1;
 }
