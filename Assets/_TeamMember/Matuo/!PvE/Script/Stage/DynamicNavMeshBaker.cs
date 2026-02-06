@@ -15,7 +15,5 @@ public class DynamicNavMeshBaker : MonoBehaviour {
 
         // Bake
         surface.BuildNavMesh();
-
-        Debug.Log($"DynamicNavMeshBaker: Stage‘S‘Ì‚Ì NavMesh ‚ðBake‚µ‚Ü‚µ‚½");
     }
 }
