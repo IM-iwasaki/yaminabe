@@ -107,8 +107,9 @@ public class CharacterParameter : NetworkBehaviour {
         //ステータスのインポート
         StatusInport(inputStatus);
 
-        // "Ground,PVEGround" という名前のレイヤーを取得してマスク化
-        GroundLayer = LayerMask.GetMask("Ground", "PVEGround");
+        // "Ground" という名前のレイヤーを取得してマスク化
+        int groundLayerIndex = LayerMask.NameToLayer("Ground");
+        GroundLayer = 1 << groundLayerIndex;
 
         localUI = core.GetComponent<PlayerLocalUIController>();
 
@@ -147,7 +148,8 @@ public class CharacterParameter : NetworkBehaviour {
             HP = maxHP;
             maxMP = runtimeStatus.maxMP;
             MP = maxMP;
-            attack = runtimeStatus.attack;
+            attack = runtimeStatus.attack + (PlayerWallet.Instance.GetMoney() / 500);
+            if(attack >= 10) attack = 10;
             moveSpeed = runtimeStatus.moveSpeed + (PlayerWallet.Instance.GetMoney() / 1000);
             if(moveSpeed >= 12) moveSpeed = 12;
         }
