@@ -1114,6 +1114,10 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   searchInterval: 1
+  hitInterval: 0.5
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &903121373027397556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1166,6 +1170,7 @@ MonoBehaviour:
   attack: 20
   moveSpeed: 5
   isDead: 0
+  TeamID: -1
 --- !u!114 &3294126387626504885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1181,8 +1186,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  weaponData: {fileID: 11400000, guid: 4f55e02b6cd92db4fa746fc1d4e29f1c, type: 2}
-  SkillWeaponData: {fileID: 11400000, guid: 4f55e02b6cd92db4fa746fc1d4e29f1c, type: 2}
+  weaponData: {fileID: 11400000, guid: 9be6957018023624689c1dc2b1e24c3f, type: 2}
+  SkillWeaponData: {fileID: 11400000, guid: 9be6957018023624689c1dc2b1e24c3f, type: 2}
   firePoint: {fileID: 5588145079169914513}
 --- !u!114 &-3173164369616758843
 MonoBehaviour:
