@@ -174,6 +174,7 @@ public class ResultPanel : NetworkBehaviour {
             ServerManager.instance.ResetCharacterStatus();
             GameSceneManager.Instance.LoadGameSceneForAll();
             resultManager.HideResult(); // ‰¼: UIíœ‚Ì‚İiÄíˆ—‚ÍŒã‚Å’Ç‰Áj
+            PlayerListManager.Instance.ResetAllScores();
         }
     }
 
