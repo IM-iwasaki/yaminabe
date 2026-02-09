@@ -169,19 +169,26 @@ public class CustomNetworkManager : NetworkManager {
             var conn = playerObj.connectionToClient;
             int teamID = character.parameter.TeamID;
             NetworkTransformHybrid startPos = character.GetComponent<NetworkTransformHybrid>();
+            Vector3 respawnPos;
+            Vector3 bufferPos = new Vector3(Random.Range(-3.0f, 3.0f), 1.0f, Random.Range(-3.0f, 3.0f));
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
             if (sceneName == GameSceneManager.Instance.gameSceneName) {
-                var RespawnPos = StageManager.Instance.GetTeamSpawnPoints((TeamColor)teamID);
-                startPos.ServerTeleport(RespawnPos[Random.Range(0, RespawnPos.Count)].position, Quaternion.identity);
+                var RespawnPosList = StageManager.Instance.GetTeamSpawnPoints((TeamColor)teamID);
+                startPos.ServerTeleport(RespawnPosList[Random.Range(0, RespawnPosList.Count)].position + bufferPos, Quaternion.identity);
             }
             //ロビーシーンなら開始地点に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
                 //重なることを考慮してランダムで座標をずらす
-                Vector3 respawnPos = new Vector3(Random.Range(1, serverManager.connectPlayer.Count), 5, 0);
-                startPos.ServerTeleport(respawnPos, Quaternion.identity);
+                respawnPos = new Vector3(Random.Range(1, serverManager.connectPlayer.Count), 5, 0);
+                startPos.ServerTeleport(respawnPos + bufferPos, Quaternion.identity);
                 //レートの数値を反映して表示
                 RateDisplay.instance.ChangeRateUI();
                 character.parameter.TargetSkillUIUpdate(conn);
+            }
+            //PvEシーンはスポーン位置を一か所(余裕を持たせて)に固定
+            else if(sceneName == GameSceneManager.Instance.pveSceneName) {
+                respawnPos = StageManager.Instance.GetSpawnPoint((TeamColor)teamID).position;
+                startPos.ServerTeleport(respawnPos + bufferPos, Quaternion.identity);
             }
         }
         FadeManager.Instance.StartFadeIn(0.5f);
