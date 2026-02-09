@@ -53,8 +53,6 @@ public abstract class CharacterBase : CreatureBase {
         input = GetComponent<CharacterInput>();
         action = GetComponent<CharacterActions>();
         animCon = GetComponent<CharacterAnimationController>();
-
-        //RpcChangeWeapon(weaponController_main.weaponData.ID);
     }
 
     /// <summary>
@@ -424,6 +422,7 @@ public abstract class CharacterBase : CreatureBase {
         //新しいチームに加入
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
         player.parameter.TeamID = newTeam;
+        player.teamID = newTeam;
         //ログを表示
         ChatManager.Instance.CmdSendSystemMessage(_player.GetComponent<CharacterParameter>().PlayerName + " is joined " + newTeam + " team ");
 

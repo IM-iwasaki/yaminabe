@@ -87,6 +87,7 @@ public class ServerManager : NetworkBehaviour {
             }
             teams[teamIndex].teamPlayerList.Add(player);
             player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
+            player.GetComponent<GeneralCharacter>().teamID = teamIndex;
 
             teamIndex = (teamIndex + 1) % teams.Count;
         }

@@ -31,15 +31,33 @@ public class EnemyStatusBase : CreatureBase {
     /// ダメージ処理（敵専用）
     /// </summary>
     [Server]
-    public override void TakeDamage(int damage, string attackerName, int attackerID) {
+    public override void TakeDamage(int _damage, string attackerName, int attackerID) {
+        //既に死亡状態かロビー内なら帰る
+        if (enemyParameter.isDead) return;
 
-        // 共通ダメージ処理（HP減算・SE・スコア加算）
-        base.TakeDamage(damage, attackerName, attackerID);
+        //ダメージ倍率を適用
+        float damage = _damage * ((float) parameter.DamageRatio / 100);
+        //ダメージが0以下だったら1に補正する
+        if (damage <= 0) damage = 1;
+        //HPの減算処理
+        enemyParameter.HP -= (int) damage;
 
-        RpcUpdateView(damage);
+        // hitSE 再生
+        PlayHitSE(attackerID);
+
+        if (parameter.HP <= 0) {
+            parameter.HP = 0;
+
+            if (PlayerListManager.Instance != null) {
+                // スコア加算
+                PlayerListManager.Instance.AddScoreById(attackerID, 100);
+                PlayerListManager.Instance.AddKillById(attackerID);
+            }
+        }
+        RpcUpdateView(_damage);
 
         // HPが0以下なら死亡
-        if (parameter.HP <= 0) {
+        if (enemyParameter.HP <= 0) {
             Die();
         }
     }
