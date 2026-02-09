@@ -355,9 +355,9 @@ public abstract class CharacterBase : CreatureBase {
 #endif
             return;
         }
-
+        Vector3 bufferPos = new Vector3(Random.Range(-3.0f, 3.0f), 1.0f, Random.Range(-3.0f, 3.0f));
         NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
-        NTH.ServerTeleport(spawnPoint.position, spawnPoint.rotation);
+        NTH.ServerTeleport(spawnPoint.position + bufferPos, spawnPoint.rotation);
 
         parameter.StartInvincible();
         ResetHealth();

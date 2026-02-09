@@ -251,7 +251,6 @@ public class MainWeaponController : NetworkBehaviour {
         Vector3 forward = firePoint.forward;
 
 
-
         foreach (var c in hits) {
             Vector3 toTarget = (c.transform.position - firePoint.position).normalized;
             float dot = Vector3.Dot(forward, toTarget);
