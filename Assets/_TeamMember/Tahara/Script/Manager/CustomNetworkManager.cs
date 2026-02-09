@@ -187,8 +187,7 @@ public class CustomNetworkManager : NetworkManager {
             }
             //PvEシーンはスポーン位置を一か所(余裕を持たせて)に固定
             else if(sceneName == GameSceneManager.Instance.pveSceneName) {
-                respawnPos = StageManager.Instance.GetSpawnPoint((TeamColor)teamID).position;
-                startPos.ServerTeleport(respawnPos + bufferPos, Quaternion.identity);
+                startPos.ServerTeleport(bufferPos, Quaternion.identity);
             }
         }
         FadeManager.Instance.StartFadeIn(0.5f);
