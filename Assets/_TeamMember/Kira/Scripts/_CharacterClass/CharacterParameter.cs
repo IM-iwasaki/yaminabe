@@ -33,10 +33,10 @@ public class CharacterParameter : NetworkBehaviour {
     //基礎攻撃力
     [SyncVar] public float attack;
     //移動速度
-    [SyncVar] public int moveSpeed = 5;
+    [SyncVar] public int moveSpeed;
 
     //変動値
-    [SyncVar] public float[] fluctuation;
+    [SyncVar] public float[] fluctuationValue;
 
 
     //持っている武器の文字列
@@ -54,6 +54,7 @@ public class CharacterParameter : NetworkBehaviour {
 
     public float defaultAttack { get; protected set; }
     public int defaultMoveSpeed { get; protected set; }
+    public int defaultDamageRatio { get; protected set; }
 
     // 味方検知用
     public bool HasNearbyAlly { get; private set; }
@@ -199,6 +200,7 @@ public class CharacterParameter : NetworkBehaviour {
     private void InDefaultStatus() {
         defaultAttack = attack;
         defaultMoveSpeed = moveSpeed;
+        defaultDamageRatio = DamageRatio;
     }
 
     /// <summary>
@@ -207,12 +209,14 @@ public class CharacterParameter : NetworkBehaviour {
     private void OutDefaultStatus_Attack() {
         attack = defaultAttack;
     }
-
     /// <summary>
     /// 現在の速度をデフォルトにリセットする
     /// </summary>
     public void OutDefaultStatus_MoveSpeed() {
         moveSpeed = defaultMoveSpeed;
+    }
+    public void OutDefaultStatus_DamageRatio() {
+        DamageRatio = defaultDamageRatio;
     }
 
     /// <summary>

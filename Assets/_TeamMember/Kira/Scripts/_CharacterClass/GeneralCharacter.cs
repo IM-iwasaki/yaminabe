@@ -2,6 +2,7 @@
 //  @file   Second_CharacterClass
 //
 using Mirror;
+using UnityEngine;
 
 public class GeneralCharacter : CharacterBase {
 
@@ -39,12 +40,25 @@ public class GeneralCharacter : CharacterBase {
         //RespawnControl();
 
         //バフデバフの処理
-        //TODO:ここに処理を書く。
         for(int paramIndex = 0 ; paramIndex < (int)ParamaterType.max ; paramIndex++) {
             //nullだったり要素がなかったりしたらとばす
             if(temporaryBuffs[paramIndex] == null || temporaryBuffs[paramIndex].Count == 0) continue;
-            for (int )
 
+            //倍率の累計
+            float influxValue = 1.0f;
+            //各バフの反映と時間経過処理
+            for (int buffIndex = 0 ; buffIndex < temporaryBuffs[paramIndex].Count ; buffIndex++) {
+                //倍率の累計に掛けていく
+                influxValue *= temporaryBuffs[paramIndex][buffIndex].amount;
+                //反映したら効果時間を減らす
+                temporaryBuffs[paramIndex][buffIndex].duration -= Time.deltaTime;
+
+                //効果時間が切れたら
+                if(temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
+                    //該当する要素を削除。
+                    temporaryBuffs[paramIndex].Remove(temporaryBuffs[paramIndex][buffIndex]);
+                }                   
+            }
         }
     }
 
