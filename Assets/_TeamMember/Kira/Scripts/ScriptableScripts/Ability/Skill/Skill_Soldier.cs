@@ -19,6 +19,7 @@ public class Skill_Soldier : SkillBase {
     public override void Activate(CharacterBase user) {       
         Vector3 attackDir = user.parameter.GetShootDirection();
         StartExtraAttackDelay(user, 0.1f, 5, attackDir);
+        
     }
 
     /// <summary>
@@ -39,6 +40,8 @@ public class Skill_Soldier : SkillBase {
             //UŒ‚‚·‚é
             ExtraAttack(dir,user);
         }
+        //’Ç‰ÁUŒ‚‚ªI‚í‚Á‚½‚çUŒ‚ƒ‚[ƒVƒ‡ƒ“‚ğI‚í‚ç‚¹‚é
+        user.animCon.StopShootAnim();
     }
 
     /// <summary>
