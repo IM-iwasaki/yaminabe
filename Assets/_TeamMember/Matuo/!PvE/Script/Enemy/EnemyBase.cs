@@ -25,6 +25,9 @@ public class EnemyBase : NetworkBehaviour {
     [Header("攻撃判定用レイヤー")]
     [SerializeField] private LayerMask wallLayer = default; // PVEWall を指定
 
+    [Header("攻撃距離設定")]
+    [SerializeField] private float attackRange = 2.0f;
+
     /// <summary>
     /// サーバー開始時の初期化
     /// </summary>
@@ -58,11 +61,12 @@ public class EnemyBase : NetworkBehaviour {
 
         float distance = Vector3.Distance(transform.position, target.position);
 
-        if (distance > agent.stoppingDistance) {
+        if (distance > attackRange) {
+            // 攻撃距離外 → 追いかける
             agent.isStopped = false;
             agent.SetDestination(target.position);
         } else {
-            // 壁チェック
+            // 攻撃距離内
             if (!Physics.Linecast(transform.position, target.position, wallLayer)) {
                 agent.isStopped = true;
 
@@ -74,7 +78,6 @@ public class EnemyBase : NetworkBehaviour {
                     weapon.ServerRequestAttack(direction);
                 }
             } else {
-                // 壁があるので攻撃はせず移動を続ける
                 agent.isStopped = false;
                 agent.SetDestination(target.position);
             }
