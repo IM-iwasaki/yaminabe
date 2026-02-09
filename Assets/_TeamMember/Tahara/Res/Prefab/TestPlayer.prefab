@@ -524,6 +524,9 @@ MonoBehaviour:
   isDead: 0
   AttackTrigger: 0
   canMove: 1
+  GroundLayer:
+    serializedVersion: 2
+    m_Bits: 69640
 --- !u!114 &7720380049160173364
 MonoBehaviour:
   m_ObjectHideFlags: 0
