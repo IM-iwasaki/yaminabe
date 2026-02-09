@@ -6,12 +6,23 @@ public class PVEResultPanel : MonoBehaviour {
     public void OnClickRematch() {
         if (!NetworkServer.active) return;
 
+        RuleManager.Instance?.Initialize();
+        GameManager.Instance.EndGame();
+        //プレイヤーの状態を戻す
+        ServerManager.instance.ResetCharacterStatus();
         GameManager.Instance.StartPveGameFromList(false);
+        GameSceneManager.Instance.LoadPvESceneForAll();
+        PlayerListManager.Instance.ResetAllScores();
     }
 
     public void OnClickReturnLobby() {
         if (!NetworkServer.active) return;
 
-        NetworkManager.singleton.ServerChangeScene("LobbyScene");
+        RuleManager.Instance?.Initialize();
+        GameManager.Instance.EndGame();
+        //プレイヤーの状態を戻す
+        ServerManager.instance.ResetCharacterStatus();
+        GameSceneManager.Instance.LoadLobbySceneForAll();
+        PlayerListManager.Instance.ResetAllScores();
     }
 }

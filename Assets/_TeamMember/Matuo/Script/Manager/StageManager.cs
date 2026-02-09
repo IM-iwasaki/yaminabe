@@ -152,7 +152,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
 
         // 既存の NavMeshSurface を全部消す
         foreach (var s in stageRoot.GetComponentsInChildren<NavMeshSurface>(true)) {
-            Destroy(s);
+            DestroyImmediate(s);
         }
 
         // ステージに NavMeshSurface を1つだけ追加
