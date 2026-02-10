@@ -106,6 +106,27 @@ public class ServerManager : NetworkBehaviour {
     }
 
     /// <summary>
+    /// 追加 マツオ：全プレイヤーをチーム0に設定(PVE用)
+    /// </summary>
+    [Server]
+    public void SetAllPlayersToPvETeam() {
+        // チーム初期化
+        teams = new List<TeamData>();
+        for (int i = 0; i < (int)TeamColor.ColorMax; i++) {
+            teams.Add(new TeamData());
+        }
+
+        // 全員チーム0へ
+        foreach (var player in connectPlayer) {
+            var character = player.GetComponent<GeneralCharacter>();
+            character.parameter.TeamID = 0;
+            teams[0].teamPlayerList.Add(player);
+        }
+
+        teams[0].isFullTeam = false;
+    }
+
+    /// <summary>
     /// 全員のHP、弾数状態を戻す
     /// </summary>
     [Server]
