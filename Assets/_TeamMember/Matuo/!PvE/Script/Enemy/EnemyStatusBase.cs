@@ -13,10 +13,17 @@ public class EnemyStatusBase : CreatureBase {
 
     private EnemyHealthView healthView;
 
+    private PveBossHpBarController bossHpBar;
+
     protected override void Awake() {
         base.Awake();
         enemyParameter = GetComponent<EnemyParameter>();
+
         healthView = GetComponent<EnemyHealthView>();
+
+        if(healthView == null) {
+            bossHpBar = GetComponent<PveBossHpBarController>();
+        }
     }
 
     public override void OnStartServer() {
@@ -54,6 +61,7 @@ public class EnemyStatusBase : CreatureBase {
                 PlayerListManager.Instance.AddKillById(attackerID);
             }
         }
+
         RpcUpdateView(_damage);
 
         // HP‚ª0ˆÈ‰º‚È‚çŽ€–S
@@ -68,10 +76,14 @@ public class EnemyStatusBase : CreatureBase {
     /// <param name="damage"></param>
     [ClientRpc]
     private void RpcUpdateView(int damage) {
-        if (healthView == null) return;
+        if (healthView != null) {
+            healthView.UpdateHP(enemyParameter.HP);
+            healthView.ShowDamage(damage);
+        }
+        else if(bossHpBar != null) {
+            bossHpBar.UpdateHP(enemyParameter.HP);
+        }
 
-        healthView.UpdateHP(enemyParameter.HP);
-        healthView.ShowDamage(damage);
     }
 
     /// <summary>
