@@ -65,7 +65,7 @@ public class LandMine : TrapBase {
         foreach (var c in hits) {
             var target = c.GetComponent<CreatureBase>();
             if (target == null) continue;
-            if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) continue;
+            if (!canDamageAllies && target.teamID == ownerTeamID) continue;
             target.TakeDamage(damage, ownerName, ID);
         }
 

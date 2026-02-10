@@ -103,8 +103,7 @@ public class MagicProjectile : NetworkBehaviour {
                 return;
 
             // チーム判定
-            if (target.parameter.TeamID != owner.GetComponent<CreatureBase>().parameter.TeamID
-                || target.parameter.TeamID == -1) {
+            if (target.teamID != owner.GetComponent<CreatureBase>().teamID) {
                 target.TakeDamage(damage, ownerName, ID);
             }
 
@@ -114,8 +113,7 @@ public class MagicProjectile : NetworkBehaviour {
 
         // ---- 既存 Projectile 用 ----
         if (other.TryGetComponent(out CreatureBase targetNormal)) {
-            if (targetNormal.parameter.TeamID != owner.GetComponent<CreatureBase>().parameter.TeamID
-                || targetNormal.parameter.TeamID == -1) {
+            if (targetNormal.teamID != owner.GetComponent<CreatureBase>().teamID) {
                 targetNormal.TakeDamage(damage, ownerName, ID);
             }
         }
