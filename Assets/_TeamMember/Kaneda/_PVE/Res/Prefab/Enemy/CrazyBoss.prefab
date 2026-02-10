@@ -5097,7 +5097,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Crazy Chicken
+  m_text: No Boss Data
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: f2dcf029949142e28b974630369c8b4e, type: 2}
@@ -26114,6 +26114,8 @@ GameObject:
   - component: {fileID: 8804381359840827769}
   - component: {fileID: 7544360703930358048}
   - component: {fileID: 2778739753235086703}
+  - component: {fileID: 1577301146051474248}
+  - component: {fileID: 3757476824893241323}
   - component: {fileID: 3834852910228016057}
   m_Layer: 6
   m_Name: CrazyBoss
@@ -26230,7 +26232,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  teamID: -10
+  teamID: -1
   statusData: {fileID: 11400000, guid: 77b02a6cc246f7342bc78d7a499a2468, type: 2}
 --- !u!114 &6879583336050108321
 MonoBehaviour:
@@ -26318,6 +26320,41 @@ MonoBehaviour:
   weaponData: {fileID: 11400000, guid: 9be6957018023624689c1dc2b1e24c3f, type: 2}
   SkillWeaponData: {fileID: 11400000, guid: 9be6957018023624689c1dc2b1e24c3f, type: 2}
   firePoint: {fileID: 8248844290832394704}
+--- !u!114 &1577301146051474248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6409203065136170536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0242f63f6d016984e827ee4ca533f492, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  HP: 1000
+  attack: 10
+  moveSpeed: 5
+  isDead: 0
+  TeamID: -1
+--- !u!114 &3757476824893241323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6409203065136170536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0beee0d9e2a3324abcb07a6d72478fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyParameter: {fileID: 1577301146051474248}
+  hpSlider: {fileID: 5287790230525221075}
+  nameText: {fileID: 1627527738958181864}
 --- !u!114 &3834852910228016057
 MonoBehaviour:
   m_ObjectHideFlags: 0

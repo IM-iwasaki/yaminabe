@@ -27,6 +27,8 @@ public class PveBossHpBarController : MonoBehaviour
         enemyStatus = GetComponent<EnemyStatusBase>();
         if (nameText == null) return;
         nameText.SetText(enemyStatus.statusData.name);
+
+        HideBossUI();
     }
 
     /// <summary>
@@ -38,5 +40,24 @@ public class PveBossHpBarController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// UI‚ð•\Ž¦‚³‚¹‚é
+    /// </summary>
+    public void ShowBossUI() {
+        if(nameText == null || hpSlider == null) return;
+
+        hpSlider.gameObject.SetActive(true);
+        nameText.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// UI‚ð”ñ•\Ž¦‚³‚¹‚é
+    /// </summary>
+    public void HideBossUI() {
+        if (nameText == null || hpSlider == null) return;
+
+        hpSlider.gameObject.SetActive(false);
+        nameText.gameObject.SetActive(false);
+    }
 
 }
