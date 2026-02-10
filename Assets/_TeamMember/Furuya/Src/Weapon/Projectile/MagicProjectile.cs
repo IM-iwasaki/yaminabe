@@ -74,11 +74,12 @@ public class MagicProjectile : NetworkBehaviour {
             StartCoroutine(AutoDisable()); // 自動で非アクティブ化
         }
 
-        // エフェクト再初期化（必須）
-        var particles = GetComponentsInChildren<ParticleSystem>(true);
-        foreach (var ps in particles) {
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            ps.Play();
+        if (isServer) {
+            StopAllCoroutines();
+            StartCoroutine(AutoDisable());
+
+            // クライアント含めエフェクト再生
+            RpcResetEffects();
         }
 
     }
@@ -173,6 +174,22 @@ public class MagicProjectile : NetworkBehaviour {
             var fx = EffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
             EffectPool.Instance.ReturnToPool(fx, 3f);
+        }
+    }
+
+    [ClientRpc]
+    void RpcResetEffects() {
+        ResetEffects();
+    }
+    /// <summary>
+    /// エフェクトのリセット
+    /// </summary>
+    void ResetEffects() {
+        var particles = GetComponentsInChildren<ParticleSystem>(true);
+
+        foreach (var ps in particles) {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Play();
         }
     }
 }
