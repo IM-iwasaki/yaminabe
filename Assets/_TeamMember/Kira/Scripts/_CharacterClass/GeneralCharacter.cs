@@ -40,9 +40,12 @@ public class GeneralCharacter : CharacterBase {
         //RespawnControl();
 
         //バフデバフの処理
-        for(int paramIndex = 0 ; paramIndex < (int)ParamaterType.max ; paramIndex++) {
+        for(int paramIndex = (int)ParamaterType.max -1 ; 0 < paramIndex ; paramIndex--) {
+            Debug.Log(temporaryBuffs.Count);
+            Debug.Log(temporaryBuffs[paramIndex].Count);
+
             //nullだったり要素がなかったりしたらとばす
-            if(temporaryBuffs[paramIndex] == null || temporaryBuffs[paramIndex].Count == 0) continue;
+            if(temporaryBuffs[paramIndex].Count == 0) continue;
 
             //倍率の累計
             float influxValue = 1.0f;
@@ -56,8 +59,26 @@ public class GeneralCharacter : CharacterBase {
                 //効果時間が切れたら
                 if(temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
                     //該当する要素を削除。
-                    temporaryBuffs[paramIndex].Remove(temporaryBuffs[paramIndex][buffIndex]);
+                    temporaryBuffs[paramIndex].RemoveAt(buffIndex);
                 }                   
+            }
+
+            //値を反映(switchで分岐)
+            switch((ParamaterType)paramIndex) {
+                case ParamaterType.Attack:
+                    parameter.attack *= influxValue;
+                    break;
+                case ParamaterType.moveSpeed:
+                    parameter.moveSpeed *= (int)influxValue;
+                    break;
+                case ParamaterType.damageRate:
+                    parameter.DamageRatio *= (int)influxValue;
+                    break;
+                default:
+#if UNITY_EDITOR
+                    Debug.LogWarning("実行されないべきであるコードが実行されました。\n発生：GeneralCharacter.Update");
+#endif
+                    break;
             }
         }
     }

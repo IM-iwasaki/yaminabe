@@ -31,10 +31,7 @@ public class PlayerConst {
 /// ƒpƒ‰ƒ[ƒ^í•Ê‚Ì—ñ‹“‘Ì
 /// </summary>
 public enum ParamaterType {
-    HP = 0,
-    MP,
-    Attack,
-    defence,
+    Attack = 0,
     moveSpeed,
     damageRate,
     max,
