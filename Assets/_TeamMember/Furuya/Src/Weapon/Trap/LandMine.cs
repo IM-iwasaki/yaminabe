@@ -37,8 +37,8 @@ public class LandMine : TrapBase {
     [ServerCallback]
     private void OnTriggerEnter(Collider other) {
         if (!isActivated || hasTriggered) return;
-        if (other.TryGetComponent(out CharacterBase target)) {
-            if (!canDamageAllies && target.parameter.TeamID == ownerTeamID) return;
+        if (other.TryGetComponent(out CreatureBase target)) {
+            if (!canDamageAllies && target.teamID == ownerTeamID) return;
             Explode();
         }
     }
