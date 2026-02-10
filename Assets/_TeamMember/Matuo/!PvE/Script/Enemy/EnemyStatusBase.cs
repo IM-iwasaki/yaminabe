@@ -14,7 +14,7 @@ public class EnemyStatusBase : CreatureBase {
     private EnemyHealthView healthView;
 
     protected override void Awake() {
-        base.Awake(); // •K—v‚È‚ç
+        base.Awake();
         enemyParameter = GetComponent<EnemyParameter>();
         healthView = GetComponent<EnemyHealthView>();
     }
