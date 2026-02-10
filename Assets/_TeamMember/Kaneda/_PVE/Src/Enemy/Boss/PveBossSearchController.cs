@@ -18,9 +18,13 @@ public class PveBossSearchController : NetworkBehaviour
     [Header("索敵コライダー")]
     [SerializeField] private SphereCollider col;
 
+    private PveBossHpBarController hpBar;
+
     private void Awake() {
         col = col.GetComponent<SphereCollider>();
         col.radius = searchRadius;
+
+        hpBar = GetComponent<PveBossHpBarController>();
     }
 
     //  現在のターゲット候補を取得
@@ -69,6 +73,7 @@ public class PveBossSearchController : NetworkBehaviour
         foreach (var t in removeList) {
             exitTimers.Remove(t);
             targets.Remove(t);
+            hpBar.HideBossUI();
         }
     }
 
@@ -83,6 +88,9 @@ public class PveBossSearchController : NetworkBehaviour
         CharacterBase player = other.GetComponent<CharacterBase>();
         if(player == null) return;
         Transform t = player.transform;
+        //  ボスのHPBarを表示させる
+        if (hpBar != null) hpBar.ShowBossUI();
+
         //  プレイヤーをターゲット候補に追加
         if (!targets.Contains(t)) {
             targets.Add(t);
