@@ -50,7 +50,7 @@ public class EnemyWeaponController : NetworkBehaviour {
 
         foreach (var c in hits) {
             var hp = c.GetComponent<CharacterBase>();
-            if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == -1) continue;
+            if (hp == null || !IsValidTarget(hp.gameObject) || hp.teamID == -1) continue;
             hp.TakeDamage(meleeData.damage, enemyBase.statusData.enemyName, -1);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }

@@ -261,7 +261,7 @@ public class MainWeaponController : NetworkBehaviour {
             if (dot < threshold) continue;
 
             var hp = c.GetComponent<CreatureBase>();
-            if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == characterBase.parameter.TeamID) continue;
+            if (hp == null || !IsValidTarget(hp.gameObject) || hp.teamID == characterBase.teamID) continue;
             hp.TakeDamage(meleeData.damage + (int)characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }
