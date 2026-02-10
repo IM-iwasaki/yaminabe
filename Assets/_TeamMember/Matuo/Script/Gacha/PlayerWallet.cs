@@ -15,7 +15,7 @@ public class PlayerWallet : MonoBehaviour {
     [SerializeField] private int startMoney = 0;
 
     [Header("現在の所持金")]
-    [SerializeField] private int currentMoney;
+    [SerializeField] public int currentMoney;
 
     /// <summary>
     /// 所持金が変化した時に通知されるイベント

@@ -85,18 +85,28 @@ public class MainWeaponController : NetworkBehaviour {
                     StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
                 break;
             case WeaponType.Gun:
-                //弾がなかったら通過不可。かわりにリロードを要求する。
-                if (ammo == 0) {
-                    ReloadRequest();
-                    return;
-                }
-                //その他リロード中は射撃できなくする。
-                else if (characterBase.parameter.isReloading) return;
-
                 if (weaponData is GunData gunData) {
+
+                    if (gunData.weaponName == "MoneyGun" && PlayerWallet.Instance.currentMoney >= gunData.multiShot * 4) {
+                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                        PlayerWallet.Instance.SpendMoney(gunData.multiShot * 4);
+                        ammo = PlayerWallet.Instance.currentMoney;
+                    }
+                    else {
+                        if (gunData.weaponName == "MoneyGun") return;
+
+                        //弾がなかったら通過不可。かわりにリロードを要求する。
+                        if (ammo == 0) {
+                            ReloadRequest();
+                            return;
+                        }
+                        //その他リロード中は射撃できなくする。
+                        else if (characterBase.parameter.isReloading) return;
+
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
-                    if (ammo > 0)
+                        if (ammo > 0)
                         ammo -= gunData.multiShot;
+                    }
                 }
 
                 break;
@@ -254,7 +264,7 @@ public class MainWeaponController : NetworkBehaviour {
         foreach (var c in hits) {
             Vector3 toTarget = (c.transform.position - firePoint.position).normalized;
             float dot = Vector3.Dot(forward, toTarget);
-            
+
             float angle = meleeData.meleeAngle;
             float threshold = Mathf.Cos(angle * Mathf.Deg2Rad);
             //角度チェック
@@ -262,7 +272,7 @@ public class MainWeaponController : NetworkBehaviour {
 
             var hp = c.GetComponent<CreatureBase>();
             if (hp == null || !IsValidTarget(hp.gameObject) || hp.teamID == characterBase.teamID) continue;
-            hp.TakeDamage(meleeData.damage + (int)characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
+            hp.TakeDamage(meleeData.damage + (int) characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
@@ -376,7 +386,7 @@ public class MainWeaponController : NetworkBehaviour {
             Quaternion.LookRotation(direction)
             );
         }
-        
+
 
         if (proj == null) return;
 
@@ -529,9 +539,9 @@ public class MainWeaponController : NetworkBehaviour {
         return _weaponName switch {
             "HandGun" or "revolver" or "Punch" => 1,
             "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" or "Spear" or "IceMagic" => 2,
-            "RPG"  or "Katana"=> 3,
-            "Sniper" or "Knife" or "PizzaCutter"=> 4,
-            "Minigun" or "Lightsaver"=> 5,
+            "RPG" or "Katana" => 3,
+            "Sniper" or "Knife" or "PizzaCutter" => 4,
+            "Minigun" or "Lightsaver" => 5,
 
             _ => -1,
         };
