@@ -36,7 +36,7 @@ public class EnemyStatusBase : CreatureBase {
         if (enemyParameter.isDead) return;
 
         //ダメージ倍率を適用
-        float damage = _damage * ((float) parameter.DamageRatio / 100);
+        float damage = _damage;
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理
@@ -45,8 +45,8 @@ public class EnemyStatusBase : CreatureBase {
         // hitSE 再生
         PlayHitSE(attackerID);
 
-        if (parameter.HP <= 0) {
-            parameter.HP = 0;
+        if (enemyParameter.HP <= 0) {
+            enemyParameter.HP = 0;
 
             if (PlayerListManager.Instance != null) {
                 // スコア加算
@@ -70,7 +70,7 @@ public class EnemyStatusBase : CreatureBase {
     private void RpcUpdateView(int damage) {
         if (healthView == null) return;
 
-        healthView.UpdateHP(parameter.HP);
+        healthView.UpdateHP(enemyParameter.HP);
         healthView.ShowDamage(damage);
     }
 
@@ -80,7 +80,7 @@ public class EnemyStatusBase : CreatureBase {
     [Server]
     private void Die() {
 
-        parameter.isDead = true;   // 死亡フラグ
+        enemyParameter.isDead = true;   // 死亡フラグ
 
         // 死亡演出などはここに
 
