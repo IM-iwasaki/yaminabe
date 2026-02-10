@@ -120,7 +120,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// </summary>
     [Server]
     private void OnPveTimeUp() {
-        EndGame(); // Ž¸”sˆµ‚¢—\’è
+        EndGame(); // Ž¸”sˆµ‚¢
     }
 
     /// <summary>

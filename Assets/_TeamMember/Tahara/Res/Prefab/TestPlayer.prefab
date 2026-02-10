@@ -484,6 +484,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  teamID: -1
   localUI: {fileID: 53306003606112779}
   CameraMenu: {fileID: 1182430980143703742}
   weaponController_main: {fileID: 6621664334883643172}
@@ -524,9 +525,6 @@ MonoBehaviour:
   isDead: 0
   AttackTrigger: 0
   canMove: 1
-  GroundLayer:
-    serializedVersion: 2
-    m_Bits: 69640
 --- !u!114 &7720380049160173364
 MonoBehaviour:
   m_ObjectHideFlags: 0

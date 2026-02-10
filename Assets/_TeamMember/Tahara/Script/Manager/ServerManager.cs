@@ -121,6 +121,7 @@ public class ServerManager : NetworkBehaviour {
         foreach (var player in connectPlayer) {
             var character = player.GetComponent<GeneralCharacter>();
             character.parameter.TeamID = 0;
+            character.teamID = 0;
             teams[0].teamPlayerList.Add(player);
         }
 

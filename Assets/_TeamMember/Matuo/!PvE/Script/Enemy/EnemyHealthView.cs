@@ -21,8 +21,15 @@ public class EnemyHealthView : MonoBehaviour {
 
     private void Awake() {
         mainCam = Camera.main;
-        if (damageText != null)
+
+        if (damageText != null) {
             damageText.gameObject.SetActive(false);
+
+            // 最初から親を設定しておく
+            if (textSpawnPoint != null) {
+                damageText.transform.SetParent(textSpawnPoint);
+            }
+        }
     }
 
     private void Start() {
@@ -40,9 +47,12 @@ public class EnemyHealthView : MonoBehaviour {
 
         // ダメージテキスト更新
         if (damageText != null && damageText.gameObject.activeSelf) {
-            Vector3 dir = damageText.transform.position - mainCam.transform.position;
-            damageText.transform.rotation = Quaternion.LookRotation(dir);
+            if (mainCam != null) {
+                Vector3 dir = damageText.transform.position - mainCam.transform.position;
+                damageText.transform.rotation = Quaternion.LookRotation(dir);
+            }
 
+            // ワールドY方向に上昇させる
             damageText.transform.position += Vector3.up * Time.deltaTime;
 
             dmgTextTimer += Time.deltaTime;
@@ -67,10 +77,14 @@ public class EnemyHealthView : MonoBehaviour {
     public void ShowDamage(int damage) {
         if (damageText == null) return;
 
-        Vector3 pos = textSpawnPoint != null ? textSpawnPoint.position : transform.position;
-        pos += Vector3.up * 0.9f;
+        // 必ず textSpawnPoint の子にする
+        if (textSpawnPoint != null) {
+            damageText.transform.SetParent(textSpawnPoint);
+        }
 
-        damageText.transform.position = pos;
+        // 毎回ローカル位置をリセット
+        damageText.transform.localPosition = Vector3.up * 0.9f;
+
         damageText.text = damage.ToString();
         damageText.color = nextDamageColor;
         damageText.gameObject.SetActive(true);

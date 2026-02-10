@@ -404,6 +404,14 @@ PrefabInstance:
       propertyPath: sceneId
       value: 4143744753
       objectReference: {fileID: 0}
+    - target: {fileID: 5584060461596989805, guid: ade70c0d39720b64eb312e9223ee3ead, type: 3}
+      propertyPath: maxEnemyCount
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584060461596989805, guid: ade70c0d39720b64eb312e9223ee3ead, type: 3}
+      propertyPath: spawnInterval
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8060137004925448692, guid: ade70c0d39720b64eb312e9223ee3ead, type: 3}
       propertyPath: m_Name
       value: EnemySpawnManager

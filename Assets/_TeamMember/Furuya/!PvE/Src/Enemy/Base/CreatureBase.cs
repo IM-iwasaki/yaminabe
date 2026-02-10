@@ -5,7 +5,7 @@ public class CreatureBase : NetworkBehaviour
 
     public CharacterParameter parameter { get; private set; }
 
-    public int teamID = -10;
+    public int teamID = -1;
 
     protected virtual void Awake() {
         parameter = GetComponent<CharacterParameter>();
