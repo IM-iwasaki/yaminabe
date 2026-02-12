@@ -44,6 +44,8 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         gameTimer?.ResetTimer();
 
+        PlayerWallet.Instance.ResetMatchSpentMoney();
+
         // ステージ生成
         StageManager.Instance.SpawnStage(stageData, rule);
 

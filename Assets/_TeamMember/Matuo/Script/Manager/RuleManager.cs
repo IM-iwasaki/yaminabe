@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using static ResultManager;
 
 /// <summary>
 /// ルール管理
@@ -207,6 +208,10 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             int myTeam = player.parameter.TeamID;
             int reward = (winningTeamId == -1) ? 50 : (myTeam == winningTeamId ? 100 : 50);
             TargetRewardMoney(client, reward);
+
+            if (winningTeamId != -1 && myTeam == winningTeamId) {
+                ApplyMillionairePassive(player, client);
+            }
         }
 
         // 勝利結果表示
@@ -256,4 +261,23 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     public bool IsDeathMatch() {
         return currentRule == GameRuleType.DeathMatch;
     }
+
+    /// <summary>
+    /// ミリオネア専用
+    /// </summary>
+    /// <param name="data"></param>
+
+    [Server]
+    private void ApplyMillionairePassive(CharacterBase player, NetworkConnection conn) {
+        var param = player.parameter;
+        if (param == null) return;
+
+        foreach (var passive in param.equippedPassives) {
+            if (passive is Passive_Millionaire millionaire) {
+                // クライアント側のWalletに返還させる
+                PlayerWallet.Instance.RefundSpentMoney(conn, millionaire.multiple);
+            }
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ using TMPro;
 using System;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using Mirror;
 
 /// <summary>
 /// プレイヤーの所持金を管理するクラス
@@ -28,6 +29,9 @@ public class PlayerWallet : MonoBehaviour {
     // 生成されたUIの参照
     private Canvas moneyCanvas;
     private TextMeshProUGUI moneyText;
+
+    // 試合中に消費した総額
+    public int matchSpentMoney = 0;
 
     /// <summary>
     /// 常時表示するかどうか（Lobbyなど）
@@ -109,6 +113,9 @@ public class PlayerWallet : MonoBehaviour {
         UpdateMoneyText();
         ShowFloatingMoney(-amount);
 
+        if (GameManager.Instance.IsGameRunning())
+            matchSpentMoney += amount;
+
         return true;
     }
 
@@ -121,6 +128,25 @@ public class PlayerWallet : MonoBehaviour {
         SaveMoney();
         UpdateMoneyText();
     }
+
+    /// <summary>
+    /// 試合開始時に試合中に消費した金額をリセット
+    /// </summary>
+    public void ResetMatchSpentMoney() {
+        matchSpentMoney = 0;
+    }
+
+    /// <summary>
+    /// 勝利時に1.2倍にして返す。
+    /// </summary>
+    /// <param name="multiplier"></param>
+    [TargetRpc]
+    public void RefundSpentMoney(NetworkConnection target, float multiplier = 1.2f) {
+        int refund = Mathf.FloorToInt(matchSpentMoney * multiplier);
+        AddMoney(refund);
+        matchSpentMoney = 0;
+    }
+
 
     /// <summary>
     /// 所持金をセーブ

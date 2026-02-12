@@ -1,8 +1,13 @@
 using System.Collections;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Character/Skill/Millionaire_決死の盾")]
+[CreateAssetMenu(menuName = "Character/Skill/Millionaire_投資回収")]
 public class Skill_Millionaire : SkillBase {
+
+    //
+    // パッシブ名　：投資回収
+    // 効果        ：与えたダメージの一部をゴールドとして回収する
+    //
 
     [SerializeField]private int money = 100;
 

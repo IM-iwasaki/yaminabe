@@ -79,6 +79,7 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     /// </summary>
     [Server]
     public void ShowResult(ResultData data) {
+        ApplyMillionairePassive(data);
         StartCoroutine(ShowResultCoroutine(data));
     }
 
