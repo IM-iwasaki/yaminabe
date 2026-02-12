@@ -30,44 +30,41 @@ public class EnemySpawnManager : NetworkBehaviour {
 
     [ServerCallback]
     private void Update() {
-        // ゲーム中でなければ何もしない
+
         if (!GameManager.Instance.IsGameRunning()) return;
 
-        timer += Time.deltaTime;
-        if (timer < spawnInterval) return;
+        foreach (var sp in spawnPoints) {
 
-        timer = 0f;
-        TrySpawnEnemy();
+            sp.timer += Time.deltaTime;
+
+            if (sp.timer < sp.spawnInterval)
+                continue;
+
+            sp.timer = 0f;
+
+            TrySpawnEnemy(sp);
+        }
     }
 
     /// <summary>
     /// スポーン可能なポイントを探して敵を生成
     /// </summary>
     [Server]
-    private void TrySpawnEnemy() {
+    private void TrySpawnEnemy(EnemySpawnPoint sp) {
 
         // 全体数制限
         if (currentEnemyCount >= maxEnemyCount)
             return;
 
-        foreach (var sp in spawnPoints) {
+        if (sp.currentSpawnCount >= sp.maxSpawnCount)
+            return;
+        // プレイヤーが近くに居るかチェック
+        if (!SpawnUtility.IsAnyPlayerInRange(sp.transform.position, sp.activateRadius))
+            return;
+        if (!SpawnUtility.CanSpawnOutOfPlayerView(sp.transform.position))
+            return;
 
-            // スポナー個別の上限
-            if (sp.currentSpawnCount >= sp.maxSpawnCount)
-                continue;
-
-            // プレイヤーが近くにいない
-            if (!SpawnUtility.IsAnyPlayerInRange(sp.transform.position,sp.activateRadius))
-                continue;
-
-            // 視界チェック
-            if (!SpawnUtility.CanSpawnOutOfPlayerView(sp.transform.position))
-                continue;
-
-            // 条件を満たしたのでスポーン
-            SpawnEnemy(sp);
-            break; // 1回のUpdateで1体だけ
-        }
+        SpawnEnemy(sp);
     }
 
     /// <summary>
@@ -92,6 +89,7 @@ public class EnemySpawnManager : NetworkBehaviour {
         var status = enemyObj.GetComponent<EnemyStatusBase>();
         if (status != null) {
             status.statusData = data;
+            status.SetSpawnPoint(sp);
         }
 
         sp.currentSpawnCount++;

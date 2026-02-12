@@ -15,6 +15,8 @@ public class EnemyStatusBase : CreatureBase {
 
     private PveBossHpBarController bossHpBar;
 
+    private EnemySpawnPoint spawnPoint;
+
     protected override void Awake() {
         base.Awake();
         enemyParameter = GetComponent<EnemyParameter>();
@@ -24,6 +26,11 @@ public class EnemyStatusBase : CreatureBase {
         if(healthView == null) {
             bossHpBar = GetComponent<PveBossHpBarController>();
         }
+    }
+
+    [Server]
+    public void SetSpawnPoint(EnemySpawnPoint sp) {
+        spawnPoint = sp;
     }
 
     public override void OnStartServer() {
@@ -94,7 +101,9 @@ public class EnemyStatusBase : CreatureBase {
 
         enemyParameter.isDead = true;   // 死亡フラグ
 
-        // 死亡演出などはここに
+        if (spawnPoint != null) {
+            EnemySpawnManager.Instance.NotifyEnemyDead(spawnPoint);
+        }
 
         NetworkServer.Destroy(gameObject); // サーバーから削除
     }

@@ -16,6 +16,11 @@ public class EnemySpawnPoint : MonoBehaviour {
     [Header("起動条件")]
     public float activateRadius = 20f;          // プレイヤー検知距離
 
+    [Header("スポーン間隔")]
+    public float spawnInterval = 2f;   // このスポナーの試行間隔
+    [HideInInspector]
+    public float timer = 0f;           // 経過時間
+
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected() {
         // 起動範囲をScene上で可視化

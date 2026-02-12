@@ -15,9 +15,9 @@ MonoBehaviour:
   enemyName: ZombieChicken
   enemyPrefab: {fileID: 3548868566056176881, guid: 747f0dd193ff66f4f84fa9c80481e42f, type: 3}
   description: 
-  maxHp: 100
+  maxHp: 30
   attack: 10
-  moveSpeed: 3.5
+  moveSpeed: 8
   acceleration: 50
   angularSpeed: 720
-  stoppingDistance: 1.2
+  stoppingDistance: 2
