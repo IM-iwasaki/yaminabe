@@ -5,8 +5,8 @@ using UnityEngine;
 public class Skill_Millionaire : SkillBase {
 
     [SerializeField]private int money = 100;
-
     public override void Activate(CharacterBase user) {
+        if (!user.isLocalPlayer) return;
         PlayerWallet.Instance.AddMoney(money);
     }
 }

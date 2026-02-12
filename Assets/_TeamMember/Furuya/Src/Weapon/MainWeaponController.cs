@@ -86,30 +86,10 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 if (weaponData is GunData gunData) {
-
-                    if (gunData.weaponName == "MoneyGun" && PlayerWallet.Instance.currentMoney >= gunData.multiShot * 4) {
-                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
-                        PlayerWallet.Instance.SpendMoney(gunData.multiShot * 4);
-                        ammo = PlayerWallet.Instance.currentMoney;
-                    }
-                    else {
-                        if (gunData.weaponName == "MoneyGun") return;
-
-                        //弾がなかったら通過不可。かわりにリロードを要求する。
-                        if (ammo == 0) {
-                            ReloadRequest();
-                            return;
-                        }
-                        //その他リロード中は射撃できなくする。
-                        else if (characterBase.parameter.isReloading) return;
-
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
-                        if (ammo > 0)
-                        ammo -= gunData.multiShot;
-                    }
                 }
-
                 break;
+
             case WeaponType.Magic:
                 if (weaponData is MainMagicData magicdata)
                     ServerStartMagicCast(direction);
@@ -122,6 +102,23 @@ public class MainWeaponController : NetworkBehaviour {
         characterBase.parameter.AttackTrigger = true;
     }
 
+    /// <summary>
+    /// 追加　マツオ : MoneyGun用攻撃時のお金消費処理(ローカル)
+    /// </summary>
+    /// <param name="direction"></param>
+    public void AttemptAttack(Vector3 direction) {
+        if (!isLocalPlayer) return;
+
+        // MoneyGunの場合、先にローカルでお金を消費
+        if (weaponData.type == WeaponType.Gun && weaponData is GunData gunData && gunData.weaponName == "MoneyGun") {
+            if (!PlayerWallet.Instance.SpendMoney(gunData.multiShot * 4))
+                return; // お金不足で撃てない
+            ammo = PlayerWallet.Instance.currentMoney; // UI更新用
+        }
+
+        // サーバーに弾撃ちをリクエスト
+        CmdRequestAttack(direction);
+    }
     [ClientRpc]
     private void RpcPlayShootAnimation() {
         if (animCon == null || animCon.anim == null) return;
