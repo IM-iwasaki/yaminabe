@@ -199,7 +199,7 @@ public class CharacterActions : NetworkBehaviour {
 
                         // 25%‚Å’eÁ”ï–³Œø
                         if (Random.value <= 0.25f) {
-                            core.weaponController_main.CmdRequestAttack(shootDir);
+                            core.weaponController_main.AttemptAttack(shootDir);
                             return;
                         }
                     }
@@ -207,7 +207,7 @@ public class CharacterActions : NetworkBehaviour {
             }
         }
 
-        core.weaponController_main.CmdRequestAttack(shootDir);
+        core.weaponController_main.AttemptAttack(shootDir);
     }
 
     /// <summary>
