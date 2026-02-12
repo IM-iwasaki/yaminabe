@@ -52,13 +52,6 @@ public enum ProjectileType {
     GroundLine,
 }
 
-public enum EffectHitboxPattern {
-    Single,         // 足元1回だけ
-    Fan,            // 扇状（wifiマーク）
-    LineGrow,       // 一本線＋拡大円（地走り）
-    ProjectileGrow  // 小弾が進みながら拡大円
-}
-
 public enum EffectType { 
     Default,
     Fire,

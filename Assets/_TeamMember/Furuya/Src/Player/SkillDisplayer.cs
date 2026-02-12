@@ -13,6 +13,10 @@ public class SkillDisplayer : MonoBehaviour {
     }
 
     public void SetSkillUI(string _skillName, string _skillTxt, string _passiveName, string _passiveTxt) {
+        if (skillTxt == null || passiveTxt == null) {
+            //Debug.LogError("テキストないで");
+            return;
+        }
         skillTxt.text =
         $"Skill : {_skillName}\n{_skillTxt}";
 

@@ -14,7 +14,7 @@ public class MainWeaponController : NetworkBehaviour {
 
     private GameObject activeChargeFx;
 
-    private CharacterEnum.CharaterType charaterType;
+    public CharacterEnum.CharaterType charaterType { get; private set; }
 
     private CharacterBase characterBase; // 名前を取得するため
     private CharacterAnimationController animCon;
@@ -85,18 +85,28 @@ public class MainWeaponController : NetworkBehaviour {
                     StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
                 break;
             case WeaponType.Gun:
-                //弾がなかったら通過不可。かわりにリロードを要求する。
-                if (ammo == 0) {
-                    ReloadRequest();
-                    return;
-                }
-                //その他リロード中は射撃できなくする。
-                else if (characterBase.parameter.isReloading) return;
-
                 if (weaponData is GunData gunData) {
+
+                    if (gunData.weaponName == "MoneyGun" && PlayerWallet.Instance.currentMoney >= gunData.multiShot * 4) {
+                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                        PlayerWallet.Instance.SpendMoney(gunData.multiShot * 4);
+                        ammo = PlayerWallet.Instance.currentMoney;
+                    }
+                    else {
+                        if (gunData.weaponName == "MoneyGun") return;
+
+                        //弾がなかったら通過不可。かわりにリロードを要求する。
+                        if (ammo == 0) {
+                            ReloadRequest();
+                            return;
+                        }
+                        //その他リロード中は射撃できなくする。
+                        else if (characterBase.parameter.isReloading) return;
+
                     StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
-                    if (ammo > 0)
+                        if (ammo > 0)
                         ammo -= gunData.multiShot;
+                    }
                 }
 
                 break;
@@ -207,6 +217,7 @@ public class MainWeaponController : NetworkBehaviour {
 
         if (!CanUseWeapon(charaterType, data.type)) {
             Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
+            AudioManager.Instance.CmdPlayUISE("武器取得失敗");
             return;
         }
 
@@ -218,6 +229,9 @@ public class MainWeaponController : NetworkBehaviour {
         characterBase.GetComponent<GeneralCharacter>().RpcChangeWeapon(weaponData.ID);
         //見た目変更
         animCon.SetWeaponLayer(GenerateWeaponIndex(weaponData.weaponName));
+        //効果音を流す
+        AudioManager.Instance.CmdPlayUISE("武器取得");
+
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
 
@@ -247,19 +261,18 @@ public class MainWeaponController : NetworkBehaviour {
         Vector3 forward = firePoint.forward;
 
 
-
         foreach (var c in hits) {
             Vector3 toTarget = (c.transform.position - firePoint.position).normalized;
             float dot = Vector3.Dot(forward, toTarget);
-            
+
             float angle = meleeData.meleeAngle;
             float threshold = Mathf.Cos(angle * Mathf.Deg2Rad);
             //角度チェック
             if (dot < threshold) continue;
 
             var hp = c.GetComponent<CreatureBase>();
-            if (hp == null || !IsValidTarget(hp.gameObject) || hp.parameter.TeamID == characterBase.parameter.TeamID) continue;
-            hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
+            if (hp == null || !IsValidTarget(hp.gameObject) || hp.teamID == characterBase.teamID) continue;
+            hp.TakeDamage(meleeData.damage + (int) characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
@@ -373,7 +386,7 @@ public class MainWeaponController : NetworkBehaviour {
             Quaternion.LookRotation(direction)
             );
         }
-        
+
 
         if (proj == null) return;
 
@@ -526,9 +539,9 @@ public class MainWeaponController : NetworkBehaviour {
         return _weaponName switch {
             "HandGun" or "revolver" or "Punch" => 1,
             "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" or "Spear" or "IceMagic" => 2,
-            "RPG"  or "Katana"=> 3,
-            "Sniper" or "Knife" or "PizzaCutter"=> 4,
-            "Minigun" or "Lightsaver"=> 5,
+            "RPG" or "Katana" => 3,
+            "Sniper" or "Knife" or "PizzaCutter" => 4,
+            "Minigun" or "Lightsaver" => 5,
 
             _ => -1,
         };

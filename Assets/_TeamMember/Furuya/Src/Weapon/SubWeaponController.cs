@@ -190,7 +190,7 @@ public class SubWeaponController : NetworkBehaviour {
         if (subWeaponData.ObjectPrefab == null) return;
 
         Vector3 origin = transform.position + Vector3.up * 0.5f; // è≠Çµè„Ç©ÇÁRayÇîÚÇŒÇ∑
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 5f, LayerMask.GetMask("Ground"))) {
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 5f, LayerMask.GetMask("Ground", "PVEGround"))) {
             Vector3 spawnPos = hit.point;
 
             GameObject trapObj = ProjectilePool.Instance.SpawnFromPool(

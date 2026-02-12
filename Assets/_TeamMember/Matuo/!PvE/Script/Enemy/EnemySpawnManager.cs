@@ -57,9 +57,7 @@ public class EnemySpawnManager : NetworkBehaviour {
                 continue;
 
             // プレイヤーが近くにいない
-            if (!SpawnUtility.IsAnyPlayerInRange(
-                    sp.transform.position,
-                    sp.activateRadius))
+            if (!SpawnUtility.IsAnyPlayerInRange(sp.transform.position,sp.activateRadius))
                 continue;
 
             // 視界チェック

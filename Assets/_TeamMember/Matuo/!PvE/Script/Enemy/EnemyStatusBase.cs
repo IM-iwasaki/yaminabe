@@ -11,9 +11,19 @@ public class EnemyStatusBase : CreatureBase {
     public EnemyStatusBaseData statusData;    // 敵のステータスデータ
     public EnemyParameter enemyParameter { get; private set; }
 
+    private EnemyHealthView healthView;
+
+    private PveBossHpBarController bossHpBar;
+
     protected override void Awake() {
-        base.Awake(); // 必要なら
+        base.Awake();
         enemyParameter = GetComponent<EnemyParameter>();
+
+        healthView = GetComponent<EnemyHealthView>();
+
+        if(healthView == null) {
+            bossHpBar = GetComponent<PveBossHpBarController>();
+        }
     }
 
     public override void OnStartServer() {
@@ -28,15 +38,52 @@ public class EnemyStatusBase : CreatureBase {
     /// ダメージ処理（敵専用）
     /// </summary>
     [Server]
-    public override void TakeDamage(int damage, string attackerName, int attackerID) {
+    public override void TakeDamage(int _damage, string attackerName, int attackerID) {
+        //既に死亡状態かロビー内なら帰る
+        if (enemyParameter.isDead) return;
 
-        // 共通ダメージ処理（HP減算・SE・スコア加算）
-        base.TakeDamage(damage, attackerName, attackerID);
+        //ダメージ倍率を適用
+        float damage = _damage;
+        //ダメージが0以下だったら1に補正する
+        if (damage <= 0) damage = 1;
+        //HPの減算処理
+        enemyParameter.HP -= (int) damage;
+
+        // hitSE 再生
+        PlayHitSE(attackerID);
+
+        if (enemyParameter.HP <= 0) {
+            enemyParameter.HP = 0;
+
+            if (PlayerListManager.Instance != null) {
+                // スコア加算
+                PlayerListManager.Instance.AddScoreById(attackerID, 100);
+                PlayerListManager.Instance.AddKillById(attackerID);
+            }
+        }
+
+        RpcUpdateView(_damage);
 
         // HPが0以下なら死亡
-        if (parameter.HP <= 0) {
+        if (enemyParameter.HP <= 0) {
             Die();
         }
+    }
+
+    /// <summary>
+    /// ダメージテキスト、HPUI表示用
+    /// </summary>
+    /// <param name="damage"></param>
+    [ClientRpc]
+    private void RpcUpdateView(int damage) {
+        if (healthView != null) {
+            healthView.UpdateHP(enemyParameter.HP);
+            healthView.ShowDamage(damage);
+        }
+        else if(bossHpBar != null) {
+            bossHpBar.UpdateHP(enemyParameter.HP);
+        }
+
     }
 
     /// <summary>
@@ -45,7 +92,7 @@ public class EnemyStatusBase : CreatureBase {
     [Server]
     private void Die() {
 
-        parameter.isDead = true;   // 死亡フラグ
+        enemyParameter.isDead = true;   // 死亡フラグ
 
         // 死亡演出などはここに
 

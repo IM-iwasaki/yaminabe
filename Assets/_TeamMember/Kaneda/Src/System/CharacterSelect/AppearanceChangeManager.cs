@@ -13,7 +13,7 @@ public class AppearanceChangeManager : MonoBehaviour {
     private GameObject currentSkin = null;
 
     [Header("キャラクターデータ")]
-    [SerializeField] private CharacterDatabase data;
+    [SerializeField] public CharacterDatabase data;
 
     //  ここでインスタンス化
     private void Awake() {

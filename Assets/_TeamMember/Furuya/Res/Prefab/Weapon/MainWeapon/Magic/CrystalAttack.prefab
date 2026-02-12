@@ -14825,7 +14825,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 9213433196463778554}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -24602,7 +24602,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9213433196463778554}
@@ -29557,7 +29557,7 @@ Transform:
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5289318898856529092}
   - {fileID: 7339214275783540883}
@@ -44383,8 +44383,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5, y: 1, z: 10}
-  m_Center: {x: 0, y: 0, z: 5}
+  m_Size: {x: 7, y: 4, z: 15}
+  m_Center: {x: 0, y: 2, z: 5}
 --- !u!1001 &6498625858084574220
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44393,6 +44393,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 452216849487924520}
     m_Modifications:
+    - target: {fileID: 1029033011919820905, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1425876875080139285, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
       propertyPath: playOnAwake
       value: 1
@@ -44400,6 +44404,22 @@ PrefabInstance:
     - target: {fileID: 1478354871455854054, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
       propertyPath: playOnAwake
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965918773050727801, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965918773050727801, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965918773050727801, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965918773050727801, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3432605367972841884, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
       propertyPath: sceneId
@@ -44431,6 +44451,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7834390366832105433, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
       propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7958123791712460040, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7958123791712460040, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7958123791712460040, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7958123791712460040, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
@@ -44472,6 +44504,10 @@ PrefabInstance:
     - target: {fileID: 7958123791712460040, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7958123791712460040, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8109694605444035535, guid: 206c8cfc632cfd1429e2c455730588b1, type: 3}
       propertyPath: playOnAwake

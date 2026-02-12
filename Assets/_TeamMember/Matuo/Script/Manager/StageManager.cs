@@ -149,29 +149,20 @@ public class StageManager : NetworkSystemObject<StageManager> {
     }
 
     private void BakePveGroundNavMesh(GameObject stageRoot) {
-        // PVEGround タグだけを対象
-        var grounds = stageRoot.GetComponentsInChildren<Transform>(true);
-        int bakedCount = 0;
 
-        foreach (var go in grounds) {
-            if (!go.CompareTag("PVEGround"))
-                continue;
-
-            // NavMeshSurface がなければ追加
-            var surface = go.GetComponent<NavMeshSurface>();
-            if (surface == null) {
-                surface = go.gameObject.AddComponent<NavMeshSurface>();
-            }
-
-            surface.collectObjects = CollectObjects.Children;
-            surface.useGeometry = NavMeshCollectGeometry.RenderMeshes;
-
-            // Bake
-            surface.BuildNavMesh();
-            bakedCount++;
+        // 既存の NavMeshSurface を全部消す
+        foreach (var s in stageRoot.GetComponentsInChildren<NavMeshSurface>(true)) {
+            DestroyImmediate(s);
         }
 
-        Debug.Log($"DynamicNavMeshBaker: {bakedCount} 個の PVEGround をBakeしました");
+        // ステージに NavMeshSurface を1つだけ追加
+        var surface = stageRoot.AddComponent<NavMeshSurface>();
+
+        surface.collectObjects = CollectObjects.Children;
+        surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+        surface.layerMask = LayerMask.GetMask("PVEGround", "PVEWall");
+
+        surface.BuildNavMesh();
     }
 
     /// <summary>

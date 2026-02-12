@@ -18,6 +18,16 @@ public class EnemyBase : NetworkBehaviour {
 
     private Transform target;              // 現在のターゲット（プレイヤー）
 
+    [Header("多段ヒット設定")]
+    [SerializeField] private float hitInterval = 0.5f;
+    private float hitTimer = 0.0f;
+
+    [Header("攻撃判定用レイヤー")]
+    [SerializeField] private LayerMask wallLayer = default; // PVEWall を指定
+
+    [Header("攻撃距離設定")]
+    [SerializeField] private float attackRange = 2.0f;
+
     /// <summary>
     /// サーバー開始時の初期化
     /// </summary>
@@ -31,10 +41,10 @@ public class EnemyBase : NetworkBehaviour {
         var data = status.statusData;
 
         // NavMeshAgent 設定
-        agent.speed = data.moveSpeed;                  // 移動速度
-        agent.acceleration = data.acceleration;        // 加速
-        agent.angularSpeed = data.angularSpeed;        // 旋回速度
-        agent.stoppingDistance = data.stoppingDistance;// 攻撃開始距離
+        agent.speed = data.moveSpeed;
+        agent.acceleration = data.acceleration;
+        agent.angularSpeed = data.angularSpeed;
+        agent.stoppingDistance = data.stoppingDistance;
 
         // 定期的にターゲットを探す
         InvokeRepeating(nameof(SearchTarget), 0f, searchInterval);
@@ -44,25 +54,35 @@ public class EnemyBase : NetworkBehaviour {
     /// 毎フレームのAI更新（サーバーのみ）
     /// </summary>
     [ServerCallback]
-private void Update() {
+    private void Update() {
 
-    // status や parameter が null の場合もガード
-    if (target == null)
-        return;
+        if (target == null)
+            return;
 
-    float distance = Vector3.Distance(transform.position, target.position);
+        float distance = Vector3.Distance(transform.position, target.position);
 
-    if (distance > agent.stoppingDistance) {
-        agent.isStopped = false;
-        agent.SetDestination(target.position);
+        if (distance > attackRange) {
+            // 攻撃距離外 → 追いかける
+            agent.isStopped = false;
+            agent.SetDestination(target.position);
+        } else {
+            // 攻撃距離内
+            if (!Physics.Linecast(transform.position, target.position, wallLayer)) {
+                agent.isStopped = true;
+
+                Vector3 direction = (target.position - transform.position).normalized;
+
+                hitTimer += Time.deltaTime;
+                if (hitTimer >= hitInterval) {
+                    hitTimer = 0.0f;
+                    weapon.ServerRequestAttack(direction);
+                }
+            } else {
+                agent.isStopped = false;
+                agent.SetDestination(target.position);
+            }
+        }
     }
-    else {
-        agent.isStopped = true;
-        Vector3 direction = (target.position - transform.position).normalized;
-        weapon.ServerRequestAttack(direction);
-    }
-}
-
 
     /// <summary>
     /// 一番近い生存プレイヤーを探す

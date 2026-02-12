@@ -17,19 +17,26 @@ public class DoTArea : NetworkBehaviour {
     private float speed = 20f;
     private bool initialized;
 
+    private Dictionary<CreatureBase, float> timers = new();
+
     [Header("DoT Settings")]
     private int damage = 10;
     [SerializeField] private float interval = 1f;
-    [SerializeField] private string targetTag = "Player";
+    [SerializeField] private string[] targetTags = { "Player", "Enemy" };
 
-    private Dictionary<GameObject, float> timers = new();
+    bool IsTarget(GameObject obj) {
+        foreach (var tag in targetTags)
+            if (obj.CompareTag(tag))
+                return true;
 
+        return false;
+    }
 
     /// <summary>
     /// 弾の初期化（発射時に呼ぶ）
     /// </summary>
-    public void Init(int teamID, string _name, int _ID, EffectType hitEffect, float _speed, int _damage) {
-        ownerTeamID = teamID;
+    public void Init(int _ownerTeamID, string _name, int _ID, EffectType hitEffect, float _speed, int _damage) {
+        ownerTeamID = _ownerTeamID;
         ownerName = _name;
         ID = _ID;
         hitEffectType = hitEffect;
@@ -61,45 +68,48 @@ public class DoTArea : NetworkBehaviour {
     [ServerCallback]
     private void OnTriggerEnter(Collider other) {
         if (!initialized || !isServer) return;
-        if (!other.CompareTag(targetTag)) return;
-        // 自分自身の発射元には当たらない
-        var target = other.GetComponent<CharacterBase>();
-        if (target.parameter.TeamID == ownerTeamID) return;
+        if (!IsTarget(other.gameObject)) return;
 
-        var character = other.GetComponent<CharacterBase>();
-        if (character != null) {
-           character.TakeDamage(damage, ownerName, ID);
-        }
+        var target = other.GetComponent<CreatureBase>();
+        if (target == null) return;
+
+        // 味方無効
+        if (target.teamID == ownerTeamID) return;
+
+        target.TakeDamage(damage, ownerName, ID);
+        RpcPlayHitEffect(target.transform.position, hitEffectType);
     }
+
 
     [ServerCallback]
     private void OnTriggerStay(Collider other) {
         if (!initialized || !isServer) return;
-        if (!other.CompareTag(targetTag)) return;
-        // 自分自身の発射元には当たらない
-        var target = other.GetComponent<CharacterBase>();
-        if (target.parameter.TeamID == ownerTeamID) return;
+        if (!IsTarget(other.gameObject)) return;
 
-        if (!timers.ContainsKey(other.gameObject))
-            timers[other.gameObject] = 0f;
+        var target = other.GetComponent<CreatureBase>();
+        if (target == null) return;
 
-        timers[other.gameObject] += Time.deltaTime;
+        if (target.teamID == ownerTeamID) return;
 
-        if (timers[other.gameObject] >= interval) {
-            timers[other.gameObject] = 0f;
+        if (!timers.ContainsKey(target))
+            timers[target] = 0f;
 
-            var character = other.GetComponent<CreatureBase>();
-            if (character != null) {
-                character.TakeDamage(damage, ownerName, ID);
-                RpcPlayHitEffect(character.transform.position, hitEffectType);
-            }
-        }
+        timers[target] += Time.deltaTime;
+
+        if (timers[target] < interval) return;
+
+        timers[target] = 0f;
+
+        target.TakeDamage(damage, ownerName, ID);
+        RpcPlayHitEffect(target.transform.position, hitEffectType);
     }
+
 
     [ServerCallback]
     private void OnTriggerExit(Collider other) {
-        if (timers.ContainsKey(other.gameObject))
-            timers.Remove(other.gameObject);
+        var target = other.GetComponent<CreatureBase>();
+        if (target != null)
+            timers.Remove(target);
     }
 
     /// <summary>

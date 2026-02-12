@@ -87,6 +87,7 @@ public class ServerManager : NetworkBehaviour {
             }
             teams[teamIndex].teamPlayerList.Add(player);
             player.GetComponent<GeneralCharacter>().parameter.TeamID = teamIndex;
+            player.GetComponent<GeneralCharacter>().teamID = teamIndex;
 
             teamIndex = (teamIndex + 1) % teams.Count;
         }
@@ -103,6 +104,28 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     public void OnToggleChangeAllRandom() {
         isRandom = !isRandom;
+    }
+
+    /// <summary>
+    /// 追加 マツオ：全プレイヤーをチーム0に設定(PVE用)
+    /// </summary>
+    [Server]
+    public void SetAllPlayersToPvETeam() {
+        // チーム初期化
+        teams = new List<TeamData>();
+        for (int i = 0; i < (int)TeamColor.ColorMax; i++) {
+            teams.Add(new TeamData());
+        }
+
+        // 全員チーム0へ
+        foreach (var player in connectPlayer) {
+            var character = player.GetComponent<GeneralCharacter>();
+            character.parameter.TeamID = 0;
+            character.teamID = 0;
+            teams[0].teamPlayerList.Add(player);
+        }
+
+        teams[0].isFullTeam = false;
     }
 
     /// <summary>

@@ -74,11 +74,12 @@ public class MagicProjectile : NetworkBehaviour {
             StartCoroutine(AutoDisable()); // 自動で非アクティブ化
         }
 
-        // エフェクト再初期化（必須）
-        var particles = GetComponentsInChildren<ParticleSystem>(true);
-        foreach (var ps in particles) {
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            ps.Play();
+        if (isServer) {
+            StopAllCoroutines();
+            StartCoroutine(AutoDisable());
+
+            // クライアント含めエフェクト再生
+            RpcResetEffects();
         }
 
     }
@@ -102,8 +103,7 @@ public class MagicProjectile : NetworkBehaviour {
                 return;
 
             // チーム判定
-            if (target.parameter.TeamID != owner.GetComponent<CreatureBase>().parameter.TeamID
-                || target.parameter.TeamID == -1) {
+            if (target.teamID != owner.GetComponent<CreatureBase>().teamID) {
                 target.TakeDamage(damage, ownerName, ID);
             }
 
@@ -113,8 +113,7 @@ public class MagicProjectile : NetworkBehaviour {
 
         // ---- 既存 Projectile 用 ----
         if (other.TryGetComponent(out CreatureBase targetNormal)) {
-            if (targetNormal.parameter.TeamID != owner.GetComponent<CreatureBase>().parameter.TeamID
-                || targetNormal.parameter.TeamID == -1) {
+            if (targetNormal.teamID != owner.GetComponent<CreatureBase>().teamID) {
                 targetNormal.TakeDamage(damage, ownerName, ID);
             }
         }
@@ -173,6 +172,22 @@ public class MagicProjectile : NetworkBehaviour {
             var fx = EffectPool.Instance.GetFromPool(prefab, pos, Quaternion.identity);
             fx.SetActive(true);
             EffectPool.Instance.ReturnToPool(fx, 3f);
+        }
+    }
+
+    [ClientRpc]
+    void RpcResetEffects() {
+        ResetEffects();
+    }
+    /// <summary>
+    /// エフェクトのリセット
+    /// </summary>
+    void ResetEffects() {
+        var particles = GetComponentsInChildren<ParticleSystem>(true);
+
+        foreach (var ps in particles) {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Play();
         }
     }
 }

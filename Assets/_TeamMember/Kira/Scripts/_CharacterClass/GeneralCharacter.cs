@@ -36,7 +36,6 @@ public class GeneralCharacter : CharacterBase {
         if (!isLocalPlayer) return;  //自分だけ処理する         
 
         parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
-
         //RespawnControl();
 
         //バフデバフの処理

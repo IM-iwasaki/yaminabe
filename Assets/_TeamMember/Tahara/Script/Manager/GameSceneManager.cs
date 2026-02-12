@@ -72,6 +72,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadPvESceneForAll() {
+        ServerManager.instance.SetAllPlayersToPvETeam();
         if (!isChanged) {
             isChanged = true;
             FadeManager.Instance.StartFadeOut(0.5f);
