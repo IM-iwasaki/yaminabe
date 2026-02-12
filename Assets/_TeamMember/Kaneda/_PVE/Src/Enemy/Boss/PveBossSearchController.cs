@@ -89,7 +89,7 @@ public class PveBossSearchController : NetworkBehaviour
         if(player == null) return;
         Transform t = player.transform;
         //  ボスのHPBarを表示させる
-        if (hpBar != null) hpBar.ShowBossUI();
+        if (isServer && hpBar != null) hpBar.ShowBossUI();
 
         //  プレイヤーをターゲット候補に追加
         if (!targets.Contains(t)) {

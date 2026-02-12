@@ -1,11 +1,11 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PveBossHpBarController : MonoBehaviour
-{
+public class PveBossHpBarController : NetworkBehaviour {
 
     [Header("éQè∆")]
     [SerializeField] private EnemyParameter enemyParameter;
@@ -27,8 +27,9 @@ public class PveBossHpBarController : MonoBehaviour
         enemyStatus = GetComponent<EnemyStatusBase>();
         if (nameText == null) return;
         nameText.SetText(enemyStatus.statusData.name);
-
-        HideBossUI();
+        if (isServer) {
+            HideBossUI();
+        }        
     }
 
     /// <summary>
@@ -43,6 +44,7 @@ public class PveBossHpBarController : MonoBehaviour
     /// <summary>
     /// UIÇï\é¶Ç≥ÇπÇÈ
     /// </summary>
+    [ClientRpc]
     public void ShowBossUI() {
         if(nameText == null || hpSlider == null) return;
 
@@ -53,6 +55,7 @@ public class PveBossHpBarController : MonoBehaviour
     /// <summary>
     /// UIÇîÒï\é¶Ç≥ÇπÇÈ
     /// </summary>
+    [ClientRpc]
     public void HideBossUI() {
         if (nameText == null || hpSlider == null) return;
 
