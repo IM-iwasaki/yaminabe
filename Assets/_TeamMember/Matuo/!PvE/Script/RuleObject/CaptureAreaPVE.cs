@@ -106,7 +106,9 @@ public class CaptureAreaPVE : NetworkBehaviour {
 
     [ClientRpc]
     private void RpcExecuteEvents() {
-        foreach (var e in onClearedEvents) {
+        var events = GetComponentsInChildren<PVEStageEvent>(true);
+
+        foreach (var e in events) {
             if (e != null)
                 e.Execute();
         }
