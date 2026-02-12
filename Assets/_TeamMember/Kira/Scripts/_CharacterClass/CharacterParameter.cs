@@ -33,7 +33,7 @@ public class CharacterParameter : NetworkBehaviour {
     //基礎攻撃力
     [SyncVar] public float attack;
     //移動速度
-    [SyncVar] public int moveSpeed;
+    [SyncVar] public float moveSpeed;
 
     //変動値
     [SyncVar] public float[] fluctuationValue;
@@ -46,15 +46,15 @@ public class CharacterParameter : NetworkBehaviour {
     //プレイヤーの名前
     [SyncVar] public string PlayerName = "Default";
     //受けるダメージ倍率
-    [System.NonSerialized] public int DamageRatio = 100;
+    [System.NonSerialized] public float DamageRatio = 100;
     //サーバーが割り当てるプレイヤー番号（Player1～6）
     [SyncVar] public int playerId = -1;
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
 
     public float defaultAttack { get; protected set; }
-    public int defaultMoveSpeed { get; protected set; }
-    public int defaultDamageRatio { get; protected set; }
+    public float defaultMoveSpeed { get; protected set; }
+    public float defaultDamageRatio { get; protected set; }
 
     // 味方検知用
     public bool HasNearbyAlly { get; private set; }

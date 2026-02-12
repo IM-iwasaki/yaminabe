@@ -37,53 +37,12 @@ public class GeneralCharacter : CharacterBase {
 
         parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
         //RespawnControl();
-
-        //バフデバフの処理
-        for(int paramIndex = (int)ParamaterType.max -1 ; 0 < paramIndex ; paramIndex--) {
-            Debug.Log(temporaryBuffs.Count);
-            Debug.Log(temporaryBuffs[paramIndex].Count);
-
-            //nullだったり要素がなかったりしたらとばす
-            if(temporaryBuffs[paramIndex].Count == 0) continue;
-
-            //倍率の累計
-            float influxValue = 1.0f;
-            //各バフの反映と時間経過処理
-            for (int buffIndex = 0 ; buffIndex < temporaryBuffs[paramIndex].Count ; buffIndex++) {
-                //倍率の累計に掛けていく
-                influxValue *= temporaryBuffs[paramIndex][buffIndex].amount;
-                //反映したら効果時間を減らす
-                temporaryBuffs[paramIndex][buffIndex].duration -= Time.deltaTime;
-
-                //効果時間が切れたら
-                if(temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
-                    //該当する要素を削除。
-                    temporaryBuffs[paramIndex].RemoveAt(buffIndex);
-                }                   
-            }
-
-            //値を反映(switchで分岐)
-            switch((ParamaterType)paramIndex) {
-                case ParamaterType.Attack:
-                    parameter.attack *= influxValue;
-                    break;
-                case ParamaterType.moveSpeed:
-                    parameter.moveSpeed *= (int)influxValue;
-                    break;
-                case ParamaterType.damageRate:
-                    parameter.DamageRatio *= (int)influxValue;
-                    break;
-                default:
-#if UNITY_EDITOR
-                    Debug.LogWarning("実行されないべきであるコードが実行されました。\n発生：GeneralCharacter.Update");
-#endif
-                    break;
-            }
-        }
+        
+        BuffUpdate();
     }
 
     [ClientRpc]
-    public override void Initalize() {
+    public void Initalize() {
         //HPやフラグ関連などの基礎的な初期化
         //base.Initalize();
         //MaxMPが0でなければ最大値で初期化
