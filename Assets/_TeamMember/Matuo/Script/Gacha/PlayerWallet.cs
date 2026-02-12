@@ -140,8 +140,7 @@ public class PlayerWallet : MonoBehaviour {
     /// Ÿ—˜‚É1.2”{‚É‚µ‚Ä•Ô‚·B
     /// </summary>
     /// <param name="multiplier"></param>
-    [TargetRpc]
-    public void RefundSpentMoney(NetworkConnection target, float multiplier = 1.2f) {
+    public void RefundSpentMoney(float multiplier = 1.2f) {
         int refund = Mathf.FloorToInt(matchSpentMoney * multiplier);
         AddMoney(refund);
         matchSpentMoney = 0;

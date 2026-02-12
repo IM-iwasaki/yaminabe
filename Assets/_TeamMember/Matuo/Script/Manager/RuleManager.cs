@@ -275,9 +275,15 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         foreach (var passive in param.equippedPassives) {
             if (passive is Passive_Millionaire millionaire) {
                 // クライアント側のWalletに返還させる
-                PlayerWallet.Instance.RefundSpentMoney(conn, millionaire.multiple);
+                TargetRefundMoney(conn, millionaire.multiple);
             }
         }
     }
+
+    [TargetRpc]
+    private void TargetRefundMoney(NetworkConnection target, float multiplier) {
+        PlayerWallet.Instance?.RefundSpentMoney(multiplier);
+    }
+
 
 }
