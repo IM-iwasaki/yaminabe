@@ -18,6 +18,8 @@ public class EnemySpawnManager : NetworkBehaviour {
 
     private List<EnemySpawnPoint> spawnPoints = new(); // Scene内スポナー一覧
 
+    private bool bossAlive = false;
+
     private void Awake() {
         Instance = this;
     }
@@ -51,16 +53,29 @@ public class EnemySpawnManager : NetworkBehaviour {
     /// </summary>
     [Server]
     private void TrySpawnEnemy(EnemySpawnPoint sp) {
+        // ボス用スポナーの場合
+        if (sp.isBossSpawnPoint) {
+            // 既にボスが居るなら生成しない
+            if (bossAlive)
+                return;
 
-        // 全体数制限
-        if (currentEnemyCount >= maxEnemyCount)
+            SpawnEnemy(sp);
+            bossAlive = true;
+            return;
+        }
+
+        // 通常スポナーの場合
+
+        // ボス用に1枠空ける
+        if (currentEnemyCount >= maxEnemyCount - 1)
             return;
 
         if (sp.currentSpawnCount >= sp.maxSpawnCount)
             return;
-        // プレイヤーが近くに居るかチェック
+
         if (!SpawnUtility.IsAnyPlayerInRange(sp.transform.position, sp.activateRadius))
             return;
+
         if (!SpawnUtility.CanSpawnOutOfPlayerView(sp.transform.position))
             return;
 
@@ -103,5 +118,9 @@ public class EnemySpawnManager : NetworkBehaviour {
     public void NotifyEnemyDead(EnemySpawnPoint sp) {
         currentEnemyCount--;
         sp.currentSpawnCount--;
+
+        if (sp.isBossSpawnPoint) {
+            bossAlive = false;
+        }
     }
 }
