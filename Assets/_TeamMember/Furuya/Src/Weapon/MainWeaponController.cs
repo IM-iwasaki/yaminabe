@@ -86,7 +86,23 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 if (weaponData is GunData gunData) {
-                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                    if (gunData.weaponName == "MoneyGun")
+                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                    else {
+
+                        //弾がなかったら通過不可。かわりにリロードを要求する。
+                        if (ammo == 0) {
+                            ReloadRequest();
+                            return;
+                        }
+                        //その他リロード中は射撃できなくする。
+                        else if (characterBase.parameter.isReloading) return;
+
+                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                        if (ammo > 0)
+                            ammo -= gunData.multiShot;
+                    }
+
                 }
                 break;
 
@@ -269,7 +285,8 @@ public class MainWeaponController : NetworkBehaviour {
 
             var hp = c.GetComponent<CreatureBase>();
             if (hp == null || !IsValidTarget(hp.gameObject) || hp.teamID == characterBase.teamID) continue;
-            hp.TakeDamage(meleeData.damage + (int) characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
+            //hp.TakeDamage(meleeData.damage + (int) characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
+            hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
