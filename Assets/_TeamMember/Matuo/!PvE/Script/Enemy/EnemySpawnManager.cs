@@ -37,6 +37,12 @@ public class EnemySpawnManager : NetworkBehaviour {
 
         foreach (var sp in spawnPoints) {
 
+            // まだ1体も出していないなら即スポーン試行
+            if (sp.currentSpawnCount == 0) {
+                TrySpawnEnemy(sp);
+                continue;
+            }
+
             sp.timer += Time.deltaTime;
 
             if (sp.timer < sp.spawnInterval)
