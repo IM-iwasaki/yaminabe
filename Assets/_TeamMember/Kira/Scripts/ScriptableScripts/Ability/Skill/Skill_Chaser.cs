@@ -28,8 +28,7 @@ public class Skill_Chaser : SkillBase {
     }
 
     public override void SkillEffectUpdate(CharacterBase user) {
-        if (user.weaponController_main.weaponData is not MainMagicData magicData)
-            return;
+        if (user.weaponController_main.weaponData is not MainMagicData magicData) return;
         intervalDelay = magicData.cooldown / 2;
 
         //使用中か確認、効果中は時間を計測
