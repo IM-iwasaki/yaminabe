@@ -516,6 +516,7 @@ MonoBehaviour:
   isReloading: 0
   attack: 0
   moveSpeed: 5
+  fluctuationValue: []
   TeamID: -1
   PlayerName: Default
   playerId: -1
@@ -664,7 +665,7 @@ Transform:
   m_GameObject: {fileID: 4854489468192512913}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.277, y: -3.25, z: 0}
+  m_LocalPosition: {x: 0.37, y: -3.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

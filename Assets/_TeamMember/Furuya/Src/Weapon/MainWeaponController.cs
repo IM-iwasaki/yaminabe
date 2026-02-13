@@ -285,7 +285,8 @@ public class MainWeaponController : NetworkBehaviour {
 
             var hp = c.GetComponent<CreatureBase>();
             if (hp == null || !IsValidTarget(hp.gameObject) || hp.teamID == characterBase.teamID) continue;
-            hp.TakeDamage(meleeData.damage + (int) characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
+            //hp.TakeDamage(meleeData.damage + (int) characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
+            hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
