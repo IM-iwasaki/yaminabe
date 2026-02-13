@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// 敵専用ステータス管理
@@ -102,6 +103,12 @@ public class EnemyStatusBase : CreatureBase {
         if (spawnPoint != null) {
             EnemySpawnManager.Instance.NotifyEnemyDead(spawnPoint);
         }
+        StartCoroutine(DestroyAfterDelay());
+    }
+
+    [Server]
+    private IEnumerator DestroyAfterDelay() {
+        yield return new WaitForSeconds(0.3f); // ダメージ表示時間より少し短め
 
         NetworkServer.Destroy(gameObject); // サーバーから削除
     }
