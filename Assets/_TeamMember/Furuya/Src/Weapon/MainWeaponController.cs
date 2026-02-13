@@ -197,12 +197,6 @@ public class MainWeaponController : NetworkBehaviour {
 
         var data = WeaponDataRegistry.GetWeapon(_weaponID);
 
-        if (!CanUseWeapon(charaterType, data.type)) {
-            Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
-            AudioManager.Instance.CmdPlayUISE("武器取得失敗");
-            return;
-        }
-
         // サーバーで SyncVar を更新
         appearanceID = data.appearanceID;
         weaponID = data.WeaponID; 
@@ -213,8 +207,6 @@ public class MainWeaponController : NetworkBehaviour {
         characterBase.GetComponent<GeneralCharacter>().RpcChangeWeapon(weaponData.appearanceID);
         //見た目変更
         animCon.SetWeaponLayer(GenerateWeaponIndex(weaponData.weaponName));
-        //効果音を流す
-        AudioManager.Instance.CmdPlayUISE("武器取得");
 
         Debug.LogWarning($"'{data.weaponName}' を使用します");
     }
@@ -237,7 +229,7 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="character"></param>
     /// <param name="weapon"></param>
     /// <returns></returns>
-    private bool CanUseWeapon(CharacterEnum.CharaterType character, WeaponType weapon) {
+    public bool CanUseWeapon(CharacterEnum.CharaterType character, WeaponType weapon) {
         return character switch {
             CharacterEnum.CharaterType.Melee => weapon == WeaponType.Melee,
             CharacterEnum.CharaterType.Gunner => weapon == WeaponType.Gun,
