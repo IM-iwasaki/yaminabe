@@ -14,13 +14,23 @@ public class CaptureAreaPVE : NetworkBehaviour {
     [Header("このエリア突破時に実行するイベント")]
     private List<PVEStageEvent> onClearedEvents = new();
 
-    private float currentScore = 0f;
+    [SyncVar] private float currentScore = 0f;
+    [SyncVar] private int currentPlayerCount = 0;
+    [SyncVar] private int maxPlayerCount = 0;
+
     private float timer = 0f;
 
     private HashSet<CharacterBase> playersInArea = new();
     private bool cleared = false;
 
     private AreaClearCondition clearCondition;
+
+    public float CurrentScore => currentScore;
+    public float TargetScore => targetScore;
+    public int CurrentPlayerCount => currentPlayerCount;
+    public int MaxPlayerCount => maxPlayerCount;
+    public AreaClearCondition ClearCondition => clearCondition;
+
 
     private void Awake() {
         if (areaCollider == null)
@@ -34,6 +44,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
         targetScore = spawnPoint.targetScore;
         clearCondition = spawnPoint.clearCondition;
 
+        maxPlayerCount = ServerManager.instance.connectPlayer.Count;
+
         onClearedEvents.Clear();
         foreach (var evt in spawnPoint.events) {
             if (evt == null) continue;
@@ -44,15 +56,19 @@ public class CaptureAreaPVE : NetworkBehaviour {
     [ServerCallback]
     private void OnTriggerEnter(Collider other) {
         var player = other.GetComponent<CharacterBase>();
-        if (player != null)
+        if (player != null) {
             playersInArea.Add(player);
+            currentPlayerCount = playersInArea.Count;
+        }
     }
 
     [ServerCallback]
     private void OnTriggerExit(Collider other) {
         var player = other.GetComponent<CharacterBase>();
-        if (player != null)
+        if (player != null) {
             playersInArea.Remove(player);
+            currentPlayerCount = playersInArea.Count;
+        }
     }
 
     [ServerCallback]
