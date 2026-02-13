@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// 敵専用ステータス管理
@@ -69,7 +70,7 @@ public class EnemyStatusBase : CreatureBase {
             }
         }
 
-        RpcUpdateView(_damage);
+        RpcUpdateEnemyView(enemyParameter.HP, _damage);
 
         // HPが0以下なら死亡
         if (enemyParameter.HP <= 0) {
@@ -82,15 +83,13 @@ public class EnemyStatusBase : CreatureBase {
     /// </summary>
     /// <param name="damage"></param>
     [ClientRpc]
-    private void RpcUpdateView(int damage) {
+    private void RpcUpdateEnemyView(int currentHP, int damage) {
         if (healthView != null) {
-            healthView.UpdateHP(enemyParameter.HP);
+            healthView.UpdateHP(currentHP);
             healthView.ShowDamage(damage);
+        } else if (bossHpBar != null) {
+            bossHpBar.UpdateHP(currentHP);
         }
-        else if(bossHpBar != null) {
-            bossHpBar.UpdateHP(enemyParameter.HP);
-        }
-
     }
 
     /// <summary>
@@ -104,6 +103,12 @@ public class EnemyStatusBase : CreatureBase {
         if (spawnPoint != null) {
             EnemySpawnManager.Instance.NotifyEnemyDead(spawnPoint);
         }
+        StartCoroutine(DestroyAfterDelay());
+    }
+
+    [Server]
+    private IEnumerator DestroyAfterDelay() {
+        yield return new WaitForSeconds(0.3f); // ダメージ表示時間より少し短め
 
         NetworkServer.Destroy(gameObject); // サーバーから削除
     }

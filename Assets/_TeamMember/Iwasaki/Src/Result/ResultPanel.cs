@@ -80,6 +80,14 @@ public class ResultPanel : NetworkBehaviour {
     public void RpcShowResult() {
         bool isHost = NetworkServer.active;
 
+        // ホストがオプションを開いていたら閉じる
+        if (isHost) {
+            OptionMenu optionMenu = FindObjectOfType<OptionMenu>();
+            if (optionMenu != null && optionMenu.isOpen) {
+                optionMenu.ToggleMenu(); // 閉じる
+            }
+        }
+
         if (rematchButton != null)
             rematchButton.gameObject.SetActive(isHost);
         if (returnLobbyButton != null)

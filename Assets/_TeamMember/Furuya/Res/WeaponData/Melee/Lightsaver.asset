@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: Lightsaver
   m_EditorClassIdentifier: 
   weaponName: Lightsaver
+  weaponID: 42
   type: 0
-  damage: 60
+  damage: 45
   cooldown: 0.8
-  ID: 10
+  appearanceID: 10
   muzzleFlashType: 0
   hitEffectType: 0
   maxAmmo: 0
   reloadTime: 0
-  range: 3
-  meleeAngle: 45
+  range: 4
+  meleeAngle: 50
   combo: 2
   comboDelay: 0.3
   se: 4

@@ -56,7 +56,7 @@ public abstract class CharacterBase : CreatureBase {
         action = GetComponent<CharacterActions>();
         animCon = GetComponent<CharacterAnimationController>();
 
-        //RpcChangeWeapon(weaponController_main.weaponData.ID);
+        //RpcChangeWeapon(weaponController_main.weaponData.appearanceID);
         for(int i = 0; i < (int)ParamaterType.max ; i++) {
             temporaryBuffs.Add(new List<TemporaryBuff>());
         }
@@ -535,6 +535,7 @@ public abstract class CharacterBase : CreatureBase {
                 if(temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
                     //該当する要素を削除。
                     temporaryBuffs[paramIndex].RemoveAt(buffIndex);
+                    DestroyChildrenWithTag(EFFECT_TAG);
                 }                   
             }
 

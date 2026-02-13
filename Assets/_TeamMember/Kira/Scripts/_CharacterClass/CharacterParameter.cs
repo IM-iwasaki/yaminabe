@@ -193,11 +193,11 @@ public class CharacterParameter : NetworkBehaviour {
         weaponController_main.SetCharacterType(runtimeStatus.chatacterType);
 
         //初期武器の設定
-        var mainWeapon = runtimeStatus.MainWeapon.WeaponName;
-        var subWeapon = runtimeStatus.SubWeapon.WeaponName;
+        var mainWeapon = runtimeStatus.MainWeapon.WeaponID;
+        var subWeapon = runtimeStatus.SubWeapon.WeaponID;
 
         weaponController_main.CmdSetWeaponData(mainWeapon);
-        weaponController_sub.SetSubWeaponData(subWeapon);
+        weaponController_sub.CmdSetSubWeapon(subWeapon);
     }
 
     [TargetRpc]
@@ -306,12 +306,12 @@ public class CharacterParameter : NetworkBehaviour {
             return;
 
         // 初期装備名を取得
-        string mainWeaponName = runtimeStatus.MainWeapon.WeaponName;
-        string subWeaponName = runtimeStatus.SubWeapon.WeaponName;
+        int mainWeaponName = runtimeStatus.MainWeapon.WeaponID;
+        int subWeaponName = runtimeStatus.SubWeapon.WeaponID;
 
         // サーバー側で武器データを設定
         weaponControllerMain.CmdSetWeaponData(mainWeaponName);
-        weaponControllerSub.SetSubWeaponData(subWeaponName);
+        weaponControllerSub.CmdSetSubWeapon(subWeaponName);
 
         // クライアント側にも反映
         RpcUpdateWeaponOnClient(mainWeaponName, subWeaponName);
@@ -321,17 +321,17 @@ public class CharacterParameter : NetworkBehaviour {
     /// 追加　マツオ : クライアント用武器を初期装備に戻す
     /// </summary>
     [ClientRpc]
-    private void RpcUpdateWeaponOnClient(string mainWeaponName, string subWeaponName) {
+    private void RpcUpdateWeaponOnClient(int mainWeaponID, int subWeaponID) {
         if (!isLocalPlayer) return;
 
         var weaponControllerMain = GetComponent<MainWeaponController>();
         var weaponControllerSub = GetComponent<SubWeaponController>();
 
         if (weaponControllerMain != null)
-            weaponControllerMain.CmdSetWeaponData(mainWeaponName);
+            weaponControllerMain.CmdSetWeaponData(mainWeaponID);
 
         if (weaponControllerSub != null)
-            weaponControllerSub.SetSubWeaponData(subWeaponName);
+            weaponControllerSub.CmdSetSubWeapon(subWeaponID);
     }
 
     /// <summary>

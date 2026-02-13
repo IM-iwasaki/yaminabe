@@ -73,9 +73,6 @@ public class PveBossSearchController : NetworkBehaviour
         foreach (var t in removeList) {
             exitTimers.Remove(t);
             targets.Remove(t);
-            if (isServer) {
-                hpBar.HideBossUI();
-            }
         }
     }
 

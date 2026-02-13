@@ -24,7 +24,7 @@ public class WeaponItem : ItemBase {
         }
         
         //  持っている武器データをプレイヤーに受け渡す
-        playerWeaponData.CmdSetWeaponData(weaponData.WeaponName);
+        playerWeaponData.CmdSetWeaponData(weaponData.WeaponID);
         //  キャラクター側のフラグをリセットする
         player.GetComponent<CharacterBase>().action.ResetCanPickFlag();
 

@@ -21,6 +21,9 @@ public class EnemySpawnPoint : MonoBehaviour {
     [HideInInspector]
     public float timer = 0f;           // 経過時間
 
+    [Header("ボス設定")]
+    public bool isBossSpawnPoint = false;   // このスポナーはボス用か
+
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected() {
         // 起動範囲をScene上で可視化

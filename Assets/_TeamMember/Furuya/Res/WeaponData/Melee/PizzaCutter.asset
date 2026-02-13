@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: PizzaCutter
   m_EditorClassIdentifier: 
   weaponName: PizzaCutter
+  weaponID: 43
   type: 0
   damage: 2
   cooldown: 0.01
-  ID: 11
+  appearanceID: 11
   muzzleFlashType: 0
   hitEffectType: 0
   maxAmmo: 0
   reloadTime: 0
   range: 3
-  meleeAngle: 15
+  meleeAngle: 35
   combo: 1
   comboDelay: 0
   se: 3
