@@ -120,7 +120,7 @@ public class ResultPanel : NetworkBehaviour {
         }
 
         if (isTeamBattle) {
-            winnerText.text = $"{name} Team Win!";
+            winnerText.text = $"{name} Team  Win!";
             // チームカラーに合わせて色分け（例：Red / Blue）
             winnerText.color = (name == "Red") ? Color.red : Color.blue;
         } else {
