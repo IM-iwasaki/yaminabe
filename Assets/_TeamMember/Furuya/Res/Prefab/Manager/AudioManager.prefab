@@ -50,6 +50,12 @@ MonoBehaviour:
   syncInterval: 0
   initializationOrder: 0
   bgmList:
+  - name: "\u30ED\u30D3\u30FC"
+    clip: {fileID: 8300000, guid: e3c96d181c6e51d4cb242e49837be2e0, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 500
   - name: "\u30B2\u30FC\u30E01"
     clip: {fileID: 8300000, guid: 710f6c2508e8d974982aaa7723cc10fc, type: 3}
     volume: 0.2
@@ -62,8 +68,14 @@ MonoBehaviour:
     pitch: 1
     minDistance: 1
     maxDistance: 500
-  - name: "\u30ED\u30D3\u30FC"
-    clip: {fileID: 8300000, guid: e3c96d181c6e51d4cb242e49837be2e0, type: 3}
+  - name: "\u30B2\u30FC\u30E03"
+    clip: {fileID: 8300000, guid: a00d65024d9916b4caf32b02aa7b8060, type: 3}
+    volume: 0.2
+    pitch: 1
+    minDistance: 1
+    maxDistance: 500
+  - name: "\u30B2\u30FC\u30E04"
+    clip: {fileID: 8300000, guid: 937c789201533bb41a8035f60d5158dc, type: 3}
     volume: 0.2
     pitch: 1
     minDistance: 1
