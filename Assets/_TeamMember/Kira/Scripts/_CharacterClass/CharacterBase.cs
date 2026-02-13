@@ -31,6 +31,8 @@ public abstract class CharacterBase : CreatureBase {
 
     public int bannerNum = 0;
 
+    protected List<List<TemporaryBuff>> temporaryBuffs = new List<List<TemporaryBuff>>((int)ParamaterType.max);
+
     //各コンポーネントの参照
     public CharacterInput input { get; private set; }
     public CharacterActions action { get; private set; }
@@ -53,6 +55,11 @@ public abstract class CharacterBase : CreatureBase {
         input = GetComponent<CharacterInput>();
         action = GetComponent<CharacterActions>();
         animCon = GetComponent<CharacterAnimationController>();
+
+        //RpcChangeWeapon(weaponController_main.weaponData.ID);
+        for(int i = 0; i < (int)ParamaterType.max ; i++) {
+            temporaryBuffs.Add(new List<TemporaryBuff>());
+        }
     }
 
     /// <summary>
@@ -146,13 +153,6 @@ public abstract class CharacterBase : CreatureBase {
     #endregion
 
     #region ～プレイヤー状態更新関数～
-
-    /// <summary>
-    /// プレイヤー状態を初期化する関数
-    /// </summary>
-    public virtual void Initalize() {
-
-    }
 
     /// <summary>
     /// 追加:タハラ クライアント用準備状態切り替え関数
@@ -501,6 +501,57 @@ public abstract class CharacterBase : CreatureBase {
     [Server]
     public void SetHoldingHoko(bool value) => isHoldingHoko = value;
 
+    /// <summary>
+    /// バフの総合管理
+    /// </summary>
+    protected void BuffUpdate() {
+        //保険。大丈夫なはずだがバフリストのnullチェック
+        if (temporaryBuffs == null) {
+#if UNITY_EDITOR
+            Debug.LogWarning("なんでtemporaryBuffsないの！");
+#endif
+            return;
+        }
+
+        //バフデバフの処理
+        for(int paramIndex = (int)ParamaterType.max -1 ; 0 <= paramIndex ; paramIndex--) {
+            //倍率の累計
+            float influxValue = 1.0f;
+            //各バフの反映と時間経過処理
+            //走査中に途中で要素を削除するなら末尾から見る！
+            for (int buffIndex = temporaryBuffs[paramIndex].Count - 1 ; 0 <= buffIndex ; buffIndex--) {
+                //倍率の累計に掛けていく
+                influxValue *= temporaryBuffs[paramIndex][buffIndex].amount;
+                //反映したら効果時間を減らす
+                temporaryBuffs[paramIndex][buffIndex].duration -= Time.deltaTime;
+
+                //効果時間が切れたら
+                if(temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
+                    //該当する要素を削除。
+                    temporaryBuffs[paramIndex].RemoveAt(buffIndex);
+                }                   
+            }
+
+            //値を反映(switchで分岐)
+            switch((ParamaterType)paramIndex) {
+                case ParamaterType.Attack:
+                    parameter.attack = parameter.defaultAttack * influxValue;
+                    break;
+                case ParamaterType.moveSpeed:
+                    parameter.moveSpeed = parameter.defaultMoveSpeed * influxValue;
+                    break;
+                case ParamaterType.damageRate:
+                    parameter.DamageRatio = parameter.defaultDamageRatio * influxValue;
+                    break;
+                default:
+#if UNITY_EDITOR
+                    Debug.LogWarning("実行されないべきであるコードが実行されました。\n発生：CharacterBase.BuffUpdate：551");
+#endif
+                    break;
+            }
+        }
+    }
+
     #endregion
 
     #region 入力受付・入力実行・判定関数
@@ -669,11 +720,14 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [Command]
     public void AttackBuff(float _value, float _usingTime) {
+        temporaryBuffs[(int)ParamaterType.Attack].Add(new TemporaryBuff(_value, _usingTime));
+
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+
         //  エフェクト再生
         PlayEffect(ATTACK_BUFF_EFFECT);
 
-        attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
+        //attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
     }
 
     /// <summary>
@@ -692,11 +746,13 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [Command]
     public void MoveSpeedBuff(float _value, float _usingTime) {
+        temporaryBuffs[(int)ParamaterType.moveSpeed].Add(new TemporaryBuff(_value, _usingTime));
+
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         //  エフェクト再生
         PlayEffect(SPEED_BUFF_EFFECT);
 
-        speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
+        //speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
 
     /// <summary>
@@ -716,9 +772,11 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [Command]
     public void DamageCut(int _value, float _usingTime) {
+        temporaryBuffs[(int)ParamaterType.damageRate].Add(new TemporaryBuff(_value, _usingTime));
+
         if (damageCutCoroutine != null) StopCoroutine(damageCutCoroutine);
 
-        damageCutCoroutine = StartCoroutine(DamageCutRoutine(_value, _usingTime));
+        //damageCutCoroutine = StartCoroutine(DamageCutRoutine(_value, _usingTime));
     }
 
     /// <summary>
@@ -811,22 +869,16 @@ public abstract class CharacterBase : CreatureBase {
 /// </summary>
 [System.Serializable]
 public class TemporaryBuff {
-
-    /// <summary>
-    /// 効果種別
-    /// </summary>
-    public ParamaterType type;
     /// <summary>
     /// 効果値
     /// </summary>
-    public int amount;
+    public float amount;
     /// <summary>
     /// 効果時間
     /// </summary>
     public float duration;
 
-    public TemporaryBuff(ParamaterType type, int amount, float duration) {
-        this.type = type;
+    public TemporaryBuff(float amount, float duration) {
         this.amount = amount;
         this.duration = duration;
     }

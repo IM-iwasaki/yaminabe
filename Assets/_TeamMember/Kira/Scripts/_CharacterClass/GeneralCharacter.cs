@@ -2,6 +2,7 @@
 //  @file   Second_CharacterClass
 //
 using Mirror;
+using UnityEngine;
 
 public class GeneralCharacter : CharacterBase {
 
@@ -35,14 +36,13 @@ public class GeneralCharacter : CharacterBase {
         if (!isLocalPlayer) return;  //自分だけ処理する         
 
         parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
-        //RespawnControl();    
-
-        //死んでいたら以降の処理は行わない。
-        //if (isDead) return;
+        //RespawnControl();
+        
+        BuffUpdate();
     }
 
     [ClientRpc]
-    public override void Initalize() {
+    public void Initalize() {
         //HPやフラグ関連などの基礎的な初期化
         //base.Initalize();
         //MaxMPが0でなければ最大値で初期化
