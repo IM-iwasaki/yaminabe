@@ -529,6 +529,7 @@ public abstract class CharacterBase : CreatureBase {
                 if(temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
                     //該当する要素を削除。
                     temporaryBuffs[paramIndex].RemoveAt(buffIndex);
+                    DestroyChildrenWithTag(EFFECT_TAG);
                 }                   
             }
 
