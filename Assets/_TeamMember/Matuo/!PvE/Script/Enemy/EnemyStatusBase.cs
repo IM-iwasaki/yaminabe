@@ -69,7 +69,7 @@ public class EnemyStatusBase : CreatureBase {
             }
         }
 
-        RpcUpdateView(_damage);
+        RpcUpdateEnemyView(enemyParameter.HP, _damage);
 
         // HP‚ª0ˆÈ‰º‚È‚çŽ€–S
         if (enemyParameter.HP <= 0) {
@@ -82,15 +82,13 @@ public class EnemyStatusBase : CreatureBase {
     /// </summary>
     /// <param name="damage"></param>
     [ClientRpc]
-    private void RpcUpdateView(int damage) {
+    private void RpcUpdateEnemyView(int currentHP, int damage) {
         if (healthView != null) {
-            healthView.UpdateHP(enemyParameter.HP);
+            healthView.UpdateHP(currentHP);
             healthView.ShowDamage(damage);
+        } else if (bossHpBar != null) {
+            bossHpBar.UpdateHP(currentHP);
         }
-        else if(bossHpBar != null) {
-            bossHpBar.UpdateHP(enemyParameter.HP);
-        }
-
     }
 
     /// <summary>
