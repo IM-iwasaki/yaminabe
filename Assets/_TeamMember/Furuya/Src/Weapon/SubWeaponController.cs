@@ -12,6 +12,9 @@ public class SubWeaponController : NetworkBehaviour {
     [Header("Sub Weapon")]
     public SubWeaponData subWeaponData;
 
+    [SyncVar(hook = nameof(OnSubWeaponIDChanged))]
+    private int subWeaponID;
+
     [SyncVar(hook = nameof(OnCurrentUsesChanged))]
     private int currentUses;
 
@@ -36,8 +39,13 @@ public class SubWeaponController : NetworkBehaviour {
         characterSelectManager = FindObjectOfType<CharacterSelectManager>();
         gachaSystem = FindObjectOfType<GachaSystem>();
 
+    }
+
+    public override void OnStartServer() {
         if (subWeaponData != null)
-            currentUses = subWeaponData.startFull ? subWeaponData.maxUses : 0;
+            currentUses = subWeaponData.startFull
+                ? subWeaponData.maxUses
+                : 0;
     }
 
     void OnCurrentUsesChanged(int oldValue, int newValue) {
@@ -133,14 +141,22 @@ public class SubWeaponController : NetworkBehaviour {
     /// 武器データセット
     /// </summary>
     /// <param name="name"></param>
-    //[Command]
-    public void SetSubWeaponData(string name) {
-        var data = WeaponDataRegistry.GetSubWeapon(name);
+    [Command]
+    public void CmdSetSubWeapon(int weaponID) {
+        var data = WeaponDataRegistry.GetSubWeapon(weaponID);
 
         subWeaponData = data;
         playerUI.LocalUIChanged();
         Debug.LogWarning($"'{data.subWeaponName}' を使用します");
     }
+
+    private void OnSubWeaponIDChanged(int oldID, int newID) {
+        subWeaponData = WeaponDataRegistry.GetSubWeapon(newID);
+
+        if (isLocalPlayer)
+            playerUI?.LocalUIChanged();
+    }
+
 
     /// <summary>
     /// グレ生成

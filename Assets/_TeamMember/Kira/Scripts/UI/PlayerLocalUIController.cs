@@ -123,7 +123,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
                 break;
             case WeaponType.Magic:
                 //所持している武器が魔法であるか確認。
-                if (WeaponDataRegistry.GetWeapon(player.weaponController_main.weaponData.WeaponName) is not MainMagicData magicData) {
+                if (WeaponDataRegistry.GetWeapon(player.weaponController_main.weaponData.WeaponID) is not MainMagicData magicData) {
 #if UNITY_EDITOR
                     Debug.LogError("所持している魔法の詳細情報を正常に取得できませんでした。");
 #endif

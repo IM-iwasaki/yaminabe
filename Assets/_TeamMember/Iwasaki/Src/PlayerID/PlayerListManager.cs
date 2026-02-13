@@ -5,8 +5,8 @@ using System.Linq;
 
 /// <summary>
 /// 現在のプレイヤー一覧をサーバーで管理するマネージャー
-/// 名前・ID・スコアを一元管理
-/// ID（0〜5）を自動的に割り当て、抜けたら前詰めする
+/// 名前・appearanceID・スコアを一元管理
+/// appearanceID（0〜5）を自動的に割り当て、抜けたら前詰めする
 /// スコア加算　スコア送信
 /// </summary>
 public class PlayerListManager : NetworkBehaviour {

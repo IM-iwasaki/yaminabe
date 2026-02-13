@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ce6e5dcda118c9409df034ee11d7d7f, type: 3}
   m_Name: Katana
   m_EditorClassIdentifier: 
-  weaponName: Katana
+  weaponName: EnemyAttack
+  weaponID: 0
   type: 3
-  damage: 5
+  damage: 10
   cooldown: 1
-  ID: 8
+  appearanceID: 0
   muzzleFlashType: 0
   hitEffectType: 0
   maxAmmo: 0
   reloadTime: 0
   range: 4
   meleeAngle: 60
-  combo: 2
-  comboDelay: 0.3
+  combo: 1
+  comboDelay: 0
   se: 2
