@@ -7,11 +7,12 @@ using UnityEngine;
 /// </summary>
 public class WeaponData : ScriptableObject, IWeaponInfo {
     public string weaponName;
+    [SerializeField] private int weaponID;
+    public int WeaponID => weaponID;
     public WeaponType type;
     public int damage;
     public float cooldown;
-
-    public int ID;
+    public int appearanceID;
 
     [Header("Visual Effects")]
     public EffectType muzzleFlashType = EffectType.Default;

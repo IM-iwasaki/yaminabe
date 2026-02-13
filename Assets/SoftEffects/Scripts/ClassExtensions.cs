@@ -781,7 +781,7 @@ namespace Mkey
     public struct Data
     {
         /// <summary>
-        ///  item ID
+        ///  item appearanceID
         /// </summary>
         // public int id;
 

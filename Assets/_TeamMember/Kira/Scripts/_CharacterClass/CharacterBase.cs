@@ -56,7 +56,7 @@ public abstract class CharacterBase : CreatureBase {
         action = GetComponent<CharacterActions>();
         animCon = GetComponent<CharacterAnimationController>();
 
-        //RpcChangeWeapon(weaponController_main.weaponData.ID);
+        //RpcChangeWeapon(weaponController_main.weaponData.appearanceID);
         for(int i = 0; i < (int)ParamaterType.max ; i++) {
             temporaryBuffs.Add(new List<TemporaryBuff>());
         }

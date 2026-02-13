@@ -7,7 +7,9 @@ using static UnityEngine.UI.GridLayoutGroup;
 /// メイン武器コントローラー
 /// </summary>
 public class MainWeaponController : NetworkBehaviour {
-    [SyncVar(hook = (nameof(ChangeWeapon)))] public WeaponData weaponData;           // メイン武器
+    [SyncVar(hook = nameof(OnWeaponIDChanged))] public int weaponID;
+    private int appearanceID;
+    public WeaponData weaponData;           // メイン武器
     public Transform firePoint;
     private float lastAttackTime;
     [SyncVar, System.NonSerialized] public int ammo;
@@ -54,7 +56,7 @@ public class MainWeaponController : NetworkBehaviour {
 
     public void ServerResetMainWeapon(GeneralCharacterStatus _status) {
         weaponData = _status.MainWeapon;
-        CmdSetWeaponData(weaponData.name);
+        CmdSetWeaponData(weaponData.WeaponID);
     }
 
     /// <summary>
@@ -62,7 +64,7 @@ public class MainWeaponController : NetworkBehaviour {
     /// </summary>
     /// <param name="_"></param>
     /// <param name="_new"></param>
-    private void ChangeWeapon(WeaponData _, WeaponData _new) {
+    private void ChangeWeapon(WeaponData _new) {
         if (_new == null) return;
 
         _new.AmmoReset();
@@ -126,8 +128,8 @@ public class MainWeaponController : NetworkBehaviour {
         if (!isLocalPlayer) return;
 
         // MoneyGunの場合、先にローカルでお金を消費
-        if (weaponData.type == WeaponType.Gun && weaponData is GunData gunData && gunData.weaponName == "MoneyGun") {
-            if (!PlayerWallet.Instance.SpendMoney(gunData.multiShot * 4))
+        if (weaponID == 4) {
+            if (!PlayerWallet.Instance.SpendMoney(1))
                 return; // お金不足で撃てない
             ammo = PlayerWallet.Instance.currentMoney; // UI更新用
         }
@@ -178,40 +180,6 @@ public class MainWeaponController : NetworkBehaviour {
     }
 
     /// <summary>
-    /// 追加攻撃用(こちらは攻撃間隔を無視して攻撃を呼び出せます)
-    /// </summary>
-    /// <param name="direction"></param>
-    [Command]
-    public void CmdRequestSkillAttack(Vector3 direction, WeaponData skillweapon) {
-        switch (skillweapon.type) {
-            case WeaponType.Melee:
-                if (skillweapon is MeleeData meleeData)
-                    StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
-                break;
-            case WeaponType.Gun:
-                //弾がなかったら通過不可。かわりにリロードを要求する。
-                if (ammo == 0) {
-                    ReloadRequest();
-                    return;
-                }
-                //その他リロード中は射撃できなくする。
-                else if (characterBase.parameter.isReloading) return;
-
-                if (skillweapon is GunData gunData) {
-                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
-                }
-                break;
-            case WeaponType.Magic:
-                ServerStartMagicCast(direction);
-                break;
-        }
-        //アニメーション開始
-        RpcPlayShootAnimation();
-        //フレーム中攻撃した瞬間にフラグを立てる
-        characterBase.parameter.AttackTrigger = true;
-    }
-
-    /// <summary>
     /// 攻撃可否判定
     /// </summary>
     /// <returns></returns>
@@ -225,8 +193,9 @@ public class MainWeaponController : NetworkBehaviour {
     /// </summary>
     /// <param name="name"></param>
     [Command]
-    public void CmdSetWeaponData(string name) {
-        var data = WeaponDataRegistry.GetWeapon(name);
+    public void CmdSetWeaponData(int _weaponID) {
+
+        var data = WeaponDataRegistry.GetWeapon(_weaponID);
 
         if (!CanUseWeapon(charaterType, data.type)) {
             Debug.LogWarning($"{charaterType} は {data.weaponName} を装備できません");
@@ -235,17 +204,31 @@ public class MainWeaponController : NetworkBehaviour {
         }
 
         // サーバーで SyncVar を更新
+        appearanceID = data.appearanceID;
+        weaponID = data.WeaponID; 
         weaponData = data;
-        ammo = weaponData.ammo;
+        ChangeWeapon(weaponData);
 
         // 見た目・状態は全クライアントで Hook / Rpc で反映される
-        characterBase.GetComponent<GeneralCharacter>().RpcChangeWeapon(weaponData.ID);
+        characterBase.GetComponent<GeneralCharacter>().RpcChangeWeapon(weaponData.appearanceID);
         //見た目変更
         animCon.SetWeaponLayer(GenerateWeaponIndex(weaponData.weaponName));
         //効果音を流す
         AudioManager.Instance.CmdPlayUISE("武器取得");
 
         Debug.LogWarning($"'{data.weaponName}' を使用します");
+    }
+
+    private void OnWeaponIDChanged(int oldID, int newID) {
+        weaponData = WeaponDataRegistry.GetWeapon(newID);
+
+        if (weaponData == null)
+            return;
+
+        ammo = weaponData.ammo;
+
+        if (isLocalPlayer)
+            playerUI?.LocalUIChanged();
     }
 
     /// <summary>

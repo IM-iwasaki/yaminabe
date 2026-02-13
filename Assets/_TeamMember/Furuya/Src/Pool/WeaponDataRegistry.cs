@@ -5,6 +5,7 @@ using UnityEngine;
 /// 名前保存用
 /// </summary>
 public interface IWeaponInfo {
+    int WeaponID { get; }
     string WeaponName { get; }
 }
 
@@ -13,7 +14,7 @@ public class WeaponDataRegistry : MonoBehaviour {
     [SerializeField]
     private List<ScriptableObject> allWeaponData = new List<ScriptableObject>();
 
-    private static Dictionary<string, IWeaponInfo> weaponDict = new Dictionary<string, IWeaponInfo>();
+    private static Dictionary<int, IWeaponInfo> weaponDict = new Dictionary<int, IWeaponInfo>();
 
     void Awake() {
         RegisterAll();
@@ -29,44 +30,41 @@ public class WeaponDataRegistry : MonoBehaviour {
             if (obj is not IWeaponInfo weaponInfo)
                 continue;
 
-            if (string.IsNullOrEmpty(weaponInfo.WeaponName))
-                continue;
-
-            if (weaponDict.ContainsKey(weaponInfo.WeaponName)) {
-                Debug.LogWarning($"WeaponDataRegistry: 重複した武器名 '{weaponInfo.WeaponName}' が存在します。");
+            if (weaponDict.ContainsKey(weaponInfo.WeaponID)) {
+                Debug.LogWarning(
+                    $"WeaponDataRegistry: 重複したID '{weaponInfo.WeaponID}' が存在します。"
+                );
                 continue;
             }
 
-            weaponDict[weaponInfo.WeaponName] = weaponInfo;
+            weaponDict[weaponInfo.WeaponID] = weaponInfo;
         }
 
-        Debug.Log($"WeaponDataRegistry: {weaponDict.Count} 件のWeaponData/SubWeaponDataを登録しました。");
+        Debug.Log($"WeaponDataRegistry: {weaponDict.Count} 件登録しました。");
     }
 
-    // --- WeaponDataを直接取得するメソッド ---
-    public static WeaponData GetWeapon(string weaponName) {
-        if (weaponDict.TryGetValue(weaponName, out var info) && info is WeaponData weapon) {
-            Debug.LogWarning($"{weapon} を取得した");
 
+    // --- WeaponDataを直接取得するメソッド ---
+    public static WeaponData GetWeapon(int weaponID) {
+        if (weaponDict.TryGetValue(weaponID, out var info)
+            && info is WeaponData weapon) {
             return weapon;
         }
 
-        Debug.LogWarning($"WeaponDataRegistry: '{weaponName}' に対応する WeaponData が見つかりません。");
+        Debug.LogWarning(
+            $"WeaponDataRegistry: ID {weaponID} に対応する WeaponData が見つかりません。"
+        );
+
         return null;
     }
 
     // --- SubWeaponDataを直接取得するメソッド ---
-    public static SubWeaponData GetSubWeapon(string weaponName) {
-        if (weaponDict.TryGetValue(weaponName, out var info) && info is SubWeaponData sub)
+    public static SubWeaponData GetSubWeapon(int weaponID) {
+        if (weaponDict.TryGetValue(weaponID, out var info)
+            && info is SubWeaponData sub) {
             return sub;
+        }
 
-        Debug.LogWarning($"WeaponDataRegistry: '{weaponName}' に対応する SubWeaponData が見つかりません。");
         return null;
-    }
-
-    // --- 共通インターフェースアクセス（型不問） ---
-    public static IWeaponInfo Get(string weaponName) {
-        weaponDict.TryGetValue(weaponName, out var info);
-        return info;
     }
 }

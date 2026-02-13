@@ -33,7 +33,7 @@ public class Skill_Quasar : SkillBase {
         var SkillCash = user.weaponController_main.weaponData;
         //ƒXƒLƒ‹—p•Ší‚ÉØ‚è‘Ö‚¦‚ÄUŒ‚
         user.weaponController_main.weaponData = weaponData;
-        user.weaponController_main.CmdRequestSkillAttack(dir, weaponData);
+        //user.weaponController_main.CmdRequestSkillAttack(dir, weaponData);
         //•Ší‚ğ–ß‚·
         user.weaponController_main.weaponData = SkillCash;
     }

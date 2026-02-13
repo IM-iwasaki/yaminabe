@@ -8,6 +8,9 @@ public abstract class SubWeaponData : ScriptableObject, IWeaponInfo {
     public string subWeaponName;
     public SubWeaponType type;
 
+    [SerializeField] private int weaponID;
+    public int WeaponID => weaponID;
+
     [Header("Stats")]
     public int damage;
     //public float range;
