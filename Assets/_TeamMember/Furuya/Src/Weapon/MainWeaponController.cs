@@ -86,7 +86,23 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 if (weaponData is GunData gunData) {
-                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                    if (gunData.weaponName == "MoneyGun")
+                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                    else {
+
+                        //弾がなかったら通過不可。かわりにリロードを要求する。
+                        if (ammo == 0) {
+                            ReloadRequest();
+                            return;
+                        }
+                        //その他リロード中は射撃できなくする。
+                        else if (characterBase.parameter.isReloading) return;
+
+                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                        if (ammo > 0)
+                            ammo -= gunData.multiShot;
+                    }
+
                 }
                 break;
 
