@@ -114,18 +114,18 @@ public class CaptureAreaPVE : NetworkBehaviour {
         if (cleared) return;
         cleared = true;
 
-        RpcExecuteEvents();
+        ExecuteEvents();
 
         // “Ë”j
         areaCollider.enabled = false;
     }
 
-    [ClientRpc]
-    private void RpcExecuteEvents() {
+    [Server]
+    private void ExecuteEvents() {
 
         foreach (var evt in onClearedEvents) {
             if (evt != null)
-                evt.Execute();
+                evt.RpcExecute();
         }
     }
 }

@@ -1,5 +1,12 @@
+using Mirror;
 using UnityEngine;
 
-public abstract class PVEStageEvent : MonoBehaviour {
-    public abstract void Execute();
+public abstract class PVEStageEvent : NetworkBehaviour {
+
+    [ClientRpc]
+    public void RpcExecute() {
+        Execute();
+    }
+
+    protected abstract void Execute();
 }
