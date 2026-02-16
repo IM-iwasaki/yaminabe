@@ -13,8 +13,7 @@ public class AreaWorldCounterView : MonoBehaviour {
     [SerializeField] private float popScale = 1.25f;
     [SerializeField] private float popTime = 0.25f;
     [SerializeField]
-    private AnimationCurve popCurve =
-        AnimationCurve.EaseInOut(0, 0, 1, 1);
+    private AnimationCurve popCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     private Coroutine popCoroutine;
     private float lastScore = -1f;

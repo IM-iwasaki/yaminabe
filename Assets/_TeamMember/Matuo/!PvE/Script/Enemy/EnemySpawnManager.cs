@@ -10,7 +10,7 @@ public class EnemySpawnManager : NetworkBehaviour {
     public static EnemySpawnManager Instance;
 
     [Header("全体制御")]
-    public int maxEnemyCount = 30;          // ステージ全体の敵最大数
+    public int maxEnemyCount = 20;          // ステージ全体の敵最大数
     public float spawnInterval = 2.0f;      // スポーン試行間隔（秒）
 
     private float timer = 0f;               // 時間計測用
@@ -28,6 +28,13 @@ public class EnemySpawnManager : NetworkBehaviour {
     private void Start() {
         // シーン内に配置されたスポナーを全取得
         spawnPoints.AddRange(FindObjectsOfType<EnemySpawnPoint>());
+    }
+
+    private int CurrentMaxEnemyCount {
+        get {
+            int playerCount = NetworkServer.connections.Count;
+            return maxEnemyCount * Mathf.Max(1, playerCount);
+        }
     }
 
     [ServerCallback]
@@ -73,7 +80,7 @@ public class EnemySpawnManager : NetworkBehaviour {
         // 通常スポナーの場合
 
         // ボス用に1枠空ける
-        if (currentEnemyCount >= maxEnemyCount - 1)
+        if (currentEnemyCount >= CurrentMaxEnemyCount - 1)
             return;
 
         if (sp.currentSpawnCount >= sp.maxSpawnCount)
@@ -98,11 +105,7 @@ public class EnemySpawnManager : NetworkBehaviour {
         if (data == null || data.enemyPrefab == null)
             return;
 
-        GameObject enemyObj = Instantiate(
-            data.enemyPrefab,
-            sp.transform.position,
-            Quaternion.identity
-        );
+        GameObject enemyObj = Instantiate(data.enemyPrefab,sp.transform.position,Quaternion.identity);
 
         NetworkServer.Spawn(enemyObj);
 

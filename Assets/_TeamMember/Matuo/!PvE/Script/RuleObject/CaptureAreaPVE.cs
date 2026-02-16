@@ -8,7 +8,7 @@ public class CaptureAreaPVE : NetworkBehaviour {
     [Header("スコアが増える間隔")]
     public float scorePerSecond = 1f;
     [Header("突破に必要なスコア")]
-    public float targetScore = 10f;
+    public float targetScore = 8f;
     public Collider areaCollider;
 
     [Header("このエリア突破時に実行するイベント")]
@@ -124,9 +124,9 @@ public class CaptureAreaPVE : NetworkBehaviour {
     private void RpcExecuteEvents() {
         var events = GetComponentsInChildren<PVEStageEvent>(true);
 
-        foreach (var e in events) {
-            if (e != null)
-                e.Execute();
+        foreach (var evt in events) {
+            if (evt != null)
+                evt.Execute();
         }
     }
 }
