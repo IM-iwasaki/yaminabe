@@ -206,7 +206,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             if (player == null) continue;
 
             int myTeam = player.parameter.TeamID;
-            int reward = (winningTeamId == -1) ? 50 : (myTeam == winningTeamId ? 100 : 50);
+            int reward = (winningTeamId == -1) ? 50 : (myTeam == winningTeamId ? 3000 : 1500);
             TargetRewardMoney(client, reward);
 
             if (winningTeamId != -1 && myTeam == winningTeamId) {

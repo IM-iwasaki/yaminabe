@@ -8,8 +8,6 @@ public class PVEResultPanel : MonoBehaviour {
 
         RuleManager.Instance?.Initialize();
         GameManager.Instance.EndGame();
-        // プレイヤー状態リセット
-        ServerManager.instance.ResetCharacterStatus();
 
         // 次のステージへ
         GameSceneManager.Instance.LoadPvESceneForAll();
