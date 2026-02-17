@@ -12,6 +12,9 @@ public class ShowResultPanelEvent : PVEStageEvent {
     protected override void Execute() {
         if (resultPanel == null) return;
         bool isHost = NetworkServer.active;
+        if (NetworkServer.active) {
+            GameManager.Instance.EndGame();
+        }
         // ホストがオプションを開いていたら閉じる
         if (isHost) {
             OptionMenu optionMenu = FindObjectOfType<OptionMenu>();

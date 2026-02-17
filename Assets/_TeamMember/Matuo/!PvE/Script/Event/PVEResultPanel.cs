@@ -3,13 +3,15 @@ using Mirror;
 
 public class PVEResultPanel : MonoBehaviour {
 
-    public void OnClickRematch() {
+    public void OnClickNextStage() {
         if (!NetworkServer.active) return;
 
         RuleManager.Instance?.Initialize();
         GameManager.Instance.EndGame();
-        //プレイヤーの状態を戻す
+        // プレイヤー状態リセット
         ServerManager.instance.ResetCharacterStatus();
+
+        // 次のステージへ
         GameSceneManager.Instance.LoadPvESceneForAll();
         GameManager.Instance.StartPveGameFromList(false);
         PlayerListManager.Instance.ResetAllScores();
