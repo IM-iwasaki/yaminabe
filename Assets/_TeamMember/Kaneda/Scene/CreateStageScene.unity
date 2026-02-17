@@ -38744,6 +38744,14 @@ PrefabInstance:
       propertyPath: sceneId
       value: 2275718676
       objectReference: {fileID: 0}
+    - target: {fileID: 2082905373757138141, guid: 4c5a920927e97ad4191c08960a9e248c, type: 3}
+      propertyPath: weaponData
+      value: 
+      objectReference: {fileID: 11400000, guid: e9a0ba43480bc8a4ab292717e6699823, type: 2}
+    - target: {fileID: 2082905373757138141, guid: 4c5a920927e97ad4191c08960a9e248c, type: 3}
+      propertyPath: SkillWeaponData
+      value: 
+      objectReference: {fileID: 11400000, guid: 7222f0e34585ff44997f4218fe9b8dea, type: 2}
     - target: {fileID: 5650633397879355693, guid: 4c5a920927e97ad4191c08960a9e248c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -38784,6 +38792,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5964193507503620242, guid: 4c5a920927e97ad4191c08960a9e248c, type: 3}
+      propertyPath: bossAttack.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 901a79cd489fdaf4689af4aa0e5b3134, type: 2}
     - target: {fileID: 6103746568581990819, guid: 4c5a920927e97ad4191c08960a9e248c, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
