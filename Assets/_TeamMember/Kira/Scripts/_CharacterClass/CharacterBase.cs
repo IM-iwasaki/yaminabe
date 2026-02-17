@@ -765,7 +765,7 @@ public abstract class CharacterBase : CreatureBase {
         //  エフェクト再生
         PlayEffect(SPEED_BUFF_EFFECT);
 
-        //speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
+        speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
 
     /// <summary>

@@ -38,7 +38,7 @@ public class GeneralCharacter : CharacterBase {
         parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
         //RespawnControl();
         
-        BuffUpdate();
+        //BuffUpdate();
     }
 
     [ClientRpc]
