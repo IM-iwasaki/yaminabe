@@ -1355,6 +1355,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3042347831295132091}
     m_Modifications:
+    - target: {fileID: -1135504974587826202, guid: 77ef58c1d6d3c93468e71b0db690d8de, type: 3}
+      propertyPath: _assetId
+      value: 3174746938
+      objectReference: {fileID: 0}
     - target: {fileID: 713358315816772422, guid: 77ef58c1d6d3c93468e71b0db690d8de, type: 3}
       propertyPath: _assetId
       value: 3174746938
@@ -1413,6 +1417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 713358315816772422, guid: 77ef58c1d6d3c93468e71b0db690d8de, type: 3}
+    - {fileID: -1135504974587826202, guid: 77ef58c1d6d3c93468e71b0db690d8de, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -18971,6 +18976,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3042347831295132091}
     m_Modifications:
+    - target: {fileID: -8823231773223768200, guid: 5c1319db51cde4b48a1a599bdc50bb15, type: 3}
+      propertyPath: _assetId
+      value: 3174746938
+      objectReference: {fileID: 0}
     - target: {fileID: 1583602073105882573, guid: 5c1319db51cde4b48a1a599bdc50bb15, type: 3}
       propertyPath: m_Name
       value: PVEResultPanel
@@ -19066,6 +19075,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 7204291129700549609, guid: 5c1319db51cde4b48a1a599bdc50bb15, type: 3}
     - {fileID: 2611096757637492834, guid: 5c1319db51cde4b48a1a599bdc50bb15, type: 3}
+    - {fileID: -8823231773223768200, guid: 5c1319db51cde4b48a1a599bdc50bb15, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
