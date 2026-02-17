@@ -126,6 +126,13 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
     // ======================
     [Command(requiresAuthority = false)]
     public void CmdPlayUISE(string name, NetworkConnectionToClient conn = null) {
+        if (conn == null)
+            return;
+
+        // ホストには送らない
+        if (conn is LocalConnectionToClient)
+            return;
+
         TargetPlayUISE(conn, name);
     }
 

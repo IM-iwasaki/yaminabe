@@ -143,11 +143,7 @@ public class SubWeaponController : NetworkBehaviour {
     /// <param name="name"></param>
     [Command]
     public void CmdSetSubWeapon(int weaponID) {
-        var data = WeaponDataRegistry.GetSubWeapon(weaponID);
-
-        subWeaponData = data;
-        playerUI.LocalUIChanged();
-        Debug.LogWarning($"'{data.subWeaponName}' ‚ðŽg—p‚µ‚Ü‚·");
+        subWeaponID = weaponID;
     }
 
     private void OnSubWeaponIDChanged(int oldID, int newID) {

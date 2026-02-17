@@ -1,7 +1,6 @@
-using UnityEngine;
-
 public class RemoveObjectEvent : PVEStageEvent {
-    public override void Execute() {
+
+    protected override void Execute() {
         gameObject.SetActive(false);
     }
 }

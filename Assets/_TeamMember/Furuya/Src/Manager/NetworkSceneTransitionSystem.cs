@@ -17,11 +17,14 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
     public void ChangeScene(string sceneName) {
         RpcStartFadeOut(sceneName);
 
-        if(sceneName == GameSceneManager.Instance.lobbySceneName) {
+        if (sceneName == GameSceneManager.Instance.lobbySceneName) {
             AudioManager.Instance.CmdPlayBGM("ƒƒr[", 2f);
         }
-        else if (sceneName == GameSceneManager.Instance.gameSceneName) {
-            AudioManager.Instance.CmdPlayBGM("ƒQ[ƒ€1", 2f);
+        else {
+            if (sceneName == GameSceneManager.Instance.titleSceneName) return;
+            int BGMnum = Random.Range(1, 5);
+
+            AudioManager.Instance.CmdPlayBGM($"ƒQ[ƒ€{BGMnum}", 2f);
         }
     }
 

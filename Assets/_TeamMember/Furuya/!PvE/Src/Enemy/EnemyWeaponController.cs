@@ -100,12 +100,12 @@ public class EnemyWeaponController : NetworkBehaviour {
             );
         }
         else if (proj.TryGetComponent(out DoTArea dotArea)) {
-            int teamID = -1;
+            int teamID = -2;
             Vector3 Direction = transform.forward;
             dotArea.Init(
                 teamID,
                 "Boss",
-                -1,
+                -2,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,
                 magicData.damage

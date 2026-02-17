@@ -77,7 +77,7 @@ public class CollectPoint : NetworkBehaviour {
 
         foreach (var evt in onCompletedEvents) {
             if (evt != null)
-                evt.Execute();
+                evt.RpcExecute();
         }
     }
 }

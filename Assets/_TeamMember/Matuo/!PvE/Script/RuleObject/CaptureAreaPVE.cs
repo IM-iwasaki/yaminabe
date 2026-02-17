@@ -8,19 +8,29 @@ public class CaptureAreaPVE : NetworkBehaviour {
     [Header("スコアが増える間隔")]
     public float scorePerSecond = 1f;
     [Header("突破に必要なスコア")]
-    public float targetScore = 10f;
+    public float targetScore = 8f;
     public Collider areaCollider;
 
     [Header("このエリア突破時に実行するイベント")]
     private List<PVEStageEvent> onClearedEvents = new();
 
-    private float currentScore = 0f;
+    [SyncVar] private float currentScore = 0f;
+    [SyncVar] private int currentPlayerCount = 0;
+    [SyncVar] private int maxPlayerCount = 0;
+
     private float timer = 0f;
 
     private HashSet<CharacterBase> playersInArea = new();
     private bool cleared = false;
 
     private AreaClearCondition clearCondition;
+
+    public float CurrentScore => currentScore;
+    public float TargetScore => targetScore;
+    public int CurrentPlayerCount => currentPlayerCount;
+    public int MaxPlayerCount => maxPlayerCount;
+    public AreaClearCondition ClearCondition => clearCondition;
+
 
     private void Awake() {
         if (areaCollider == null)
@@ -34,6 +44,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
         targetScore = spawnPoint.targetScore;
         clearCondition = spawnPoint.clearCondition;
 
+        maxPlayerCount = ServerManager.instance.connectPlayer.Count;
+
         onClearedEvents.Clear();
         foreach (var evt in spawnPoint.events) {
             if (evt == null) continue;
@@ -44,15 +56,19 @@ public class CaptureAreaPVE : NetworkBehaviour {
     [ServerCallback]
     private void OnTriggerEnter(Collider other) {
         var player = other.GetComponent<CharacterBase>();
-        if (player != null)
+        if (player != null) {
             playersInArea.Add(player);
+            currentPlayerCount = playersInArea.Count;
+        }
     }
 
     [ServerCallback]
     private void OnTriggerExit(Collider other) {
         var player = other.GetComponent<CharacterBase>();
-        if (player != null)
+        if (player != null) {
             playersInArea.Remove(player);
+            currentPlayerCount = playersInArea.Count;
+        }
     }
 
     [ServerCallback]
@@ -98,19 +114,18 @@ public class CaptureAreaPVE : NetworkBehaviour {
         if (cleared) return;
         cleared = true;
 
-        RpcExecuteEvents();
+        ExecuteEvents();
 
         // 突破
         areaCollider.enabled = false;
     }
 
-    [ClientRpc]
-    private void RpcExecuteEvents() {
-        var events = GetComponentsInChildren<PVEStageEvent>(true);
+    [Server]
+    private void ExecuteEvents() {
 
-        foreach (var e in events) {
-            if (e != null)
-                e.Execute();
+        foreach (var evt in onClearedEvents) {
+            if (evt != null)
+                evt.RpcExecute();
         }
     }
 }

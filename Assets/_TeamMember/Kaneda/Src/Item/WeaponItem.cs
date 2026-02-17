@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using static CharacterEnum;
 
 /// <summary>
 /// 武器アイテムクラス
@@ -18,17 +19,24 @@ public class WeaponItem : ItemBase {
     public override void Use(GameObject player) {
         //  プレイヤー処理(プレイヤーが出来次第追加)
         MainWeaponController playerWeaponData = player.GetComponent<MainWeaponController>();
+        CharacterBase playerBase = player.GetComponent<CharacterBase>();
         if (playerWeaponData == null) {
             Debug.LogWarning("プレイヤーの中にNetworkWeaponが見つかりませんでした");
             return;
         }
-        
+
+        if (!playerWeaponData.CanUseWeapon(playerWeaponData.charaterType, weaponData.type)) {
+            AudioManager.Instance.CmdPlayUISE("武器取得失敗");
+            return;
+        }
+
         //  持っている武器データをプレイヤーに受け渡す
         playerWeaponData.CmdSetWeaponData(weaponData.WeaponID);
         //  キャラクター側のフラグをリセットする
-        player.GetComponent<CharacterBase>().action.ResetCanPickFlag();
+        playerBase.action.ResetCanPickFlag();
 
-        
+        //効果音を流す
+        AudioManager.Instance.CmdPlayUISE("武器取得");
 
         // 使用後にアイテムを削除
         if (canDestroy) CmdRequestDestroy();
