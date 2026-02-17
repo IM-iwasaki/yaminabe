@@ -13,7 +13,6 @@ public class PVEResultPanel : MonoBehaviour {
 
         // 次のステージへ
         GameSceneManager.Instance.LoadPvESceneForAll();
-        GameManager.Instance.StartPveGameFromList(false);
         PlayerListManager.Instance.ResetAllScores();
     }
 
