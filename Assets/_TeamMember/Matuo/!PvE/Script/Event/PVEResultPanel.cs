@@ -10,8 +10,8 @@ public class PVEResultPanel : MonoBehaviour {
         GameManager.Instance.EndGame();
         //ƒvƒŒƒCƒ„[‚Ìó‘Ô‚ğ–ß‚·
         ServerManager.instance.ResetCharacterStatus();
-        GameManager.Instance.StartPveGameFromList(false);
         GameSceneManager.Instance.LoadPvESceneForAll();
+        GameManager.Instance.StartPveGameFromList(false);
         PlayerListManager.Instance.ResetAllScores();
     }
 
