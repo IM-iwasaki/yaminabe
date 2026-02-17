@@ -20,6 +20,11 @@ public class EnemySpawnManager : NetworkBehaviour {
 
     private bool bossAlive = false;
 
+    [Header("ボス再出現設定")]
+    public float bossRespawnDelay = 60f;
+
+    private float bossRespawnTimer = 0f;
+
     private void Awake() {
         Instance = this;
     }
@@ -41,6 +46,16 @@ public class EnemySpawnManager : NetworkBehaviour {
     private void Update() {
 
         if (!GameManager.Instance.IsGameRunning()) return;
+
+        // ボス死亡中ならタイマー進行
+        if (!bossAlive && bossRespawnTimer > 0f) {
+            bossRespawnTimer -= Time.deltaTime;
+
+            if (bossRespawnTimer <= 0f) {
+                // 再スポーン可能にする
+                bossRespawnTimer = 0f;
+            }
+        }
 
         foreach (var sp in spawnPoints) {
 
@@ -68,12 +83,18 @@ public class EnemySpawnManager : NetworkBehaviour {
     private void TrySpawnEnemy(EnemySpawnPoint sp) {
         // ボス用スポナーの場合
         if (sp.isBossSpawnPoint) {
-            // 既にボスが居るなら生成しない
+
+            // 生きているなら湧かない
             if (bossAlive)
+                return;
+
+            // タイマー中なら湧かない
+            if (bossRespawnTimer > 0f)
                 return;
 
             SpawnEnemy(sp);
             bossAlive = true;
+
             return;
         }
 
@@ -130,6 +151,7 @@ public class EnemySpawnManager : NetworkBehaviour {
 
         if (sp.isBossSpawnPoint) {
             bossAlive = false;
+            bossRespawnTimer = bossRespawnDelay;
         }
     }
 }
