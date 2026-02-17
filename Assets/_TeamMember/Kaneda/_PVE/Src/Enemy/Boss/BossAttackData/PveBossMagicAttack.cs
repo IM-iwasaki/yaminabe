@@ -4,6 +4,7 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "PveBoss/BossAttack/MagicAttack")]
 public class PveBossMagicAttack : PveBossAttackData {
+
     public override void StartAttack(
         EnemyWeaponController weapon, 
         PveBossController boss, 
