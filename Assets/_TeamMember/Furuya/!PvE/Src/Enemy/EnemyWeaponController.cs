@@ -21,9 +21,9 @@ public class EnemyWeaponController : NetworkBehaviour {
     public void ServerRequestAttack(Vector3 direction) {
         if (weaponData.type == WeaponType.Enemy) {
             if (weaponData is MeleeData meleeData)
-                StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
+                StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay, meleeData));
             else if (weaponData is MainMagicData magicData)
-                ServerStartMagicCast(direction);
+                ServerStartMagicCast(direction, magicData);
         }
     }
 
@@ -32,16 +32,14 @@ public class EnemyWeaponController : NetworkBehaviour {
     public void ServerRequestSkill(Vector3 direction) {
         if (SkillWeaponData.type == WeaponType.Enemy) {
             if (SkillWeaponData is MeleeData meleeData)
-                StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
+                StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay, meleeData));
             else if (SkillWeaponData is MainMagicData magicData)
-                ServerStartMagicCast(direction);
+                ServerStartMagicCast(direction, magicData);
         }
     }
 
     // --- 近接攻撃 ---
-    void ServerMeleeAttack() {
-        if (weaponData is not MeleeData meleeData)
-            return;
+    void ServerMeleeAttack(MeleeData meleeData) {
 
         int attackLayer = LayerMask.GetMask("Character");
         Collider[] hits = Physics.OverlapSphere(firePoint.position, meleeData.range, attackLayer);
@@ -60,12 +58,12 @@ public class EnemyWeaponController : NetworkBehaviour {
 #endif
     }
 
-    IEnumerator ServerMeleeCombo(int combo, float comboDelay) {
+    IEnumerator ServerMeleeCombo(int combo, float comboDelay, MeleeData meleeData) {
         int count = Mathf.Max(1, combo);
         float delay = comboDelay;
 
         for (int i = 0; i < count; i++) {
-            ServerMeleeAttack();
+            ServerMeleeAttack(meleeData);
 
             // 最後の以外は待機
             if (i < count - 1)
@@ -74,15 +72,35 @@ public class EnemyWeaponController : NetworkBehaviour {
     }
 
     // --- 魔法攻撃 ---
-    void ServerMagicAttack(Vector3 direction) {
-        if (weaponData is not MainMagicData magicData || magicData.projectilePrefab == null)
+    void ServerMagicAttack(Vector3 direction, MainMagicData magicData) {
+        if (magicData.projectilePrefab == null)
             return;
 
-        GameObject proj = ProjectilePool.Instance.SpawnFromPool(
+        GameObject proj;
+
+        if (magicData.magicType == ProjectileType.DoT) {
+            Vector3 spawnPos = transform.position;
+            Quaternion rot = Quaternion.identity;
+
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f)) {
+                spawnPos = hit.point;
+                rot = Quaternion.LookRotation(transform.forward, hit.normal);
+            }
+
+            proj = ProjectilePool.Instance.SpawnFromPool(
+                magicData.projectilePrefab.name,
+                spawnPos,
+                rot
+            );
+
+        }
+        else {
+            proj = ProjectilePool.Instance.SpawnFromPool(
             magicData.projectilePrefab.name,
             firePoint.position,
             Quaternion.LookRotation(direction)
-        );
+            );
+        }
 
         if (proj == null) return;
 
@@ -90,7 +108,7 @@ public class EnemyWeaponController : NetworkBehaviour {
             projScript.Init(
                 gameObject,
                 "Boss",
-                -1,
+                -2,
                 magicData.magicType,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,
@@ -118,8 +136,7 @@ public class EnemyWeaponController : NetworkBehaviour {
     /// </summary>
     /// <param name="direction"></param>
     [Server]
-    public void ServerStartMagicCast(Vector3 direction) {
-        if (weaponData is not MainMagicData magicData) return;
+    public void ServerStartMagicCast(Vector3 direction, MainMagicData magicData) {
 
         //クライアント側にチャージエフェクトを出させる
         if (magicData.chargeTime > 0)
@@ -135,7 +152,7 @@ public class EnemyWeaponController : NetworkBehaviour {
         RpcCastMagic(firePoint.position, magicData.muzzleFlashType);
 
         // 弾の生成
-        ServerMagicAttack(direction);
+        ServerMagicAttack(direction, magicData);
 
         // SE はここでサーバー再生
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);

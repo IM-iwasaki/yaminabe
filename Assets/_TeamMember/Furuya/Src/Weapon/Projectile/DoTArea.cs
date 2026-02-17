@@ -12,7 +12,7 @@ public class DoTArea : NetworkBehaviour {
     private int ID;
     private string ownerName;
     private EffectType hitEffectType;
-    private float lifetime = 5f;
+    public float lifetime = 5f;
     private Rigidbody rb;
     private float speed = 20f;
     private bool initialized;
