@@ -89,13 +89,9 @@ public class GameManager : NetworkSystemObject<GameManager> {
         currentPveStage = stage;
 
         isGameRunning = false;
-        gameTimer.ResetTimer();
 
         // PvEステージ生成
         StageManager.Instance.SpawnPveStage(stage);
-
-        gameTimer.ResetTimer();
-        gameTimer.SetLimitTime(stage.timeLimit);
 
         // PvE用ゲーム開始
         StartPveRound();
