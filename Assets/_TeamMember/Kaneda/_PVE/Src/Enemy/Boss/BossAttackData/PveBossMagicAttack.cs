@@ -24,6 +24,17 @@ public class PveBossMagicAttack : PveBossAttackData {
         // 向きを先に合わせる（見た目の安定）
         boss.transform.rotation = Quaternion.LookRotation(dir);
 
+        boss.StartCoroutine(MagicCoroutine(boss, weapon, dir));
+
+    }
+
+    private IEnumerator MagicCoroutine(
+    PveBossController boss,
+    EnemyWeaponController weapon,
+    Vector3 dir) {
+
+        yield return new WaitForSecondsRealtime(0.25f);
+
         // 左45度
         Vector3 dirLeft = Quaternion.AngleAxis(-45f, Vector3.up) * dir;
 
@@ -31,12 +42,14 @@ public class PveBossMagicAttack : PveBossAttackData {
         Vector3 dirRight = Quaternion.AngleAxis(45f, Vector3.up) * dir;
 
         //  三方向に攻撃を飛ばす
-        weapon.ServerRequestSkill(dir);
-        weapon.ServerRequestSkill(dirLeft);
-        weapon.ServerRequestSkill(dirRight);
+        weapon.ServerRequestAttack(dir);
+        weapon.ServerRequestAttack(dirLeft);
+        weapon.ServerRequestAttack(dirRight);
+
+        yield return new WaitForSecondsRealtime(1.5f);
 
         //  攻撃終了
         boss.EndAttack();
-
     }
+
 }

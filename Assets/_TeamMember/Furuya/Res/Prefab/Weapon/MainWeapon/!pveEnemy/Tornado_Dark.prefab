@@ -14673,7 +14673,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4025044563194595751}
   - {fileID: 4025044562454811654}
@@ -19601,7 +19601,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   interval: 0.1
-  targetTag: Player
+  targetTags:
+  - Player
+  - Enemy
 --- !u!1 &4025044562805138823
 GameObject:
   m_ObjectHideFlags: 0
