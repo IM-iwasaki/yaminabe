@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SocialPlatforms;
 
 /// <summary>
 /// Playerì‡ÇÃLocalUIä«óù
@@ -52,7 +53,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField] Image[] passive_Icon;
     [SerializeField] Image passive_State;
     [SerializeField] TextMeshProUGUI passiveChains;
-    [SerializeField] GeneralCharacter player;
+    [SerializeField] CharacterBase player;
     [SyncVar] float skillStateProgress = 0.0f;
     //[SyncVar] float passiveStateProgress = 0.0f;
 
@@ -69,7 +70,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// <summary>
     /// ÉçÅ[ÉJÉãUIÇÃà¿ëSÇ»èâä˙âª
     /// </summary>
-    public void InitializeLocalUI(GeneralCharacter _player) {
+    public void InitializeLocalUI(CharacterBase _player) {
         if (!isLocalPlayer) return;
 
         player = _player;
@@ -95,6 +96,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
         mpBar_slider.interactable = false;
         hpUnderBar_slider.interactable = false;
         mpUnderBar_slider.interactable = false;
+        hpBar_slider.maxValue = FIXED_RATIO;
+        mpBar_slider.maxValue = FIXED_RATIO;
 
         localUIObject.SetActive(true);
 
@@ -312,6 +315,9 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// </summary>
     public void ChangeHPUI(int _maxHP, int _hp) {
         hpText.text = _hp.ToString();
+
+        Debug.Log($"HPUI: hp={_hp} maxHP={_maxHP}");
+        if (_maxHP <= 0) return;
         hpBar_slider.value = (float)_hp / _maxHP * FIXED_RATIO;
         Debug.Log("value:" + _hp + "/ slider.value:" + hpBar_slider.value);
         //éÄñSéû

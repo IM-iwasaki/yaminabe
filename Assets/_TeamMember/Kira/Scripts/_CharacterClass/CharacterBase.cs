@@ -75,6 +75,9 @@ public abstract class CharacterBase : CreatureBase {
             input.Initialize(this);
             action.Initialize(this);
             parameter.Initialize(this);
+            localUI.InitializeLocalUI(this);
+            localUI.ChangeHPUI(parameter.maxHP, parameter.HP);
+            localUI.ChangeMPUI(parameter.maxMP, parameter.MP);
 
             Camera camera = GetComponentInChildren<Camera>();
             camera.tag = "MainCamera";
