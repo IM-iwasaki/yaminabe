@@ -180,6 +180,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
         currentPveStage = null;
 
         gameTimer.StopTimer();
+        gameTimer.ClearOnTimerFinished();
         Cursor.lockState = CursorLockMode.None;
 
         if (hoko != null)
