@@ -20,10 +20,7 @@ public class EnemyWeaponController : NetworkBehaviour {
     [Server]
     public void ServerRequestAttack(Vector3 direction) {
         if (weaponData.type == WeaponType.Enemy) {
-            if (weaponData is MeleeData meleeData)
-                StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay, meleeData));
-            else if (weaponData is MainMagicData magicData)
-                ServerStartMagicCast(direction, magicData);
+            ExecuteWeapon(weaponData, direction);
         }
     }
 
@@ -31,15 +28,27 @@ public class EnemyWeaponController : NetworkBehaviour {
     [Server]
     public void ServerRequestSkill(Vector3 direction) {
         if (SkillWeaponData.type == WeaponType.Enemy) {
-            if (SkillWeaponData is MeleeData meleeData)
-                StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay, meleeData));
-            else if (SkillWeaponData is MainMagicData magicData)
-                ServerStartMagicCast(direction, magicData);
+            ExecuteWeapon(SkillWeaponData, direction);
         }
     }
 
+    [Server]
+    void ExecuteWeapon(WeaponData data, Vector3 direction) {
+        if (data == null || data.type != WeaponType.Enemy)
+            return;
+
+        if (data is MeleeData meleeData)
+            StartCoroutine(ServerMeleeCombo(meleeData.combo, meleeData.comboDelay));
+
+        else if (data is MainMagicData magicData)
+            ServerStartMagicCast(magicData, direction);
+    }
+
+
     // --- 近接攻撃 ---
-    void ServerMeleeAttack(MeleeData meleeData) {
+    void ServerMeleeAttack() {
+        if (weaponData is not MeleeData meleeData)
+            return;
 
         int attackLayer = LayerMask.GetMask("Character");
         Collider[] hits = Physics.OverlapSphere(firePoint.position, meleeData.range, attackLayer);
@@ -58,12 +67,12 @@ public class EnemyWeaponController : NetworkBehaviour {
 #endif
     }
 
-    IEnumerator ServerMeleeCombo(int combo, float comboDelay, MeleeData meleeData) {
+    IEnumerator ServerMeleeCombo(int combo, float comboDelay) {
         int count = Mathf.Max(1, combo);
         float delay = comboDelay;
 
         for (int i = 0; i < count; i++) {
-            ServerMeleeAttack(meleeData);
+            ServerMeleeAttack();
 
             // 最後の以外は待機
             if (i < count - 1)
@@ -72,87 +81,84 @@ public class EnemyWeaponController : NetworkBehaviour {
     }
 
     // --- 魔法攻撃 ---
-    void ServerMagicAttack(Vector3 direction, MainMagicData magicData) {
-        if (magicData.projectilePrefab == null)
+    void ServerMagicAttack(MainMagicData magic, Vector3 direction) {
+        if (magic.projectilePrefab == null)
             return;
 
         GameObject proj;
 
-        if (magicData.magicType == ProjectileType.DoT) {
+        if (magic.magicType == ProjectileType.DoT) {
             Vector3 spawnPos = transform.position;
             Quaternion rot = Quaternion.identity;
 
             if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f)) {
                 spawnPos = hit.point;
-                rot = Quaternion.LookRotation(transform.forward, hit.normal);
+                rot = Quaternion.LookRotation(direction, hit.normal);
             }
 
             proj = ProjectilePool.Instance.SpawnFromPool(
-                magicData.projectilePrefab.name,
+                magic.projectilePrefab.name,
                 spawnPos,
                 rot
             );
-
         }
         else {
             proj = ProjectilePool.Instance.SpawnFromPool(
-            magicData.projectilePrefab.name,
-            firePoint.position,
-            Quaternion.LookRotation(direction)
+                magic.projectilePrefab.name,
+                firePoint.position,
+                Quaternion.LookRotation(direction)
             );
         }
 
         if (proj == null) return;
 
-        if (proj.TryGetComponent(out MagicProjectile projScript)) {
-            projScript.Init(
+        if (proj.TryGetComponent(out MagicProjectile mp)) {
+            mp.Init(
                 gameObject,
                 "Boss",
-                -2,
-                magicData.magicType,
-                magicData.hitEffectType,
-                magicData.projectileSpeed,
-                magicData.initialHeightSpeed,
-                magicData.damage,
+                -1,
+                magic.magicType,
+                magic.hitEffectType,
+                magic.projectileSpeed,
+                magic.initialHeightSpeed,
+                magic.damage,
                 direction
             );
         }
-        else if (proj.TryGetComponent(out DoTArea dotArea)) {
-            int teamID = -2;
-            Vector3 Direction = transform.forward;
-            dotArea.Init(
-                teamID,
+        else if (proj.TryGetComponent(out DoTArea dot)) {
+            dot.Init(
+                -2,
                 "Boss",
                 -2,
-                magicData.hitEffectType,
-                magicData.projectileSpeed,
-                magicData.damage
-                );
+                magic.hitEffectType,
+                magic.projectileSpeed,
+                magic.damage
+            );
         }
     }
+
 
     /// <summary>
     /// 詠唱開始
     /// </summary>
     /// <param name="direction"></param>
     [Server]
-    public void ServerStartMagicCast(Vector3 direction, MainMagicData magicData) {
+    public void ServerStartMagicCast(MainMagicData magic, Vector3 direction) {
+        if (magic.chargeTime > 0)
+            RpcPlayChargeEffect(firePoint.position, magic.chargeEffectType);
 
-        //クライアント側にチャージエフェクトを出させる
-        if (magicData.chargeTime > 0)
-            RpcPlayChargeEffect(firePoint.position, magicData.chargeEffectType);
-        StartCoroutine(CastAfterDelay(direction, magicData));
+        StartCoroutine(CastAfterDelay(magic, direction));
     }
 
     [Server]
-    private IEnumerator CastAfterDelay(Vector3 direction, MainMagicData magicData) {
+    private IEnumerator CastAfterDelay(MainMagicData magicData, Vector3 direction) {
         yield return new WaitForSeconds(magicData.chargeTime);
 
         // 発射エフェクト (チャージ停止＆マズルフラッシュ)
         RpcCastMagic(firePoint.position, magicData.muzzleFlashType);
 
         // 弾の生成
-        ServerMagicAttack(direction, magicData);
+        ServerMagicAttack(magicData, direction);
 
         // SE はここでサーバー再生
         AudioManager.Instance.CmdPlayWorldSE(magicData.se.ToString(), transform.position);

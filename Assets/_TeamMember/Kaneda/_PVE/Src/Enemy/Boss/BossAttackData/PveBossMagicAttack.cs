@@ -42,9 +42,9 @@ public class PveBossMagicAttack : PveBossAttackData {
         Vector3 dirRight = Quaternion.AngleAxis(45f, Vector3.up) * dir;
 
         //  O•ûŒü‚ÉUŒ‚‚ğ”ò‚Î‚·
-        weapon.ServerRequestAttack(dir);
-        weapon.ServerRequestAttack(dirLeft);
-        weapon.ServerRequestAttack(dirRight);
+        weapon.ServerRequestSkill(dir);
+        weapon.ServerRequestSkill(dirLeft);
+        weapon.ServerRequestSkill(dirRight);
 
         yield return new WaitForSecondsRealtime(1.5f);
 
