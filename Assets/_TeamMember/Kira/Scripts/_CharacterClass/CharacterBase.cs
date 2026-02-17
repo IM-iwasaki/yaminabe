@@ -75,6 +75,9 @@ public abstract class CharacterBase : CreatureBase {
             input.Initialize(this);
             action.Initialize(this);
             parameter.Initialize(this);
+            localUI.InitializeLocalUI(this);
+            localUI.ChangeHPUI(parameter.maxHP, parameter.HP);
+            localUI.ChangeMPUI(parameter.maxMP, parameter.MP);
 
             Camera camera = GetComponentInChildren<Camera>();
             camera.tag = "MainCamera";
@@ -517,9 +520,15 @@ public abstract class CharacterBase : CreatureBase {
         for(int paramIndex = (int)ParamaterType.max -1 ; 0 <= paramIndex ; paramIndex--) {
             //倍率の累計
             float influxValue = 1.0f;
+            //倍率の最高値
+            float maxInfluxValue = 0.0f;
+
             //各バフの反映と時間経過処理
-            //走査中に途中で要素を削除するなら末尾から見る！
+            //【走査中に途中で要素を削除するなら末尾から見る！】
             for (int buffIndex = temporaryBuffs[paramIndex].Count - 1 ; 0 <= buffIndex ; buffIndex--) {
+                if (maxInfluxValue <= temporaryBuffs[paramIndex][buffIndex].amount) 
+                    maxInfluxValue = temporaryBuffs[paramIndex][buffIndex].amount;
+
                 //倍率の累計に掛けていく
                 influxValue *= temporaryBuffs[paramIndex][buffIndex].amount;
                 //反映したら効果時間を減らす
@@ -532,6 +541,9 @@ public abstract class CharacterBase : CreatureBase {
                     DestroyChildrenWithTag(EFFECT_TAG);
                 }                   
             }
+
+            //倍率が一定を超えたら該当バフ内の最高値のみを参照する
+            if (influxValue >= 2.0f) influxValue = maxInfluxValue;
 
             //値を反映(switchで分岐)
             switch((ParamaterType)paramIndex) {

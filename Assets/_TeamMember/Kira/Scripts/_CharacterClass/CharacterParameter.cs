@@ -261,7 +261,7 @@ public class CharacterParameter : NetworkBehaviour {
     /// UI用のHP更新関数(第一引数は消せないため無名変数を使用。)
     /// </summary>
     public void ChangeHP(int _, int _newValue) {
-        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
+        if (!isLocalPlayer) return; // 自分のプレイヤーでなければUI更新しない
         if (localUI != null) localUI.ChangeHPUI(maxHP, _newValue);
         else {
 #if UNITY_EDITOR
@@ -270,7 +270,7 @@ public class CharacterParameter : NetworkBehaviour {
         }
     }
     public void ChangeMP(int _, int _newValue) {
-        if (!isLocalPlayer && !isClient) return; // 自分のプレイヤーでなければUI更新しない
+        if (!isLocalPlayer) return; // 自分のプレイヤーでなければUI更新しない
         if (localUI != null) localUI.ChangeMPUI(maxMP, _newValue);
         else {
 #if UNITY_EDITOR
