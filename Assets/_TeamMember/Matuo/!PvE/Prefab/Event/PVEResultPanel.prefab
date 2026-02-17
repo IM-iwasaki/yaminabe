@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8988390695354981445}
   - component: {fileID: 2029608929673204310}
   - component: {fileID: 3462474684880373452}
+  - component: {fileID: 567587166460618919}
   m_Layer: 0
   m_Name: PVEResultPanel
   m_TagString: Untagged
@@ -47,6 +48,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd628d038de782458ce36fd9a22b4be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   resultPanel: {fileID: 1583602073105882573}
 --- !u!114 &3462474684880373452
 MonoBehaviour:
@@ -60,6 +64,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dca7b131c886f2a49a14d92a60d38acc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &567587166460618919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583602073105882573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 910492224
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &587167036125705488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -296,6 +317,10 @@ PrefabInstance:
       propertyPath: m_FontData.m_Font
       value: 
       objectReference: {fileID: 12800000, guid: 8a2b9e2a607dd2143b58c44bc32410b4, type: 3}
+    - target: {fileID: 5229229676624197253, guid: 1f03e8ce036b6104a9d886cb19ba5e92, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5241595352653712390, guid: 1f03e8ce036b6104a9d886cb19ba5e92, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -325,8 +350,24 @@ PrefabInstance:
       value: 88
       objectReference: {fileID: 0}
     - target: {fileID: 5895317115941938337, guid: 1f03e8ce036b6104a9d886cb19ba5e92, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5895317115941938337, guid: 1f03e8ce036b6104a9d886cb19ba5e92, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5895317115941938337, guid: 1f03e8ce036b6104a9d886cb19ba5e92, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5895317115941938337, guid: 1f03e8ce036b6104a9d886cb19ba5e92, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -328.74826
+      objectReference: {fileID: 0}
+    - target: {fileID: 5895317115941938337, guid: 1f03e8ce036b6104a9d886cb19ba5e92, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5946168700223944111, guid: 1f03e8ce036b6104a9d886cb19ba5e92, type: 3}
       propertyPath: m_SortingOrder
@@ -461,11 +502,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2034130235692891188, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
       propertyPath: m_Size
-      value: 0.516285
+      value: 0.46656415
       objectReference: {fileID: 0}
     - target: {fileID: 2034130235692891188, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
       propertyPath: m_Value
-      value: 1.0000002
+      value: 1.0000027
       objectReference: {fileID: 0}
     - target: {fileID: 3115981906705432870, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
       propertyPath: m_Name
@@ -585,7 +626,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9023275546278245807, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000038954797
+      value: -0.00069066044
       objectReference: {fileID: 0}
     - target: {fileID: 9204069343772778139, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
       propertyPath: m_AnchorMax.x
@@ -599,7 +640,8 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6197686052324367918, guid: f81de6097f7b1fe46b3d8ac513f57580, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
