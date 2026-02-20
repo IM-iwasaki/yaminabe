@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System.Collections;
+
 using Mirror.Examples.Basic;
 using static CharacterEnum;
 using Mirror.Examples.Benchmark;
@@ -36,8 +37,7 @@ public class SubWeaponController : NetworkBehaviour {
         characterAnimationController = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
 
-        characterSelectManager = FindObjectOfType<CharacterSelectManager>();
-        gachaSystem = FindObjectOfType<GachaSystem>();
+        
 
     }
 
@@ -57,23 +57,29 @@ public class SubWeaponController : NetworkBehaviour {
     }
 
 
+
     /// <summary>
     /// UI 操作中などでサブ武器を使えない状態か
     /// </summary>
     private bool IsUIBlocked() {
 
-        if (!characterBase.isLocalPlayer)
-            return true;
+        characterSelectManager = FindObjectOfType<CharacterSelectManager>();
+        gachaSystem = FindObjectOfType<GachaSystem>();
 
-        if (characterSelectManager != null &&
-            characterSelectManager.IsCharacterSelectActive())
-            return true;
+        // ローカルでないならここでは判断しない
+        if (!isLocalPlayer)
+            return false;
 
-        if (gachaSystem != null &&
-            gachaSystem.IsGachaActive())
-            return true;
+        bool selectActive =
+            characterSelectManager != null &&
+            characterSelectManager.IsCharacterSelectActive();
 
-        return false;
+        bool gachaActive =
+            gachaSystem != null &&
+            gachaSystem.IsGachaActive();
+
+        return selectActive || gachaActive;
+       
     }
 
 
