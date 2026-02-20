@@ -5,6 +5,7 @@ using System;
 /// </summary>
 [Serializable]
 public struct ResultScoreData {
+    public int PlayerId;       // ★ 追加
     public string PlayerName;  // プレイヤー名
     public int Score;          // スコア値
     public int Kills;　　　　　// キル
