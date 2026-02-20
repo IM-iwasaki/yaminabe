@@ -101,6 +101,8 @@ public class CharacterParameter : NetworkBehaviour {
 
     #endregion
 
+    public int money;
+
     /// <summary>
     /// ‰Šú‰»
     /// </summary>
@@ -130,6 +132,12 @@ public class CharacterParameter : NetworkBehaviour {
         equippedPassives[0].isPassiveActive = false;
         //SkillŠÖ˜A‚Ì‰Šú‰»
         equippedSkills[0].isSkillUse = false;
+
+        ReloadMoney();
+    }
+
+    public void ReloadMoney() {
+        money = PlayerWallet.Instance.GetMoney();
     }
 
     /// <summary>
@@ -146,14 +154,14 @@ public class CharacterParameter : NetworkBehaviour {
             inputStatus = _inport;
 
             runtimeStatus = _inport;
-            maxHP = runtimeStatus.maxHP + (PlayerWallet.Instance.GetMoney() / 100);
+            maxHP = runtimeStatus.maxHP + (money / 100);
             if(maxHP >= 1000) maxHP = 1000;
             HP = maxHP;
             maxMP = runtimeStatus.maxMP;
             MP = maxMP;
-            attack = runtimeStatus.attack + (PlayerWallet.Instance.GetMoney() / 1000);
+            attack = runtimeStatus.attack + (money / 1000);
             if(attack >= 10) attack = 10;
-            moveSpeed = runtimeStatus.moveSpeed + (PlayerWallet.Instance.GetMoney() / 1000);
+            moveSpeed = runtimeStatus.moveSpeed + (money / 1000);
             if(moveSpeed >= 12) moveSpeed = 12;
         }
         else {
