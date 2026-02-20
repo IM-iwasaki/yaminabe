@@ -42,10 +42,25 @@ public class CharacterActions : NetworkBehaviour {
         // ローカルプレイヤー以外は処理しない
         if (!isLocalPlayer) return;
 
+
+        // 参照が死んでいたら再取得
+        if (characterSelectManager == null)
+            characterSelectManager = FindObjectOfType<CharacterSelectManager>();
+
+        if (gachaSystem == null)
+            gachaSystem = FindObjectOfType<GachaSystem>();
+
+        if (hud == null)
+            hud = FindObjectOfType<HudManager>();
+
+        bool isBlocked =
+            (characterSelectManager != null && characterSelectManager.IsCharacterSelectActive()) ||
+            (gachaSystem != null && gachaSystem.IsGachaActive());
+
+
+
         // キャラ選択中 or ガチャ中なら全操作ブロック
-        if ((characterSelectManager != null && characterSelectManager.IsCharacterSelectActive()) ||
-            (gachaSystem != null && gachaSystem.IsGachaActive())
-        ) {
+        if (isBlocked) {
             // HUD（レティクル）非表示
             if(hud != null) hud.SetReticleVisible(false);
 
