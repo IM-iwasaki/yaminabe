@@ -161,7 +161,7 @@ public abstract class CharacterBase : CreatureBase {
     /// 追加:タハラ クライアント用準備状態切り替え関数
     /// </summary>
     [Command]
-    private void CmdChangePlayerReady() {
+    public void CmdChangePlayerReady() {
         if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName) return;
         parameter.ready = !parameter.ready;
         ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);

@@ -136,6 +136,8 @@ public class ServerManager : NetworkBehaviour {
         foreach (var player in connectPlayer) {
             GeneralCharacter resetPlayer = player.GetComponent<GeneralCharacter>();
             resetPlayer.parameter.StatusInport(resetPlayer.parameter.runtimeStatus);
+            resetPlayer.parameter.TeamID = -1;
+            resetPlayer.teamID = -1;
             //万が一の死亡状態解除
             resetPlayer.ResetHealth();
             // 追加 マツオ : 武器リセット用
