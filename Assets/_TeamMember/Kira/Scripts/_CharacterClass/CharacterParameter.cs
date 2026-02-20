@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 using System.Linq;
+using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
 
 /// <summary>
 /// Characterの変数管理
@@ -31,9 +32,11 @@ public class CharacterParameter : NetworkBehaviour {
     //リロード中か
     [SyncVar(hook = nameof(UpdateReloadIcon))] public bool isReloading = false;
     //基礎攻撃力
-    [SyncVar] public float attack;
+    [SyncVar(hook = nameof(ChangeAttack))] public float attack;
     //移動速度
-    [SyncVar] public float moveSpeed;
+    [SyncVar(hook = nameof(ChangeMoveSpeed))] public float moveSpeed;
+    //受けるダメージ倍率
+    [SyncVar(hook = nameof(ChangeDamageRatio))] public float damageRatio = 100;
 
     //変動値
     [SyncVar] public float[] fluctuationValue;
@@ -45,13 +48,11 @@ public class CharacterParameter : NetworkBehaviour {
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
     [SyncVar] public string PlayerName = "Default";
-    //受けるダメージ倍率
-    [System.NonSerialized] public float DamageRatio = 100;
+    
     //サーバーが割り当てるプレイヤー番号（Player1～6）
     [SyncVar] public int playerId = -1;
     // 追加:タハラ プレイヤー準備完了状態
     [SyncVar] public bool ready = true;
-
     public float defaultAttack { get; protected set; }
     public float defaultMoveSpeed { get; protected set; }
     public float defaultDamageRatio { get; protected set; }
@@ -229,7 +230,7 @@ public class CharacterParameter : NetworkBehaviour {
     private void InDefaultStatus() {
         defaultAttack = attack;
         defaultMoveSpeed = moveSpeed;
-        defaultDamageRatio = DamageRatio;
+        defaultDamageRatio = damageRatio;
     }
 
     /// <summary>
@@ -245,7 +246,7 @@ public class CharacterParameter : NetworkBehaviour {
         moveSpeed = defaultMoveSpeed;
     }
     public void OutDefaultStatus_DamageRatio() {
-        DamageRatio = defaultDamageRatio;
+        damageRatio = defaultDamageRatio;
     }
 
     /// <summary>
@@ -278,11 +279,19 @@ public class CharacterParameter : NetworkBehaviour {
 #endif
         }
     }
+    public void ChangeAttack(float _, float newValue) {
+        attack = newValue;
+    }
+    public void ChangeMoveSpeed(float _, float newValue) {
+        moveSpeed = newValue;
+    }
+    public void ChangeDamageRatio(float _, float newValue) {
+        damageRatio = newValue;
+    }
 
     /// <summary>
     /// 追加 マツオ :クライアントMP回復用
     /// </summary>
-    /// <param name="value"></param>
     [Command]
     public void CmdRecoverMP(int value) {
         if (isDead) return;

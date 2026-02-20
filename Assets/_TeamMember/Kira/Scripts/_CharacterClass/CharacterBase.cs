@@ -183,7 +183,7 @@ public abstract class CharacterBase : CreatureBase {
         if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
-        float damage = _damage * ((float)parameter.DamageRatio / 100);
+        float damage = _damage * ((float)parameter.damageRatio / 100);
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理
@@ -526,6 +526,7 @@ public abstract class CharacterBase : CreatureBase {
             //各バフの反映と時間経過処理
             //【走査中に途中で要素を削除するなら末尾から見る！】
             for (int buffIndex = temporaryBuffs[paramIndex].Count - 1 ; 0 <= buffIndex ; buffIndex--) {
+                //バフ最高値の更新
                 if (maxInfluxValue <= temporaryBuffs[paramIndex][buffIndex].amount) 
                     maxInfluxValue = temporaryBuffs[paramIndex][buffIndex].amount;
 
@@ -554,7 +555,7 @@ public abstract class CharacterBase : CreatureBase {
                     parameter.moveSpeed = parameter.defaultMoveSpeed * influxValue;
                     break;
                 case ParamaterType.damageRate:
-                    parameter.DamageRatio = parameter.defaultDamageRatio * influxValue;
+                    parameter.damageRatio = parameter.defaultDamageRatio * influxValue;
                     break;
                 default:
 #if UNITY_EDITOR
@@ -765,7 +766,7 @@ public abstract class CharacterBase : CreatureBase {
         //  エフェクト再生
         PlayEffect(SPEED_BUFF_EFFECT);
 
-        speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
+        //speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
 
     /// <summary>
@@ -797,10 +798,10 @@ public abstract class CharacterBase : CreatureBase {
     /// 時間まで被ダメを下げておく実行処理(コルーチン)
     /// </summary>
     private IEnumerator DamageCutRoutine(int _value, float _duration) {
-        parameter.DamageRatio = _value;
+        parameter.damageRatio = _value;
         Debug.Log("被ダメージ倍率変更中");
         yield return new WaitForSeconds(_duration);
-        parameter.DamageRatio = 100;
+        parameter.damageRatio = 100;
         damageCutCoroutine = null;
     }
 

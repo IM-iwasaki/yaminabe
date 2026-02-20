@@ -15,7 +15,7 @@ public class Passive_Soldier : PassiveBase {
         else isPassiveActive = false;
 
         //効果中はダメージを軽減。
-        if (isPassiveActive) user.parameter.DamageRatio = 80;
-        else user.parameter.DamageRatio = 100;        
+        if (isPassiveActive) user.parameter.damageRatio = 80;
+        else user.parameter.damageRatio = 100;        
     }
 }

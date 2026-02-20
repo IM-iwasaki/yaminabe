@@ -23,7 +23,7 @@ public class Passive_Fighter : PassiveBase {
             }
             // 10•b‚ÅŒ³‚É–ß‚é‚Í‚¸
             else if (coolTime >=cooldown /3) {
-                user.parameter.DamageRatio = 100;
+                user.parameter.damageRatio = 100;
             }
 
         }
@@ -32,7 +32,7 @@ public class Passive_Fighter : PassiveBase {
         //”­“®’†‚ÉHP‚ªğŒ‚ğ–‚½‚µ‚½‚ç”­“®B
         if (isPassiveActive && user.parameter.HP <= user.parameter.maxHP / 4) {
             isPassiveActive=false;
-            user.parameter.DamageRatio = 50;
+            user.parameter.damageRatio = 50;
         }
        
     }
