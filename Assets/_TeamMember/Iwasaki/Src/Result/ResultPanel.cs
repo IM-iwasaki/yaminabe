@@ -200,7 +200,6 @@ public class ResultPanel : NetworkBehaviour {
             GameManager.Instance.EndGame();
             //プレイヤーの状態を戻す
             ServerManager.instance.ResetCharacterStatus();
-            ServerManager.instance.ReloadCharacterMoney();
             GameSceneManager.Instance.LoadLobbySceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
             PlayerListManager.Instance.ResetAllScores();

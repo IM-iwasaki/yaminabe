@@ -145,11 +145,4 @@ public class ServerManager : NetworkBehaviour {
             param.ResetWeaponToDefault();
         }
     }
-
-    public void ReloadCharacterMoney() {
-        foreach (var player in connectPlayer) {
-            GeneralCharacter localPlayer = player.GetComponent<GeneralCharacter>();
-            localPlayer.parameter.ReloadMoney();
-        }
-    }
 }

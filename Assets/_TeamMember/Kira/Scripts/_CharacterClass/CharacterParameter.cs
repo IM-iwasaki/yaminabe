@@ -102,6 +102,9 @@ public class CharacterParameter : NetworkBehaviour {
     #endregion
 
     public int money;
+    public void SetMoney(int value) {
+        money = value;
+    }
 
     /// <summary>
     /// 初期化
@@ -133,12 +136,9 @@ public class CharacterParameter : NetworkBehaviour {
         //Skill関連の初期化
         equippedSkills[0].isSkillUse = false;
 
-        ReloadMoney();
+        SetMoney(PlayerWallet.Instance.GetMoney());
     }
 
-    public void ReloadMoney() {
-        money = PlayerWallet.Instance.GetMoney();
-    }
 
     /// <summary>
     /// ステータスのインポート

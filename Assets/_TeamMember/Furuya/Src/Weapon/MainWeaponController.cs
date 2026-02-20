@@ -78,9 +78,6 @@ public class MainWeaponController : NetworkBehaviour {
     // --- 攻撃リクエスト ---
     [Command]
     public void CmdRequestAttack(Vector3 direction) {
-        if (!CanAttack()) return;
-        lastAttackTime = Time.time;
-
         switch (weaponData.type) {
             case WeaponType.Melee:
                 if (weaponData is MeleeData meleeData)
@@ -127,9 +124,12 @@ public class MainWeaponController : NetworkBehaviour {
     public void AttemptAttack(Vector3 direction) {
         if (!isLocalPlayer) return;
 
+        if (!CanAttack()) return;
+        lastAttackTime = Time.time;
+
         // MoneyGunの場合、先にローカルでお金を消費
         if (weaponID == 4) {
-            if (!PlayerWallet.Instance.SpendMoney(1))
+            if (!PlayerWallet.Instance.SpendMoney(4))
                 return; // お金不足で撃てない
             ammo = PlayerWallet.Instance.currentMoney; // UI更新用
         }
