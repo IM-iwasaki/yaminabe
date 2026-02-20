@@ -202,7 +202,7 @@ public abstract class CharacterBase : CreatureBase {
 
             Dead(_name);
 
-            if (PlayerListManager.Instance != null || _ID != -1) {
+            if (PlayerListManager.Instance != null && _ID != -1) {
                 // スコア加算
                 PlayerListManager.Instance.AddScoreById(_ID, 100);
                 PlayerListManager.Instance.AddKillById(_ID);
@@ -274,8 +274,8 @@ public abstract class CharacterBase : CreatureBase {
             Debug.LogWarning("スコア計算が正常に成功しませんでした。");
 #endif
         }
-        // 死亡回数を増やす
-        if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeath(parameter.PlayerName);
+        //// 死亡回数を増やす
+        if (PlayerListManager.Instance != null) PlayerListManager.Instance.AddDeathById(parameter.playerId);
     }
 
     /// <summary>

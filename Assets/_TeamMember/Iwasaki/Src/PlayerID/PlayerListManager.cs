@@ -53,7 +53,6 @@ public class PlayerListManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void RegisterPlayer(CharacterBase player) {
-        if (players.Exists(p => p.name == player.parameter.PlayerName)) return;
 
         // 空いているIDを探す（0〜5まで）
         int assignedId = -1;
@@ -136,41 +135,7 @@ public class PlayerListManager : NetworkBehaviour {
 
     #endregion
 
-
-
-
-
-
-
-
-
-
-    /// <summary>
-    /// 名前からスコアを加算（サーバー専用）
-    /// </summary>
-    [Server]
-    public void AddScoreByName(string playerName, int value) {
-        var target = players.Find(p => p.name == playerName);
-        if (target != null) {
-            target.score += value;
-            Debug.Log($"[PlayerListManager] {playerName} のスコアを {value} 加算（合計 {target.score}）");
-        }
-        else {
-            Debug.LogWarning($"[PlayerListManager] 名前 '{playerName}' のプレイヤーが見つかりません。");
-        }
-    }
-
-    /// <summary>
-    /// 指定プレイヤーのスコアをリセット
-    /// </summary>
-    [Server]
-    public void ResetScore(CharacterBase player) {
-        var target = players.Find(p => p.id == player.parameter.playerId);
-        if (target != null) {
-            target.score = 0;
-            Debug.Log($"[PlayerListManager] {target.name} のスコアをリセット");
-        }
-    }
+   
 
     /// <summary>
     /// 全プレイヤーのスコアをリセット
@@ -189,22 +154,6 @@ public class PlayerListManager : NetworkBehaviour {
 
 
 
-    // キル数
-    [Server]
-    public void AddKill(string name) {
-        var p = players.Find(x => x.name == name);
-        if (p != null) p.kills++;
-    }
-    // デス数
-    [Server]
-    public void AddDeath(string name) {
-        var p = players.Find(x => x.name == name);
-        if (p != null) p.deaths++;
-    }
-
-
-
-
     //==============================================================
     // ▼ リザルト連携
     //==============================================================
@@ -215,25 +164,26 @@ public class PlayerListManager : NetworkBehaviour {
     [Server]
     public List<ResultScoreData> GetResultDataList() {
         List<ResultScoreData> list = new();
+
         foreach (var p in players) {
 
-            // CharacterBaseから teamId を取る
             var chara = FindObjectsOfType<CharacterBase>()
-                .FirstOrDefault(c => c.parameter.PlayerName == p.name);
+                .FirstOrDefault(c => c.parameter.playerId == p.id);
 
             int team = 0;
             if (chara != null)
                 team = chara.parameter.TeamID;
 
             list.Add(new ResultScoreData {
+                PlayerId = p.id,         
                 PlayerName = p.name,
                 Score = p.score,
                 Kills = p.kills,
                 Deaths = p.deaths,
                 TeamId = team
-
             });
         }
+
         return list;
     }
 
