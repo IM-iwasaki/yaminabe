@@ -58,4 +58,10 @@ public class GeneralCharacter : CharacterBase {
         //パッシブのセットアップ
         parameter.equippedPassives[0].PassiveSetting();
     }
+
+    // 追加 マツオ : クライアントステータスリセット用
+    [TargetRpc]
+    public void TargetResetStatus(NetworkConnection target) {
+        parameter.StatusInport(parameter.runtimeStatus);
+    }
 }
