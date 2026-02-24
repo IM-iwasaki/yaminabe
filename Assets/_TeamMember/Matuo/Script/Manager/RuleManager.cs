@@ -1,7 +1,6 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
-using static ResultManager;
 
 /// <summary>
 /// ルール管理
@@ -263,7 +262,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     }
 
     /// <summary>
-    /// ミリオネア専用
+    /// 古谷　ミリオネア専用
     /// </summary>
     /// <param name="data"></param>
 
@@ -280,10 +279,11 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         }
     }
 
+    /// <summary>
+    /// 古谷　Walletに返還
+    /// </summary>
     [TargetRpc]
     private void TargetRefundMoney(NetworkConnection target, float multiplier) {
         PlayerWallet.Instance?.RefundSpentMoney(multiplier);
     }
-
-
 }

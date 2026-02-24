@@ -38,21 +38,34 @@ public class CaptureArea : NetworkBehaviour {
 
     [ServerCallback]
     private void Update() {
-        if (!GameManager.Instance.IsGameRunning()) return; // ← 追加
+        if (!GameManager.Instance.IsGameRunning()) return;
         if (playersInArea.Count == 0) return;
 
-        // 全員同じチームかチェック
-        int teamId = -1;
+        int? firstTeam = null;
+        bool multipleTeams = false;
+
         foreach (var p in playersInArea) {
-            teamId = p.parameter.TeamID;
-            break; // 最初の要素のチームIDを取得したら抜ける
+            int team = p.parameter.TeamID;
+
+            if (firstTeam == null)
+                firstTeam = team;
+            else if (firstTeam != team) {
+                multipleTeams = true;
+                break;
+            }
         }
 
-        // タイマーでスコア加算
+        // 両チームいるなら止める
+        if (multipleTeams || firstTeam == null) {
+            timer = 0f;
+            return;
+        }
+
+        // 単独チームのみ加算
         timer += Time.deltaTime;
         if (timer >= 1f) {
             timer = 0f;
-            RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
+            RuleManager.Instance.OnCaptureProgress(firstTeam.Value, scorePerSecond);
         }
     }
 }
