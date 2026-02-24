@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class PlayerListUIManager : MonoBehaviour {
+public class PlayerListUIManager : NetworkBehaviour {
     public static PlayerListUIManager Instance;
 
     //  サーバーマネージャーを取得
@@ -25,20 +25,15 @@ public class PlayerListUIManager : MonoBehaviour {
         playerListRoot.SetActive(false);
     }
 
-    private IEnumerator Start() {
-        // ServerManager の唯一インスタンスを待つ
-        while (ServerManager.instance == null) {
-            yield return null;
-        }
-        if (server == null) server = ServerManager.instance;
+    /// <summary>
+    /// 追加 マツオ : スタート時クライアントもUI出す
+    /// </summary>
+    public override void OnStartClient() {
+        base.OnStartClient();
 
-        // サーバー起動を待つ
-        while (!NetworkServer.active) {
-            yield return null;
-        }
+        ShowUI();
 
-        if (NetworkClient.active) ShowUI();
-        UpdatePlayerList();
+        InvokeRepeating(nameof(UpdatePlayerList), 0.5f, 0.5f);
     }
 
     //  ホストだけ表示するUI
@@ -51,25 +46,18 @@ public class PlayerListUIManager : MonoBehaviour {
     /// </summary>
     /// <param name="server"></param>
     public void UpdatePlayerList() {
-        //  エラー落ち処理
-        if (server == null) return;
-        if (server.connectPlayer == null) return;
-        //  現在のコネクト数をログに流す
-        Debug.Log($"connectPlayer Count = {server.connectPlayer.Count}");
-        //  一度プレイヤーリストを初期化
         ResetPlayerList();
-        //  プレイヤー1人1人のプレハブを作成
-        foreach (var conn in server.connectPlayer) {
-            //  キャラクターパラメータの情報をキャッシュ
-            var player = conn.GetComponent<CharacterParameter>();
-            //  子オブジェクトとして生成
+        // 変更 : マツオ
+        foreach (var identity in NetworkClient.spawned.Values) {
+            if (!identity.TryGetComponent<CharacterParameter>(out var player))
+                continue;
+
             GameObject nameText = Instantiate(playerListUI, playerListRoot.transform);
-            //  プレイヤーの名前をチームカラー含めセット]
+
             ChangePlayerTextAndColor(player, nameText);
             //  チェックボックス判定
             CanReadyPlayerUI(player, nameText);
         }
-
     }
 
     /// <summary>
@@ -121,6 +109,12 @@ public class PlayerListUIManager : MonoBehaviour {
         foreach (Transform child in parent) {
             Destroy(child.gameObject);
         }
+    }
+    /// <summary>
+    /// 追加 マツオ : Listの内容が切り替わった時に呼ばれる
+    /// </summary>
+    private void OnPlayerListChanged(SyncList<NetworkIdentity>.Operation op,int index,NetworkIdentity oldItem,NetworkIdentity newItem) {
+        UpdatePlayerList();
     }
 
 }

@@ -49,8 +49,8 @@ public class CharacterParameter : NetworkBehaviour {
     [System.NonSerialized] public float DamageRatio = 100;
     //サーバーが割り当てるプレイヤー番号（Player1～6）
     [SyncVar] public int playerId = -1;
-    // 追加:タハラ プレイヤー準備完了状態
-    [SyncVar] public bool ready = true;
+    [SyncVar(hook = nameof(OnReadyChanged))]
+    public bool ready = true;
 
     public float defaultAttack { get; protected set; }
     public float defaultMoveSpeed { get; protected set; }
@@ -409,5 +409,14 @@ public class CharacterParameter : NetworkBehaviour {
         isInvincible = true;
         //経過時間をリセット
         respownAfterTime = 0;
+    }
+    /// <summary>
+    /// 追加 マツオ : PlayerReady用
+    /// </summary>
+    /// <param name="oldValue"></param>
+    /// <param name="newValue"></param>
+    private void OnReadyChanged(bool oldValue, bool newValue) {
+        if (PlayerListUIManager.Instance != null)
+            PlayerListUIManager.Instance.UpdatePlayerList();
     }
 }

@@ -57,7 +57,7 @@ public abstract class CharacterBase : CreatureBase {
         animCon = GetComponent<CharacterAnimationController>();
 
         //RpcChangeWeapon(weaponController_main.weaponData.appearanceID);
-        for(int i = 0; i < (int)ParamaterType.max ; i++) {
+        for (int i = 0; i < (int)ParamaterType.max; i++) {
             temporaryBuffs.Add(new List<TemporaryBuff>());
         }
     }
@@ -98,8 +98,7 @@ public abstract class CharacterBase : CreatureBase {
             var option = GetComponentInChildren<ReticleOptionUI>(true);
             if (option != null) {
                 option.Initialize(true);
-            }
-            else {
+            } else {
 #if UNITY_EDITOR
                 Debug.LogWarning("PlayerSetup: No ReticleOptionUI found as child for local player.");
 #endif
@@ -162,15 +161,9 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [Command]
     public void CmdChangePlayerReady() {
-        if (SceneManager.GetActiveScene().name == GameSceneManager.Instance.gameSceneName) return;
         parameter.ready = !parameter.ready;
-        ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
 
-        //カネダ
-        //準備完了か否かをリストUIとして表示する
-        if (PlayerListUIManager.Instance != null) {
-            PlayerListUIManager.Instance.UpdatePlayerList();
-        }
+        ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready : " + parameter.ready);
     }
 
 
@@ -268,8 +261,7 @@ public abstract class CharacterBase : CreatureBase {
             }
             // OnKill を呼ぶときに victimTeam を渡すように変更
             combat.OnKill(killerIdentity, victimTeam);
-        }
-        else {
+        } else {
 #if UNITY_EDITOR
             Debug.LogWarning("スコア計算が正常に成功しませんでした。");
 #endif
@@ -517,7 +509,7 @@ public abstract class CharacterBase : CreatureBase {
         }
 
         //バフデバフの処理
-        for(int paramIndex = (int)ParamaterType.max -1 ; 0 <= paramIndex ; paramIndex--) {
+        for (int paramIndex = (int)ParamaterType.max - 1; 0 <= paramIndex; paramIndex--) {
             //倍率の累計
             float influxValue = 1.0f;
             //倍率の最高値
@@ -525,8 +517,8 @@ public abstract class CharacterBase : CreatureBase {
 
             //各バフの反映と時間経過処理
             //【走査中に途中で要素を削除するなら末尾から見る！】
-            for (int buffIndex = temporaryBuffs[paramIndex].Count - 1 ; 0 <= buffIndex ; buffIndex--) {
-                if (maxInfluxValue <= temporaryBuffs[paramIndex][buffIndex].amount) 
+            for (int buffIndex = temporaryBuffs[paramIndex].Count - 1; 0 <= buffIndex; buffIndex--) {
+                if (maxInfluxValue <= temporaryBuffs[paramIndex][buffIndex].amount)
                     maxInfluxValue = temporaryBuffs[paramIndex][buffIndex].amount;
 
                 //倍率の累計に掛けていく
@@ -535,18 +527,18 @@ public abstract class CharacterBase : CreatureBase {
                 temporaryBuffs[paramIndex][buffIndex].duration -= Time.deltaTime;
 
                 //効果時間が切れたら
-                if(temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
+                if (temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
                     //該当する要素を削除。
                     temporaryBuffs[paramIndex].RemoveAt(buffIndex);
                     DestroyChildrenWithTag(EFFECT_TAG);
-                }                   
+                }
             }
 
             //倍率が一定を超えたら該当バフ内の最高値のみを参照する
             if (influxValue >= 2.0f) influxValue = maxInfluxValue;
 
             //値を反映(switchで分岐)
-            switch((ParamaterType)paramIndex) {
+            switch ((ParamaterType)paramIndex) {
                 case ParamaterType.Attack:
                     parameter.attack = parameter.defaultAttack * influxValue;
                     break;
@@ -573,8 +565,8 @@ public abstract class CharacterBase : CreatureBase {
     /// 追加:タハラ UI表示
     /// </summary>
     public void OnShowHostUI(InputAction.CallbackContext context) {
-        if (!isServer || !isLocalPlayer 
-            || SceneManager.GetActiveScene().name == "GameScene" 
+        if (!isServer || !isLocalPlayer
+            || SceneManager.GetActiveScene().name == "GameScene"
             || SceneManager.GetActiveScene().name == "PvEScene") return;
         if (context.started) {
             if (CameraMenu.isOpen)
@@ -606,20 +598,11 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     /// <param name="context"></param>
     public void OnReadyPlayer(InputAction.CallbackContext context) {
-        if (!isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene") return;
-        //内部の準備状態を更新
+        if (!isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene")
+            return;
+
         if (context.started) {
-            if (!isServer)
-                CmdChangePlayerReady();
-            else {
-                parameter.ready = !parameter.ready;
-                ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready :  " + parameter.ready);
-                //カネダ
-                //準備完了か否かをリストUIとして表示する
-                if (PlayerListUIManager.Instance != null) {
-                    PlayerListUIManager.Instance.UpdatePlayerList();
-                }
-            }
+            CmdChangePlayerReady();
         }
     }
 

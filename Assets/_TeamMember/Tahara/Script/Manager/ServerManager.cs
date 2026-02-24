@@ -13,7 +13,7 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     public static ServerManager instance = null;
     [Header("現在接続している人数")]
-    public List<NetworkIdentity> connectPlayer = null;
+    public readonly SyncList<NetworkIdentity> connectPlayer = new SyncList<NetworkIdentity>();
     [Header("チームデータの総数")]
     public List<TeamData> teams = null;
 
