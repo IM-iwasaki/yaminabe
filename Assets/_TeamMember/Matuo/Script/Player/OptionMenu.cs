@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
+using Mirror;
 
 public class OptionMenu : MonoBehaviour {
     [Header("対象のPlayerCamera")]
@@ -153,7 +154,7 @@ public class OptionMenu : MonoBehaviour {
            .Find("Text")
            ?.GetComponent<TextMeshProUGUI>();
 
-       // TitleButton?.onClick.AddListener(ReturnToTitle);
+        TitleButton?.onClick.AddListener(ReturnToTitle);
 
     }
 
@@ -335,7 +336,16 @@ public class OptionMenu : MonoBehaviour {
 
 
 
-   
+    private void ReturnToTitle() {
+        // ホストの場合
+        if (NetworkServer.active && NetworkClient.isConnected) {
+            NetworkManager.singleton.StopHost();
+        }
+        // クライアントのみの場合
+        else if (NetworkClient.isConnected) {
+            NetworkManager.singleton.StopClient();
+        }
+    }
 
 
 
