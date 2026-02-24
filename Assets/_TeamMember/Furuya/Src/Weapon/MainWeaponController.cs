@@ -2,6 +2,7 @@
 using Mirror;
 using System.Collections;
 using static UnityEngine.UI.GridLayoutGroup;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -123,15 +124,21 @@ public class MainWeaponController : NetworkBehaviour {
     /// <param name="direction"></param>
     public void AttemptAttack(Vector3 direction) {
         if (!isLocalPlayer) return;
-
         if (!CanAttack()) return;
+
         lastAttackTime = Time.time;
 
-        // MoneyGunの場合、先にローカルでお金を消費
+        // MoneyGunの場合、LobbyScene以外でお金を消費
         if (weaponID == 4) {
-            if (!PlayerWallet.Instance.SpendMoney(4))
-                return; // お金不足で撃てない
-            ammo = PlayerWallet.Instance.currentMoney; // UI更新用
+            string currentSceneName = SceneManager.GetActiveScene().name;
+
+            // LobbySceneではお金を消費しない
+            if (currentSceneName != "LobbyScene") {
+                if (!PlayerWallet.Instance.SpendMoney(4))
+                    return; // お金不足で撃てない
+
+                ammo = PlayerWallet.Instance.currentMoney; // UI更新用
+            }
         }
 
         // サーバーに弾撃ちをリクエスト
