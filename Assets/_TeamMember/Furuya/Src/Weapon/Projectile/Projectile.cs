@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class Projectile : NetworkBehaviour {
     private int damage;
@@ -14,6 +15,10 @@ public class Projectile : NetworkBehaviour {
     private bool initialized;
     public float lifetime = 5f;
 
+    void Awake() {
+        rb = GetComponent<Rigidbody>();
+    }
+
     public void Init(GameObject shooter, string _name, int _ID, EffectType hitEffect, float _speed, int _damage) {
         owner = shooter;
         ownerName = _name;
@@ -21,8 +26,6 @@ public class Projectile : NetworkBehaviour {
         hitEffectType = hitEffect;
         speed = _speed;
         damage = _damage;
-
-        rb = GetComponent<Rigidbody>();
 
         initialized = true;
 
@@ -33,8 +36,16 @@ public class Projectile : NetworkBehaviour {
     }
 
     void FixedUpdate() {
-        if (!isServer) return;
-        transform.position += transform.forward * speed * Time.fixedDeltaTime;
+        if (!isServer || !initialized) return;
+
+        float distance = speed * Time.fixedDeltaTime;
+
+        rb.MovePosition(
+            rb.position + transform.forward * distance
+        );
+        //transform.position += transform.forward * speed * Time.fixedDeltaTime;
+
+
     }
 
     [ServerCallback]
@@ -43,14 +54,15 @@ public class Projectile : NetworkBehaviour {
         if (other.gameObject == owner) return;
         if (other.TryGetComponent<DoTArea>(out _)) return;
 
+        // ここでフィルタ
+        if (!other.TryGetComponent<CreatureBase>(out var target))
+            return;
 
-         if(other.TryGetComponent<NetworkIdentity>(out var identity)) {
-            if (identity.TryGetComponent(out CreatureBase target)) {
-                if (target.teamID != owner.GetComponent<CreatureBase>().teamID)
-                    target.TakeDamage(damage, ownerName, ID);
-                    RpcPlayHitEffect(transform.position, hitEffectType);
-            }
-        }
+        if (target.teamID == owner.GetComponent<CreatureBase>().parameter.TeamID)
+            return;
+
+        target.TakeDamage(damage, ownerName, ID);
+        RpcPlayHitEffect(transform.position, hitEffectType);
         Deactivate();
     }
 
@@ -67,7 +79,7 @@ public class Projectile : NetworkBehaviour {
     /// 非アクティブ化
     /// </summary>
     [Server]
-    private void Deactivate() {
+    public void Deactivate() {
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         initialized = false;
@@ -76,6 +88,12 @@ public class Projectile : NetworkBehaviour {
             ProjectilePool.Instance.DespawnToPool(gameObject);
         else
             NetworkServer.Destroy(gameObject);
+    }
+
+    [Server]
+    public void ServerDeactivate() {
+        if (!initialized) return;
+        Deactivate();
     }
 
     /// <summary>
