@@ -101,10 +101,8 @@ public class CharacterParameter : NetworkBehaviour {
 
     #endregion
 
+    [SyncVar(hook = nameof(OnMoneyChanged))]
     public int money;
-    public void SetMoney(int value) {
-        money = value;
-    }
 
     /// <summary>
     /// 初期化
@@ -136,51 +134,31 @@ public class CharacterParameter : NetworkBehaviour {
         //Skill関連の初期化
         equippedSkills[0].isSkillUse = false;
 
-        SetMoney(PlayerWallet.Instance.GetMoney());
+        CmdSetMoney(PlayerWallet.Instance.GetMoney());
     }
 
+    public override void OnStartLocalPlayer() {
+        CmdSetMoney(PlayerWallet.Instance.GetMoney());
+    }
 
     /// <summary>
     /// ステータスのインポート
     /// </summary>
     public void StatusInport(GeneralCharacterStatus _inport = null) {
-        if (_inport.displayName == "ミリオネア") {
-            if (_inport == null) {
-                Debug.Log("ステータス無いで");
-                DefaultStatusInport();
-                return;
-            }
-
-            inputStatus = _inport;
-
-            runtimeStatus = _inport;
-            maxHP = runtimeStatus.maxHP + (money / 100);
-            if(maxHP >= 1000) maxHP = 1000;
-            HP = maxHP;
-            maxMP = runtimeStatus.maxMP;
-            MP = maxMP;
-            attack = runtimeStatus.attack + (money / 1000);
-            if(attack >= 10) attack = 10;
-            moveSpeed = runtimeStatus.moveSpeed + (money / 1000);
-            if(moveSpeed >= 12) moveSpeed = 12;
+        if (isLocalPlayer) {
+            CmdSetMoney(PlayerWallet.Instance.GetMoney());
         }
-        else {
-            if (_inport == null) {
-                Debug.Log("ステータス無いで");
-                DefaultStatusInport();
-                return;
-            }
-
-            inputStatus = _inport;
-
-            runtimeStatus = _inport;
-            maxHP = runtimeStatus.maxHP;
-            HP = maxHP;
-            maxMP = runtimeStatus.maxMP;
-            MP = maxMP;
-            attack = runtimeStatus.attack;
-            moveSpeed = runtimeStatus.moveSpeed;
+        if (_inport == null) {
+            Debug.Log("ステータス無いで");
+            DefaultStatusInport();
+            return;
         }
+
+        inputStatus = _inport;
+        runtimeStatus = _inport;
+
+        RecalculateStatus();
+
         equippedSkills = runtimeStatus.skills;
         equippedPassives = runtimeStatus.passives;
         /* xxx.Where() <= nullでないか確認する。 xxx.Select() <= 指定した変数を取り出す。 ※using System.Linq が必要。 */
@@ -206,6 +184,41 @@ public class CharacterParameter : NetworkBehaviour {
 
         weaponController_main.CmdSetWeaponData(mainWeapon);
         weaponController_sub.CmdSetSubWeapon(subWeapon);
+    }
+
+    private void OnMoneyChanged(int oldValue, int newValue) {
+        RecalculateStatus();
+    }
+
+    [Command]
+    public void CmdSetMoney(int value) {
+        money = value;
+    }
+
+    /// <summary>
+    /// 追加 マツオ : ステータスインポート用
+    /// </summary>
+    private void RecalculateStatus() {
+        if (runtimeStatus == null) return;
+
+        if (runtimeStatus.displayName == "ミリオネア") {
+            maxHP = runtimeStatus.maxHP + (money / 100);
+            if (maxHP > 1000) maxHP = 1000;
+
+            attack = runtimeStatus.attack + (money / 1000);
+            if (attack > 10) attack = 10;
+
+            moveSpeed = runtimeStatus.moveSpeed + (money / 1000);
+            if (moveSpeed > 12) moveSpeed = 12;
+        } else {
+            maxHP = runtimeStatus.maxHP;
+            attack = runtimeStatus.attack;
+            moveSpeed = runtimeStatus.moveSpeed;
+        }
+
+        HP = maxHP;
+        maxMP = runtimeStatus.maxMP;
+        MP = maxMP;
     }
 
     [TargetRpc]

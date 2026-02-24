@@ -135,7 +135,7 @@ public class ServerManager : NetworkBehaviour {
     public void ResetCharacterStatus() {
         foreach (var player in connectPlayer) {
             GeneralCharacter resetPlayer = player.GetComponent<GeneralCharacter>();
-            resetPlayer.parameter.StatusInport(resetPlayer.parameter.runtimeStatus);
+            resetPlayer.TargetResetStatus(player.connectionToClient);
             resetPlayer.parameter.TeamID = -1;
             resetPlayer.teamID = -1;
             //–œ‚ªˆê‚Ì€–Só‘Ô‰ğœ

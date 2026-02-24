@@ -106,19 +106,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [Server]
     private void StartPveRound() {
         isGameRunning = true;
-
-        GameTimer.Instance.ClearOnTimerFinished();
-        GameTimer.Instance.OnTimerFinished += OnPveTimeUp;
-
-        GameTimer.Instance.StartTimer();
-    }
-
-    /// <summary>
-    /// PVEモードのタイムアップ
-    /// </summary>
-    [Server]
-    private void OnPveTimeUp() {
-        EndGame(); // 失敗扱い
     }
 
     /// <summary>
@@ -126,12 +113,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// </summary>
     [Server]
     private IEnumerator StartGameAfterCountdown(GameRuleType rule) {
-        //ゲーム開始時に動けないようにし、カウントダウン終了後再度動けるように変更
-        foreach (var player in ServerManager.instance.connectPlayer) {
-            GeneralCharacter currentPlayer = player.GetComponent<GeneralCharacter>();
-            if (currentPlayer.parameter.canMove)
-                currentPlayer.parameter.canMove = false;
-        }
         yield return new WaitForSeconds(4f);
 
         isGameRunning = true;
