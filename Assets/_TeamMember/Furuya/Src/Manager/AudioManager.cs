@@ -129,11 +129,10 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
         if (conn == null)
             return;
 
-        // ホストの場合は直接再生
-        if (conn is LocalConnectionToClient) {
-            TargetPlayUISE(conn, name);
+        // ホストには送らない
+        if (conn is LocalConnectionToClient)
             return;
-        }
+
 
         TargetPlayUISE(conn, name);
     }
