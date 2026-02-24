@@ -79,6 +79,7 @@ public class OptionMenu : MonoBehaviour {
     private Button fireSubButton;
     private Button skillButton;
     private Button reloadButton;
+    private Button TitleButton;
 
     private TextMeshProUGUI statusText;
 
@@ -93,6 +94,7 @@ public class OptionMenu : MonoBehaviour {
     private TextMeshProUGUI fireSubText;
     private TextMeshProUGUI skillText;
     private TextMeshProUGUI reloadText;
+    private TextMeshProUGUI titleText;
 
     void Start() {
         optionCanvas.enabled = false;
@@ -141,6 +143,18 @@ public class OptionMenu : MonoBehaviour {
         UpdateButtonText("Reload", reloadText);
 
         #endregion
+
+
+        TitleButton = optionCanvas.transform
+          .Find("TitleButton")
+          ?.GetComponent<Button>();
+
+        titleText = TitleButton?.transform
+           .Find("Text")
+           ?.GetComponent<TextMeshProUGUI>();
+
+       // TitleButton?.onClick.AddListener(ReturnToTitle);
+
     }
 
     /// <summary>
@@ -318,4 +332,12 @@ public class OptionMenu : MonoBehaviour {
         if (!string.IsNullOrEmpty(saved))
             playerInput.actions[actionName].LoadBindingOverridesFromJson(saved);
     }
+
+
+
+   
+
+
+
+
 }
