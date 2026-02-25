@@ -7,12 +7,6 @@ using static TeamData;
 /// </summary>
 public class CustomNetworkManager : NetworkManager {
     /// <summary>
-    /// シーンにあるサーバーマネージャー
-    /// </summary>
-    [SerializeField]
-    private ServerManager serverManager = null;
-
-    /// <summary>
     /// ホスト専用UI
     /// </summary>
     [SerializeField]
@@ -99,9 +93,9 @@ public class CustomNetworkManager : NetworkManager {
 
         player.GetComponent<GeneralCharacter>().parameter.StatusInport(characterData.statusData);
         NetworkServer.AddPlayerForConnection(_conn, player);
-        if (!serverManager.connectPlayer.Contains(_conn.identity))
-            serverManager.connectPlayer.Add(_conn.identity);
-        ChatManager.Instance.CmdSendSystemMessage(serverManager.connectPlayer.Count + "is Connected ");
+        if (!ServerManager.instance.connectPlayer.Contains(_conn.identity))
+            ServerManager.instance.connectPlayer.Add(_conn.identity);
+        ChatManager.Instance.CmdSendSystemMessage(ServerManager.instance.connectPlayer.Count + "is Connected ");
     }
 
     /// <summary>
@@ -127,7 +121,7 @@ public class CustomNetworkManager : NetworkManager {
             //参加者全員に通知
             ChatManager.Instance.CmdSendSystemMessage("Leave Player");
             if (_conn.identity != null)
-                serverManager.connectPlayer.Remove(_conn.identity);
+                ServerManager.instance.connectPlayer.Remove(_conn.identity);
 
             base.OnServerDisconnect(_conn);
             return;
@@ -163,7 +157,7 @@ public class CustomNetworkManager : NetworkManager {
             GameManager.Instance.StartPveGameFromList(false); // trueにすればランダム
         }
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
-        foreach (var playerObj in serverManager.connectPlayer) {
+        foreach (var playerObj in ServerManager.instance.connectPlayer) {
             //必要な変数をキャッシュ
             GeneralCharacter character = playerObj.GetComponent<GeneralCharacter>();
             var conn = playerObj.connectionToClient;
@@ -179,7 +173,7 @@ public class CustomNetworkManager : NetworkManager {
             //ロビーシーンなら開始地点に転送
             else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
                 //重なることを考慮してランダムで座標をずらす
-                respawnPos = new Vector3(Random.Range(1, serverManager.connectPlayer.Count), 5, 0);
+                respawnPos = new Vector3(Random.Range(1, ServerManager.instance.connectPlayer.Count), 5, 0);
                 startPos.ServerTeleport(respawnPos + bufferPos, Quaternion.identity);
                 //レートの数値を反映して表示
                 RateDisplay.instance.ChangeRateUI();

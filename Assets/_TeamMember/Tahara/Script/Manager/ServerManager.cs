@@ -43,6 +43,13 @@ public class ServerManager : NetworkBehaviour {
     }
 
     /// <summary>
+    /// サーバー終了時処理
+    /// </summary>
+    public override void OnStopServer() {
+        connectPlayer.Clear();
+    }
+
+    /// <summary>
     /// プレイヤーをランダムなチームに振り分ける
     /// </summary>
     /// <param name="_allRandomTeam"></param>
