@@ -166,6 +166,13 @@ public abstract class CharacterBase : CreatureBase {
         ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready : " + parameter.ready);
     }
 
+    [Command]
+    public void CmdChangePlayerReadyFalse() {
+        parameter.ready = false;
+
+        ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready : " + parameter.ready);
+    }
+
 
     /// <summary>
     /// 被弾・死亡判定関数

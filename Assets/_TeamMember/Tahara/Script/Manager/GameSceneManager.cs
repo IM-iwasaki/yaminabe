@@ -72,7 +72,28 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadPvESceneForAll() {
+
+        // 全員の準備チェック
+        foreach (var player in ServerManager.instance.connectPlayer) {
+
+            CharacterBase readyPlayer = player.GetComponent<CharacterBase>();
+
+            if (!readyPlayer) {
+                ChatManager.Instance.CmdSendSystemMessage("Not found player Info");
+                return;
+            }
+
+            if (!readyPlayer.parameter.ready) {
+                ChatManager.Instance.CmdSendSystemMessage(readyPlayer.parameter.PlayerName + " is not ready");
+                return;
+            } else {
+                ChatManager.Instance.CmdSendSystemMessage(readyPlayer.parameter.PlayerName + " is ready!!");
+            }
+        }
+
+        // 全員準備完了ならPvEチームへ
         ServerManager.instance.SetAllPlayersToPvETeam();
+
         if (!isChanged) {
             isChanged = true;
             FadeManager.Instance.StartFadeOut(0.5f);
