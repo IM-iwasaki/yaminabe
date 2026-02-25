@@ -67,7 +67,7 @@ public class CharacterSelectManager : NetworkBehaviour {
         currentPlayer = player;
         var paramater = player.GetComponent<CharacterBase>();
 
-        paramater.CmdChangePlayerReady();
+        paramater.CmdChangePlayerReadyFalse();
 
         SetCharacterSelectState(true);
 

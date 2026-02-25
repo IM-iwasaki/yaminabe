@@ -109,7 +109,7 @@ public class GachaSystem : MonoBehaviour {
 
         var paramater = player.GetComponent<CharacterBase>();
 
-        paramater.CmdChangePlayerReady();
+        paramater.CmdChangePlayerReadyFalse();
 
         SetGachaState(true);
 
