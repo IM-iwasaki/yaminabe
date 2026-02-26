@@ -11,6 +11,9 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     [SyncVar(hook = nameof(OnRuleChanged))]
     public GameRuleType currentRule = GameRuleType.Area;
 
+    [SyncVar]
+    private bool isOvertime = false;    // 延長戦用
+
     public Dictionary<GameRuleType, float> winScores = new() {
         { GameRuleType.Area, 50f },
         { GameRuleType.Hoko, 50f },
@@ -64,7 +67,24 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         if (!GameManager.Instance.IsGameRunning())
             return;
         if (currentRule != GameRuleType.DeathMatch)
-        AddScore(teamId, amount, currentRule);
+            AddScore(teamId, amount, currentRule);
+    }
+
+    /// <summary>
+    /// 延長戦を開始する
+    /// </summary>
+    [Server]
+    private void StartOvertime() {
+        isOvertime = true;          // サーバー側で状態変更
+        RpcStartOvertime();         // 全クライアントに通知
+    }
+
+    /// <summary>
+    /// クライアント側で延長UIを表示する
+    /// </summary>
+    [ClientRpc]
+    private void RpcStartOvertime() {
+        GameUIManager.Instance?.ShowOvertime();
     }
 
     /// <summary>
@@ -80,25 +100,35 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// </summary>
     [Server]
     private void AddScore(int teamId, float amount, GameRuleType rule) {
-        // ゲームが動いていない or タイマー終了なら加算しない
-        if (!GameManager.Instance.IsGameRunning() || GameTimer.Instance.GetRemainingTime() <= 0f)
+        // ゲームが止まっているなら何もしない
+        if (!GameManager.Instance.IsGameRunning())
             return;
 
+        // 通常時間でタイマーが0なら加算しない
+        // ただし延長戦中は許可する
+        if (GameTimer.Instance.GetRemainingTime() <= 0f && !isOvertime)
+            return;
+
+        // スコア辞書に未登録なら初期化
         if (!teamScores.ContainsKey(teamId))
             teamScores[teamId] = 0f;
 
-        // Area / Hoko の場合、スコア上限に達していたら加算しない
+        // Area / Hoko の場合は目標値を超えないように制限
         if (rule != GameRuleType.DeathMatch) {
             float targetScore = winScores[rule];
             if (teamScores[teamId] >= targetScore)
                 return;
         }
 
+        // スコア加算
         teamScores[teamId] += amount;
+
+        // 全クライアントへスコア同期
         RpcUpdateScore(teamId, teamScores[teamId]);
 
+        // 勝利条件チェック
         if (rule != GameRuleType.DeathMatch)
-            CheckWinConditionAllTeams();
+            CheckWinConditionAllTeams(false);
     }
 
     /// <summary>
@@ -112,8 +142,9 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
     /// <summary>
     /// 勝利条件チェック
-    /// Area / Hoko：目標値到達
-    /// 時間切れ時：最大スコア
+    /// 目標到達勝利
+    /// 時間切れ時の延長判定
+    /// 延長終了判定
     /// </summary>
     [Server]
     public void CheckWinConditionAllTeams(bool isTimeUp = false) {
@@ -125,38 +156,71 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             return;
         }
 
+        float red = teamScores.ContainsKey(0) ? teamScores[0] : 0f;
+        float blue = teamScores.ContainsKey(1) ? teamScores[1] : 0f;
         float target = winScores[currentRule];
-        int winnerId = -1;
-        bool multiple = false;
 
-        foreach (var kvp in teamScores) {
-            if (kvp.Value >= target) {
-                if (winnerId == -1)
-                    winnerId = kvp.Key;
-                else
-                    multiple = true;
-            }
+        // 目標到達勝利
+        if (red >= target || blue >= target) {
+            int winner = -1;
+
+            if (red >= target && blue >= target)
+                winner = -1;
+            else if (red >= target)
+                winner = 0;
+            else
+                winner = 1;
+
+            SendTeamResultToAll(winner);
+            PlayerRankingManager.Instance.ApplyRateAllPlayers(winner);
+            GameManager.Instance.EndGame();
+            return;
         }
+        // 通常時間終了時の延長判定
+        if (isTimeUp && !isOvertime) {
+            int losingTeam = -1;
 
-        if (multiple)
-            winnerId = -1;
-        else if (winnerId == -1 && isTimeUp) {
-            float max = -1f;
-            foreach (var kvp in teamScores) {
-                if (kvp.Value > max) {
-                    max = kvp.Value;
-                    winnerId = kvp.Key;
-                } else if (Mathf.Approximately(kvp.Value, max)) {
-                    winnerId = -1;
-                }
+            if (red > blue) losingTeam = 1;
+            else if (blue > red) losingTeam = 0;
+
+            if (losingTeam != -1 && IsTeamControllingObject(losingTeam)) {
+                StartOvertime();
+                return;
             }
-        } else if (winnerId == -1) {
+
+            // 延長条件なし → 即終了
+            int winner = -1;
+            if (red > blue) winner = 0;
+            else if (blue > red) winner = 1;
+
+            SendTeamResultToAll(winner);
+            PlayerRankingManager.Instance.ApplyRateAllPlayers(winner);
+            GameManager.Instance.EndGame();
             return;
         }
 
-        SendTeamResultToAll(winnerId);
-        PlayerRankingManager.Instance.ApplyRateAllPlayers(winnerId);
-        GameManager.Instance.EndGame();
+        // 延長中の終了判定
+        if (isOvertime) {
+            int losingTeam = -1;
+
+            if (red > blue) losingTeam = 1;
+            else if (blue > red) losingTeam = 0;
+
+            // 同点ならまだ継続
+            if (losingTeam == -1)
+                return;
+
+            // 負けチームが保持していない → 終了
+            if (!IsTeamControllingObject(losingTeam)) {
+                int winner = red > blue ? 0 : 1;
+
+                SendTeamResultToAll(winner);
+                PlayerRankingManager.Instance.ApplyRateAllPlayers(winner);
+                GameManager.Instance.EndGame();
+            }
+
+            return;
+        }
     }
 
     /// <summary>
@@ -178,6 +242,16 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         }
 
         SendTeamResultToAll(topTeams.Count == 1 ? topTeams[0] : -1);
+    }
+
+    /// <summary>
+    /// 延長戦終了判定用
+    /// </summary>
+    [Server]
+    public void NotifyObjectStateChanged() {
+        if (!isOvertime) return;
+
+        CheckWinConditionAllTeams(false);
     }
 
     /// <summary>
@@ -235,6 +309,42 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             rule = currentRule,
             teamScores = teamScoreList.ToArray(),
         });
+    }
+
+    /// <summary>
+    /// 指定チームが現在オブジェクトに関与しているか判定
+    /// Area → 負けチームのプレイヤーが1人でもエリア内にいればOK
+    /// Hoko → ホコ保持していればOK
+    /// </summary>
+    private bool IsTeamControllingObject(int teamId) {
+        if (teamId == -1)
+            return false;
+
+        // Areaルールの場合
+        if (currentRule == GameRuleType.Area) {
+            var area = FindObjectOfType<CaptureArea>();
+            if (area == null) return false;
+
+            // エリア内にいるプレイヤーを確認
+            foreach (var player in area.playersInArea) {
+                if (player.parameter.TeamID == teamId) {
+                    // 負けチームのプレイヤーが1人でもいれば延長
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Hokoルールの場合
+        if (currentRule == GameRuleType.Hoko) {
+            var hoko = FindObjectOfType<CaptureHoko>();
+            if (hoko == null) return false;
+
+            return hoko.GetHolderTeam() == teamId;
+        }
+
+        return false;
     }
 
     /// <summary>

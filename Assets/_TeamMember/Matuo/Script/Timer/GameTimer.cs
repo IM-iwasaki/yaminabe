@@ -79,7 +79,7 @@ public class GameTimer : NetworkBehaviour {
     private void Update() {
         if (!isRunning) return;
 
-        // 無制限モード（limitTime <= 0）の場合は経過時間だけ進めて終了判定なし
+        // 無制限モード
         if (limitTime <= 0f) {
             elapsedTime += Time.deltaTime;
             return;
@@ -92,8 +92,10 @@ public class GameTimer : NetworkBehaviour {
             elapsedTime = limitTime;
             isRunning = false;
 
-            // タイマー終了イベント
-            OnTimerFinished?.Invoke();
+            // RuleManagerに勝敗判断を任せる
+            if (RuleManager.Instance != null) {
+                RuleManager.Instance.CheckWinConditionAllTeams(true);
+            }
         }
     }
 

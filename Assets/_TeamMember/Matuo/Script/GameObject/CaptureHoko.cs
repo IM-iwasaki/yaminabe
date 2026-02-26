@@ -120,6 +120,7 @@ public class CaptureHoko : NetworkBehaviour {
         holder = null;
         canBePickedUp = false;
         Invoke(nameof(EnablePickup), pickupCooldown);
+        RuleManager.Instance.NotifyObjectStateChanged();
     }
 
     [Server]
@@ -148,5 +149,20 @@ public class CaptureHoko : NetworkBehaviour {
     public void HandleGameEnd() {
         isActive = false;
         Drop();
+    }
+
+    /// <summary>
+    /// 現在ホコを持っているチームIDを返す
+    /// 所持者がいなければ -1
+    /// </summary>
+    public int GetHolderTeam() {
+        if (holder == null)
+            return -1;
+
+        var player = holder.GetComponent<CharacterBase>();
+        if (player == null)
+            return -1;
+
+        return player.parameter.TeamID;
     }
 }

@@ -31,6 +31,8 @@ public class GameUIManager : MonoBehaviour {
     private RuleManager ruleManager;
     private float timer;
 
+    private bool isOvertime = false;    // 延長戦表示中かどうか
+
     private void Awake() {
         // シングルトン
         if (Instance == null)
@@ -72,14 +74,21 @@ public class GameUIManager : MonoBehaviour {
 
     /// <summary>
     /// タイマーとスコアのUIを更新
+    /// 延長戦中はタイマーの代わりに文字表示
     /// </summary>
     public void UpdateUI() {
-        float remaining = gameTimer.GetRemainingTime();
-        timerText.text =
-            $"{Mathf.FloorToInt(remaining / 60f):00}:{Mathf.FloorToInt(remaining % 60f):00}";
+        // 延長戦中なら特別表示
+        if (isOvertime) {
+            timerText.text = "OVERTIME!!!";
+        } else {
+            float remaining = gameTimer.GetRemainingTime();
+            timerText.text =
+                $"{Mathf.FloorToInt(remaining / 60f):00}:{Mathf.FloorToInt(remaining % 60f):00}";
+        }
 
         float redScore = 0f;
         float blueScore = 0f;
+
         ruleManager.TryGetTeamScore(0, out redScore);
         ruleManager.TryGetTeamScore(1, out blueScore);
 
@@ -91,12 +100,18 @@ public class GameUIManager : MonoBehaviour {
             float target = ruleManager.winScores[ruleManager.currentRule];
             redTeamScoreText.text = $"Count\n{redScore:F0}/{target:F0}";
             blueTeamScoreText.text = $"Count\n{blueScore:F0}/{target:F0}";
-
         } else {
             // キル数などの普通のスコア
             redTeamScoreText.text = $"RedTeam: {redScore:F0}";
             blueTeamScoreText.text = $"BlueTeam: {blueScore:F0}";
         }
+    }
+
+    /// <summary>
+    /// 延長戦表示に切り替える
+    /// </summary>
+    public void ShowOvertime() {
+        isOvertime = true;
     }
 
     /// <summary>

@@ -12,7 +12,7 @@ public class CaptureArea : NetworkBehaviour {
     public float scorePerSecond = 1f;        // 1秒ごとのスコア
     public Collider areaCollider;
 
-    public HashSet<CharacterBase> playersInArea { get; private set; } = new ();// エリア内プレイヤー
+    public HashSet<CharacterBase> playersInArea { get; private set; } = new();// エリア内プレイヤー
     private float timer = 0f;
 
     private void Awake() {
@@ -34,6 +34,7 @@ public class CaptureArea : NetworkBehaviour {
         var player = other.GetComponent<CharacterBase>();
         if (player != null)
             playersInArea.Remove(player);
+        RuleManager.Instance.NotifyObjectStateChanged();
     }
 
     [ServerCallback]
@@ -67,5 +68,24 @@ public class CaptureArea : NetworkBehaviour {
             timer = 0f;
             RuleManager.Instance.OnCaptureProgress(firstTeam.Value, scorePerSecond);
         }
+    }
+
+    /// <summary>
+    /// 現在このエリアを制圧しているチームを返す
+    /// 誰もいない場合 -1
+    /// </summary>
+    public int GetControllingTeam() {
+        int? firstTeam = null;
+
+        foreach (var p in playersInArea) {
+            int team = p.parameter.TeamID;
+
+            if (firstTeam == null)
+                firstTeam = team;
+            else if (firstTeam != team)
+                return -1; // 両チームいる
+        }
+
+        return firstTeam ?? -1;
     }
 }

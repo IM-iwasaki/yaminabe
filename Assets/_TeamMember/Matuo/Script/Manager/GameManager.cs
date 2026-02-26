@@ -121,19 +121,20 @@ public class GameManager : NetworkSystemObject<GameManager> {
             if (!currentPlayer.parameter.canMove)
                 currentPlayer.parameter.canMove = true;
         }
-        // 前試合のイベントを破棄
+
+        // 前試合イベント削除
         gameTimer.ClearOnTimerFinished();
 
         gameTimer.OnTimerFinished += () => {
-            if (rule == GameRuleType.DeathMatch)
+            if (rule == GameRuleType.DeathMatch) {
                 ruleManager.EndDeathMatch();
-            else
+            } else {
+                // 勝敗判定のみ
                 ruleManager.CheckWinConditionAllTeams(true);
-
-            EndGame();
+            }
         };
 
-        // タイマー開始（GO!と同時）
+        // タイマー開始
         gameTimer.StartTimer();
     }
 
