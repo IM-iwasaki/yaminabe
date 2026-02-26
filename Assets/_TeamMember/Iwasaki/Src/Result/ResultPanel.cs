@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using TMPro;
 
 /// <summary>
 /// リザルト画面の勝敗表示およびボタン操作を制御するクラス。
@@ -10,7 +11,7 @@ using Mirror;
 /// </summary>
 public class ResultPanel : NetworkBehaviour {
     [Header("UI参照")]
-    [SerializeField] private Text winnerText;           // 勝者テキスト
+    [SerializeField] private TextMeshProUGUI winnerText;           // 勝者テキスト
     [SerializeField] private Button rematchButton;      // 再戦ボタン（ホスト専用）
     [SerializeField] private Button returnLobbyButton;  // ロビー戻りボタン（ホスト専用）
 
@@ -22,12 +23,12 @@ public class ResultPanel : NetworkBehaviour {
     [SerializeField] private GameObject deathMatchPanel; // デスマッチ用
 
     // チームスコア表示テキスト
-    [SerializeField] private Text areaRedScoreText;
-    [SerializeField] private Text areaBlueScoreText;
-    [SerializeField] private Text hokoRedProgressText;
-    [SerializeField] private Text hokoBlueProgressText;
-    [SerializeField] private Text deathRedKillText;
-    [SerializeField] private Text deathBlueKillText;
+    [SerializeField] private TextMeshProUGUI areaRedScoreText;
+    [SerializeField] private TextMeshProUGUI areaBlueScoreText;
+    [SerializeField] private TextMeshProUGUI hokoRedProgressText;
+    [SerializeField] private TextMeshProUGUI hokoBlueProgressText;
+    [SerializeField] private TextMeshProUGUI deathRedKillText;
+    [SerializeField] private TextMeshProUGUI deathBlueKillText;
 
 
 
