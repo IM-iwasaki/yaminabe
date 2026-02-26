@@ -40,15 +40,19 @@ public class AreaWorldCounterView : MonoBehaviour {
     private void UpdateText() {
         if (countText == null) return;
 
-        string header = "<size=62%><b>Count</b></size>\n";
+        // 条件によってヘッダー変更
+        string header;
+        if (area.ClearCondition == AreaClearCondition.AllPlayers) {
+            header = "<size=62%><b>Player</b></size>\n";
+        } else {
+            header = "<size=62%><b>Count</b></size>\n";
+        }
 
         if (area.ClearCondition == AreaClearCondition.AllPlayers) {
 
             int current = area.CurrentPlayerCount;
 
-            countText.text =
-                header +
-                current + " / " + area.MaxPlayerCount + " Player";
+            countText.text = header + current + " / " + area.MaxPlayerCount + " Player";
 
             // 色変更
             if (current >= area.MaxPlayerCount)
@@ -65,10 +69,7 @@ public class AreaWorldCounterView : MonoBehaviour {
 
             float current = Mathf.CeilToInt(area.CurrentScore);
 
-            countText.text =
-                header +
-                current + " / " +
-                Mathf.CeilToInt(area.TargetScore);
+            countText.text = header + current + " / " + Mathf.CeilToInt(area.TargetScore);
 
             countText.color = Color.white;
 
@@ -98,11 +99,7 @@ public class AreaWorldCounterView : MonoBehaviour {
 
         float t = 0f;
         while (t < popTime) {
-            tf.localScale = Vector3.Lerp(
-                baseScale,
-                peakScale,
-                popCurve.Evaluate(t / popTime)
-            );
+            tf.localScale = Vector3.Lerp(baseScale, peakScale, popCurve.Evaluate(t / popTime));
 
             t += Time.deltaTime;
             yield return null;
@@ -111,4 +108,10 @@ public class AreaWorldCounterView : MonoBehaviour {
         tf.localScale = baseScale;
     }
 
+    /// <summary>
+    /// テキストリフレッシュ
+    /// </summary>
+    public void Refresh() {
+        UpdateText();
+    }
 }

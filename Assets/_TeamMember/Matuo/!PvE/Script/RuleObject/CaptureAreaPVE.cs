@@ -8,7 +8,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
     [Header("スコアが増える間隔")]
     public float scorePerSecond = 1f;
     [Header("突破に必要なスコア")]
-    public float targetScore = 8f;
+    [SyncVar(hook = nameof(OnTargetScoreChanged))]
+    private float targetScore = 8f;
     public Collider areaCollider;
 
     [Header("このエリア突破時に実行するイベント")]
@@ -16,14 +17,16 @@ public class CaptureAreaPVE : NetworkBehaviour {
 
     [SyncVar] private float currentScore = 0f;
     [SyncVar] private int currentPlayerCount = 0;
-    [SyncVar] private int maxPlayerCount = 0;
+    [SyncVar(hook = nameof(OnMaxPlayerCountChanged))]
+    private int maxPlayerCount = 0;
 
     private float timer = 0f;
 
     private HashSet<CharacterBase> playersInArea = new();
     private bool cleared = false;
 
-    private AreaClearCondition clearCondition;
+    [SyncVar(hook = nameof(OnClearConditionChanged))]
+    private AreaClearCondition clearCondition = AreaClearCondition.AnyPlayer;
 
     public float CurrentScore => currentScore;
     public float TargetScore => targetScore;
@@ -51,6 +54,34 @@ public class CaptureAreaPVE : NetworkBehaviour {
             if (evt == null) continue;
             onClearedEvents.Add(evt);
         }
+
+        // クライアントに UI 更新通知
+        RpcUpdateUI();
+    }
+
+    [ClientRpc]
+    private void RpcUpdateUI() {
+        var view = GetComponentInChildren<AreaWorldCounterView>();
+        if (view != null)
+            view.Refresh();
+    }
+
+    private void OnTargetScoreChanged(float oldVal, float newVal) {
+        UpdateUI();
+    }
+
+    private void OnClearConditionChanged(AreaClearCondition oldVal, AreaClearCondition newVal) {
+        UpdateUI();
+    }
+
+    private void OnMaxPlayerCountChanged(int oldVal, int newVal) {
+        UpdateUI();
+    }
+
+    private void UpdateUI() {
+        var view = GetComponentInChildren<AreaWorldCounterView>();
+        if (view != null)
+            view.Refresh();
     }
 
     [ServerCallback]
