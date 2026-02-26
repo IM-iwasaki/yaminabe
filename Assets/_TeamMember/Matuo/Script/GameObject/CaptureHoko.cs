@@ -98,9 +98,9 @@ public class CaptureHoko : NetworkBehaviour {
         scoreTimer = 0f; // スコア加算タイマーリセット
 
         // 移動速度を下げる
-        var param = player.GetComponent<CharacterBase>().parameter;
+        var param = player.GetComponent<CharacterParameter>();
         if (param != null) {
-            param.moveSpeed = Mathf.Max(1, param.moveSpeed - 3); // 3下げる
+            param.speedMultiplier = 0.7f;
         }
     }
 
@@ -111,10 +111,10 @@ public class CaptureHoko : NetworkBehaviour {
     public void Drop() {
         if (holder == null) return;
 
-        // 元の速度に戻す
-        var param = holder.GetComponent<CharacterBase>().parameter;
+        // 移動速度を元に戻す
+        var param = holder.GetComponent<CharacterParameter>();
         if (param != null) {
-            param.OutDefaultStatus_MoveSpeed(); // デフォルト速度に戻す
+            param.speedMultiplier = 1f; // 元に戻す
         }
 
         holder = null;

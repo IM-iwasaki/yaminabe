@@ -59,6 +59,8 @@ public class CharacterParameter : NetworkBehaviour {
     // 味方検知用
     public bool HasNearbyAlly { get; private set; }
 
+    [SyncVar] public float speedMultiplier = 1f; // ホコ用移動速度
+
     #endregion
 
     #region Transform系変数
