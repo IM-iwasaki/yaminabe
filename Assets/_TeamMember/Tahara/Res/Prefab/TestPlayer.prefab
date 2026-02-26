@@ -451,6 +451,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  weaponID: 0
   weaponData: {fileID: 11400000, guid: c7a01917bcaabcc47832e0fcbb847bf1, type: 2}
   firePoint: {fileID: 8141860258521693391}
 --- !u!114 &205382949362171920
@@ -526,6 +527,7 @@ MonoBehaviour:
   isDead: 0
   AttackTrigger: 0
   canMove: 1
+  money: 0
 --- !u!114 &7720380049160173364
 MonoBehaviour:
   m_ObjectHideFlags: 0
