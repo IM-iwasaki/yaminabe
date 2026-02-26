@@ -151,7 +151,8 @@ public class CharacterActions : NetworkBehaviour {
 
         // ‹ó’†‚©’nã‚Å‹““®‚ğ•ª‚¯‚é
         Vector3 velocity = rb.velocity;
-        Vector3 targetVelocity = new(moveDirection.x * param.moveSpeed, velocity.y, moveDirection.z * param.moveSpeed);
+        Vector3 targetVelocity = new(moveDirection.x * param.moveSpeed * param.speedMultiplier,velocity.y,moveDirection.z * param.moveSpeed * param.speedMultiplier
+);
 
         //’n–Ê‚É—§‚Á‚Ä‚¢‚½‚ç’Êí’Ê‚è
         if (param.IsGrounded) {
