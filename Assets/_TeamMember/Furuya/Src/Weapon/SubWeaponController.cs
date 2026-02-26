@@ -174,7 +174,7 @@ public class SubWeaponController : NetworkBehaviour {
         );
 
         int teamID = characterBase?.parameter.TeamID ?? 0;
-        Vector3 throwDirection = transform.forward;
+        Vector3 throwDirection = characterBase.parameter.GetShootDirection();
 
         // SmokeGrenade �̏ꍇ
         if (subWeaponData is SmokeData smokeData && grenadeObj.TryGetComponent(out SmokeGrenade smokeGrenade)) {

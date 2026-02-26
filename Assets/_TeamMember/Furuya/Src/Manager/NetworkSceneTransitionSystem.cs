@@ -16,7 +16,6 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
     [Server]
     public void ChangeScene(string sceneName) {
         RpcStartFadeOut(sceneName);
-
         if (sceneName == GameSceneManager.Instance.lobbySceneName) {
             AudioManager.Instance.CmdPlayBGM("ƒƒr[", 2f);
         }
