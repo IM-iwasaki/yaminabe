@@ -3,76 +3,118 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// ゲーム全体の進行管理
-/// ゲーム開始・終了、ルール切替、タイマー管理
+/// ゲーム全体の進行を管理するクラス
+/// PVP / PVE開始処理
+/// タイマー管理
+/// ルール終了処理
 /// </summary>
 public class GameManager : NetworkSystemObject<GameManager> {
-    public CaptureHoko hoko { get; private set; }
-    [SyncVar] private bool isGameRunning = false;
+    #region 定数
+
+    private const int COUNTDOWN_SECONDS = 3;
+    private const float GAME_START_DELAY = 4f;
+    private const float DEFAULT_REMAINING_TIME = 0f;
+
+    #endregion
+
+    #region 変数
+
+    public CaptureHoko Hoko { get; private set; }
+
+    [SyncVar]
+    private bool isGameRunning = false;
+
     private GameTimer gameTimer;
     private RuleManager ruleManager;
-
-    [SyncVar] private bool isPveMode = false;
     private PVEStageData currentPveStage;
 
+    #endregion
+
+    #region 初期化
+
     /// <summary>
-    /// 初期化
+    /// 初期化処理
     /// </summary>
     public override void Initialize() {
         base.Initialize();
 
+        // GameTimer取得（なければ追加）
         gameTimer = GetComponent<GameTimer>();
-        if (gameTimer == null)
+        if (gameTimer == null) {
             gameTimer = gameObject.AddComponent<GameTimer>();
+        }
 
+        // ルールマネージャ取得
         ruleManager = RuleManager.Instance;
     }
+
+    #endregion
+
+    #region PVP関連処理
 
     /// <summary>
     /// PVPゲーム開始
     /// </summary>
-    /// <param name="rule">開始するルールタイプ</param>
-    /// <param name="stageData">生成するステージのステージデータ</param>
     [Server]
     public void StartPvpGame(GameRuleType rule, StageData stageData) {
-        if (isGameRunning) return;
+        // 既に進行中なら開始しない
+        if (isGameRunning) {
+            return;
+        }
 
-        // 試合開始前の初期化
-        isGameRunning = false;
-        isPveMode = false;
-        currentPveStage = null;
+        // 試合前初期化
+        ResetGameState();
 
+        // タイマーリセット
         gameTimer?.ResetTimer();
 
+        // プレイヤー支出リセット
         PlayerWallet.Instance.ResetMatchSpentMoney();
 
         // ステージ生成
-        StageManager.Instance.SpawnStage(stageData, rule);
+        SpawnPvpStage(rule, stageData);
 
-        StageManager.Instance.SetRespawnMode(
-            rule == GameRuleType.DeathMatch
-                ? RespawnMode.Random
-                : RespawnMode.Team
-        );
-
-        // PVPのみルールスコア初期化
+        // ルールスコア初期化
         ruleManager.InitializeScoresForRule(rule);
 
         // カウントダウン開始
-        CountdownManager.Instance.SendCountdown(3);
+        CountdownManager.Instance.SendCountdown(COUNTDOWN_SECONDS);
         StartCoroutine(StartGameAfterCountdown(rule));
     }
 
     /// <summary>
-    /// PVEゲーム開始前の準備
+    /// PVP用ステージ生成
     /// </summary>
-    /// <param name="random"></param>
+    private void SpawnPvpStage(GameRuleType rule, StageData stageData) {
+        StageManager.Instance.SpawnStage(stageData, rule);
+
+        // リスポーン方式設定
+        RespawnMode mode =
+            rule == GameRuleType.DeathMatch
+            ? RespawnMode.Random
+            : RespawnMode.Team;
+
+        StageManager.Instance.SetRespawnMode(mode);
+    }
+
+    #endregion
+
+    #region PVE関連処理
+
+    /// <summary>
+    /// PVEゲーム開始（リストから取得）
+    /// </summary>
     [Server]
     public void StartPveGameFromList(bool random = false) {
-        if (isGameRunning) return;
+        if (isGameRunning) {
+            return;
+        }
 
-        var stage = StageManager.Instance.GetNextPveStage(random);
-        if (stage == null) return;
+        // ステージ取得
+        PVEStageData stage = StageManager.Instance.GetNextPveStage(random);
+        if (stage == null) {
+            return;
+        }
 
         StartPveGame(stage);
     }
@@ -82,49 +124,59 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// </summary>
     [Server]
     public void StartPveGame(PVEStageData stage) {
-        if (isGameRunning) return;
-        if (stage == null) return;
+        if (isGameRunning) {
+            return;
+        }
 
-        isPveMode = true;
+        if (stage == null) {
+            return;
+        }
+
+        // PVE状態設定
         currentPveStage = stage;
-
         isGameRunning = false;
 
-        // PvEステージ生成
+        // ステージ生成
         StageManager.Instance.SpawnPveStage(stage);
 
-        // PvE用ゲーム開始
+        // ラウンド開始
         StartPveRound();
     }
 
+    /// <summary>
+    /// PVEステージのみ設定
+    /// </summary>
     [Server]
     public void SetPveStage(PVEStageData stage) {
-        isPveMode = true;
         currentPveStage = stage;
     }
 
+    /// <summary>
+    /// PVEラウンド開始
+    /// </summary>
     [Server]
     private void StartPveRound() {
         isGameRunning = true;
     }
 
+    #endregion
+
+    #region タイマー・進行管理
+
     /// <summary>
-    /// カウントダウン終了後にゲームを開始する
+    /// カウントダウン終了後にゲーム開始
     /// </summary>
     [Server]
     private IEnumerator StartGameAfterCountdown(GameRuleType rule) {
-        yield return new WaitForSeconds(4f);
+        // カウントダウン待機
+        yield return new WaitForSeconds(GAME_START_DELAY);
 
         isGameRunning = true;
-        foreach (var player in ServerManager.instance.connectPlayer) {
-            GeneralCharacter currentPlayer = player.GetComponent<GeneralCharacter>();
-            if (!currentPlayer.parameter.canMove)
-                currentPlayer.parameter.canMove = true;
-        }
 
-        // 前試合イベント削除
+        // 前回イベント削除
         gameTimer.ClearOnTimerFinished();
 
+        // タイマー終了時処理登録
         gameTimer.OnTimerFinished += () => {
             if (rule == GameRuleType.DeathMatch) {
                 ruleManager.EndDeathMatch();
@@ -139,39 +191,68 @@ public class GameManager : NetworkSystemObject<GameManager> {
     }
 
     /// <summary>
-    /// ホコオブジェクト登録
-    /// </summary>
-    [Server]
-    public void RegisterHoko(CaptureHoko h) {
-        hoko = h;
-    }
-
-    /// <summary>
     /// ゲーム終了処理
     /// </summary>
     [Server]
     public void EndGame() {
-        if (!isGameRunning) return;
+        if (!isGameRunning) {
+            return;
+        }
 
-        isGameRunning = false;
-        isPveMode = false;
-        currentPveStage = null;
+        // 状態リセット
+        ResetGameState();
 
+        // タイマー停止
         gameTimer.StopTimer();
         gameTimer.ClearOnTimerFinished();
-        Cursor.lockState = CursorLockMode.None;
 
-        if (hoko != null)
-            hoko.HandleGameEnd();
+        // カーソル解放
+        Cursor.lockState = CursorLockMode.None;
     }
+
+    #endregion
+
+    #region 状態取得
 
     /// <summary>
     /// ゲーム進行中か
     /// </summary>
-    public bool IsGameRunning() => isGameRunning;
+    public bool IsGameRunning() {
+        return isGameRunning;
+    }
 
     /// <summary>
     /// 残り時間取得
     /// </summary>
-    public float GetRemainingTime() => gameTimer != null ? gameTimer.GetRemainingTime() : 0f;
+    public float GetRemainingTime() {
+        return gameTimer != null
+            ? gameTimer.GetRemainingTime()
+            : DEFAULT_REMAINING_TIME;
+    }
+
+    #endregion
+
+    #region 共通内部処理
+
+    /// <summary>
+    /// ゲーム状態初期化
+    /// </summary>
+    private void ResetGameState() {
+        isGameRunning = false;
+        currentPveStage = null;
+    }
+
+    #endregion
+
+    #region 登録処理
+
+    /// <summary>
+    /// ホコオブジェクト登録(hokoルール用)
+    /// </summary>
+    [Server]
+    public void RegisterHoko(CaptureHoko h) {
+        Hoko = h;
+    }
+
+    #endregion
 }
