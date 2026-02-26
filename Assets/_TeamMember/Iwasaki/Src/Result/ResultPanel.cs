@@ -31,6 +31,13 @@ public class ResultPanel : NetworkBehaviour {
     [SerializeField] private TextMeshProUGUI deathBlueKillText;
 
 
+    #region テキスト演出用
+    // 勝者演出用
+    [SerializeField] private float winnerDelay = 0.5f;   // 表示までの待機時間
+    [SerializeField] private float winnerAnimTime = 0.4f; // アニメ時間
+    #endregion
+
+
 
 
 
@@ -113,21 +120,10 @@ public class ResultPanel : NetworkBehaviour {
     public void ShowWinner(string name, bool isTeamBattle) {
         if (winnerText == null) return;
 
-        // 引き分け専用処理
-        if (name == "Draw") {
-            winnerText.text = "Draw";
-            winnerText.color = Color.yellow; // 見やすい色に
-            return;
-        }
+        // いったん非表示スケールにする
+        winnerText.transform.localScale = Vector3.zero;
 
-        if (isTeamBattle) {
-            winnerText.text = $"{name} Team  Win!";
-            // チームカラーに合わせて色分け（例：Red / Blue）
-            winnerText.color = (name == "Red") ? Color.red : Color.blue;
-        } else {
-            winnerText.text = $"Winner : {name}";
-            winnerText.color = Color.white;
-        }
+        StartCoroutine(PlayWinnerAnimation(name, isTeamBattle));
     }
 
     // エリアチームスコア表示用関数
@@ -159,8 +155,83 @@ public class ResultPanel : NetworkBehaviour {
     }
 
 
+    #region リザルト演出
+
+    /// <summary>
+    /// 勝者テキストのドン演出
+    /// </summary>
+    private System.Collections.IEnumerator PlayWinnerAnimation(string name, bool isTeamBattle) {
+        // 少し待つ
+        yield return new WaitForSeconds(winnerDelay);
+
+        // ===== テキスト内容設定 =====
+        if (name == "Draw") {
+            winnerText.text = "Draw";
+            winnerText.color = Color.yellow;
+        }
+        else if (isTeamBattle) {
+            winnerText.text = $"{name} Team  Win!";
+            winnerText.color = (name == "Red") ? Color.red : Color.blue;
+        }
+        else {
+            winnerText.text = $"Winner : {name}";
+            winnerText.color = Color.white;
+        }
+
+        // ===== 拡大アニメーション =====
+        float time = 0f;
+
+        while (time < winnerAnimTime) {
+            time += Time.deltaTime;
+
+            // 0 → 1.2 まで拡大
+            float scale = Mathf.Lerp(0f, 1.2f, time / winnerAnimTime);
+            winnerText.transform.localScale = new Vector3(scale, scale, 1f);
+
+            yield return null;
+        }
+
+        // 最後に少し縮めて安定させる（ドン感）
+        winnerText.transform.localScale = Vector3.one;
+
+        // 最後に等倍へ戻す
+        winnerText.transform.localScale = Vector3.one;
+
+        //StartCoroutine(WinnerColorShift());
+        // 出現後の鼓動アニメ開始
+        StartCoroutine(WinnerIdlePulse());
+
+    }
 
 
+    /// <summary>
+    /// ゆっくり鼓動アニメーション
+    /// </summary>
+    private System.Collections.IEnumerator WinnerIdlePulse() {
+        float pulseSpeed = 3f;     // 速さ
+        float pulseAmount = 0.05f; // 揺れ幅
+
+        while (true) {
+            float scale = 1f + Mathf.Sin(Time.time * pulseSpeed) * pulseAmount;
+            winnerText.transform.localScale = new Vector3(scale, scale, 1f);
+            yield return null;
+        }
+    }
+    /// <summary>
+    /// テキストを光らせる
+    /// </summary>
+    private System.Collections.IEnumerator WinnerColorShift() {
+        while (true) {
+            float t = (Mathf.Sin(Time.time * 2f) + 1f) * 0.5f;
+            winnerText.color = Color.Lerp(Color.white, Color.red, t);
+            yield return null;
+        }
+    }
+
+
+
+
+    #endregion
 
     //================================================================
     // ボタンイベント（ホストのみ有効）
