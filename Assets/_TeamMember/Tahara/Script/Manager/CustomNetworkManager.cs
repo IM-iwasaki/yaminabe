@@ -16,6 +16,12 @@ public class CustomNetworkManager : NetworkManager {
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
     public override void Start() {
+
+        if (Application.isBatchMode) {
+            StartServer();
+            return;
+        }
+
 #if DEBUG
         if (TitleManager.instance == null) {
             base.Start();
@@ -58,9 +64,12 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     public override void OnStartClient() {
         base.OnStartClient();
+
+        if (Application.isBatchMode) return;
+
         if (NetworkServer.active) {
             GameObject uiRoot = GameObject.Find("GameUI");
-            HostUI host = Instantiate(hostUI,uiRoot.transform);
+            HostUI host = Instantiate(hostUI, uiRoot.transform);
             hostUI = host;
             hostUI.Init();
         }
@@ -138,6 +147,10 @@ public class CustomNetworkManager : NetworkManager {
                 HostUI.ShowOrHideUI();
             GameSceneManager.Instance.ResetIsChangedScene();
         }
+
+        if (!Application.isBatchMode) {
+            FadeManager.Instance.StartFadeIn(0.5f);
+        }
         Cursor.lockState = HostUI.isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
@@ -180,7 +193,7 @@ public class CustomNetworkManager : NetworkManager {
                 character.parameter.TargetSkillUIUpdate(conn);
             }
             //PvEシーンはスポーン位置を一か所(余裕を持たせて)に固定
-            else if(sceneName == GameSceneManager.Instance.pveSceneName) {
+            else if (sceneName == GameSceneManager.Instance.pveSceneName) {
                 startPos.ServerTeleport(bufferPos, Quaternion.identity);
             }
         }
@@ -205,9 +218,13 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     public override void OnStopClient() {
         base.OnStopClient();
-        Cursor.lockState = CursorLockMode.None;
-        Destroy(gameObject);
-        SceneManager.LoadScene("TitleScene");
+
+        if (!Application.isBatchMode) {
+            Cursor.lockState = CursorLockMode.None;
+            Destroy(gameObject);
+            SceneManager.LoadScene("TitleScene");
+        }
+
     }
 
     public override void OnClientDisconnect() {
