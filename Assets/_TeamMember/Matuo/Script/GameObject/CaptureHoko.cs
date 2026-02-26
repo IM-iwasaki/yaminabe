@@ -143,15 +143,6 @@ public class CaptureHoko : NetworkBehaviour {
     }
 
     /// <summary>
-    /// ゲーム終了時にホコ落とす
-    /// </summary>
-    [Server]
-    public void HandleGameEnd() {
-        isActive = false;
-        Drop();
-    }
-
-    /// <summary>
     /// 現在ホコを持っているチームIDを返す
     /// 所持者がいなければ -1
     /// </summary>
