@@ -86,7 +86,7 @@ public class SubWeaponController : NetworkBehaviour {
     /// <summary>
     /// サブ武器の使用可否判定
     /// </summary>
-    public void TryUseSubWeapon() {
+    public void TryUseSubWeapon(Vector3 direction) {
         // キャラ選択・ガチャ中ならブロック
         if (IsUIBlocked())
             return;
@@ -97,14 +97,14 @@ public class SubWeaponController : NetworkBehaviour {
             return;
 
         isUsingSubWeapon = true;
-        CmdUseSubWeapon();
+        CmdUseSubWeapon(direction);
     }
 
     /// <summary>
     /// サブ武器使用
     /// </summary>
     [Command]
-    private void CmdUseSubWeapon() {
+    private void CmdUseSubWeapon(Vector3 direction) {
         if (subWeaponData == null || currentUses <= 0 || !isServer) return;
 
         currentUses--;
@@ -112,7 +112,7 @@ public class SubWeaponController : NetworkBehaviour {
         // サブ武器の種類ごとの処理
         switch (subWeaponData.type) {
             case SubWeaponType.Grenade:
-                SpawnGrenade();
+                SpawnGrenade(direction);
                 break;
 
             case SubWeaponType.Trap:
@@ -164,7 +164,7 @@ public class SubWeaponController : NetworkBehaviour {
     /// グレ生成
     /// </summary>
     [Server]
-    private void SpawnGrenade() {
+    private void SpawnGrenade(Vector3 throwDirection) {
         if (subWeaponData.ObjectPrefab == null) return;
 
         GameObject grenadeObj = ProjectilePool.Instance.SpawnFromPool(
@@ -174,7 +174,6 @@ public class SubWeaponController : NetworkBehaviour {
         );
 
         int teamID = characterBase?.parameter.TeamID ?? 0;
-        Vector3 throwDirection = characterBase.parameter.GetShootDirection();
 
         // SmokeGrenade の場合
         if (subWeaponData is SmokeData smokeData && grenadeObj.TryGetComponent(out SmokeGrenade smokeGrenade)) {

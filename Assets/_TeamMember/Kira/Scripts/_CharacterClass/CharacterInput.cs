@@ -11,6 +11,7 @@ public class CharacterInput : NetworkBehaviour {
     public bool AttackPressed { get; private set; }
     public bool AttackReleased { get; private set; }
     public bool AttackTriggered { get; private set; }
+    public bool SubAttackPressed { get; private set; }
 
     public bool SkillTriggered;
     public bool InteractTriggered;
@@ -103,7 +104,7 @@ public class CharacterInput : NetworkBehaviour {
                 OnAttack(ctx);
                 break;
             case "SubWeapon":
-                core.weaponController_sub.TryUseSubWeapon();
+                OnAttackSub(ctx);
                 break;
             case "ShowHostUI":
                 core.OnShowHostUI(ctx);
@@ -176,7 +177,7 @@ public class CharacterInput : NetworkBehaviour {
         float moveZ = MoveInput.y;
 
         //€–S’†‚ÍˆÚ“®ƒxƒNƒgƒ‹‚ğ0‚É‚·‚é
-        if (core.parameter.isDead) MoveInput = Vector2.zero; 
+        if (core.parameter.isDead) MoveInput = Vector2.zero;
 
         animCon.ControllMoveAnimation(moveX, moveZ);
     }
@@ -217,6 +218,33 @@ public class CharacterInput : NetworkBehaviour {
             //‰Ÿ‚µ‚½uŠÔ
             case InputActionPhase.Performed:
                 AttackTriggered = true;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// UŒ‚“ü—Í
+    /// </summary>
+    public void OnAttackSub(InputAction.CallbackContext ctx) {
+        //€–S‚µ‚Ä‚¢‚½‚çƒtƒ‰ƒO‚ğ‰º‚µ‚ÄUŒ‚‚Å‚«‚È‚­‚·‚é
+        if (core.parameter.isDead || !isLocalPlayer) {
+            SubAttackPressed = false;
+            return;
+        }
+
+        //“ü—Íƒ^ƒCƒv‚Å•ªŠò
+        switch (ctx.phase) {
+            //‰Ÿ‚µ‚½uŠÔ‚©‚ç
+            case InputActionPhase.Started:
+                SubAttackPressed = true;
+                break;
+            //—£‚µ‚½uŠÔ‚Ü‚Å
+            case InputActionPhase.Canceled:
+                SubAttackPressed = false;
+                break;
+            //‰Ÿ‚µ‚½uŠÔ
+            case InputActionPhase.Performed:
+                SubAttackPressed = true;
                 break;
         }
     }

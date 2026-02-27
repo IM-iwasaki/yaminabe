@@ -75,6 +75,7 @@ public class CharacterActions : NetworkBehaviour {
 
         //UŒ‚“ü—Í‚ª‚ ‚éŠÔUŒ‚ŠÖ”‚ğŒÄ‚Ô(ŠÔŠu‚Ì§Œä‚ÍMainWeaponController‚Éˆê”C)
         if (input.AttackPressed) StartAttack();
+        if (input.SubAttackPressed) StartSubAttack();
 
         HandleSkill();
         HandleInteract();
@@ -224,6 +225,22 @@ public class CharacterActions : NetworkBehaviour {
         }
 
         core.weaponController_main.AttemptAttack(shootDir);
+    }
+    
+    /// <summary>
+    /// UŒ‚ŠÖ”
+    /// </summary>
+    virtual public void StartSubAttack() {
+        if (core.weaponController_sub == null) return;
+
+        if (HostUI.isVisibleUI == true) return;
+        
+        //ÅŒã‚ÉUŒ‚‚µ‚½ŠÔ‚ğ‹L˜^
+        param.AttackStartTimeRecord();
+        // •Ší‚ªUŒ‚‰Â”\‚©ƒ`ƒFƒbƒN‚µ‚ÄƒT[ƒo[–½—ß‚ğ‘—‚é(CmdRequestAttack•Šíí‚²‚Æ‚Ì•ªŠò‚à‘¤‚Å)
+        Vector3 shootDir = core.parameter.GetShootDirection();
+
+        core.weaponController_sub.TryUseSubWeapon(shootDir);
     }
 
     /// <summary>
