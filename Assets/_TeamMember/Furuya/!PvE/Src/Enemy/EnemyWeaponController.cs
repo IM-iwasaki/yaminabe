@@ -82,35 +82,47 @@ public class EnemyWeaponController : NetworkBehaviour {
 
     // --- ñÇñ@çUåÇ ---
     void ServerMagicAttack(MainMagicData magic, Vector3 direction) {
-        if (magic.projectilePrefab == null)
+        if (magic == null || magic.projectilePrefab == null)
             return;
 
-        GameObject proj;
+        Vector3 safeDir = direction;
+        safeDir.y = 0f;
+
+        if (safeDir.sqrMagnitude < 0.0001f) {
+            safeDir = firePoint.forward;
+        }
+
+        safeDir.Normalize();
+
+        Quaternion rot = Quaternion.LookRotation(safeDir);
+
+        GameObject proj = null;
 
         if (magic.magicType == ProjectileType.DoT) {
             Vector3 spawnPos = transform.position;
-            Quaternion rot = Quaternion.identity;
+            Quaternion dotRot = rot;
 
             if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f)) {
                 spawnPos = hit.point;
-                rot = Quaternion.LookRotation(direction, hit.normal);
+                dotRot = Quaternion.LookRotation(safeDir, hit.normal);
             }
 
             proj = ProjectilePool.Instance.SpawnFromPool(
                 magic.projectilePrefab.name,
                 spawnPos,
-                rot
+                dotRot
             );
         }
         else {
             proj = ProjectilePool.Instance.SpawnFromPool(
                 magic.projectilePrefab.name,
                 firePoint.position,
-                Quaternion.LookRotation(direction)
+                rot
             );
         }
 
-        if (proj == null) return;
+        if (proj == null)
+            return;
 
         if (proj.TryGetComponent(out MagicProjectile mp)) {
             mp.Init(
@@ -122,9 +134,9 @@ public class EnemyWeaponController : NetworkBehaviour {
                 magic.projectileSpeed,
                 magic.initialHeightSpeed,
                 magic.damage,
-                direction
+                safeDir
             );
-        }
+        } 
         else if (proj.TryGetComponent(out DoTArea dot)) {
             dot.Init(
                 -2,
