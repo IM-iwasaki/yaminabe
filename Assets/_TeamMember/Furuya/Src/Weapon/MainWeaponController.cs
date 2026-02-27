@@ -86,24 +86,26 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 if (weaponData is GunData gunData) {
-                    if (gunData.type == WeaponType.MoneyGun)
-                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
-                    else {
 
-                        //弾がなかったら通過不可。かわりにリロードを要求する。
-                        if (ammo == 0) {
-                            ReloadRequest();
-                            return;
-                        }
-                        //その他リロード中は射撃できなくする。
-                        else if (characterBase.parameter.isReloading) return;
 
-                        StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
-                        if (ammo > 0)
-                            ammo -= gunData.multiShot;
+                    //弾がなかったら通過不可。かわりにリロードを要求する。
+                    if (ammo == 0) {
+                        ReloadRequest();
+                        return;
                     }
+                    //その他リロード中は射撃できなくする。
+                    else if (characterBase.parameter.isReloading) return;
+
+                    StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
+                    if (ammo > 0)
+                        ammo -= gunData.multiShot;
+
 
                 }
+                break;
+            case WeaponType.MoneyGun:
+                if (weaponData is GunData moneyGunData)
+                    StartCoroutine(ServerBurstShoot(direction, moneyGunData.multiShot, moneyGunData.burstDelay));
                 break;
 
             case WeaponType.Magic:
@@ -137,8 +139,8 @@ public class MainWeaponController : NetworkBehaviour {
                 if (!PlayerWallet.Instance.SpendMoney(weaponData.cost))
                     return; // お金不足で撃てない
 
-                ammo = PlayerWallet.Instance.currentMoney; // UI更新用
             }
+            ammo = PlayerWallet.Instance.currentMoney; // UI更新用
         }
 
         // サーバーに弾撃ちをリクエスト
@@ -206,7 +208,7 @@ public class MainWeaponController : NetworkBehaviour {
 
         // サーバーで SyncVar を更新
         appearanceID = data.appearanceID;
-        weaponID = data.WeaponID; 
+        weaponID = data.WeaponID;
         weaponData = data;
         ChangeWeapon(weaponData);
 
@@ -239,7 +241,8 @@ public class MainWeaponController : NetworkBehaviour {
     public bool CanUseWeapon(CharacterEnum.CharaterType character, WeaponType weapon) {
         return character switch {
             CharacterEnum.CharaterType.Melee => weapon == WeaponType.Melee,
-            CharacterEnum.CharaterType.Gunner => weapon == WeaponType.Gun,
+            CharacterEnum.CharaterType.Gunner => weapon == WeaponType.Gun
+                                              || weapon == WeaponType.MoneyGun,
             CharacterEnum.CharaterType.Wizard => weapon == WeaponType.Magic,
             _ => false
         };
