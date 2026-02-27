@@ -67,8 +67,35 @@ public class ProjectilePool : NetworkBehaviour {
             return null;
         }
 
-        GameObject obj = pool.Dequeue();
-        pool.Enqueue(obj);
+        GameObject obj = null;
+
+        int count = pool.Count;
+
+        // 非アクティブなオブジェクトを探す
+        for (int i = 0; i < count; i++) {
+            GameObject candidate = pool.Dequeue();
+
+            if (!candidate.activeSelf) {
+                obj = candidate;
+                pool.Enqueue(candidate);
+                break;
+            }
+
+            pool.Enqueue(candidate);
+        }
+
+        // 全部使用中なら新規生成
+        if (obj == null) {
+            GameObject prefab = pools.Find(p =>
+                (string.IsNullOrWhiteSpace(p.name) ? p.prefab.name : p.name) == name
+            )?.prefab;
+
+            if (prefab == null) return null;           
+
+            obj = Instantiate(prefab);
+            NetworkServer.Spawn(obj);
+            pool.Enqueue(obj);
+        }
 
         obj.transform.SetPositionAndRotation(position, rotation);
         obj.SetActive(true);
