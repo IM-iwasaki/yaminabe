@@ -115,10 +115,10 @@ public class MagicProjectile : NetworkBehaviour {
         if (other.TryGetComponent(out CreatureBase targetNormal)) {
             if (targetNormal.teamID != owner.GetComponent<CreatureBase>().teamID) {
                 targetNormal.TakeDamage(damage, ownerName, ID);
+                RpcPlayHitEffect(transform.position, hitEffectType);
             }
         }
 
-        RpcPlayHitEffect(transform.position, hitEffectType);
         Deactivate();
     }
 

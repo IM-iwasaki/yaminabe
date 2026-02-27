@@ -353,8 +353,6 @@ public class MainWeaponController : NetworkBehaviour {
         if (weaponData is not MainMagicData magicData || magicData.projectilePrefab == null)
             return;
 
-        //MPが不足していたら帰る
-        if (characterBase.parameter.MP < magicData.MPCost) return;
         characterBase.parameter.MP -= magicData.MPCost;
 
         GameObject proj;
@@ -419,6 +417,9 @@ public class MainWeaponController : NetworkBehaviour {
     [Server]
     public void ServerStartMagicCast(Vector3 direction) {
         if (weaponData is not MainMagicData magicData) return;
+
+        //MPが不足していたら帰る
+        if (characterBase.parameter.MP < magicData.MPCost) return;
 
         //クライアント側にチャージエフェクトを出させる
         if (magicData.chargeTime > 0)

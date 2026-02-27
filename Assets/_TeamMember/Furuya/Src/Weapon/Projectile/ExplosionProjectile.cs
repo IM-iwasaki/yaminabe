@@ -52,6 +52,8 @@ public class ExplosionProjectile : NetworkBehaviour {
         // ©•ª©g‚Ì”­ËŒ³‚É‚Í“–‚½‚ç‚È‚¢
         if (other.gameObject == owner) return;
 
+        if (other.TryGetComponent<DoTArea>(out _)) return;
+
         Explode();
     }
 
