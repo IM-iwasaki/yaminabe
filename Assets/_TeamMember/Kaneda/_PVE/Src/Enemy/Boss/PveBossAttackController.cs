@@ -41,7 +41,7 @@ public class PveBossAttackController : NetworkBehaviour
         //  —”‚ğæ“¾
         int rand = Random.Range(0, bossAttack.Count);
         //  ’Š‘I‚³‚ê‚½UŒ‚‚ğg—p
-        bossAttack[1].StartAttack(weapon, boss, boss.currentTarget);
+        bossAttack[rand].StartAttack(weapon, boss, boss.currentTarget);
     }
 
     /// <summary>
