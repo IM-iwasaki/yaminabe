@@ -47,6 +47,7 @@ public class LoadingUI : MonoBehaviour {
 
         isLoading = false;
         gameObject.SetActive(false);
+        FadeManager.Instance.StartFadeIn(1.0f);
     }
 
     /// <summary>

@@ -205,7 +205,6 @@ public class CustomNetworkManager : NetworkManager {
         }
         StartCoroutine(loadingUI.HideLoading());
         Physics.simulationMode = SimulationMode.FixedUpdate;
-        FadeManager.Instance.StartFadeIn(1.0f);
     }
 
     /// <summary>
