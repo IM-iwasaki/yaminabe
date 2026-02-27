@@ -77,6 +77,7 @@ public class PveBossController : NetworkBehaviour
             ChangeState(BossState.Attack);
             attackTimer = 0;
             attack.TryAttack(currentTarget);
+            SelectRandomTarget(targets);
         }
         else {
             ChangeState(BossState.Move);
