@@ -120,6 +120,8 @@ public class GameUIManager : MonoBehaviour {
     public void UpdateTeamScore(int teamId, float score) {
         if (!IsClientActive()) return;
 
+        if (redTeamScoreText == null || blueTeamScoreText == null || timerText == null) return;       
+
         bool isAreaOrHoko =
             ruleManager.currentRule == GameRuleType.Area ||
             ruleManager.currentRule == GameRuleType.Hoko;
