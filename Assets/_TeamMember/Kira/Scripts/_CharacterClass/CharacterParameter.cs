@@ -82,7 +82,7 @@ public class CharacterParameter : NetworkBehaviour {
     //•œŠˆ‚µ‚Ä‚©‚ç‚ÌŒo‰ßŠÔ
     public float respownAfterTime { get; private set; } = 0.0f;
     //UŒ‚‚µ‚½uŠÔ‚©
-    public bool AttackTrigger = false;
+    public bool attackTrigger;
     //UŒ‚ŠJnŠÔ
     public float attackStartTime { get; private set; } = 0.0f;
 
@@ -341,6 +341,14 @@ public class CharacterParameter : NetworkBehaviour {
 
         if (weaponControllerSub != null)
             weaponControllerSub.CmdSetSubWeapon(subWeaponID);
+    }
+
+    /// <summary>
+    /// UŒ‚ƒCƒxƒ“ƒg‚Ì”½‰f
+    /// </summary>
+    [ClientRpc]
+    public void RpcTriggerAttack() {
+        attackTrigger = true;
     }
 
     /// <summary>

@@ -173,7 +173,6 @@ public abstract class CharacterBase : CreatureBase {
         }
     }
 
-
     /// <summary>
     /// 被弾・死亡判定関数
     /// </summary>
@@ -503,6 +502,17 @@ public abstract class CharacterBase : CreatureBase {
 
     [Server]
     public void SetHoldingHoko(bool value) => isHoldingHoko = value;
+
+    /// <summary>
+    /// MP消費量のコントロール
+    /// </summary>
+    /// <param name="magicData">参照する魔法のデータ</param>
+    /// <returns>最終的なMP消費量を返します。</returns>
+    public int GetCurrentMPCost(MainMagicData magicData) {
+        if (parameter.equippedSkills[0] is Skill_Chaser && parameter.equippedSkills[0].isSkillUse) return 0;
+
+        return magicData.MPCost;
+    }
 
     /// <summary>
     /// バフの総合管理

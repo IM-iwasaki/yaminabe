@@ -117,7 +117,7 @@ public class MainWeaponController : NetworkBehaviour {
         //アニメーション開始
         RpcPlayShootAnimation();
 
-        characterBase.parameter.AttackTrigger = true;
+        characterBase.parameter.RpcTriggerAttack();
     }
 
     /// <summary>
@@ -175,8 +175,8 @@ public class MainWeaponController : NetworkBehaviour {
         }
         //アニメーション開始
         RpcPlayShootAnimation();
-        //フレーム中攻撃した瞬間にフラグを立てる
-        characterBase.parameter.AttackTrigger = true;
+        //フレーム中攻撃した瞬間にイベントを送信
+        characterBase.parameter.RpcTriggerAttack();
     }
 
     /// <summary>
@@ -347,8 +347,9 @@ public class MainWeaponController : NetworkBehaviour {
             return;
 
         //MPが不足していたら帰る
-        if (characterBase.parameter.MP < magicData.MPCost) return;
-        characterBase.parameter.MP -= magicData.MPCost;
+        int MPCost = characterBase.GetCurrentMPCost(magicData);
+        if (characterBase.parameter.MP < MPCost) return;
+        characterBase.parameter.MP -= MPCost;
 
         GameObject proj;
 
@@ -375,7 +376,6 @@ public class MainWeaponController : NetworkBehaviour {
             Quaternion.LookRotation(direction)
             );
         }
-
 
         if (proj == null) return;
 

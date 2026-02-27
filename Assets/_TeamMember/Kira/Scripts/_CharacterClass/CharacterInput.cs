@@ -70,7 +70,7 @@ public class CharacterInput : NetworkBehaviour {
         InteractTriggered = false;
         isJumpPressed = false;
 
-        if (core != null) core.parameter.AttackTrigger = false;
+        if (core != null) core.parameter.attackTrigger = false;
     }
 
     #region InputSystem ‹¤’Êƒnƒ“ƒhƒ‰

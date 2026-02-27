@@ -1,3 +1,4 @@
+using Mirror.BouncyCastle.Asn1.Pkcs;
 using System.Collections;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ public class Skill_Chaser : SkillBase {
 
     public override void SkillEffectUpdate(CharacterBase user) {
         if (user.weaponController_main.weaponData is not MainMagicData magicData) return;
-        intervalDelay = magicData.cooldown / 2;
+        intervalDelay = magicData.cooldown / 2;        
 
         //使用中か確認、効果中は時間を計測
         if(isSkillUse) {
@@ -39,17 +40,14 @@ public class Skill_Chaser : SkillBase {
             //効果時間を過ぎたら効果を終了
             if (useTime >= effectTime) isSkillUse = false;
 
-            //攻撃が入力された中かつインターバルが経過していたら
+            //攻撃が入力中かつインターバルが経過していたら
             if(user.input.AttackPressed && intervalTime >= intervalDelay) {
                 //インターバルをリセット
                 intervalTime = 0;
                 //若干の遅延を入れて追加攻撃発動
                 RequestExtraAttackWithDelay(intervalDelay, user);
             }
-
-            //攻撃した瞬間にMP消費を相殺
-            if (user.parameter.AttackTrigger) user.parameter.MP += magicData.MPCost;
-        }       
+        } 
     }
 
     //遅延をかけて追加攻撃開始の合図を送る
