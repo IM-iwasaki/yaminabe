@@ -61,8 +61,20 @@ public class DoTArea : NetworkBehaviour {
     }
 
     void FixedUpdate() {
-        if (!isServer) return;
-        transform.position += transform.forward * speed * Time.fixedDeltaTime;
+        if (!isServer || !initialized) return;
+
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f,
+                            Vector3.down,
+                            out RaycastHit hit,
+                            2f)) {
+            Vector3 groundForward =
+                Vector3.ProjectOnPlane(transform.forward, hit.normal).normalized;
+            if (groundForward.sqrMagnitude < 0.001f)
+                groundForward = Vector3.Cross(hit.normal, transform.right);
+            transform.rotation =
+                Quaternion.LookRotation(groundForward, hit.normal);
+            transform.position += groundForward * speed * Time.fixedDeltaTime;
+        }
     }
 
     [ServerCallback]
