@@ -5,19 +5,19 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 public class LoadingUI : MonoBehaviour {
-    [SerializeField]
+    [SerializeField,Header("ローディングUI(回転させるやつ)")]
     private GameObject loadingUI;
-    [SerializeField]
+    [SerializeField,Header("回転スピード")]
     private float rotaSpeed = 5.0f;
-    [SerializeField]
+    [SerializeField,Header("tipsのイメージ画像※現状使う予定なし")]
     private List<Sprite> tipsImages;
-    [SerializeField]
+    [SerializeField,Header("回転する長さ")]
     private float rotaTime = 5.0f;
-    [SerializeField]
+    [SerializeField,Header("tipsの種類")]
     private TextMeshProUGUI tipsCategory;
-    [SerializeField]
+    [SerializeField,Header("tipsの中身")]
     private TextMeshProUGUI tipsText;
-    [SerializeField]
+    [SerializeField,Header("tips文章リスト")]
     private ExplaneScentences explaneDatas;
 
     private bool isLoading = false;
@@ -43,7 +43,7 @@ public class LoadingUI : MonoBehaviour {
     }
 
     public IEnumerator HideLoading() {
-        yield return new WaitForSeconds(4.5f);
+        yield return new WaitForSeconds(rotaTime);
 
         isLoading = false;
         gameObject.SetActive(false);
