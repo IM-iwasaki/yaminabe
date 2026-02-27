@@ -68,7 +68,7 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnStartClient() {
         base.OnStartClient();
 
-        if (Application.isBatchMode) return;
+        //if (Application.isBatchMode) return;
         GameObject uiRoot = GameObject.Find("GameUI");
         if (NetworkServer.active) {
 
@@ -154,9 +154,9 @@ public class CustomNetworkManager : NetworkManager {
             GameSceneManager.Instance.ResetIsChangedScene();
         }
 
-        if (!Application.isBatchMode) {
-            FadeManager.Instance.StartFadeIn(0.5f);
-        }
+        //if (!Application.isBatchMode) {
+        //    FadeManager.Instance.StartFadeIn(0.5f);
+        //}
         Cursor.lockState = HostUI.isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
