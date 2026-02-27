@@ -199,6 +199,10 @@ public class GameManager : NetworkSystemObject<GameManager> {
             return;
         }
 
+        if (Hoko != null) {
+            Hoko.Drop();
+        }
+
         // ó‘ÔƒŠƒZƒbƒg
         ResetGameState();
 
