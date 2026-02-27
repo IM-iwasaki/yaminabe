@@ -6,10 +6,11 @@ public class Passive_Millionaire : PassiveBase {
     //
     // パッシブ名　：投資回収
     // 効果        ：試合に勝利した場合、その試合で消費した金額を少し増やして回収する。
+    //               また所持金額に応じてステータスが強化される。（上限あり）
     //
 
     [Header("倍率")]
-    [SerializeField] public float multiple = 1.2f;
+    [SerializeField] public float multiple = 2f;
 
     public override void PassiveSetting() {
         //発動中でなかったら発動中の状態にする

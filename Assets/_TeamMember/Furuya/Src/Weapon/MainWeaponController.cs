@@ -86,7 +86,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 if (weaponData is GunData gunData) {
-                    if (gunData.weaponName == "MoneyGun")
+                    if (gunData.type == WeaponType.MoneyGun)
                         StartCoroutine(ServerBurstShoot(direction, gunData.multiShot, gunData.burstDelay));
                     else {
 
@@ -129,12 +129,12 @@ public class MainWeaponController : NetworkBehaviour {
         lastAttackTime = Time.time;
 
         // MoneyGunの場合、LobbyScene以外でお金を消費
-        if (weaponID == 4) {
+        if (weaponData.type == WeaponType.MoneyGun) {
             string currentSceneName = SceneManager.GetActiveScene().name;
 
             // LobbySceneではお金を消費しない
             if (currentSceneName != "LobbyScene") {
-                if (!PlayerWallet.Instance.SpendMoney(4))
+                if (!PlayerWallet.Instance.SpendMoney(weaponData.cost))
                     return; // お金不足で撃てない
 
                 ammo = PlayerWallet.Instance.currentMoney; // UI更新用

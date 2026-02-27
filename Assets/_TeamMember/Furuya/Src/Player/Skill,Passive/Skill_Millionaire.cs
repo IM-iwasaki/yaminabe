@@ -1,17 +1,44 @@
 using System.Collections;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Character/Skill/Millionaire_投資回収")]
+[CreateAssetMenu(menuName = "Character/Skill/Millionaire_戦費転用")]
 public class Skill_Millionaire : SkillBase {
 
     //
-    // パッシブ名　：投資回収
-    // 効果        ：与えたダメージの一部をゴールドとして回収する
+    // パッシブ名　：戦費転用
+    // 効果        ：所持している武器をマネーガンに変更し、すでにマネーガンを持っている場合は消費金額と与ダメージを増やす。
+    //               最大まで強化済みの場合、ごく少量のお金を得る。
     //
 
-    [SerializeField]private int money = 100;
+    [SerializeField] private WeaponData[] weaponData;
+
+    [SerializeField] private int amount = 100;
+
     public override void Activate(CharacterBase user) {
         if (!user.isLocalPlayer) return;
-        PlayerWallet.Instance.AddMoney(money);
+        WeaponData weapon = user.weaponController_main.weaponData;
+
+        if(weapon.type == WeaponType.MoneyGun) {
+            for (int i = 0; i < weaponData.Length; i++) {
+                if (weaponData[i].WeaponID == weapon.WeaponID) {
+                    int nextIndex = i + 1;
+
+                    if (nextIndex < weaponData.Length) {
+                        user.weaponController_main.CmdSetWeaponData(weaponData[nextIndex].WeaponID);
+                    }
+                    else {
+                        // 最後だった場合
+                        PlayerWallet.Instance.AddMoney(amount);
+                    }
+
+                    return;
+                }
+            }
+        }
+        //マネーガンにする
+        else
+            user.weaponController_main.CmdSetWeaponData(weaponData[0].WeaponID);
+
+
     }
 }

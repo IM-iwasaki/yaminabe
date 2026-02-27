@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ef3c3d8cad62024a8d183c950a23d32, type: 3}
-  m_Name: MoneyGun
+  m_Name: MoneyGun 1
   m_EditorClassIdentifier: 
   weaponName: MoneyGun
-  weaponID: 4
+  weaponID: 201
   type: 1
-  damage: 25
-  cooldown: 0.1
+  damage: 15
+  cooldown: 0.15
   appearanceID: 2
   muzzleFlashType: 0
   hitEffectType: 0
   maxAmmo: 0
   reloadTime: 0.1
+  cost: 10
   projectilePrefab: {fileID: 8584663488555818686, guid: 85a0d588d9638a04aaa3c1596a30a193, type: 3}
   projectileSpeed: 20
   explosionRange: 0

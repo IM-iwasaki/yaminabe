@@ -26,6 +26,9 @@ public class WeaponData : ScriptableObject, IWeaponInfo {
     public int maxAmmo;
     public float reloadTime;
 
+    [Header("MoneyGun Settings")]
+    public int cost = 1;
+
     /// <summary>
     /// ’Ç‰ÁFƒLƒ‰   Œ»İ’e–ò”‚ğÅ‘å’e–ò”‚Æ“¯‚¶‚É‚·‚éB
     /// </summary>

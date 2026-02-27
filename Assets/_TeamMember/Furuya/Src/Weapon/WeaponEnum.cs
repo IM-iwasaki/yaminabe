@@ -88,6 +88,7 @@ public enum WeaponType {
     Gun,
     Magic,
     Enemy,
+    MoneyGun,
 }
 
 public enum SubWeaponType {
