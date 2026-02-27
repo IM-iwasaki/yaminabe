@@ -15,6 +15,7 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
     // サーバー側がシーンを切り替える（全クライアントにフェード命令）
     [Server]
     public void ChangeScene(string sceneName) {
+        Physics.simulationMode = SimulationMode.Script;
         RpcStartFadeOut(sceneName);
         if (sceneName == GameSceneManager.Instance.lobbySceneName) {
             AudioManager.Instance.CmdPlayBGM("ロビー", 2f);

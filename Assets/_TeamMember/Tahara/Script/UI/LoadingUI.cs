@@ -2,22 +2,72 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
-public class LoadingUI : MonoBehaviour
-{
+public class LoadingUI : MonoBehaviour {
     [SerializeField]
-    private Slider loadingUI;
+    private GameObject loadingUI;
     [SerializeField]
-    private TextMeshProUGUI loadingPersent;
-    // Start is called before the first frame update
-    public IEnumerator LoadingCorutine() {
-        loadingUI.value = 0.0f;
-        while (loadingUI.value < 100) {
-            loadingUI.value += 0.033f;
-            loadingPersent.text = loadingUI.value.ToString("F1") + "%";
-            yield return null;
+    private float rotaSpeed = 5.0f;
+    [SerializeField]
+    private List<Sprite> tipsImages;
+    [SerializeField]
+    private float rotaTime = 5.0f;
+    [SerializeField]
+    private TextMeshProUGUI tipsCategory;
+    [SerializeField]
+    private TextMeshProUGUI tipsText;
+    [SerializeField]
+    private ExplaneScentences explaneDatas;
+
+    private bool isLoading = false;
+    private float rotaZ = 0f;
+
+    /// <summary>
+    /// ロード画面出力非同期処理
+    /// ロード画面中の全ての処理の発火場所
+    /// </summary>
+    /// <returns></returns>
+    void Update() {
+        if (!isLoading) return;
+
+        rotaZ -= rotaSpeed;
+        loadingUI.transform.rotation = Quaternion.Euler(0, 0, rotaZ);
+    }
+
+
+    public void ShowLoading(GameRuleType _rule) {
+        UpdateTips(_rule);
+        isLoading = true;
+        gameObject.SetActive(true);
+    }
+
+    public IEnumerator HideLoading() {
+        yield return new WaitForSeconds(4.5f);
+
+        isLoading = false;
+        gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Tipsの更新
+    /// </summary>
+    /// <param name="_index"></param>
+    private void UpdateTips(GameRuleType _rule) {
+
+        switch (_rule) {
+            case GameRuleType.Hoko:
+                tipsCategory.text = "クラウン";
+                break;
+            case GameRuleType.Area:
+                tipsCategory.text = "エリア";
+                break;
+            case GameRuleType.DeathMatch:
+                tipsCategory.text = "デスマッチ";
+                break;
+            default:
+                break;
         }
-        loadingPersent.text = "100%";
+        tipsText.text = explaneDatas.explanes[(int)_rule];
     }
 }
