@@ -100,6 +100,8 @@ public class EnemyStatusBase : CreatureBase {
 
         enemyParameter.isDead = true;   // 死亡フラグ
 
+        RpcPlayDeathEffect();
+
         if (spawnPoint != null) {
             EnemySpawnManager.Instance.NotifyEnemyDead(spawnPoint);
         }
@@ -111,5 +113,19 @@ public class EnemyStatusBase : CreatureBase {
         yield return new WaitForSeconds(0.3f); // ダメージ表示時間より少し短め
 
         NetworkServer.Destroy(gameObject); // サーバーから削除
+    }
+
+    /// <summary>
+    /// クライアントエフェクト表示
+    /// </summary>
+    [ClientRpc(includeOwner = true)]
+    void RpcPlayDeathEffect() {
+
+        GameObject prefab = EffectPoolRegistry.Instance.GetDeathEffect(EffectType.Explosion);
+        if (prefab != null) {
+            var fx = EffectPool.Instance.GetFromPool(prefab, transform.position, Quaternion.identity);
+            fx.SetActive(true);
+            EffectPool.Instance.ReturnToPool(fx, 1.5f);
+        }
     }
 }
