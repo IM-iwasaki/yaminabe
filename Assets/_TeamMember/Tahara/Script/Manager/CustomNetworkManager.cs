@@ -11,7 +11,10 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     [SerializeField]
     private HostUI hostUI = null;
+    [SerializeField]
+    private LoadingUI loadingUI = null;
 
+    private Coroutine loadCorutine = null;
     /// <summary>
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
@@ -66,14 +69,16 @@ public class CustomNetworkManager : NetworkManager {
         base.OnStartClient();
 
         if (Application.isBatchMode) return;
-
+        GameObject uiRoot = GameObject.Find("GameUI");
         if (NetworkServer.active) {
-            GameObject uiRoot = GameObject.Find("GameUI");
+
             HostUI host = Instantiate(hostUI, uiRoot.transform);
             hostUI = host;
             hostUI.Init();
         }
-
+        LoadingUI loadUI = Instantiate(loadingUI, uiRoot.transform);
+        loadingUI = loadUI;
+        loadingUI.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -142,6 +147,7 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
+        loadingUI.ShowLoading(RuleManager.Instance.currentRule);
         if (newSceneName == GameSceneManager.Instance.gameSceneName || newSceneName == GameSceneManager.Instance.pveSceneName) {
             if (HostUI.isVisibleUI)
                 HostUI.ShowOrHideUI();
@@ -197,7 +203,8 @@ public class CustomNetworkManager : NetworkManager {
                 startPos.ServerTeleport(bufferPos, Quaternion.identity);
             }
         }
-        FadeManager.Instance.StartFadeIn(0.5f);
+        StartCoroutine(loadingUI.HideLoading());
+        Physics.simulationMode = SimulationMode.FixedUpdate;
     }
 
     /// <summary>
