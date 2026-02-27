@@ -124,6 +124,13 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
     // ======================
     // --- パーソナル系 SE ---
     // ======================
+    [Server]
+    public void ServerPlayUISE(string name, NetworkConnectionToClient conn) {
+        if (conn == null) return;
+
+        TargetPlayUISE(conn, name);
+    }
+
     [Command(requiresAuthority = false)]
     public void CmdPlayUISE(string name, NetworkConnectionToClient conn = null) {
         if (conn == null)

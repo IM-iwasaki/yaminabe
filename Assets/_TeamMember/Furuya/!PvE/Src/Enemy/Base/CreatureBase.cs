@@ -43,18 +43,16 @@ public class CreatureBase : NetworkBehaviour
     [Server]
     public void PlayHitSE(int attackerID) {
         // îÌíeé“
-        NetworkConnectionToClient victimConn =
-            GetComponent<NetworkIdentity>().connectionToClient;
+        NetworkConnectionToClient victimConn = GetComponent<NetworkIdentity>().connectionToClient;
 
         // çUåÇé“ÅiñºëOÇ©ÇÁéÊìæÅj
-        NetworkConnectionToClient attackerConn =
-            GetConnectionByPlayerName(attackerID);
+        NetworkConnectionToClient attackerConn = GetConnectionByPlayerName(attackerID);
 
         if (attackerConn != null)
-            AudioManager.Instance.CmdPlayUISE("hit", attackerConn);
+            AudioManager.Instance.ServerPlayUISE("hit", attackerConn);
 
         if (victimConn != null)
-            AudioManager.Instance.CmdPlayUISE("hit", victimConn);
+            AudioManager.Instance.ServerPlayUISE("hit", victimConn);
     }
 
     [Server]
