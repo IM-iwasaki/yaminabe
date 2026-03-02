@@ -7,34 +7,35 @@ public class Skill_Quasar : SkillBase {
     //
     //  スキル名：扇状氷結の術
     //  タイプ　：範囲攻撃型
-    //  効果    ：前方に氷の衝撃波を発生させる。
-    //　CT      ：16秒
-    //
+    //  効果    ：一定時間氷の衝撃波で攻撃できる。
+    //　CT      ：20秒
+    //  
+    //          「「「「「「霜踏み」」」」」」
 
-    [SerializeField]WeaponData weaponData;
+    [SerializeField] private WeaponData weaponData;
+    [SerializeField] private int time;
 
-     public override void Activate(CharacterBase user) {       
-        Vector3 attackDir = user.parameter.GetShootDirection();
-        StartExtraAttackDelay(user, attackDir);
+     public override void Activate(CharacterBase user) {
+        StartExtraAttackDelay(user);
     }
 
-    public void StartExtraAttackDelay(CharacterBase user, Vector3 dir) {
-        user.StartCoroutine(ExtraAttackRoutine(user, dir));
+    public void StartExtraAttackDelay(CharacterBase user) {
+        user.StartCoroutine(ExtraAttackRoutine(user));
     }
 
-    private IEnumerator ExtraAttackRoutine(CharacterBase user, Vector3 dir) {
-        yield return null;
-        //攻撃する
-        ExtraAttack(dir,user);
-    }
+    private IEnumerator ExtraAttackRoutine(CharacterBase user) {
+        // 元武器を保存
+        var originalWeapon = user.weaponController_main.weaponData;
 
-    private void ExtraAttack(Vector3 dir, CharacterBase user) {
-        //元の武器情報をキャッシュ
-        var SkillCash = user.weaponController_main.weaponData;
-        //スキル用武器に切り替えて攻撃
+        // スキル武器へ変更
         user.weaponController_main.weaponData = weaponData;
-        //user.weaponController_main.CmdRequestSkillAttack(dir, weaponData);
-        //武器を戻す
-        user.weaponController_main.weaponData = SkillCash;
+
+        // 指定時間維持
+        yield return new WaitForSeconds(time);
+
+        // 元に戻す
+        if (user.weaponController_main.weaponData == weaponData) {
+            user.weaponController_main.weaponData = originalWeapon;
+        }
     }
 }

@@ -18,10 +18,11 @@ MonoBehaviour:
   damage: 150
   cooldown: 1
   appearanceID: 7
-  muzzleFlashType: 0
+  muzzleFlashType: 2
   hitEffectType: 2
   maxAmmo: 0
   reloadTime: 0
+  cost: 1
   projectilePrefab: {fileID: 8524352568393916313, guid: 45d3ddb55c3772e469a5f06dcdc91e9d, type: 3}
   projectileSpeed: 0
   MPCost: 10

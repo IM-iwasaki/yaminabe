@@ -36,9 +36,6 @@ public class SubWeaponController : NetworkBehaviour {
         characterBase = GetComponent<CharacterBase>();
         characterAnimationController = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
-
-
-
     }
 
     public override void OnStartServer() {
