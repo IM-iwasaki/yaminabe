@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 using System.Linq;
+using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
 
 /// <summary>
 /// Characterの変数管理
@@ -31,9 +32,11 @@ public class CharacterParameter : NetworkBehaviour {
     //リロード中か
     [SyncVar(hook = nameof(UpdateReloadIcon))] public bool isReloading = false;
     //基礎攻撃力
-    [SyncVar] public float attack;
+    [SyncVar(hook = nameof(ChangeAttack))] public float attack;
     //移動速度
-    [SyncVar] public float moveSpeed;
+    [SyncVar(hook = nameof(ChangeMoveSpeed))] public float moveSpeed;
+    //受けるダメージ倍率
+    [SyncVar(hook = nameof(ChangeDamageRatio))] public float damageRatio = 100;
 
     //変動値
     [SyncVar] public float[] fluctuationValue;
@@ -45,10 +48,10 @@ public class CharacterParameter : NetworkBehaviour {
     [SyncVar] public int TeamID = -1;
     //プレイヤーの名前
     [SyncVar] public string PlayerName = "Default";
-    //受けるダメージ倍率
-    [System.NonSerialized] public float DamageRatio = 100;
+    
     //サーバーが割り当てるプレイヤー番号（Player1～6）
     [SyncVar] public int playerId = -1;
+
     [SyncVar(hook = nameof(OnReadyChanged))]
     public bool ready = true;
 
@@ -83,7 +86,7 @@ public class CharacterParameter : NetworkBehaviour {
     //復活してからの経過時間
     public float respownAfterTime { get; private set; } = 0.0f;
     //攻撃した瞬間か
-    public bool AttackTrigger = false;
+    public bool attackTrigger;
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0.0f;
 
@@ -252,7 +255,7 @@ public class CharacterParameter : NetworkBehaviour {
     private void InDefaultStatus() {
         defaultAttack = attack;
         defaultMoveSpeed = moveSpeed;
-        defaultDamageRatio = DamageRatio;
+        defaultDamageRatio = damageRatio;
     }
 
     /// <summary>
@@ -268,7 +271,7 @@ public class CharacterParameter : NetworkBehaviour {
         moveSpeed = defaultMoveSpeed;
     }
     public void OutDefaultStatus_DamageRatio() {
-        DamageRatio = defaultDamageRatio;
+        damageRatio = defaultDamageRatio;
     }
 
     /// <summary>
@@ -301,11 +304,19 @@ public class CharacterParameter : NetworkBehaviour {
 #endif
         }
     }
+    public void ChangeAttack(float _, float newValue) {
+        attack = newValue;
+    }
+    public void ChangeMoveSpeed(float _, float newValue) {
+        moveSpeed = newValue;
+    }
+    public void ChangeDamageRatio(float _, float newValue) {
+        damageRatio = newValue;
+    }
 
     /// <summary>
     /// 追加 マツオ :クライアントMP回復用
     /// </summary>
-    /// <param name="value"></param>
     [Command]
     public void CmdRecoverMP(int value) {
         if (isDead) return;
@@ -355,6 +366,14 @@ public class CharacterParameter : NetworkBehaviour {
 
         if (weaponControllerSub != null)
             weaponControllerSub.CmdSetSubWeapon(subWeaponID);
+    }
+
+    /// <summary>
+    /// 攻撃イベントの反映
+    /// </summary>
+    [ClientRpc]
+    public void RpcTriggerAttack() {
+        attackTrigger = true;
     }
 
     /// <summary>

@@ -55,7 +55,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
     [SerializeField] TextMeshProUGUI passiveChains;
     [SerializeField] CharacterBase player;
     [SyncVar] float skillStateProgress = 0.0f;
-    //[SyncVar] float passiveStateProgress = 0.0f;
 
     [SerializeField] GameObject interactUI;
     //  ローカルUIの本体を取得
@@ -64,8 +63,6 @@ public class PlayerLocalUIController : NetworkBehaviour {
     //裏のバーの参照
     [SerializeField] Slider hpUnderBar_slider = null;
     [SerializeField] Slider mpUnderBar_slider = null;
-    //裏のバーの減少開始遅延
-    private readonly float underBar_Delay = 0.5f;
 
     /// <summary>
     /// ローカルUIの安全な初期化
@@ -231,40 +228,44 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// スキルとパッシブのアイコン、武器の情報の反映
     /// </summary>
     public void LocalUIChanged() {
+        // 自分のみ処理する
         if (!isLocalPlayer) return;
-        if (player == null) return;
-        if (!IsUIReady()) return;
+        // プレイヤーが存在しないかUIの準備が整っていない時は変える
+        if (player == null || !IsUIReady()) return;
 
-        // メイン武器
+        // メイン武器のキャッシュ
         var main = player.weaponController_main;
+        // 武器データがない時帰る
         if (main == null || main.weaponData == null) return;
 
+        // 取得した武器データが魔法であるか判定、魔法だったらMPバー表示
         bool isMagic = main.weaponData.type == WeaponType.Magic;
         mpBar.SetActive(isMagic);
         mpUnderBar.SetActive(isMagic);
 
-        ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
-        ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
+        // HPとMPのUIを強制的に更新
+        //ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
+        //ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
 
+        // 可読性向上のためキャッシュ
+        var skills = player.parameter.equippedSkills;
         // スキル
-        if (player.parameter.equippedSkills != null &&
-            player.parameter.equippedSkills.Length > 0 &&
-            player.parameter.equippedSkills[0] != null) {
-
+        if (skills != null && skills.Length > 0 && skills[0] != null) {
+            // スキルアイコンの反映
             for (int i = 0; i < skill_Icon.Length; i++)
-                skill_Icon[i].sprite = player.parameter.equippedSkills[0].skillIcon;
+                skill_Icon[i].sprite = skills[0].skillIcon;
         }
 
+        // 可読性向上のためキャッシュ
+        var passives = player.parameter.equippedPassives;
         // パッシブ
-        if (player.parameter.equippedPassives != null &&
-            player.parameter.equippedPassives.Length > 0 &&
-            player.parameter.equippedPassives[0] != null) {
-
+        if (passives != null && passives.Length > 0 && passives[0] != null) {
+            // パッシブアイコンの表示
             for (int i = 0; i < passive_Icon.Length; i++)
-                passive_Icon[i].sprite = player.parameter.equippedPassives[0].passiveIcon;
+                passive_Icon[i].sprite = passives[0].passiveIcon;
         }
 
-        // メイン武器UI
+        // メイン武器の名前をUIに反映
         mainWeaponText[(int)TextIndex.WeaponName].text = main.weaponData.weaponName;
 
         if (main.weaponData.type == WeaponType.Gun || main.weaponData.type == WeaponType.MoneyGun) {
@@ -280,6 +281,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         // サブ武器
         var sub = player.weaponController_sub;
         if (sub != null && sub.subWeaponData != null) {
+            //サブ武器の現在数、最大数、名前をテキストに反映
             subWeaponText[(int)TextIndex.Current].text = sub.CurrentUses.ToString();
             subWeaponText[(int)TextIndex.Max].text = sub.subWeaponData.maxUses.ToString();
             subWeaponText[(int)TextIndex.WeaponName].text = sub.subWeaponData.WeaponName;
@@ -318,12 +320,12 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// 体力のUI更新
     /// </summary>
     public void ChangeHPUI(int _maxHP, int _hp) {
+        //HP現在値をテキストに反映
         hpText.text = _hp.ToString();
-
-        Debug.Log($"HPUI: hp={_hp} maxHP={_maxHP}");
+        //HP最大値が0の時は帰る(_maxHPが0の時に発生する0除算の防止)
         if (_maxHP <= 0) return;
+        //現在のHP割合をSliderのvalueに反映
         hpBar_slider.value = (float)_hp / _maxHP * FIXED_RATIO;
-        Debug.Log("value:" + _hp + "/ slider.value:" + hpBar_slider.value);
         //死亡時
         if (_hp <= 0)
             hpBarImage.gameObject.SetActive(false);
@@ -337,7 +339,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
             hpBarImage.color = Color.yellow;
             hpText.color = Color.yellow;
         }
-        //それ以外
+        //5割超
         else {
             hpBarImage.gameObject.SetActive(true);
             hpBarImage.color = Color.green;
@@ -349,29 +351,43 @@ public class PlayerLocalUIController : NetworkBehaviour {
     /// MPのUI更新
     /// </summary>
     public void ChangeMPUI(int _maxMP, int _mp) {
+        //MP現在値をテキストに反映
         mpText.text = _mp.ToString();
+        //MP最大値が0の時は帰る(_maxMPが0の時に発生する0除算の防止)
+        if (_maxMP <= 0) return;
+        //現在のMP割合をSliderのvalueに反映
         mpBar_slider.value = (float)_mp / _maxMP * FIXED_RATIO;
-        if (_mp <= 0)
-            mpBarImage.gameObject.SetActive(false);
-        else
-            mpBarImage.gameObject.SetActive(true);
+        //if (_mp <= 0)
+        //    mpBarImage.gameObject.SetActive(false);
+        //else {
+        //    mpBarImage.gameObject.SetActive(true);
+        //}            
     }
 
     /// <summary>
     /// リロードアイコンを1回転させる ( float _duration = 1回転するまでにかかる時間)
     /// </summary>
     public IEnumerator RotateReloadIcon(float _duration) {
+        //リロードアイコン表示状態にする
         reloadIconRotating = true;
+        //アイコンを有効化
         mainWeaponReloadIcon.enabled = true;
+        //角度と経過時間の初期化
         float start = 0f;
         float end = -360f;
         float time = 0f;
 
+        //回転が完了するまでループ
         while (time < _duration) {
+            //設定時間に対する現在経過時間を計算
             float t = time / _duration;
+            //このフレームで到達する角度を計算
             float angle = Mathf.Lerp(start, end, t);
+            //計算した角度をアイコンに反映
             mainWeaponReloadIcon.transform.localRotation = Quaternion.Euler(0, 0, angle);
+            //時間経過の加算
             time += Time.deltaTime;
+            //1フレーム待つ
             yield return null;
         }
 

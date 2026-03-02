@@ -20,7 +20,7 @@ public class CreatureBase : NetworkBehaviour
         if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
-        float damage = _damage * ((float) parameter.DamageRatio / 100);
+        float damage = _damage * ((float) parameter.damageRatio / 100);
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理
