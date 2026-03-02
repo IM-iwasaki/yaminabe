@@ -105,7 +105,6 @@ public class MainWeaponController : NetworkBehaviour {
             case WeaponType.MoneyGun:
                 if (weaponData is GunData moneyGunData)
                     StartCoroutine(ServerBurstShoot(direction, moneyGunData.multiShot, moneyGunData.burstDelay));
-                ammo = currentMoney;
                 break;
 
             case WeaponType.Magic:
@@ -140,7 +139,7 @@ public class MainWeaponController : NetworkBehaviour {
                     return; // お金不足で撃てない
 
             }
-            currentMoney = PlayerWallet.Instance.currentMoney; // UI更新用
+            ammo = PlayerWallet.Instance.currentMoney; // UI更新用
         }
 
         // サーバーに弾撃ちをリクエスト
