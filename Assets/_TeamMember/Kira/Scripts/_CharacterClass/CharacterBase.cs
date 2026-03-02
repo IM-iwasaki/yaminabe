@@ -547,7 +547,7 @@ public abstract class CharacterBase : CreatureBase {
                 if (temporaryBuffs[paramIndex][buffIndex].duration <= 0.0f) {
                     //該当する要素を削除。
                     temporaryBuffs[paramIndex].RemoveAt(buffIndex);
-                    DestroyChildrenWithTag(EFFECT_TAG);
+                    DestroyEffect();
                 }
             }
 
@@ -724,7 +724,7 @@ public abstract class CharacterBase : CreatureBase {
             yield return null;
         }
 
-        DestroyChildrenWithTag(EFFECT_TAG);
+        DestroyEffect();
         healCoroutine = null;
     }
 
@@ -750,7 +750,7 @@ public abstract class CharacterBase : CreatureBase {
         parameter.attack = Mathf.RoundToInt(parameter.defaultAttack * _value);
         yield return new WaitForSeconds(_duration);
         parameter.attack = parameter.defaultAttack;
-        DestroyChildrenWithTag(EFFECT_TAG);
+        DestroyEffect();
         attackCoroutine = null;
     }
 
@@ -775,7 +775,7 @@ public abstract class CharacterBase : CreatureBase {
         parameter.moveSpeed = Mathf.RoundToInt(parameter.defaultMoveSpeed * _value);
         yield return new WaitForSeconds(_duration);
         parameter.moveSpeed = parameter.defaultMoveSpeed;
-        DestroyChildrenWithTag(EFFECT_TAG);
+        DestroyEffect();
         speedCoroutine = null;
     }
 
@@ -810,7 +810,7 @@ public abstract class CharacterBase : CreatureBase {
     [Command]
     public void RemoveBuff() {
         StopAllCoroutines();
-        DestroyChildrenWithTag(EFFECT_TAG);
+        DestroyEffect();
         parameter.moveSpeed = parameter.defaultMoveSpeed;
         parameter.attack = parameter.defaultAttack;
         healCoroutine = speedCoroutine = attackCoroutine = null;
@@ -830,6 +830,26 @@ public abstract class CharacterBase : CreatureBase {
     private void DestroyChildrenWithTag(string tag) {
         if (isServer) RpcDestroyChildrenWithTag(tag); // サーバーなら全員に通知
         else CmdDestroyChildrenWithTag(tag); // クライアントならサーバーへ命令
+    }
+
+    /// <summary>
+    /// 追加　マツオ:エフェクト削除
+    /// </summary>
+    private void DestroyEffect() {
+        if (isServer)
+            RpcDestroyEffect();
+        else
+            CmdDestroyEffect();
+    }
+
+    [Command]
+    private void CmdDestroyEffect() {
+        RpcDestroyEffect();
+    }
+
+    [ClientRpc]
+    private void RpcDestroyEffect() {
+        DestroyChildrenWithTag(EFFECT_TAG);
     }
 
     #region Command,ClientRpcの関数
