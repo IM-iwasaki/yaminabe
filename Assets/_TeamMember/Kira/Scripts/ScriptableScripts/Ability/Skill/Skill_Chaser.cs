@@ -33,21 +33,20 @@ public class Skill_Chaser : SkillBase {
         intervalDelay = magicData.cooldown / 2;        
 
         //使用中か確認、効果中は時間を計測
-        if(isSkillUse) {
-            useTime += Time.deltaTime;
-            intervalTime += Time.deltaTime;
+        if(!isSkillUse) return;
+        useTime += Time.deltaTime;
+        intervalTime += Time.deltaTime;
 
-            //効果時間を過ぎたら効果を終了
-            if (useTime >= effectTime) isSkillUse = false;
+        //効果時間を過ぎたら効果を終了
+        if (useTime >= effectTime) isSkillUse = false;
 
-            //攻撃が入力中かつインターバルが経過していたら
-            if(user.input.AttackPressed && intervalTime >= intervalDelay) {
-                //インターバルをリセット
-                intervalTime = 0;
-                //若干の遅延を入れて追加攻撃発動
-                RequestExtraAttackWithDelay(intervalDelay, user);
-            }
-        } 
+        //攻撃が入力中かつインターバルが経過していたら
+        if(user.input.AttackPressed && intervalTime >= intervalDelay) {
+            //インターバルをリセット
+            intervalTime = 0;
+            //若干の遅延を入れて追加攻撃発動
+            RequestExtraAttackWithDelay(intervalDelay, user);
+        }
     }
 
     //遅延をかけて追加攻撃開始の合図を送る
