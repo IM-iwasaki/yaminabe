@@ -17,7 +17,7 @@ public class GameUIManager : MonoBehaviour {
     [Header("更新間隔(秒)")]
     [SerializeField] private float updateInterval = 0.2f;
 
-    [Header("UI Animation (Score Pop)")]
+    [Header("UI アニメーション")]
     [SerializeField] private float popScale = 1.25f;
     [SerializeField] private float popTime = 0.25f;
     [SerializeField]
