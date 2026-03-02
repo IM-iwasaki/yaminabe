@@ -33,13 +33,15 @@ public class GeneralCharacter : CharacterBase {
     }
 
     void Update() {
-        if (!isLocalPlayer) return;  //自分だけ処理する         
+        // 近くの味方チェックはローカルだけ
+        if (isLocalPlayer) {
+            parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
+        }
 
-        parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
-        //RespawnControl();
-        
-        if (!isServer) return;
-        BuffUpdate();
+        // バフ処理はサーバーのみ
+        if (isServer) {
+            BuffUpdate();
+        }
     }
 
     [ClientRpc]
