@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class EnemyHealthView : MonoBehaviour {
 
@@ -18,6 +19,14 @@ public class EnemyHealthView : MonoBehaviour {
     private float dmgTextTimer;
     private float dmgTextDuration = 0.7f;
     private Color nextDamageColor = Color.yellow;
+
+    [Header("ダメージポップ設定")]
+    [SerializeField] private float popScale = 1.6f;
+    [SerializeField] private float popTime = 0.2f;
+    [SerializeField]
+    private AnimationCurve popCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    private Coroutine popCoroutine;
 
     private void Awake() {
         mainCam = Camera.main;
@@ -85,15 +94,48 @@ public class EnemyHealthView : MonoBehaviour {
         // 毎回ローカル位置をリセット
         damageText.transform.localPosition = Vector3.up * 0.9f;
 
-        damageText.text = damage.ToString();
+        int displayDamage = damage * 10;
+        damageText.text = displayDamage.ToString();
+
         damageText.color = nextDamageColor;
         damageText.gameObject.SetActive(true);
 
         dmgTextTimer = 0f;
         nextDamageColor = Color.yellow;
+
+        PlayPopEffect();
     }
 
     public void SetNextDamageColor(Color color) {
         nextDamageColor = color;
+    }
+
+    private void PlayPopEffect() {
+        if (popCoroutine != null)
+            StopCoroutine(popCoroutine);
+
+        popCoroutine = StartCoroutine(PopAnimation());
+    }
+
+    /// <summary>
+    /// ポップアニメーション
+    /// </summary>
+    private IEnumerator PopAnimation() {
+        Transform tf = damageText.transform;
+        Vector3 baseScale = Vector3.one;
+        Vector3 peakScale = Vector3.one * popScale;
+
+        float t = 0f;
+
+        while (t < popTime) {
+            tf.localScale =
+                Vector3.Lerp(baseScale, peakScale,
+                popCurve.Evaluate(t / popTime));
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        tf.localScale = baseScale;
     }
 }
