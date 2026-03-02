@@ -12,7 +12,7 @@ public class CustomNetworkManager : NetworkManager {
     [SerializeField]
     private HostUI hostUI = null;
     [SerializeField]
-    private LoadingUI loadingUI = null;
+    private RpcHub rpcHub = null;
 
     private Coroutine loadCorutine = null;
     /// <summary>
@@ -60,6 +60,9 @@ public class CustomNetworkManager : NetworkManager {
             //その後は不必要なので更新しないようにする
             TitleManager.instance.enabled = false;
         }
+        RpcHub hub = Instantiate(rpcHub);
+        rpcHub = hub;
+        NetworkServer.Spawn(rpcHub.gameObject);
     }
 
     /// <summary>
@@ -76,9 +79,6 @@ public class CustomNetworkManager : NetworkManager {
             hostUI = host;
             hostUI.Init();
         }
-        LoadingUI loadUI = Instantiate(loadingUI, uiRoot.transform);
-        loadingUI = loadUI;
-        loadingUI.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -147,7 +147,6 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
-        loadingUI.ShowLoading(RuleManager.Instance.currentRule);
         if (newSceneName == GameSceneManager.Instance.gameSceneName || newSceneName == GameSceneManager.Instance.pveSceneName) {
             if (HostUI.isVisibleUI)
                 HostUI.ShowOrHideUI();
@@ -165,6 +164,7 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="sceneName"></param>
     public override void OnServerSceneChanged(string sceneName) {
+        RpcHub.instance.RpcHideLoadingUI();
         //ゲームシーンに遷移したならゲームスタート
         if (sceneName == GameSceneManager.Instance.gameSceneName) {
             int stageIndex = Mathf.Abs(hostUI.stageIndex % StageManager.Instance.stages.Count);
@@ -203,8 +203,9 @@ public class CustomNetworkManager : NetworkManager {
                 startPos.ServerTeleport(bufferPos, Quaternion.identity);
             }
         }
-        StartCoroutine(loadingUI.HideLoading());
+        
         Physics.simulationMode = SimulationMode.FixedUpdate;
+        
     }
 
     /// <summary>

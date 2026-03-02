@@ -112,6 +112,8 @@ MonoBehaviour:
   - {fileID: 5471543249360583010, guid: 7679fac087d19cd479781fac86c569f4, type: 3}
   - {fileID: 6312887888215949329, guid: 391727f2401f95640b522f1901ee1ebf, type: 3}
   - {fileID: 6077677854487006720, guid: fb5904d33b469324ca18487565ec0fa0, type: 3}
+  - {fileID: 7491383128565937330, guid: 644b6f276f4a1384988fdfaf2f4cd010, type: 3}
+  - {fileID: 3995126297913617740, guid: 846a02c533fb40f48a27a23649d70301, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -128,7 +130,7 @@ MonoBehaviour:
   evaluationInterval: 3
   timeInterpolationGui: 0
   hostUI: {fileID: 5181230919804453920, guid: a0ac258d1ae277542b044ede07325d0d, type: 3}
-  loadingUI: {fileID: 7785645615158119163, guid: 644b6f276f4a1384988fdfaf2f4cd010, type: 3}
+  rpcHub: {fileID: 9068443350119291860, guid: 846a02c533fb40f48a27a23649d70301, type: 3}
 --- !u!114 &1526895916821643918
 MonoBehaviour:
   m_ObjectHideFlags: 0

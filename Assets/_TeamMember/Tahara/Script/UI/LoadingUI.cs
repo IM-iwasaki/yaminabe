@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -5,6 +6,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 public class LoadingUI : MonoBehaviour {
+    public static LoadingUI instance = null;
+
     [SerializeField,Header("ローディングUI(回転させるやつ)")]
     private GameObject loadingUI;
     [SerializeField,Header("回転スピード")]
@@ -23,6 +26,16 @@ public class LoadingUI : MonoBehaviour {
     private bool isLoading = false;
     private float rotaZ = 0f;
 
+    private void Start() {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
+        gameObject.SetActive(false);
+    }
+
     /// <summary>
     /// ロード画面出力非同期処理
     /// ロード画面中の全ての処理の発火場所
@@ -34,7 +47,6 @@ public class LoadingUI : MonoBehaviour {
         rotaZ -= rotaSpeed;
         loadingUI.transform.rotation = Quaternion.Euler(0, 0, rotaZ);
     }
-
 
     public void ShowLoading(GameRuleType _rule) {
         UpdateTips(_rule);
