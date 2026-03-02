@@ -25,17 +25,17 @@ public class Skill_Quasar : SkillBase {
 
     private IEnumerator ExtraAttackRoutine(CharacterBase user) {
         // 元武器を保存
-        var originalWeapon = user.weaponController_main.weaponData;
+        var originalWeapon = user.weaponController_main.weaponData.WeaponID;
 
         // スキル武器へ変更
-        user.weaponController_main.weaponData = weaponData;
+        user.weaponController_main.CmdSetWeaponData(weaponData.WeaponID);
 
         // 指定時間維持
         yield return new WaitForSeconds(time);
 
         // 元に戻す
-        if (user.weaponController_main.weaponData == weaponData) {
-            user.weaponController_main.weaponData = originalWeapon;
+        if (user.weaponController_main.weaponData.WeaponID == weaponData.WeaponID) {
+            user.weaponController_main.CmdSetWeaponData(originalWeapon);
         }
     }
 }

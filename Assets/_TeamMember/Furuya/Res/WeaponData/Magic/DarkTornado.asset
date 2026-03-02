@@ -15,16 +15,17 @@ MonoBehaviour:
   weaponName: DarkTornado
   weaponID: 21
   type: 2
-  damage: 3
+  damage: 15
   cooldown: 1
   appearanceID: 7
   muzzleFlashType: 0
   hitEffectType: 0
   maxAmmo: 0
   reloadTime: 0
+  cost: 1
   projectilePrefab: {fileID: 4025044562685867901, guid: 1520f70797d973049b0e6db372546d9a, type: 3}
   projectileSpeed: 5
-  MPCost: 20
+  MPCost: 30
   chargeEffectType: 0
   chargeTime: 0
   magicType: 2
