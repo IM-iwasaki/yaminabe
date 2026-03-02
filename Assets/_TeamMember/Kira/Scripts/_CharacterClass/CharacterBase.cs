@@ -563,7 +563,7 @@ public abstract class CharacterBase : CreatureBase {
                     parameter.moveSpeed = parameter.defaultMoveSpeed * influxValue;
                     break;
                 case ParamaterType.damageRate:
-                    parameter.damageRatio = influxValue;
+                    parameter.damageRatio = parameter.defaultDamageRatio * influxValue;
                     break;
                 default:
 #if UNITY_EDITOR
