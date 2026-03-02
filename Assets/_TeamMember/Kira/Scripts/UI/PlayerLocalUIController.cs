@@ -124,6 +124,10 @@ public class PlayerLocalUIController : NetworkBehaviour {
                 //メインウェポンの現在弾倉数を更新
                 mainWeaponText[(int)TextIndex.Current].text = player.weaponController_main.ammo.ToString();
                 break;
+            case WeaponType.MoneyGun:
+                //メインウェポンの現在弾倉数を更新
+                mainWeaponText[(int) TextIndex.Current].text = player.weaponController_main.ammo.ToString();
+                break;
             case WeaponType.Magic:
                 //所持している武器が魔法であるか確認。
                 if (WeaponDataRegistry.GetWeapon(player.weaponController_main.weaponData.WeaponID) is not MainMagicData magicData) {
@@ -263,7 +267,7 @@ public class PlayerLocalUIController : NetworkBehaviour {
         // メイン武器UI
         mainWeaponText[(int)TextIndex.WeaponName].text = main.weaponData.weaponName;
 
-        if (main.weaponData.type == WeaponType.Gun) {
+        if (main.weaponData.type == WeaponType.Gun || main.weaponData.type == WeaponType.MoneyGun) {
             mainWeaponText[(int)TextIndex.Partition].text = "/";
             mainWeaponText[(int)TextIndex.Current].text = main.ammo.ToString();
             mainWeaponText[(int)TextIndex.Max].text = main.weaponData.maxAmmo.ToString();

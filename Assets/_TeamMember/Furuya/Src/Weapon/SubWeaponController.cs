@@ -37,7 +37,7 @@ public class SubWeaponController : NetworkBehaviour {
         characterAnimationController = GetComponent<CharacterAnimationController>();
         playerUI = characterBase.GetPlayerLocalUI();
 
-        
+
 
     }
 
@@ -79,7 +79,7 @@ public class SubWeaponController : NetworkBehaviour {
             gachaSystem.IsGachaActive();
 
         return selectActive || gachaActive;
-       
+
     }
 
 
@@ -150,13 +150,15 @@ public class SubWeaponController : NetworkBehaviour {
     [Command]
     public void CmdSetSubWeapon(int weaponID) {
         subWeaponID = weaponID;
+        currentUses = subWeaponData.maxUses;
     }
 
     private void OnSubWeaponIDChanged(int oldID, int newID) {
         subWeaponData = WeaponDataRegistry.GetSubWeapon(newID);
 
-        if (isLocalPlayer)
+        if (isLocalPlayer) {
             playerUI?.LocalUIChanged();
+        }
     }
 
 
@@ -248,7 +250,7 @@ public class SubWeaponController : NetworkBehaviour {
         switch (itemData.itemType) {
 
             case ItemType.HealthPack: {
-                if (itemData is HealthPackData hpData )
+                if (itemData is HealthPackData hpData)
                     characterBase.Heal(hpData.healAmount, 1);
                 break;
             }
@@ -307,6 +309,8 @@ public class SubWeaponController : NetworkBehaviour {
         while (currentUses < subWeaponData.maxUses) {
             yield return new WaitForSeconds(subWeaponData.rechargeTime);
             currentUses++;
+            if (currentUses >= subWeaponData.maxUses)
+                currentUses = subWeaponData.maxUses;
         }
         isRecharging = false;
     }

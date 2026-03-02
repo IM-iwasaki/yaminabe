@@ -14,6 +14,7 @@ public class MainWeaponController : NetworkBehaviour {
     public Transform firePoint;
     private float lastAttackTime;
     [SyncVar, System.NonSerialized] public int ammo;
+    private int currentMoney;
 
     private GameObject activeChargeFx;
 
@@ -86,8 +87,6 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Gun:
                 if (weaponData is GunData gunData) {
-
-
                     //弾がなかったら通過不可。かわりにリロードを要求する。
                     if (ammo == 0) {
                         ReloadRequest();
@@ -106,6 +105,7 @@ public class MainWeaponController : NetworkBehaviour {
             case WeaponType.MoneyGun:
                 if (weaponData is GunData moneyGunData)
                     StartCoroutine(ServerBurstShoot(direction, moneyGunData.multiShot, moneyGunData.burstDelay));
+                ammo = currentMoney;
                 break;
 
             case WeaponType.Magic:
@@ -140,7 +140,7 @@ public class MainWeaponController : NetworkBehaviour {
                     return; // お金不足で撃てない
 
             }
-            ammo = PlayerWallet.Instance.currentMoney; // UI更新用
+            currentMoney = PlayerWallet.Instance.currentMoney; // UI更新用
         }
 
         // サーバーに弾撃ちをリクエスト
@@ -211,6 +211,10 @@ public class MainWeaponController : NetworkBehaviour {
         weaponID = data.WeaponID;
         weaponData = data;
         ChangeWeapon(weaponData);
+        if (weaponData.type == WeaponType.MoneyGun)
+            ammo = currentMoney;
+        else
+            ammo = weaponData.ammo;
 
         // 見た目・状態は全クライアントで Hook / Rpc で反映される
         characterBase.GetComponent<GeneralCharacter>().RpcChangeWeapon(weaponData.appearanceID);
