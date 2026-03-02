@@ -37,6 +37,8 @@ public class GeneralCharacter : CharacterBase {
 
         parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
         //RespawnControl();
+
+        Debug.Log("isSkillUse:" + isSkillUse);
         
         if (!isServer) return;
         BuffUpdate();

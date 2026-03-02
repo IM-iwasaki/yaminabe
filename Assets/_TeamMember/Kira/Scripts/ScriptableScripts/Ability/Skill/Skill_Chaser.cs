@@ -1,3 +1,4 @@
+using Mirror;
 using Mirror.BouncyCastle.Asn1.Pkcs;
 using System.Collections;
 using UnityEngine;
@@ -23,7 +24,18 @@ public class Skill_Chaser : SkillBase {
 
     public override void Activate(CharacterBase user) {
         //効果発動
-        isSkillUse = true;
+        user.isSkillUse = true;
+        //時間計測をリセット
+        useTime = 0;
+    }
+
+    [Command]public void CmdActivate(CharacterBase user) {
+        ServerActivate(user);
+    }
+
+    [Server]public void ServerActivate(CharacterBase user) {
+        //効果発動
+        user.isSkillUse = true;
         //時間計測をリセット
         useTime = 0;
     }
@@ -33,12 +45,12 @@ public class Skill_Chaser : SkillBase {
         intervalDelay = magicData.cooldown / 2;        
 
         //使用中か確認、効果中は時間を計測
-        if(!isSkillUse) return;
+        if(!user.isSkillUse) return;
         useTime += Time.deltaTime;
         intervalTime += Time.deltaTime;
 
         //効果時間を過ぎたら効果を終了
-        if (useTime >= effectTime) isSkillUse = false;
+        if (useTime >= effectTime) user.isSkillUse = false;
 
         //攻撃が入力中かつインターバルが経過していたら
         if(user.input.AttackPressed && intervalTime >= intervalDelay) {

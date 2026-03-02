@@ -26,6 +26,9 @@ public abstract class CharacterBase : CreatureBase {
     public MainWeaponController weaponController_main;
     public SubWeaponController weaponController_sub;
 
+    //スキル使用中か
+    [SyncVar]public bool isSkillUse = false;
+
     // ホコを持っているか判定(PVE用)
     [SyncVar] private bool isHoldingHoko = false;
 
@@ -508,7 +511,7 @@ public abstract class CharacterBase : CreatureBase {
     /// <param name="magicData">参照する魔法のデータ</param>
     /// <returns>最終的なMP消費量を返します。</returns>
     public int GetCurrentMPCost(MainMagicData magicData) {
-        if (parameter.equippedSkills[0] is Skill_Chaser && parameter.equippedSkills[0].isSkillUse) return 0;
+        if (parameter.equippedSkills[0] is Skill_Chaser && isSkillUse) return 0;
 
         return magicData.MPCost;
     }

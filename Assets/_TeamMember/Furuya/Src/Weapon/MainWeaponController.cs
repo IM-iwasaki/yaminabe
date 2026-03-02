@@ -361,6 +361,7 @@ public class MainWeaponController : NetworkBehaviour {
             return;
 
         //MPが不足していたら帰る
+        Debug.Log("isSkillUse: " + characterBase.isSkillUse);
         int MPCost = characterBase.GetCurrentMPCost(magicData);
         characterBase.parameter.MP -= MPCost;
 
