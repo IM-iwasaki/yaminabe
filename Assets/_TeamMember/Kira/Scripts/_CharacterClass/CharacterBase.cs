@@ -784,7 +784,7 @@ public abstract class CharacterBase : CreatureBase {
     /// 被ダメージ倍率変更処理
     /// </summary>
     [Command]
-    public void DamageCut(int _value, float _usingTime) {
+    public void DamageCut(float _value, float _usingTime) {
         temporaryBuffs[(int)ParamaterType.damageRate].Add(new TemporaryBuff(_value, _usingTime));
 
         if (damageCutCoroutine != null) StopCoroutine(damageCutCoroutine);

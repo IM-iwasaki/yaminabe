@@ -21,7 +21,7 @@ public class Skill_Gurdian : SkillBase {
         //停止
         user.parameter.moveSpeed = 0;
         //被ダメ大幅軽減
-        user.DamageCut(20, 2.0f);
+        user.DamageCut(0.1f, 2.0f);
         //スキル使用後効果を予約
         user.StartCoroutine(SkillEndEffect(user));
 
