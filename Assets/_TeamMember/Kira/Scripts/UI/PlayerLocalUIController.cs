@@ -244,8 +244,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
         mpUnderBar.SetActive(isMagic);
 
         // HPとMPのUIを強制的に更新
-        //ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
-        //ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
+        ChangeHPUI(player.parameter.maxHP, player.parameter.HP);
+        ChangeMPUI(player.parameter.maxMP, player.parameter.MP);
 
         // 可読性向上のためキャッシュ
         var skills = player.parameter.equippedSkills;
