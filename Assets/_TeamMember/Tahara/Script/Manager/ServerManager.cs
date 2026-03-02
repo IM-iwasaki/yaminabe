@@ -152,4 +152,20 @@ public class ServerManager : NetworkBehaviour {
             param.ResetWeaponToDefault();
         }
     }
+
+    /// <summary>
+    /// 全員のHP、弾数状態を戻す
+    /// </summary>
+    [Server]
+    public void ResetCharacterStatusOnGameStart() {
+        foreach (var player in connectPlayer) {
+            GeneralCharacter resetPlayer = player.GetComponent<GeneralCharacter>();
+            resetPlayer.TargetResetStatus(player.connectionToClient);
+            //万が一の死亡状態解除
+            resetPlayer.ResetHealth();
+            // 追加 マツオ : 武器リセット用
+            var param = player.GetComponent<GeneralCharacter>().parameter;
+            param.ResetWeaponToDefault();
+        }
+    }
 }
