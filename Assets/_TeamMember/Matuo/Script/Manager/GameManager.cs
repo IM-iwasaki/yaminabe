@@ -62,7 +62,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
             return;
         }
 
-        ServerManager.instance.ResetCharacterStatus();
+        ServerManager.instance.ResetCharacterStatusOnGameStart();
 
         // ‡‘O‰Šú‰»
         ResetGameState();
