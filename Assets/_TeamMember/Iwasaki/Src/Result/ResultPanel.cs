@@ -129,29 +129,27 @@ public class ResultPanel : NetworkBehaviour {
     // エリアチームスコア表示用関数
     public void SetAreaScores(float redScore, float blueScore) {
         if (areaRedScoreText != null)
-            areaRedScoreText.text = $"Red : {redScore:F0}";
+            StartCoroutine(AnimateScore(areaRedScoreText, redScore, "Red"));
 
         if (areaBlueScoreText != null)
-            areaBlueScoreText.text = $"Blue : {blueScore:F0}";
+            StartCoroutine(AnimateScore(areaBlueScoreText, blueScore, "Blue"));
     }
 
-    // ホコチームスコア表示用関数
     public void SetHokoScores(float red, float blue, float holdTime = 0) {
         if (hokoRedProgressText != null)
-            hokoRedProgressText.text = $"Red : {red:F0}";
+            StartCoroutine(AnimateScore(hokoRedProgressText, red, "Red"));
 
         if (hokoBlueProgressText != null)
-            hokoBlueProgressText.text = $"Blue : {blue:F0}";
-
+            StartCoroutine(AnimateScore(hokoBlueProgressText, blue, "Blue"));
     }
 
     // デスマッチチームスコア表示用関数
     public void SetDeathMatchScores(int redKills, int blueKills) {
         if (deathRedKillText != null)
-            deathRedKillText.text = $"Red : {redKills}";
+            StartCoroutine(AnimateScoreInt(deathRedKillText, redKills, "Red"));
 
         if (deathBlueKillText != null)
-            deathBlueKillText.text = $"Blue : {blueKills}";
+            StartCoroutine(AnimateScoreInt(deathBlueKillText, blueKills, "Blue"));
     }
 
 
@@ -205,7 +203,7 @@ public class ResultPanel : NetworkBehaviour {
 
 
     /// <summary>
-    /// ゆっくり鼓動アニメーション
+    /// 勝者テキストアニメーション
     /// </summary>
     private System.Collections.IEnumerator WinnerIdlePulse() {
         float pulseSpeed = 3f;     // 速さ
@@ -217,17 +215,65 @@ public class ResultPanel : NetworkBehaviour {
             yield return null;
         }
     }
+
+
     /// <summary>
-    /// テキストを光らせる
+    /// 数値を0から目標値までアニメーション表示する
+    /// ホコ・エリア用
     /// </summary>
-    private System.Collections.IEnumerator WinnerColorShift() {
-        while (true) {
-            float t = (Mathf.Sin(Time.time * 2f) + 1f) * 0.5f;
-            winnerText.color = Color.Lerp(Color.white, Color.red, t);
+    private System.Collections.IEnumerator AnimateScore(
+        TextMeshProUGUI text,
+        float targetValue,
+        string label,
+        float duration = 1.0f) {
+        float time = 0f;
+        float startValue = 0f;
+
+        while (time < duration) {
+            time += Time.deltaTime;
+
+            // 進行率（0～1）
+            float t = time / duration;
+
+            // イージング（少し減速）
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);
+
+            float currentValue = Mathf.Lerp(startValue, targetValue, t);
+
+            text.text = $"{label} : {currentValue:F0}";
+
             yield return null;
         }
+
+        // 最終値を確定表示
+        text.text = $"{label} : {targetValue:F0}";
     }
 
+    /// <summary>
+    /// 数値を0から目標値までアニメーション表示する
+    /// デスマッチ用
+    /// <returns></returns>
+    private System.Collections.IEnumerator AnimateScoreInt(
+    TextMeshProUGUI text,
+    int targetValue,
+    string label,
+    float duration = 1.0f) {
+        float time = 0f;
+
+        while (time < duration) {
+            time += Time.deltaTime;
+            float t = time / duration;
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);
+
+            int currentValue = Mathf.RoundToInt(Mathf.Lerp(0, targetValue, t));
+
+            text.text = $"{label} : {currentValue}";
+
+            yield return null;
+        }
+
+        text.text = $"{label} : {targetValue}";
+    }
 
 
 
