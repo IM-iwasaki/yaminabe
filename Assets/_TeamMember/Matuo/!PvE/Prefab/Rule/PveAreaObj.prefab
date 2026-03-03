@@ -259,7 +259,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   scorePerSecond: 1
-  targetScore: 8
   areaCollider: {fileID: 5479046135522314130}
 --- !u!114 &-6927161880704647023
 MonoBehaviour:
@@ -514,7 +513,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4445147891973370827, guid: d07e76ca352441a47862acb04eb73157, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4445147891973370827, guid: d07e76ca352441a47862acb04eb73157, type: 3}
       propertyPath: m_LocalPosition.z
