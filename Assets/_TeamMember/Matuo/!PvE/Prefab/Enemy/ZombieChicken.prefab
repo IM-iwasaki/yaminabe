@@ -1068,7 +1068,7 @@ Animator:
   m_GameObject: {fileID: 3548868566056176881}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9f078227c6f09b54392514bfaa25c741, type: 3}
-  m_Controller: {fileID: 9100000, guid: f6cc4a8616475f0409f100049a71ba25, type: 2}
+  m_Controller: {fileID: 9100000, guid: bdd7821c59adb7f439aca04e381e6662, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1210,6 +1210,32 @@ MonoBehaviour:
   hpSlider: {fileID: 7836259713016114394}
   damageText: {fileID: 8301339200930704628}
   textSpawnPoint: {fileID: 475148104740722002}
+  popScale: 1.6
+  popTime: 0.2
+  popCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!136 &-8415657473983316905
 CapsuleCollider:
   m_ObjectHideFlags: 0

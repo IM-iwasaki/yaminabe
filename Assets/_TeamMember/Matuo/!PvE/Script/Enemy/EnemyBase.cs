@@ -15,6 +15,7 @@ public class EnemyBase : NetworkBehaviour {
     private NavMeshAgent agent;            // NavMeshAgent
     private EnemyWeaponController weapon;  // 武器コントローラー
     private EnemyStatusBase status;        // 敵ステータス
+    private Animator animator;
 
     private Transform target;              // 現在のターゲット（プレイヤー）
 
@@ -37,6 +38,7 @@ public class EnemyBase : NetworkBehaviour {
         agent = GetComponent<NavMeshAgent>();
         weapon = GetComponent<EnemyWeaponController>();
         status = GetComponent<EnemyStatusBase>();
+        animator = GetComponent<Animator>();
 
         var data = status.statusData;
 
@@ -76,6 +78,7 @@ public class EnemyBase : NetworkBehaviour {
                 if (hitTimer >= hitInterval) {
                     hitTimer = 0.0f;
                     weapon.ServerRequestAttack(direction);
+                    animator.SetTrigger("Attack");
                 }
             } else {
                 agent.isStopped = false;
