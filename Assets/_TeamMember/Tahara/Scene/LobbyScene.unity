@@ -2147,8 +2147,7 @@ PrefabInstance:
       propertyPath: sceneId
       value: 313991989
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 0}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -5970,6 +5969,10 @@ PrefabInstance:
       propertyPath: spawnPrefabs.Array.data[73]
       value: 
       objectReference: {fileID: 4600921234837670496, guid: 7d26f80e234fff6409e267b2b500ecdf, type: 3}
+    - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
+      propertyPath: spawnPrefabs.Array.data[74]
+      value: 
+      objectReference: {fileID: 2283229683088611668, guid: 60752da33a914ba4d887612b8f0a03e3, type: 3}
     - target: {fileID: 8116109016544477545, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: m_Name
       value: CustomNetworkManager
