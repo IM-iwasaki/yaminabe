@@ -96,7 +96,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 ChatManager.Instance.CmdSendSystemMessage(readyPlayer.parameter.PlayerName + " is ready!!");
             }
         }
-
+        RuleManager.Instance.currentRule = GameRuleType.PvE;
         // ‘Sˆõ€”õŠ®—¹‚È‚çPvEƒ`[ƒ€‚Ö
         ServerManager.instance.SetAllPlayersToPvETeam();
 

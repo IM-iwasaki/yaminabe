@@ -4,5 +4,6 @@
 public enum GameRuleType {
     Hoko,          // ホコ
     Area,          // エリア
-    DeathMatch     // デスマッチ
+    DeathMatch,     // デスマッチ
+    PvE
 }

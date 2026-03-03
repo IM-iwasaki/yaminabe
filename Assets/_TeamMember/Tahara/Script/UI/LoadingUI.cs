@@ -7,20 +7,20 @@ using UnityEngine;
 public class LoadingUI : MonoBehaviour {
     public static LoadingUI instance = null;
 
-    [SerializeField,Header("ローディングUI(回転させるやつ)")]
+    [SerializeField, Header("ローディングUI(回転させるやつ)")]
     private GameObject loadingUI;
-    [SerializeField,Header("回転スピード")]
+    [SerializeField, Header("回転スピード")]
     private float rotaSpeed = 5.0f;
-    [SerializeField,Header("tipsのイメージ画像※現状使う予定なし")]
+    [SerializeField, Header("tipsのイメージ画像※現状使う予定なし")]
     private List<Sprite> tipsImages;
-    [SerializeField,Header("回転する長さ")]
+    [SerializeField, Header("回転する長さ")]
     private float rotaTime = 5.0f;
-    [SerializeField,Header("tipsの種類")]
+    [SerializeField, Header("tipsの種類")]
     private TextMeshProUGUI tipsCategory;
-    [SerializeField,Header("tipsの中身")]
+    [SerializeField, Header("tipsの中身")]
     private TextMeshProUGUI tipsText;
-    [SerializeField,Header("tips文章リスト")]
-    private ExplaneScentences explaneDatas;
+    [SerializeField, Header("tips文章リスト")]
+    private List<ExplaneScentences> explaneDatas;
 
     private bool isLoading = false;
     private float rotaZ = 0f;
@@ -66,7 +66,8 @@ public class LoadingUI : MonoBehaviour {
     /// </summary>
     /// <param name="_index"></param>
     private void UpdateTips(GameRuleType _rule) {
-
+        //とりあえず決め打ち
+        int tipsIndex = 0 /* = Random.Range(0, 30)*/;
         switch (_rule) {
             case GameRuleType.Hoko:
                 tipsCategory.text = "クラウン";
@@ -77,9 +78,12 @@ public class LoadingUI : MonoBehaviour {
             case GameRuleType.DeathMatch:
                 tipsCategory.text = "デスマッチ";
                 break;
+            case GameRuleType.PvE:
+                tipsCategory.text = "PvE";
+                break;
             default:
                 break;
         }
-        tipsText.text = explaneDatas.explanes[(int)_rule];
+        tipsText.text = explaneDatas[(int)_rule].explanes[tipsIndex];
     }
 }
