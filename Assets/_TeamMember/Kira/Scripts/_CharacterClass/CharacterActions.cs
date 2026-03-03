@@ -81,7 +81,10 @@ public class CharacterActions : NetworkBehaviour {
 
         MoveControl();
         param.GroundCheck(core.parameter.footPoint.position);
-        
+
+        //  ¢ŠE‚ÌŠO‚É‚à‚µ—‚¿‚Ä‚µ‚Ü‚Á‚½‚ç(Šî–{—‚¿‚È‚¢)
+        core.CheckOutsideAndFall();
+
         AbilityControl();
     }
 
