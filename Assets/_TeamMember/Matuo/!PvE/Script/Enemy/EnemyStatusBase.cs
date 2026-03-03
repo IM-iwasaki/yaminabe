@@ -18,6 +18,11 @@ public class EnemyStatusBase : CreatureBase {
 
     private EnemySpawnPoint spawnPoint;
 
+    [Header("ダメージ乱数設定")]
+    [SerializeField] private float randomRange = 0.1f;
+    [SerializeField] private float criticalChance = 0.2f;
+    [SerializeField] private float criticalMultiplier = 1.5f;
+
     protected override void Awake() {
         base.Awake();
         enemyParameter = GetComponent<EnemyParameter>();
@@ -64,10 +69,24 @@ public class EnemyStatusBase : CreatureBase {
 
         //ダメージ倍率を適用
         float damage = _damage;
-        //ダメージが0以下だったら1に補正する
-        if (damage <= 0) damage = 1;
-        //HPの減算処理
-        enemyParameter.HP -= (int)damage;
+
+        // 乱数
+        float rand = Random.Range(1f - randomRange, 1f + randomRange);
+        damage *= rand;
+
+        bool isCritical = false;
+
+        // 会心
+        if (Random.value < criticalChance) {
+            damage *= criticalMultiplier;
+            isCritical = true;
+        }
+
+        if (damage <= 0f) damage = 0.1f;
+
+        damage = Mathf.Round(damage * 10f) / 10f;
+
+        enemyParameter.HP -= Mathf.RoundToInt(damage);
 
         // hitSE 再生
         PlayHitSE(attackerID);
@@ -82,7 +101,7 @@ public class EnemyStatusBase : CreatureBase {
             }
         }
 
-        RpcUpdateEnemyView(enemyParameter.HP, _damage);
+        RpcUpdateEnemyView(enemyParameter.HP, damage, isCritical);
 
         // HPが0以下なら死亡
         if (enemyParameter.HP <= 0) {
@@ -95,10 +114,10 @@ public class EnemyStatusBase : CreatureBase {
     /// </summary>
     /// <param name="damage"></param>
     [ClientRpc]
-    private void RpcUpdateEnemyView(int currentHP, int damage) {
+    private void RpcUpdateEnemyView(int currentHP, float damage, bool isCritical) {
         if (healthView != null) {
             healthView.UpdateHP(currentHP);
-            healthView.ShowDamage(damage);
+            healthView.ShowDamage(damage, isCritical);
         } else if (bossHpBar != null) {
             bossHpBar.UpdateHP(currentHP);
         }
