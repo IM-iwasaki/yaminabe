@@ -822,15 +822,13 @@ public abstract class CharacterBase : CreatureBase {
     }
 
     [Command]
-    public void CmdUseConsumable(GameObject obj, ConsumableType type, float value, float time) {
+    public void CmdUseConsumable(ConsumableType type, float value, float time) {
 
         switch (type) {
             case ConsumableType.SpeedUp:
                 MoveSpeedBuff(value, time);
                 break;
         }
-
-        NetworkServer.Destroy(gameObject);
     }
 
     /// <summary>

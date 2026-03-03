@@ -39,7 +39,7 @@ public class ConsumableItem : ItemBase {
                 character.Heal(value, usingTime);
                 break;
             case ConsumableType.SpeedUp:
-                character.CmdUseConsumable(this.gameObject, ConsumableType.SpeedUp, value, usingTime);
+                character.CmdUseConsumable(ConsumableType.SpeedUp, value, usingTime);
                 break;
             case ConsumableType.AttackBoost:
                 character.AttackBuff(value, usingTime);
