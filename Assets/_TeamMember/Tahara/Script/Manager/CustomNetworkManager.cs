@@ -17,12 +17,6 @@ public class CustomNetworkManager : NetworkManager {
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
     public override void Start() {
-
-        if (Application.isBatchMode) {
-            StartServer();
-            return;
-        }
-
 #if DEBUG
         if (TitleManager.instance == null) {
             base.Start();
@@ -150,9 +144,6 @@ public class CustomNetworkManager : NetworkManager {
             GameSceneManager.Instance.ResetIsChangedScene();
         }
 
-        //if (!Application.isBatchMode) {
-        //    FadeManager.Instance.StartFadeIn(0.5f);
-        //}
         Cursor.lockState = HostUI.isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
@@ -166,7 +157,7 @@ public class CustomNetworkManager : NetworkManager {
             int stageIndex = Mathf.Abs(hostUI.stageIndex % StageManager.Instance.stages.Count);
             GameManager.Instance.StartPvpGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
             // 全クライアントに送る
-            CountdownManager.Instance.SendCountdown(3);
+            //CountdownManager.Instance.SendCountdown(6);
         }
         else if (sceneName == GameSceneManager.Instance.pveSceneName) {
             GameManager.Instance.StartPveGameFromList(false); // trueにすればランダム

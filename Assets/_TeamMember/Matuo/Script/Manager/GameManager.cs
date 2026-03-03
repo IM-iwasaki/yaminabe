@@ -11,8 +11,8 @@ using System.Collections;
 public class GameManager : NetworkSystemObject<GameManager> {
     #region 定数
 
-    private const int COUNTDOWN_SECONDS = 3;
-    private const float GAME_START_DELAY = 4f;
+    private const int COUNTDOWN_SECONDS = 6;
+    private const float GAME_START_DELAY = 7f;
     private const float DEFAULT_REMAINING_TIME = 0f;
 
     #endregion
@@ -77,7 +77,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
         // ルールスコア初期化
         ruleManager.InitializeScoresForRule(rule);
 
-        // カウントダウン開始
+        // カウントダウン開始(ロード分を含める)
         CountdownManager.Instance.SendCountdown(COUNTDOWN_SECONDS);
         StartCoroutine(StartGameAfterCountdown(rule));
     }
@@ -168,7 +168,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     /// </summary>
     [Server]
     private IEnumerator StartGameAfterCountdown(GameRuleType rule) {
-        // カウントダウン待機
+        // カウントダウン待機(ロード分を含める)
         yield return new WaitForSeconds(GAME_START_DELAY);
 
         isGameRunning = true;
