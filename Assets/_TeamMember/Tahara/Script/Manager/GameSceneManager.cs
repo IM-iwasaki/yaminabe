@@ -55,7 +55,6 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         //フェードアウト
         if (!isChanged) {
             isChanged = true;
-            RpcHub.instance.RpcShowLoadingUI();
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
         }
     }

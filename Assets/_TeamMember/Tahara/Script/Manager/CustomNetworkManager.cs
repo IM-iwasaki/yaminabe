@@ -161,7 +161,6 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="sceneName"></param>
     public override void OnServerSceneChanged(string sceneName) {
-        RpcHub.instance.RpcHideLoadingUI();
         //ゲームシーンに遷移したならゲームスタート
         if (sceneName == GameSceneManager.Instance.gameSceneName) {
             int stageIndex = Mathf.Abs(hostUI.stageIndex % StageManager.Instance.stages.Count);
