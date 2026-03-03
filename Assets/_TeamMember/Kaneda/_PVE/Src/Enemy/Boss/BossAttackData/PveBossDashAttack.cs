@@ -9,7 +9,7 @@ public class PveBossDashAttack : PveBossAttackData {
     [Header("突進する時間")]
     [SerializeField] private float dashDuration = 1.0f;
     [Header("突進するときの速度")]
-    [SerializeField] private float dashSpeed = 25.0f;
+    [SerializeField] private float dashSpeed = 30.0f;
     [Header("多段ヒット設定")]
     [SerializeField] private float hitInterval = 0.2f;
 
@@ -69,11 +69,7 @@ public class PveBossDashAttack : PveBossAttackData {
             elapsed += delta;
             hitTimer += delta;
 
-            Vector3 nextPos =
-                rb.position + dir * dashSpeed * delta;
-
-            
-            rb.MovePosition(nextPos);
+            rb.AddForce(dir * dashSpeed, ForceMode.Impulse);
 
             //  ヒット制御
             if (hitTimer >= hitInterval) {
@@ -81,21 +77,12 @@ public class PveBossDashAttack : PveBossAttackData {
                 hitTimer = 0f;
             }
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         //  突進後停止処理
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-
-        // 物理を一旦止める
-        rb.isKinematic = true;
-
-        // 1フレーム待つ（重要）
-        yield return null;
-
-        // 通常状態に戻す
-        rb.isKinematic = false;
 
         boss.EndAttack();
     }
