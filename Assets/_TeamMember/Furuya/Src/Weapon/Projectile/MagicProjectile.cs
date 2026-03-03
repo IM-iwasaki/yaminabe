@@ -93,21 +93,19 @@ public class MagicProjectile : NetworkBehaviour {
     [ServerCallback]
     void OnTriggerEnter(Collider other) {
         if (!initialized || !isServer) return;
-        if (other.gameObject == owner ||
-            other.CompareTag("Magic")) return;
+        if (other.gameObject == owner) return;
+
+        // ここでフィルタ
+        if (!other.TryGetComponent<CreatureBase>(out var target))
+            return;
 
         // GroundLine は床に当たっても消さない
         if (type == ProjectileType.GroundLine) {
-            // キャラ以外は無視
-            if (!other.TryGetComponent(out CreatureBase target))
-                return;
-
             // チーム判定
             if (target.teamID != owner.GetComponent<CreatureBase>().teamID) {
                 target.TakeDamage(damage, ownerName, ID);
+                RpcPlayHitEffect(transform.position, hitEffectType);
             }
-
-            RpcPlayHitEffect(transform.position, hitEffectType);
             return; //消さない
         }
 
@@ -144,6 +142,12 @@ public class MagicProjectile : NetworkBehaviour {
             ProjectilePool.Instance.DespawnToPool(gameObject);
         else
             NetworkServer.Destroy(gameObject);
+    }
+
+    [Server]
+    public void ServerDeactivate() {
+        if (!initialized) return;
+        Deactivate();
     }
 
     [Server]

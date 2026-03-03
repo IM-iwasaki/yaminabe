@@ -52,7 +52,6 @@ public class Projectile : NetworkBehaviour {
     void OnTriggerEnter(Collider other) {
         if (!initialized || !isServer) return;
         if (other.gameObject == owner) return;
-        if (other.TryGetComponent<DoTArea>(out _)) return;
 
         // ‚±‚±‚ÅƒtƒBƒ‹ƒ^
         if (!other.TryGetComponent<CreatureBase>(out var target))

@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileHitbox : MonoBehaviour
+public class MagicHitbox : MonoBehaviour
 {
-    private Projectile projectile;
+    private MagicProjectile projectile;
 
     void Awake() {
-        projectile = GetComponentInParent<Projectile>();
+        projectile = GetComponentInParent<MagicProjectile>();
     }
 
     void OnTriggerEnter(Collider other) {
