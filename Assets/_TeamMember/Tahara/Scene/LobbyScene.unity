@@ -2143,24 +2143,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4984384127893192753, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
-      propertyPath: pools.Array.size
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4984384127893192753, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
-      propertyPath: pools.Array.data[11].size
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4984384127893192753, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
-      propertyPath: pools.Array.data[11].prefab
-      value: 
-      objectReference: {fileID: 2283229683088611668, guid: 60752da33a914ba4d887612b8f0a03e3, type: 3}
     - target: {fileID: 6968258868527881071, guid: 90f6ee8a8c78435449f58fbf0028d998, type: 3}
       propertyPath: sceneId
       value: 313991989
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 0}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4650,10 +4637,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5755799587698458309, guid: f60b5cf71f498bd4c9a692d2ef109f27, type: 3}
-      propertyPath: deathEffects.Array.data[1].prefab
-      value: 
-      objectReference: {fileID: 2283229683088611668, guid: 60752da33a914ba4d887612b8f0a03e3, type: 3}
     - target: {fileID: 7027353636770662682, guid: f60b5cf71f498bd4c9a692d2ef109f27, type: 3}
       propertyPath: m_Name
       value: EffectPoolRegistry
@@ -5776,7 +5759,7 @@ PrefabInstance:
       objectReference: {fileID: 261839327}
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: spawnPrefabs.Array.size
-      value: 75
+      value: 74
       objectReference: {fileID: 0}
     - target: {fileID: 3731418493915240320, guid: 660f8d9e62642c047af566e384a34233, type: 3}
       propertyPath: spawnPrefabs.Array.data[22]
