@@ -29,6 +29,9 @@ public abstract class CharacterBase : CreatureBase {
     // ホコを持っているか判定(PVE用)
     [SyncVar] private bool isHoldingHoko = false;
 
+    //  世界の外の落下判定のy座標
+    [SerializeField] private float fallYposition = -50.0f;
+
     public int bannerNum = 0;
 
     protected List<List<TemporaryBuff>> temporaryBuffs = new List<List<TemporaryBuff>>((int)ParamaterType.max);
@@ -601,6 +604,15 @@ public abstract class CharacterBase : CreatureBase {
             }
 
             CameraMenu.ToggleMenu();
+        }
+    }
+
+    /// <summary>
+    /// 追加:カネダ 世界の外に落ちた際の判定と処理
+    /// </summary>
+    public void CheckOutsideAndFall() {
+        if(transform.position.y <= fallYposition) {
+            TakeDamage(9999, "Fall", -1);
         }
     }
 
