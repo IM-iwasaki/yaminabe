@@ -35,6 +35,9 @@ public abstract class CharacterBase : CreatureBase {
     //  世界の外の落下判定のy座標
     [SerializeField] private float fallYposition = -50.0f;
 
+    // リスポーン後の無敵判定用
+    [SyncVar] private bool isInvincible = false;
+
     public int bannerNum = 0;
 
     protected List<List<TemporaryBuff>> temporaryBuffs = new List<List<TemporaryBuff>>((int)ParamaterType.max);
@@ -184,6 +187,9 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [Server]
     public override void TakeDamage(int _damage, string _name, int _ID) {
+        // 無敵中はダメージを受けない
+        if (isInvincible) return;
+
         //既に死亡状態かロビー内なら帰る
         if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
 
@@ -366,6 +372,15 @@ public abstract class CharacterBase : CreatureBase {
 
         parameter.StartInvincible();
         ResetHealth();
+        // 無敵状態を開始（3秒間）
+        StartCoroutine(InvincibleRoutine(3.0f));
+    }
+
+    [Server]
+    private IEnumerator InvincibleRoutine(float duration) {
+        isInvincible = true;
+        yield return new WaitForSeconds(duration);
+        isInvincible = false;
     }
 
     /// <summary>
