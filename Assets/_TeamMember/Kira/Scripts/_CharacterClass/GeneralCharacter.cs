@@ -37,7 +37,6 @@ public class GeneralCharacter : CharacterBase {
         if (isLocalPlayer) {
             parameter.UpdateNearbyAlly(allyCheckRadius, allyLayer);
         }
-
         // バフ処理はサーバーのみ
         if (isServer) {
             BuffUpdate();
