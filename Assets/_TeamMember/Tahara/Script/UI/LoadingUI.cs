@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class LoadingUI : MonoBehaviour {
     public static LoadingUI instance = null;
@@ -26,7 +25,8 @@ public class LoadingUI : MonoBehaviour {
     private bool isLoading = false;
     private float rotaZ = 0f;
 
-    private void Start() {
+
+    private void Awake() {
         if (instance == null)
             instance = this;
         else
@@ -35,7 +35,6 @@ public class LoadingUI : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
         gameObject.SetActive(false);
     }
-
     /// <summary>
     /// ロード画面出力非同期処理
     /// ロード画面中の全ての処理の発火場所
