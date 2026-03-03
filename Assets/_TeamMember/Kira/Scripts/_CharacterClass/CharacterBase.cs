@@ -772,7 +772,9 @@ public abstract class CharacterBase : CreatureBase {
     /// <summary>
     /// 移動速度上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]
+    //[Command]
+
+    [Server]
     public void MoveSpeedBuff(float _value, float _usingTime) {
         temporaryBuffs[(int)ParamaterType.moveSpeed].Add(new TemporaryBuff(_value, _usingTime));
 
@@ -817,6 +819,18 @@ public abstract class CharacterBase : CreatureBase {
         yield return new WaitForSeconds(_duration);
         parameter.damageRatio = 100;
         damageCutCoroutine = null;
+    }
+
+    [Command]
+    public void CmdUseConsumable(GameObject obj, ConsumableType type, float value, float time) {
+
+        switch (type) {
+            case ConsumableType.SpeedUp:
+                MoveSpeedBuff(value, time);
+                break;
+        }
+
+        NetworkServer.Destroy(gameObject);
     }
 
     /// <summary>

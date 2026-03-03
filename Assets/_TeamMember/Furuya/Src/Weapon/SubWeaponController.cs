@@ -240,7 +240,6 @@ public class SubWeaponController : NetworkBehaviour {
         }
     }
 
-    [Server]
     private void UseItem() {
         if (subWeaponData is not ItemData itemData) return;
 
