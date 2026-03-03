@@ -24,7 +24,7 @@ public class EnemyStatusBase : CreatureBase {
 
         healthView = GetComponent<EnemyHealthView>();
 
-        if(healthView == null) {
+        if (healthView == null) {
             bossHpBar = GetComponent<PveBossHpBarController>();
         }
     }
@@ -67,7 +67,7 @@ public class EnemyStatusBase : CreatureBase {
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理
-        enemyParameter.HP -= (int) damage;
+        enemyParameter.HP -= (int)damage;
 
         // hitSE 再生
         PlayHitSE(attackerID);
@@ -111,8 +111,9 @@ public class EnemyStatusBase : CreatureBase {
     private void Die() {
 
         enemyParameter.isDead = true;   // 死亡フラグ
-
-        RpcPlayDeathEffect();
+        if (spawnPoint.isBossSpawnPoint) {
+            RpcPlayDeathEffect();
+        }
 
         if (spawnPoint != null) {
             EnemySpawnManager.Instance.NotifyEnemyDead(spawnPoint);
@@ -136,6 +137,10 @@ public class EnemyStatusBase : CreatureBase {
         GameObject prefab = EffectPoolRegistry.Instance.GetDeathEffect(EffectType.Explosion);
         if (prefab != null) {
             var fx = EffectPool.Instance.GetFromPool(prefab, transform.position, Quaternion.identity);
+
+            // エフェクトサイズ変更
+            fx.transform.localScale *= 4f;
+
             fx.SetActive(true);
             EffectPool.Instance.ReturnToPool(fx, 1.5f);
         }
