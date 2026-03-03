@@ -19,7 +19,7 @@ public class EnemyStatusBase : CreatureBase {
     private EnemySpawnPoint spawnPoint;
 
     [Header("ƒ_ƒ[ƒW—”İ’è")]
-    [SerializeField] private float randomRange = 0.1f;
+    [SerializeField] private float randomRange = 0.05f;
     [SerializeField] private float criticalChance = 0.2f;
     [SerializeField] private float criticalMultiplier = 1.5f;
 
