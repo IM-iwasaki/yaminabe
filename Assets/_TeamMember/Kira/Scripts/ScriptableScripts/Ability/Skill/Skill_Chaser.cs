@@ -24,19 +24,8 @@ public class Skill_Chaser : SkillBase {
 
     public override void Activate(CharacterBase user) {
         //効果発動
-        user.isSkillUse = true;
-        //時間計測をリセット
-        useTime = 0;
-    }
-
-    [Command]public void CmdActivate(CharacterBase user) {
-        ServerActivate(user);
-    }
-
-    [Server]public void ServerActivate(CharacterBase user) {
-        //効果発動
-        user.isSkillUse = true;
-        //時間計測をリセット
+        user.CmdSkillState(true);
+        //時間リセット
         useTime = 0;
     }
 
@@ -50,7 +39,7 @@ public class Skill_Chaser : SkillBase {
         intervalTime += Time.deltaTime;
 
         //効果時間を過ぎたら効果を終了
-        if (useTime >= effectTime) user.isSkillUse = false;
+        if (useTime >= effectTime) user.CmdSkillState(false);
 
         //攻撃が入力中かつインターバルが経過していたら
         if(user.input.AttackPressed && intervalTime >= intervalDelay) {

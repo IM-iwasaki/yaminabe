@@ -28,8 +28,11 @@ public class Passive_Chaser : PassiveBase {
     public override void PassiveReflection(CharacterBase user) {
         intervalTime += Time.deltaTime;
 
-        //•Ší‚ÌUŒ‚ŠÔŠu‚Ì7“‚ðŽQÆ‚µ‚ÄŒø‰Ê’l‚ð§Œä‚·‚é
-        CTAcceleration = user.weaponController_main.weaponData.cooldown * 0.07f;
+        //UŒ‚ŠÔŠu‚ðƒLƒƒƒbƒVƒ…
+        float cooldown = user.weaponController_main.weaponData.cooldown;
+
+        //•Ší‚ÌUŒ‚ŠÔŠu‚ðŽQÆ‚µ‚ÄŒø‰Ê’l‚ð§Œä‚·‚é(ƒXƒLƒ‹‚ÌŽg—p’†‚ÍŒø‰Ê’l‚ðŽã‚ß‚é)
+        CTAcceleration = user.isSkillUse ? cooldown * 0.001f : cooldown * 0.05f;
 
         //UŒ‚‚µ‚½uŠÔ‚ÉƒCƒ“ƒ^[ƒoƒ‹‚ªŒo‰ß‚µ‚Ä‚¢‚½‚ç
         if (user.input.AttackPressed && intervalTime >= user.weaponController_main.weaponData.cooldown) {

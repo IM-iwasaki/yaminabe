@@ -872,6 +872,22 @@ public abstract class CharacterBase : CreatureBase {
             }
         }
     }
+   
+    /// <summary>
+    /// スキルの状態変化をサーバーに送信
+    /// </summary>
+    /// <param name="_newState">状態の真偽</param>    
+    [Command]public void CmdSkillState(bool _newState) {
+        ServerSkillState(_newState);
+    }
+
+    /// <summary>
+    /// スキルの状態変化をサーバー上で反映
+    /// </summary>
+    [Server]public void ServerSkillState(bool _newState) {
+        //効果発動
+        isSkillUse = _newState;
+    }
 
     #endregion
 
