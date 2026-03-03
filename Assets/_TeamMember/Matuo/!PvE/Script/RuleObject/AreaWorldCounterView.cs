@@ -19,6 +19,11 @@ public class AreaWorldCounterView : MonoBehaviour {
     private float lastScore = -1f;
     private int lastPlayerCount = -1;
 
+    [SerializeField] private float disappearTime = 0.4f;
+    [SerializeField]
+    private AnimationCurve disappearCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
+
+    private Coroutine disappearCoroutine;
 
     private void Awake() {
         mainCam = Camera.main;
@@ -113,5 +118,38 @@ public class AreaWorldCounterView : MonoBehaviour {
     /// </summary>
     public void Refresh() {
         UpdateText();
+    }
+
+    /// <summary>
+    /// UI隠す処理
+    /// </summary>
+    public void PlayDisappear() {
+        if (disappearCoroutine != null)
+            StopCoroutine(disappearCoroutine);
+
+        disappearCoroutine = StartCoroutine(DisappearAnimation());
+    }
+
+    private IEnumerator DisappearAnimation() {
+        Transform tf = countText.transform;
+
+        Vector3 startScale = tf.localScale;
+        float t = 0f;
+
+        while (t < disappearTime) {
+            float eval = disappearCurve.Evaluate(t / disappearTime);
+
+            tf.localScale = startScale * eval;
+
+            // フェードも入れる
+            Color c = countText.color;
+            c.a = eval;
+            countText.color = c;
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        gameObject.SetActive(false);
     }
 }

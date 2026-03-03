@@ -147,10 +147,25 @@ public class CaptureAreaPVE : NetworkBehaviour {
 
         ExecuteEvents();
 
+        RpcPlayDisappear();
+
         // 突破
         areaCollider.enabled = false;
     }
 
+    /// <summary>
+    /// エリアをクリアした時にエリアUIを隠す
+    /// </summary>
+    [ClientRpc]
+    private void RpcPlayDisappear() {
+        var view = GetComponentInChildren<AreaWorldCounterView>();
+        if (view != null)
+            view.PlayDisappear();
+    }
+
+    /// <summary>
+    /// エリアクリア時に走るイベント
+    /// </summary>
     [Server]
     private void ExecuteEvents() {
 
