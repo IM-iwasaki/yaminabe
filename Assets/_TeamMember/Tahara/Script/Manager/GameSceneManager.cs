@@ -25,6 +25,11 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
+        if (TitleManager.instance.isHost) {
+            HostUI.isVisibleUI = false;
+            HostUI.ShowOrHideUI();
+        }
+
         //メッセージ送信クラスにゲーム状態を更新させる
         FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
 
@@ -86,7 +91,8 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             if (!readyPlayer.parameter.ready) {
                 ChatManager.Instance.CmdSendSystemMessage(readyPlayer.parameter.PlayerName + " is not ready");
                 return;
-            } else {
+            }
+            else {
                 ChatManager.Instance.CmdSendSystemMessage(readyPlayer.parameter.PlayerName + " is ready!!");
             }
         }

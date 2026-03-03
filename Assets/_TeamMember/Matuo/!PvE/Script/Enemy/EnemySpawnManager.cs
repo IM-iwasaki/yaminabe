@@ -111,7 +111,7 @@ public class EnemySpawnManager : NetworkBehaviour {
         if (data == null || data.enemyPrefab == null)
             return;
 
-        GameObject enemyObj = Instantiate(data.enemyPrefab,sp.transform.position,Quaternion.identity);
+        GameObject enemyObj = Instantiate(data.enemyPrefab, sp.transform.position, Quaternion.identity);
 
         NetworkServer.Spawn(enemyObj);
 
@@ -135,6 +135,10 @@ public class EnemySpawnManager : NetworkBehaviour {
         if (sp.isBossSpawnPoint) {
             bossAlive = false;
             bossRespawnTimer = bossRespawnDelay;
+
+            if (sp.removeOnBossDeath != null && sp.removeOnBossDeath.gameObject.activeSelf) {
+                sp.removeOnBossDeath.RpcExecute();
+            }
         }
     }
 }

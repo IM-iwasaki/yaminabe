@@ -11,8 +11,6 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     [SerializeField]
     private HostUI hostUI = null;
-    [SerializeField]
-    private LoadingUI loadingUI = null;
 
     private Coroutine loadCorutine = null;
     /// <summary>
@@ -43,11 +41,13 @@ public class CustomNetworkManager : NetworkManager {
         //サーバー参加時にカーソルロック
         Cursor.lockState = CursorLockMode.Locked;
     }
+
     /// <summary>
     /// サーバー開始時処理
     /// </summary>
     public override void OnStartServer() {
         base.OnStartServer();
+
         // サーバーが起動したタイミングで SystemManager に Network 系の Spawn を任せる
         if (SystemManager.Instance != null) {
             SystemManager.Instance.SpawnNetworkSystems();
@@ -76,9 +76,6 @@ public class CustomNetworkManager : NetworkManager {
             hostUI = host;
             hostUI.Init();
         }
-        LoadingUI loadUI = Instantiate(loadingUI, uiRoot.transform);
-        loadingUI = loadUI;
-        loadingUI.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -147,7 +144,6 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     /// <param name="newSceneName"></param>
     public override void OnServerChangeScene(string newSceneName) {
-        loadingUI.ShowLoading(RuleManager.Instance.currentRule);
         if (newSceneName == GameSceneManager.Instance.gameSceneName || newSceneName == GameSceneManager.Instance.pveSceneName) {
             if (HostUI.isVisibleUI)
                 HostUI.ShowOrHideUI();
@@ -203,8 +199,8 @@ public class CustomNetworkManager : NetworkManager {
                 startPos.ServerTeleport(bufferPos, Quaternion.identity);
             }
         }
-        StartCoroutine(loadingUI.HideLoading());
         Physics.simulationMode = SimulationMode.FixedUpdate;
+        
     }
 
     /// <summary>
@@ -216,10 +212,17 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
         FadeManager.Instance.StartFadeIn(0.5f);
+        LoadingUI.instance.ShowLoading(RuleManager.Instance.currentRule);
         if (GameSceneManager.Instance)
             GameSceneManager.Instance.ResetIsChangedScene();
     }
 
+    public override void OnClientSceneChanged() {
+        base.OnClientSceneChanged();
+
+        // ロード完了後に UI を消す
+        StartCoroutine(LoadingUI.instance.HideLoading());
+    }
     /// <summary>
     /// クライアントが止まった時の処理
     /// </summary>

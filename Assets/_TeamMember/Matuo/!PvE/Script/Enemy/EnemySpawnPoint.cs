@@ -24,6 +24,9 @@ public class EnemySpawnPoint : MonoBehaviour {
     [Header("ボス設定")]
     public bool isBossSpawnPoint = false;   // このスポナーはボス用か
 
+    [Header("ボス死亡時に削除するオブジェクト")]
+    [SerializeField] public RemoveObjectEvent removeOnBossDeath;
+
     public int CurrentMaxSpawnCount {
         get {
             int playerCount = Mirror.NetworkServer.connections.Count;
