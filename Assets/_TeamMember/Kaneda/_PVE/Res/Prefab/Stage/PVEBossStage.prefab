@@ -2625,6 +2625,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3561543953138704550, guid: 77ef58c1d6d3c93468e71b0db690d8de, type: 3}
   m_PrefabInstance: {fileID: 4011949430634083910}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5058857288810228530 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8185825751395442036, guid: 77ef58c1d6d3c93468e71b0db690d8de, type: 3}
+  m_PrefabInstance: {fileID: 4011949430634083910}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f17f693743991e4d950ffcada0290dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4012478170431604606
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4253,7 +4264,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 124568516127839736, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: m_Name
-      value: EnemySpawnpoint
+      value: BossSpawnpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 124568516127839736, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: enemyStatus
@@ -4271,6 +4286,10 @@ PrefabInstance:
       propertyPath: isBossSpawnPoint
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
+      propertyPath: removeOnBossDeath
+      value: 
+      objectReference: {fileID: 5058857288810228530}
     - target: {fileID: 7922028215747839612, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: m_Enabled
       value: 0
