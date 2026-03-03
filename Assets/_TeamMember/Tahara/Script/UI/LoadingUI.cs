@@ -1,4 +1,3 @@
-using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -11,8 +10,6 @@ public class LoadingUI : MonoBehaviour {
     private GameObject loadingUI;
     [SerializeField, Header("回転スピード")]
     private float rotaSpeed = 5.0f;
-    [SerializeField, Header("tipsのイメージ画像※現状使う予定なし")]
-    private List<Sprite> tipsImages;
     [SerializeField, Header("回転する長さ")]
     private float rotaTime = 5.0f;
     [SerializeField, Header("tipsの種類")]
@@ -66,8 +63,8 @@ public class LoadingUI : MonoBehaviour {
     /// </summary>
     /// <param name="_index"></param>
     private void UpdateTips(GameRuleType _rule) {
-        //とりあえず決め打ち
-        int tipsIndex = 0 /* = Random.Range(0, 30)*/;
+        //とりあえず決め打ち(クライアント側で変更がかかるので全員違うのが出るはず)
+        int tipsIndex = Random.Range(0, 3);
         switch (_rule) {
             case GameRuleType.Hoko:
                 tipsCategory.text = "クラウン";
@@ -84,6 +81,7 @@ public class LoadingUI : MonoBehaviour {
             default:
                 break;
         }
+        //メインのTipsを変更
         tipsText.text = explaneDatas[(int)_rule].explanes[tipsIndex];
     }
 }
