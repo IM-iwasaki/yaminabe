@@ -93,7 +93,7 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
         }
 
         //  3秒後に開始
-        await Task.Delay(3000);
+        await Task.Delay(6000);
 
         // 初回スポーン実行
         SpawnAllItems();
