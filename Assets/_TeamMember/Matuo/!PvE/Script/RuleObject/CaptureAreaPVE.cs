@@ -59,6 +59,13 @@ public class CaptureAreaPVE : NetworkBehaviour {
         RpcUpdateUI();
     }
 
+    [Server]
+    private void RemoveDeadPlayers() {
+        playersInArea.RemoveWhere(p => p == null || p.parameter == null || p.parameter.isDead);
+
+        currentPlayerCount = playersInArea.Count;
+    }
+
     [ClientRpc]
     private void RpcUpdateUI() {
         var view = GetComponentInChildren<AreaWorldCounterView>();
@@ -106,6 +113,8 @@ public class CaptureAreaPVE : NetworkBehaviour {
     private void Update() {
         if (cleared) return;
         if (!GameManager.Instance.IsGameRunning()) return;
+
+        RemoveDeadPlayers();
 
         if (!CanIncreaseScore()) return;
 

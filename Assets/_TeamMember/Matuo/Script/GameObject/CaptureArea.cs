@@ -37,9 +37,17 @@ public class CaptureArea : NetworkBehaviour {
         RuleManager.Instance.NotifyObjectStateChanged();
     }
 
+    [Server]
+    private void RemoveDeadPlayers() {
+        playersInArea.RemoveWhere(p => p == null || p.parameter == null || p.parameter.isDead);
+    }
+
     [ServerCallback]
     private void Update() {
         if (!GameManager.Instance.IsGameRunning()) return;
+
+        RemoveDeadPlayers();
+
         if (playersInArea.Count == 0) return;
 
         int? firstTeam = null;
