@@ -28,6 +28,14 @@ public class EnemyHealthView : MonoBehaviour {
 
     private Coroutine popCoroutine;
 
+    [Header("HPカラー設定")]
+    [SerializeField] private Image fillImage;
+
+    [Header("会心演出")]
+    [SerializeField] private Color orange = new Color(1f, 0.5f, 0f); // オレンジ
+    [SerializeField] private float criticalPopScale = 2.3f;
+    [SerializeField] private float criticalPopTime = 0.15f;
+
     private void Awake() {
         mainCam = Camera.main;
 
@@ -75,15 +83,26 @@ public class EnemyHealthView : MonoBehaviour {
     /// HP更新（EnemyStatusBaseから呼ぶ）
     /// </summary>
     public void UpdateHP(int currentHP) {
-        if (hpSlider != null) {
-            hpSlider.value = currentHP;
+        if (hpSlider == null) return;
+
+        hpSlider.value = currentHP;
+
+        float ratio = currentHP / hpSlider.maxValue;
+
+        if (fillImage != null) {
+            if (ratio <= 0.25f)
+                fillImage.color = Color.red;
+            else if (ratio <= 0.5f)
+                fillImage.color = Color.yellow;
+            else
+                fillImage.color = Color.green;
         }
     }
 
     /// <summary>
     /// ダメージ表示
     /// </summary>
-    public void ShowDamage(int damage) {
+    public void ShowDamage(float damage, bool isCritical = false) {
         if (damageText == null) return;
 
         // 必ず textSpawnPoint の子にする
@@ -94,43 +113,51 @@ public class EnemyHealthView : MonoBehaviour {
         // 毎回ローカル位置をリセット
         damageText.transform.localPosition = Vector3.up * 0.9f;
 
-        int displayDamage = damage * 10;
+        float displayDamage = damage * 10;
         damageText.text = displayDamage.ToString();
 
-        damageText.color = nextDamageColor;
+        if (isCritical)
+            damageText.color = orange;
+        else
+            damageText.color = nextDamageColor;
+
         damageText.gameObject.SetActive(true);
 
         dmgTextTimer = 0f;
         nextDamageColor = Color.yellow;
 
-        PlayPopEffect();
+        PlayPopEffect(isCritical);
     }
 
     public void SetNextDamageColor(Color color) {
         nextDamageColor = color;
     }
 
-    private void PlayPopEffect() {
+    private void PlayPopEffect(bool isCritical) {
         if (popCoroutine != null)
             StopCoroutine(popCoroutine);
 
-        popCoroutine = StartCoroutine(PopAnimation());
+        popCoroutine = StartCoroutine(PopAnimation(isCritical));
     }
 
     /// <summary>
     /// ポップアニメーション
     /// </summary>
-    private IEnumerator PopAnimation() {
+    private IEnumerator PopAnimation(bool isCritical) {
         Transform tf = damageText.transform;
+
+        float scale = isCritical ? criticalPopScale : popScale;
+        float time = isCritical ? criticalPopTime : popTime;
+
         Vector3 baseScale = Vector3.one;
-        Vector3 peakScale = Vector3.one * popScale;
+        Vector3 peakScale = Vector3.one * scale;
 
         float t = 0f;
 
-        while (t < popTime) {
+        while (t < time) {
             tf.localScale =
                 Vector3.Lerp(baseScale, peakScale,
-                popCurve.Evaluate(t / popTime));
+                popCurve.Evaluate(t / time));
 
             t += Time.deltaTime;
             yield return null;
