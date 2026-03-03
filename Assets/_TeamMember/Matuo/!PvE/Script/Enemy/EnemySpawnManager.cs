@@ -10,11 +10,9 @@ public class EnemySpawnManager : NetworkBehaviour {
     public static EnemySpawnManager Instance;
 
     [Header("全体制御")]
-    public int maxEnemyCount = 20;          // ステージ全体の敵最大数
     public float spawnInterval = 2.0f;      // スポーン試行間隔（秒）
 
     private float timer = 0f;               // 時間計測用
-    private int currentEnemyCount = 0;      // 現在存在する敵数
 
     private List<EnemySpawnPoint> spawnPoints = new(); // Scene内スポナー一覧
 
@@ -33,13 +31,6 @@ public class EnemySpawnManager : NetworkBehaviour {
     private void Start() {
         // シーン内に配置されたスポナーを全取得
         spawnPoints.AddRange(FindObjectsOfType<EnemySpawnPoint>());
-    }
-
-    private int CurrentMaxEnemyCount {
-        get {
-            int playerCount = NetworkServer.connections.Count;
-            return maxEnemyCount * Mathf.Max(1, playerCount);
-        }
     }
 
     [ServerCallback]
@@ -98,13 +89,7 @@ public class EnemySpawnManager : NetworkBehaviour {
             return;
         }
 
-        // 通常スポナーの場合
-
-        // ボス用に1枠空ける
-        if (currentEnemyCount >= CurrentMaxEnemyCount - 1)
-            return;
-
-        if (sp.currentSpawnCount >= sp.maxSpawnCount)
+        if (sp.currentSpawnCount >= sp.CurrentMaxSpawnCount)
             return;
 
         if (!SpawnUtility.IsAnyPlayerInRange(sp.transform.position, sp.activateRadius))
@@ -138,7 +123,6 @@ public class EnemySpawnManager : NetworkBehaviour {
         }
 
         sp.currentSpawnCount++;
-        currentEnemyCount++;
     }
 
     /// <summary>
@@ -146,7 +130,6 @@ public class EnemySpawnManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void NotifyEnemyDead(EnemySpawnPoint sp) {
-        currentEnemyCount--;
         sp.currentSpawnCount--;
 
         if (sp.isBossSpawnPoint) {

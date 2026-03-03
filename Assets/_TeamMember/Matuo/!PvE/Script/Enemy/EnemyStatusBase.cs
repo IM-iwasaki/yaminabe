@@ -37,7 +37,19 @@ public class EnemyStatusBase : CreatureBase {
     public override void OnStartServer() {
         if (statusData == null || enemyParameter == null) return;
 
-        enemyParameter.HP = statusData.maxHp;
+        int finalHp = statusData.maxHp;
+
+        // ボスなら人数倍率を適用
+        if (spawnPoint != null && spawnPoint.isBossSpawnPoint) {
+            int playerCount = NetworkServer.connections.Count;
+            playerCount = Mathf.Max(1, playerCount);
+
+            float multiplier = 1f + 0.5f * (playerCount - 1);
+
+            finalHp = Mathf.RoundToInt(statusData.maxHp * multiplier);
+        }
+
+        enemyParameter.HP = finalHp;
         enemyParameter.attack = statusData.attack;
         enemyParameter.moveSpeed = (int)statusData.moveSpeed;
     }

@@ -9,7 +9,7 @@ public class EnemySpawnPoint : MonoBehaviour {
     public EnemyStatusBaseData enemyStatus;     // 敵データ
 
     [Header("スポーン制限")]
-    public int maxSpawnCount = 5;               // このスポナーから同時に湧ける最大数
+    public int baseMaxSpawnCount = 5;            // このスポナーから同時に湧ける最大数
     [HideInInspector]
     public int currentSpawnCount = 0;           // 現在このスポナーから湧いている数
 
@@ -23,6 +23,15 @@ public class EnemySpawnPoint : MonoBehaviour {
 
     [Header("ボス設定")]
     public bool isBossSpawnPoint = false;   // このスポナーはボス用か
+
+    public int CurrentMaxSpawnCount {
+        get {
+            int playerCount = Mirror.NetworkServer.connections.Count;
+            playerCount = Mathf.Max(1, playerCount);
+
+            return Mathf.RoundToInt(baseMaxSpawnCount * (1f + 0.5f * (playerCount - 1)));
+        }
+    }
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected() {
