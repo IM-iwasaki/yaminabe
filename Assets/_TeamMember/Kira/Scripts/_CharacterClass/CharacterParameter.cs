@@ -433,6 +433,7 @@ public class CharacterParameter : NetworkBehaviour {
     /// </summary>
     public void StartDeadTrigger() {
         isDeadTrigger = true;
+        attackTrigger = false;
     }
 
     /// <summary>
