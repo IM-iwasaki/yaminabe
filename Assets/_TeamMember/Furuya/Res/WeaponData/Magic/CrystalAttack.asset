@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: CrystalAttack
   weaponID: 20
   type: 2
-  damage: 150
+  damage: 100
   cooldown: 1
   appearanceID: 7
   muzzleFlashType: 2
@@ -25,7 +25,7 @@ MonoBehaviour:
   cost: 1
   projectilePrefab: {fileID: 8524352568393916313, guid: 45d3ddb55c3772e469a5f06dcdc91e9d, type: 3}
   projectileSpeed: 0
-  MPCost: 10
+  MPCost: 0
   chargeEffectType: 0
   chargeTime: 0
   magicType: 3

@@ -32,8 +32,8 @@ public class Passive_Assault : PassiveBase {
         }
 
         //”­“®’†‚ÉHP‚ªğŒ‚ğ–‚½‚µ‚½‚ç”­“®B
-        if (isPassiveActive && user.parameter.HP <= user.parameter.maxHP / 5 ) {
-            user.Heal(0.3f,2.0f);
+        if (isPassiveActive && user.parameter.HP <= user.parameter.maxHP / 2 ) {
+            user.Heal(0.5f,0.5f);
             //”­“®ó‘Ô‚ğ‰ğœ
             isPassiveActive= false;
         }
