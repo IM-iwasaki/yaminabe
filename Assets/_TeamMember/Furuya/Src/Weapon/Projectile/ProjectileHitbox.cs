@@ -18,7 +18,7 @@ public class ProjectileHitbox : MonoBehaviour
         if (other.TryGetComponent<DoTArea>(out _))
             return;
 
-        if (other.TryGetComponent<MagicProjectile>(out _))
+        if (other.gameObject.tag == "Magic")
             return;
 
         projectile.ServerDeactivate();
