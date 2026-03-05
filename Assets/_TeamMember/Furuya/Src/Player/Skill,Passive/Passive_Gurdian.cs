@@ -12,7 +12,7 @@ public class Passive_Gurdian : PassiveBase {
 
     public override void PassiveSetting() {
         //発動中でなかったら発動中の状態にする
-        if (!isPassiveActive){
+        if (!isPassiveActive) {
             isPassiveActive = true;
             //クールタイム計測をリセット
             coolTime = 0;
@@ -20,28 +20,27 @@ public class Passive_Gurdian : PassiveBase {
     }
 
     public override void PassiveReflection(CharacterBase user) {
+        // クールタイム計測
+        coolTime += Time.deltaTime;
+        if (coolTime >= cooldown) {
 
-        // 味方が近くにいる → 定期回復
-        if (user.parameter.HasNearbyAlly) {
+            // 味方が近くにいる → 定期回復
+            if (user.parameter.HasNearbyAlly) {
 
-            // クールタイム計測
-            coolTime += Time.deltaTime;
-
-            if (coolTime >= cooldown) {
                 user.Heal(0.1f, 1.0f);
-                coolTime = 0;
+
+                // スキル使用中、速度バフ中以外は速度上昇効果を戻す
+                if (!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
+                    user.parameter.OutDefaultStatus_MoveSpeed();
+                }
+                return;
             }
 
-            // スキル使用中、速度バフ中以外は速度上昇効果を戻す
-            if(!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
-                user.parameter.OutDefaultStatus_MoveSpeed();
-            }           
-            return;
+            // スキル使用中、速度バフ中以外は孤立時に速度を増加
+            if (!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
+                user.CmdUseSkill(user.parameter.defaultMoveSpeed * 1.3f, 1);
+            }
+            coolTime = 0;
         }
-
-        // スキル使用中、速度バフ中以外は孤立時に速度を増加
-        if(!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
-            user.CmdUseSkill(user.parameter.defaultMoveSpeed * 1.3f, 1);
-        }          
     }
 }
