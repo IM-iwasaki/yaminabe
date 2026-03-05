@@ -111,7 +111,8 @@ public class CustomNetworkManager : NetworkManager {
         if (TitleManager.instance.isClient) {
             Destroy(FindObjectOfType<UDPBroadcaster>().gameObject);
         }
-
+        LoadingUI.instance.ShowLoading();
+        StartCoroutine(LoadingUI.instance.HideLoading());
     }
 
     /// <summary>

@@ -170,6 +170,8 @@ public class CharacterInput : NetworkBehaviour {
     /// 移動入力
     /// </summary>
     public void OnMove(InputAction.CallbackContext ctx) {
+        //ロード中は入力を受け付けない
+        if (LoadingUI.instance.isLoading) return;
         MoveInput = ctx.ReadValue<Vector2>();
 
         float moveX = MoveInput.x;
@@ -185,6 +187,8 @@ public class CharacterInput : NetworkBehaviour {
     /// ジャンプ
     /// </summary>
     public void OnJump(InputAction.CallbackContext context) {
+        //ロード中は入力を受け付けない
+        if (LoadingUI.instance.isLoading) return;
         // ボタンが押された瞬間だけ反応させる
         if (context.performed && core.parameter.IsGrounded) {
             isJumpPressed = true;
@@ -197,6 +201,8 @@ public class CharacterInput : NetworkBehaviour {
     /// 攻撃入力
     /// </summary>
     public void OnAttack(InputAction.CallbackContext ctx) {
+        //ロード中は入力を受け付けない
+        if (LoadingUI.instance.isLoading) return;
         //死亡していたらフラグを下して攻撃できなくする
         if (core.parameter.isDead || !isLocalPlayer) {
             AttackPressed = false;
@@ -225,6 +231,8 @@ public class CharacterInput : NetworkBehaviour {
     /// スキル
     /// </summary>
     public void OnSkill(InputAction.CallbackContext ctx) {
+        //ロード中は入力を受け付けない
+        if (LoadingUI.instance.isLoading) return;
         if (ctx.performed) SkillTriggered = true;
     }
 
@@ -232,6 +240,8 @@ public class CharacterInput : NetworkBehaviour {
     /// インタラクト
     /// </summary>
     public void OnInteract(InputAction.CallbackContext ctx) {
+        //ロード中は入力を受け付けない
+        if (LoadingUI.instance.isLoading) return;
         if (ctx.performed) InteractTriggered = true;
     }
 
@@ -240,6 +250,8 @@ public class CharacterInput : NetworkBehaviour {
     /// </summary>
     /// <param name="context"></param>
     public void OnReload(InputAction.CallbackContext context) {
+        //ロード中は入力を受け付けない
+        if (LoadingUI.instance.isLoading) return;
         if (context.performed &&
             core.weaponController_main.ammo < core.weaponController_main.weaponData.maxAmmo) {
             core.weaponController_main.CmdReloadRequest();
