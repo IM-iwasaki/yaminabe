@@ -29,6 +29,7 @@ public class LoadingUI : MonoBehaviour {
         else
             Destroy(gameObject);
 
+        teamColorUI.text = "";
         DontDestroyOnLoad(gameObject);
         gameObject.SetActive(false);
     }
@@ -85,7 +86,7 @@ public class LoadingUI : MonoBehaviour {
         tipsText.text = explaneDatas[(int)_rule].explanes[tipsIndex];
     }
 
-    public void UpdateTeamColorUI(int _teamID) {
+    public void UpdateTeamColorUI(int _teamID = -1) {
         if(_teamID == 0) {
             teamColorUI.color = Color.red;
             teamColorUI.text = "É`Å[ÉÄ:Red";
