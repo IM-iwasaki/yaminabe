@@ -19,7 +19,7 @@ public class Skill_Gurdian : SkillBase {
         //フラグを立てる
         isSkillUse = true;
         //停止
-        user.parameter.moveSpeed = 0;
+        //user.parameter.moveSpeed = 0;
         //被ダメ大幅軽減
         user.DamageCut(0.3f, 2.0f);
         //スキル使用後効果を予約
@@ -29,7 +29,7 @@ public class Skill_Gurdian : SkillBase {
     IEnumerator SkillEndEffect(CharacterBase user, float _delay = 2.0f) {
         yield return new WaitForSeconds(_delay);
         //移動速度を戻す。
-        user.parameter.moveSpeed = user.parameter.defaultMoveSpeed;
+        //user.parameter.moveSpeed = user.parameter.defaultMoveSpeed;
         //全バフデバフを解除。
         user.RemoveBuff();
         //損傷HPの50％回復。最大回復量は50。

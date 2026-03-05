@@ -54,6 +54,12 @@ public class ExplosionProjectile : NetworkBehaviour {
 
         if (other.TryGetComponent<DoTArea>(out _)) return;
 
+        if (other.gameObject.tag == "Magic")
+            return;
+
+        if (other.TryGetComponent<MagicHitbox>(out _)) return;
+        if (other.TryGetComponent<ProjectileHitbox>(out _)) return;
+
         Explode();
     }
 

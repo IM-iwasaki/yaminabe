@@ -21,6 +21,9 @@ public class MagicHitbox : MonoBehaviour
         if (other.gameObject.tag == "Magic")
             return;
 
+        if (other.TryGetComponent<ExplosionProjectile>(out _))
+            return;
+
         projectile.ServerDeactivate();
     }
 }
