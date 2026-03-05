@@ -16,6 +16,8 @@ public class LoadingUI : MonoBehaviour {
     private TextMeshProUGUI tipsCategory;
     [SerializeField, Header("tipsの中身")]
     private TextMeshProUGUI tipsText;
+    [SerializeField, Header("チームカラー表示用UI")]
+    private TextMeshProUGUI teamColorUI;
     [SerializeField, Header("tips文章リスト")]
     private List<ExplaneScentences> explaneDatas;
 
@@ -83,5 +85,19 @@ public class LoadingUI : MonoBehaviour {
         }
         //メインのTipsを変更
         tipsText.text = explaneDatas[(int)_rule].explanes[tipsIndex];
+    }
+
+    public void UpdateTeamColorUI(int _teamID) {
+        if(_teamID == 0) {
+            teamColorUI.color = Color.red;
+            teamColorUI.text = "チーム:Red";
+        }
+        else if(_teamID == 1) {
+            teamColorUI.color = Color.blue;
+            teamColorUI.text = "チーム:Blue";
+        }
+        else {
+            teamColorUI.text = "";
+        }
     }
 }
