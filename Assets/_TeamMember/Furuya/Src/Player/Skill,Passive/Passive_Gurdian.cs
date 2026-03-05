@@ -38,7 +38,7 @@ public class Passive_Gurdian : PassiveBase {
 
             // スキル使用中、速度バフ中以外は孤立時に速度を増加
             if (!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
-                user.CmdUseSkill(user.parameter.defaultMoveSpeed * 1.3f, 1);
+                user.CmdUseSkill(1.3f, 1);
             }
             coolTime = 0;
         }
