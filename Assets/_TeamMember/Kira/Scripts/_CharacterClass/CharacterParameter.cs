@@ -45,7 +45,7 @@ public class CharacterParameter : NetworkBehaviour {
     //持っている武器の文字列
     public string currentWeapon { get; protected set; }
     //所属チームの番号(-1は未所属。0、1はチーム所属。)
-    [SyncVar] public int TeamID = -1;
+    [SyncVar(hook =nameof(OnChangeTeamID))] public int TeamID = -1;
     //プレイヤーの名前
     [SyncVar] public string PlayerName = "Default";
     
@@ -193,6 +193,11 @@ public class CharacterParameter : NetworkBehaviour {
 
     private void OnMoneyChanged(int oldValue, int newValue) {
         RecalculateStatus();
+    }
+
+    private void OnChangeTeamID(int _oldValue, int _newValue) {
+        if (isLocalPlayer)
+            LoadingUI.instance.UpdateTeamColorUI(_newValue);
     }
 
     [Command]
