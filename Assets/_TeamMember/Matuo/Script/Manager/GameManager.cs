@@ -109,8 +109,10 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [Server]
     public void StartPveGameFromList(bool random = false) {
         if (isGameRunning) {
-            return;
+            return;       
         }
+
+        RuleManager.Instance.currentRule = GameRuleType.PvE;
 
         // ステージ取得
         PVEStageData stage = StageManager.Instance.GetNextPveStage(random);
