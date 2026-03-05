@@ -22,25 +22,22 @@ public class Passive_Gurdian : PassiveBase {
     public override void PassiveReflection(CharacterBase user) {
         // クールタイム計測
         coolTime += Time.deltaTime;
-        if (coolTime >= cooldown) {
+        if (coolTime < cooldown) return;
+        coolTime = 0;
 
-            // 味方が近くにいる → 定期回復
-            if (user.parameter.HasNearbyAlly) {
-
-                user.Heal(0.1f, 1.0f);
+        // 味方が近くにいる → 定期回復
+        if (user.parameter.HasNearbyAlly) {
+            user.Heal(0.05f, 1.0f);
 
                 // スキル使用中、速度バフ中以外は速度上昇効果を戻す
-                if (!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
-                    user.parameter.OutDefaultStatus_MoveSpeed();
-                }
-                return;
-            }
-
-            // スキル使用中、速度バフ中以外は孤立時に速度を増加
             if (!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
-                user.CmdUseSkill(1.3f, 1);
+                user.parameter.OutDefaultStatus_MoveSpeed();
             }
-            coolTime = 0;
+        } 
+        else {
+            if (!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
+                user.CmdUseSkill(1.5f, 1);
+            }
         }
     }
 }
