@@ -42,14 +42,11 @@ public class CharacterActions : NetworkBehaviour {
         // ローカルプレイヤー以外は処理しない
         if (!isLocalPlayer) return;
 
-
         // 参照が死んでいたら再取得
         if (characterSelectManager == null)
             characterSelectManager = FindObjectOfType<CharacterSelectManager>();
-
         if (gachaSystem == null)
             gachaSystem = FindObjectOfType<GachaSystem>();
-
         if (hud == null)
             hud = FindObjectOfType<HudManager>();
 
@@ -303,6 +300,13 @@ public class CharacterActions : NetworkBehaviour {
             //経過時間を固定
             param.skillAfterTime = Skill.cooldown;
         }        
+    }
+
+    /// <summary>
+    /// CTを初期化する
+    /// </summary>
+    public void ResetCooltime() {
+        GetComponent<CharacterParameter>().skillAfterTime = 0.0f;
     }
 
     /// <summary>
