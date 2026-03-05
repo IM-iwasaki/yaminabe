@@ -422,11 +422,15 @@ public class CharacterParameter : NetworkBehaviour {
     /// ãﬂÇ≠Ç…ñ°ï˚Ç™Ç¢ÇÈÇ©îªï Å@å√íJ
     /// </summary>
     public void UpdateNearbyAlly(float radius, LayerMask allyLayer) {
-        HasNearbyAlly = Physics.CheckSphere(
-            transform.position,
-            radius,
-            allyLayer
-        );
+        Collider[] hits = Physics.OverlapSphere(transform.position, radius, allyLayer);
+        foreach (var c in hits) {
+            var player = c.GetComponent<CharacterBase>();
+            if(player.teamID == TeamID) 
+                HasNearbyAlly = true;
+            return;
+        }
+
+        HasNearbyAlly = false;
     }
 
     /// <summary>
