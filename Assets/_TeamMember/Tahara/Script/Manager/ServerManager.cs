@@ -112,6 +112,13 @@ public class ServerManager : NetworkBehaviour {
         isRandom = !isRandom;
     }
 
+    [Server]
+    public void ResetTeamList() {
+        foreach(var team in teams) {
+            team.teamPlayerList.Clear();
+        }
+    }
+
     /// <summary>
     /// 追加 マツオ：全プレイヤーをチーム0に設定(PVE用)
     /// </summary>
