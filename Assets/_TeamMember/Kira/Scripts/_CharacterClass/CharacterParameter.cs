@@ -428,12 +428,12 @@ public class CharacterParameter : NetworkBehaviour {
 
             if (player == null) continue;
 
-            // ©•ª‚ğœŠO
-            if (player == this) continue;
+            if (c.gameObject == gameObject) continue;
 
-            if (player.teamID == TeamID) 
+            if (player.teamID == TeamID) {
                 HasNearbyAlly = true;
-            return;
+                return;
+            }
         }
 
         HasNearbyAlly = false;
