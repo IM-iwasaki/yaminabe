@@ -21,18 +21,9 @@ public class Skill_Gurdian : SkillBase {
         //停止
         user.parameter.moveSpeed = 0;
         //被ダメ大幅軽減
-        user.DamageCut(0.1f, 2.0f);
+        user.DamageCut(0.3f, 2.0f);
         //スキル使用後効果を予約
         user.StartCoroutine(SkillEndEffect(user));
-
-        // 突進
-        //user.MoveSpeedBuff(5.0f, 0.3f);
-        // 被ダメ半減
-        //user.DamageCut(50, 0.3f);
-        // ヒットボックス（Serverのみ）
-        //if (user.isServer) {
-        //    CreateHitBox(user);
-        //}
     }
 
     IEnumerator SkillEndEffect(CharacterBase user, float _delay = 2.0f) {
