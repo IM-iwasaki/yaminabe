@@ -603,7 +603,7 @@ public abstract class CharacterBase : CreatureBase {
     /// 追加:タハラ UI表示
     /// </summary>
     public void OnShowHostUI(InputAction.CallbackContext context) {
-        if (!isServer || !isLocalPlayer
+        if (!isServer || !isLocalPlayer || LoadingUI.instance.isLoading
             || SceneManager.GetActiveScene().name == "GameScene"
             || SceneManager.GetActiveScene().name == "PvEScene") return;
         if (context.started) {

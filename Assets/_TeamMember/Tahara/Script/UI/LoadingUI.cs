@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LoadingUI : MonoBehaviour {
     public static LoadingUI instance = null;
-
+    public bool isLoading { get; private set; }
     [SerializeField, Header("ローディングUI(回転させるやつ)")]
     private GameObject loadingUI;
     [SerializeField, Header("回転スピード")]
@@ -20,8 +20,6 @@ public class LoadingUI : MonoBehaviour {
     private TextMeshProUGUI teamColorUI;
     [SerializeField, Header("tips文章リスト")]
     private List<ExplaneScentences> explaneDatas;
-
-    private bool isLoading = false;
     private float rotaZ = 0f;
 
 
@@ -31,6 +29,7 @@ public class LoadingUI : MonoBehaviour {
         else
             Destroy(gameObject);
 
+        teamColorUI.text = "";
         DontDestroyOnLoad(gameObject);
         gameObject.SetActive(false);
     }
@@ -46,7 +45,7 @@ public class LoadingUI : MonoBehaviour {
         loadingUI.transform.rotation = Quaternion.Euler(0, 0, rotaZ);
     }
 
-    public void ShowLoading(GameRuleType _rule) {
+    public void ShowLoading(GameRuleType _rule = GameRuleType.Hoko) {
         UpdateTips(_rule);
         isLoading = true;
         gameObject.SetActive(true);
@@ -87,7 +86,7 @@ public class LoadingUI : MonoBehaviour {
         tipsText.text = explaneDatas[(int)_rule].explanes[tipsIndex];
     }
 
-    public void UpdateTeamColorUI(int _teamID) {
+    public void UpdateTeamColorUI(int _teamID = -1) {
         if(_teamID == 0) {
             teamColorUI.color = Color.red;
             teamColorUI.text = "チーム:Red";
