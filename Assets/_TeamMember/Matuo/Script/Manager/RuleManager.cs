@@ -25,6 +25,8 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
     public override void Initialize() {
         base.Initialize();
+        if (currentRule == GameRuleType.PvE)
+            currentRule = GameRuleType.Hoko;
         teamScores.Clear();
         InitializeScores();
     }

@@ -195,6 +195,12 @@ public class CharacterParameter : NetworkBehaviour {
         RecalculateStatus();
     }
 
+    /// <summary>
+    /// 追加:田原
+    /// チームID変更時発火関数
+    /// </summary>
+    /// <param name="_oldValue"></param>
+    /// <param name="_newValue"></param>
     private void OnChangeTeamID(int _oldValue, int _newValue) {
         if (isLocalPlayer)
             LoadingUI.instance.UpdateTeamColorUI(_newValue);
