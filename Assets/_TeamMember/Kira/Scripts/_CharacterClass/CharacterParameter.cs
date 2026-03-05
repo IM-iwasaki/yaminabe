@@ -224,6 +224,7 @@ public class CharacterParameter : NetworkBehaviour {
         HP = maxHP;
         maxMP = runtimeStatus.maxMP;
         MP = maxMP;
+        damageRatio = 100;
     }
 
     [TargetRpc]
