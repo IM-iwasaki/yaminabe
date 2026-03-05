@@ -15,8 +15,8 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     private bool isOvertime = false;    // 延長戦用
 
     public Dictionary<GameRuleType, float> winScores = new() {
-        { GameRuleType.Area, 50f },
-        { GameRuleType.Hoko, 50f },
+        { GameRuleType.Area, 100f },
+        { GameRuleType.Hoko, 100f },
         { GameRuleType.DeathMatch, 0f }
     };
 
@@ -32,10 +32,11 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     }
 
     /// <summary>
-    /// 全チームのスコアを 0 に初期化する
+    /// スコアを初期化する
     /// </summary>
     [Server]
     public void InitializeScores() {
+        isOvertime = false;
         foreach (int teamId in new int[] { 0, 1 }) {
             SetInitialScore(teamId, 0f);
         }

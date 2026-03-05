@@ -92,10 +92,7 @@ public class GameTimer : NetworkBehaviour {
             elapsedTime = limitTime;
             isRunning = false;
 
-            // RuleManager‚ÉŸ”s”»’f‚ğ”C‚¹‚é
-            if (RuleManager.Instance != null) {
-                RuleManager.Instance.CheckWinConditionAllTeams(true);
-            }
+            OnTimerFinished?.Invoke();
         }
     }
 

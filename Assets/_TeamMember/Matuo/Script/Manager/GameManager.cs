@@ -15,6 +15,9 @@ public class GameManager : NetworkSystemObject<GameManager> {
     private const float GAME_START_DELAY = 7f;
     private const float DEFAULT_REMAINING_TIME = 0f;
 
+    private const float OBJECTRULE_TIME = 300f;
+    private const float DEATHMATCH_TIME = 180f;
+
     #endregion
 
     #region 変数
@@ -66,6 +69,13 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         // 試合前初期化
         ResetGameState();
+
+        // ルールごとに制限時間設定
+        if (rule == GameRuleType.DeathMatch) {
+            gameTimer.SetLimitTime(DEATHMATCH_TIME);
+        } else {
+            gameTimer.SetLimitTime(OBJECTRULE_TIME);
+        }
 
         // タイマーリセット
         gameTimer?.ResetTimer();
