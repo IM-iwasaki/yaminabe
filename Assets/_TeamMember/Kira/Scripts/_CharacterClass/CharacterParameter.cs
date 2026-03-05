@@ -425,7 +425,13 @@ public class CharacterParameter : NetworkBehaviour {
         Collider[] hits = Physics.OverlapSphere(transform.position, radius, allyLayer);
         foreach (var c in hits) {
             var player = c.GetComponent<CharacterBase>();
-            if(player.teamID == TeamID) 
+
+            if (player == null) continue;
+
+            // ©•ª‚ğœŠO
+            if (player == this) continue;
+
+            if (player.teamID == TeamID) 
                 HasNearbyAlly = true;
             return;
         }
