@@ -15,9 +15,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
     private const float GAME_START_DELAY = 7f;
     private const float DEFAULT_REMAINING_TIME = 0f;
 
-    private const float OBJECTRULE_TIME = 300f;
-    private const float DEATHMATCH_TIME = 180f;
-
     #endregion
 
     #region 変数
@@ -30,6 +27,10 @@ public class GameManager : NetworkSystemObject<GameManager> {
     private GameTimer gameTimer;
     private RuleManager ruleManager;
     private PVEStageData currentPveStage;
+
+    [Header("制限時間(秒)")]
+    [SerializeField] private float objectRuleTime = 300f;
+    [SerializeField] private float deathMatchTime = 180f;
 
     #endregion
 
@@ -53,7 +54,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
     #endregion
 
-    #region PVP関連処理
+    #region PVP処理
 
     /// <summary>
     /// PVPゲーム開始
@@ -72,9 +73,9 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
         // ルールごとに制限時間設定
         if (rule == GameRuleType.DeathMatch) {
-            gameTimer.SetLimitTime(DEATHMATCH_TIME);
+            gameTimer.SetLimitTime(deathMatchTime);
         } else {
-            gameTimer.SetLimitTime(OBJECTRULE_TIME);
+            gameTimer.SetLimitTime(objectRuleTime);
         }
 
         // タイマーリセット
@@ -111,7 +112,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
     #endregion
 
-    #region PVE関連処理
+    #region PVE処理
 
     /// <summary>
     /// PVEゲーム開始（リストから取得）
@@ -119,7 +120,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [Server]
     public void StartPveGameFromList(bool random = false) {
         if (isGameRunning) {
-            return;       
+            return;
         }
 
         RuleManager.Instance.currentRule = GameRuleType.PvE;
@@ -230,7 +231,7 @@ public class GameManager : NetworkSystemObject<GameManager> {
 
     #endregion
 
-    #region 状態取得
+    #region 状態処理
 
     /// <summary>
     /// ゲーム進行中か
@@ -248,10 +249,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
             : DEFAULT_REMAINING_TIME;
     }
 
-    #endregion
-
-    #region 共通内部処理
-
     /// <summary>
     /// ゲーム状態初期化
     /// </summary>
@@ -259,10 +256,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
         isGameRunning = false;
         currentPveStage = null;
     }
-
-    #endregion
-
-    #region 登録処理
 
     /// <summary>
     /// ホコオブジェクト登録(hokoルール用)
