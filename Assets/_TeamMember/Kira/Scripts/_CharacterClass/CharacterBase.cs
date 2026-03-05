@@ -845,6 +845,11 @@ public abstract class CharacterBase : CreatureBase {
                 break;
         }
     }
+    
+    [Command]
+    public void CmdUseSkill(float value, float time) {
+       MoveSpeedBuff(value, time);
+    }
 
     /// <summary>
     /// すべてのバフを即解除

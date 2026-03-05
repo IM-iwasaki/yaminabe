@@ -28,7 +28,7 @@ public class Passive_Gurdian : PassiveBase {
             coolTime += Time.deltaTime;
 
             if (coolTime >= cooldown) {
-                user.Heal(0.3f, 2.0f);
+                user.Heal(0.1f, 1.0f);
                 coolTime = 0;
             }
 
@@ -41,8 +41,7 @@ public class Passive_Gurdian : PassiveBase {
 
         // スキル使用中、速度バフ中以外は孤立時に速度を増加
         if(!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
-            user.parameter.moveSpeed =
-        Mathf.RoundToInt(user.parameter.defaultMoveSpeed * 1.3f);
+            user.CmdUseSkill(user.parameter.defaultMoveSpeed * 1.3f, 1);
         }          
     }
 }
