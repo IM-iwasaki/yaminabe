@@ -79,7 +79,7 @@ MonoBehaviour:
     - prefab: {fileID: 2605843414203722085, guid: 25a71dc4369ec474287b8de36adffbe3, type: 3}
       spawnChancePercent: 15
     - prefab: {fileID: 5023171486721049170, guid: 8d030b5b47b3c3c45a9fa83f36b4e1dd, type: 3}
-      spawnChancePercent: 20
+      spawnChancePercent: 15
     - prefab: {fileID: 4683901493550377598, guid: 44ceca121045c5444b3505fb964e2d53, type: 3}
       spawnChancePercent: 20
     spawnProbabilityPercent: 100
@@ -90,7 +90,7 @@ MonoBehaviour:
     - prefab: {fileID: 5141172646852832494, guid: 00ed781235c86f04c9f46d3242f9f8b1, type: 3}
       spawnChancePercent: 40
     spawnProbabilityPercent: 100
-  weaponSpawnRatio: 0.8
+  weaponSpawnRatio: 0.9
   respawnInterval: 15
 --- !u!114 &7566513130517295199
 MonoBehaviour:

@@ -10,13 +10,13 @@ public class Skill_Chaser : SkillBase {
     //  スキル名：ダブルマジック
     //  タイプ　：攻撃強化特殊型
     //  効果    ：5秒の間、自身の攻撃が2段攻撃になる。
-    //　CT      ：18秒
+    //　CT      ：20秒
     //
 
     //使用後の経過時間を計測
     private float useTime = 0;
     //スキルの効果時間を定義
-    private readonly float effectTime = 6.0f;
+    private readonly float effectTime = 5.0f;
     //追加攻撃のインターバルを計測
     private float intervalTime = 0;
     //追加攻撃の発生ディレイ

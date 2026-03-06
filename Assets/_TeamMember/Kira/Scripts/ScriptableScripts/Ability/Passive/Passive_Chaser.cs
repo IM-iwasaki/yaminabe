@@ -32,7 +32,7 @@ public class Passive_Chaser : PassiveBase {
         float cooldown = user.weaponController_main.weaponData.cooldown;
 
         //武器の攻撃間隔を参照して効果値を制御する(スキルの使用中は効果値を弱める)
-        CTAcceleration = user.isSkillUse ? cooldown * 0.001f : cooldown * 0.05f;
+        CTAcceleration = user.isSkillUse ? cooldown * 0.0001f : cooldown * 0.03f;
 
         //攻撃した瞬間にインターバルが経過していたら
         if (user.input.AttackPressed && intervalTime >= user.weaponController_main.weaponData.cooldown) {
