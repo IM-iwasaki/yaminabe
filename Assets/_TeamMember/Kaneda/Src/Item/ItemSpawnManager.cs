@@ -65,6 +65,7 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
     //  内部変数
     private Transform[] spawnPoints;                                            // スポーンポイント一覧
     private readonly List<GameObject> spawnedItems = new List<GameObject>();    // 現在シーンに存在している生成済みアイテム一覧
+    private readonly int startSpawnDelay = 6500;
 
     /// <summary>
     /// 初期化処理（サーバー側のみ実行）
@@ -92,8 +93,8 @@ public class ItemSpawnManager : NetworkSystemObject<ItemSpawnManager> {
             return;
         }
 
-        //  3秒後に開始
-        await Task.Delay(6000);
+        //  ○秒後に開始
+        await Task.Delay(startSpawnDelay);
 
         // 初回スポーン実行
         SpawnAllItems();
