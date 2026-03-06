@@ -15,8 +15,8 @@ MonoBehaviour:
   weaponName: DarkTornado
   weaponID: 21
   type: 2
-  damage: 20
-  cooldown: 1
+  damage: 15
+  cooldown: 0.7
   appearanceID: 7
   muzzleFlashType: 0
   hitEffectType: 0
@@ -29,5 +29,5 @@ MonoBehaviour:
   chargeEffectType: 0
   chargeTime: 0
   magicType: 2
-  initialHeightSpeed: 5
+  initialHeightSpeed: 8
   se: 0

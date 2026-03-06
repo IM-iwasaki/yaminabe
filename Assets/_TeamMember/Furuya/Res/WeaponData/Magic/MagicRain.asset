@@ -16,7 +16,7 @@ MonoBehaviour:
   weaponID: 24
   type: 2
   damage: 2
-  cooldown: 1
+  cooldown: 2
   appearanceID: 7
   muzzleFlashType: 0
   hitEffectType: 3
@@ -25,7 +25,7 @@ MonoBehaviour:
   cost: 1
   projectilePrefab: {fileID: 5471543249360583010, guid: 7679fac087d19cd479781fac86c569f4, type: 3}
   projectileSpeed: 5
-  MPCost: 20
+  MPCost: 25
   chargeEffectType: 0
   chargeTime: 0
   magicType: 2
