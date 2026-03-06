@@ -20,6 +20,7 @@ public class UDPBroadcaster : MonoBehaviour
         public bool gamePlaying;
     }
 
+    private UdpClient client;
     /// <summary>
     /// メッセージの実体
     /// </summary>
@@ -41,6 +42,8 @@ public class UDPBroadcaster : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        client = new UdpClient();
+        client.EnableBroadcast = true;
         //送信するメッセージを初期化
         MessageInitialized();   
     }
@@ -84,20 +87,22 @@ public class UDPBroadcaster : MonoBehaviour
     /// 定期的にクライアントにメッセージを送る
     /// </summary>
     public void SendMesseageToClient() {
-        UdpClient client = new UdpClient();
-        client.EnableBroadcast = true;
-
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Broadcast,message.port);
         //jsonファイルに変更
         json = JsonUtility.ToJson(message);
         byte[] data = Encoding.UTF8.GetBytes(json);
 
         client.Send(data, data.Length, endPoint);
-        client.Close();
 
     }
 
     public void SetGamePlaying(bool _isPlaying) {
         message.gamePlaying = _isPlaying;
+    }
+
+    public void StopBroadcast() {
+        CancelInvoke(nameof(SendMesseageToClient));
+        client?.Close();
+        client?.Dispose();
     }
 }

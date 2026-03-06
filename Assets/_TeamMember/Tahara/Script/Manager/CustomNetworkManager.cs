@@ -11,8 +11,6 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     [SerializeField]
     private HostUI hostUI = null;
-
-    private Coroutine loadCorutine = null;
     /// <summary>
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
@@ -221,6 +219,7 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnStopClient() {
         base.OnStopClient();
 
+        FindObjectOfType<UDPListener>()?.StopReceiveIP();
         if (!Application.isBatchMode) {
             Cursor.lockState = CursorLockMode.None;
             Destroy(gameObject);
@@ -247,6 +246,10 @@ public class CustomNetworkManager : NetworkManager {
 
     public override void OnStopHost() {
         base.OnStopHost();
+        var udpBroadcaster = FindObjectOfType<UDPBroadcaster>();
+        udpBroadcaster?.StopBroadcast();
+        FindObjectOfType<UDPListener>()?.StopReceiveIP();
+        Destroy(udpBroadcaster.gameObject);
         Destroy(gameObject);
     }
 }

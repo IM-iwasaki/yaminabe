@@ -7,6 +7,7 @@ using System.Net;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using kcp2k;
 /// <summary>
 /// IPアドレスを定期的に受信する
 /// </summary>
@@ -19,6 +20,10 @@ public class UDPListener : MonoBehaviour {
     public List<UdpMessage> discoveredHosts = new List<UdpMessage>();
 
     public event Action<UdpMessage> onHostUpdated;
+
+    private Coroutine receiveCoroutine;
+    private UdpClient udpClient;
+    private Socket socket;
     /// <summary>
     /// 受信するメッセージ
     /// </summary>
@@ -69,11 +74,11 @@ public class UDPListener : MonoBehaviour {
     /// <returns></returns>
     public IEnumerator ReceiveMessageFromBroadcaster() {
         IPEndPoint localEP = new IPEndPoint(IPAddress.Any, 55555);
-        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         socket.Bind(localEP);
 
-        UdpClient udpClient = new UdpClient();
+        udpClient = new UdpClient();
         udpClient.Client = socket;
         while (true) {
             if (udpClient.Available > 0) {
@@ -86,6 +91,22 @@ public class UDPListener : MonoBehaviour {
             }
             yield return null;
         }
+
+    }
+
+    public void StopReceiveIP() {
+        if (receiveCoroutine != null) {
+            StopCoroutine(receiveCoroutine);
+            receiveCoroutine = null;
+        }
+
+        udpClient?.Close();
+        udpClient?.Dispose();
+        udpClient = null;
+
+        socket?.Close();
+        socket?.Dispose();
+        socket = null;
 
     }
 }
