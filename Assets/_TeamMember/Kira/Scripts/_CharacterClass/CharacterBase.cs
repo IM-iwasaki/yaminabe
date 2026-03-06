@@ -27,7 +27,7 @@ public abstract class CharacterBase : CreatureBase {
     public SubWeaponController weaponController_sub;
 
     //スキル使用中か
-    [SyncVar]public bool isSkillUse = false;
+    [SyncVar] public bool isSkillUse = false;
 
     // ホコを持っているか判定(PVE用)
     [SyncVar] private bool isHoldingHoko = false;
@@ -107,7 +107,8 @@ public abstract class CharacterBase : CreatureBase {
             var option = GetComponentInChildren<ReticleOptionUI>(true);
             if (option != null) {
                 option.Initialize(true);
-            } else {
+            }
+            else {
 #if UNITY_EDITOR
                 Debug.LogWarning("PlayerSetup: No ReticleOptionUI found as child for local player.");
 #endif
@@ -258,12 +259,13 @@ public abstract class CharacterBase : CreatureBase {
         //ホコを所持していたらドロップ
         if (RuleManager.Instance.currentRule == GameRuleType.Hoko) DropHoko();
         //不具合防止のためフラグをいろいろ下ろす。
-
+        animCon.RpcStopShootAnim();
+        //アニメーションは全員に反映
+        animCon.RpcDeadAnimation();
         //ローカルで死亡演出
         TargetDeadEffect();
         RespawnDelay();
-        //アニメーションは全員に反映
-        animCon.RpcDeadAnimation();
+
         // スコア計算にここから行きます
         if (TryGetComponent<PlayerCombat>(out var combat)) {
             int victimTeam = parameter.TeamID;
@@ -279,7 +281,8 @@ public abstract class CharacterBase : CreatureBase {
             }
             // OnKill を呼ぶときに victimTeam を渡すように変更
             combat.OnKill(killerIdentity, victimTeam);
-        } else {
+        }
+        else {
 #if UNITY_EDITOR
             Debug.LogWarning("スコア計算が正常に成功しませんでした。");
 #endif
@@ -629,7 +632,7 @@ public abstract class CharacterBase : CreatureBase {
     /// 追加:カネダ 世界の外に落ちた際の判定と処理
     /// </summary>
     public void CheckOutsideAndFall() {
-        if(transform.position.y <= fallYposition) {
+        if (transform.position.y <= fallYposition) {
             TakeDamage(9999, "Fall", -1);
         }
     }
@@ -845,10 +848,10 @@ public abstract class CharacterBase : CreatureBase {
                 break;
         }
     }
-    
+
     [Command]
     public void CmdUseSkill(float value, float time) {
-       MoveSpeedBuff(value, time);
+        MoveSpeedBuff(value, time);
     }
 
     /// <summary>
@@ -936,19 +939,21 @@ public abstract class CharacterBase : CreatureBase {
             }
         }
     }
-   
+
     /// <summary>
     /// スキルの状態変化をサーバーに送信
     /// </summary>
     /// <param name="_newState">状態の真偽</param>    
-    [Command]public void CmdSkillState(bool _newState) {
+    [Command]
+    public void CmdSkillState(bool _newState) {
         ServerSkillState(_newState);
     }
 
     /// <summary>
     /// スキルの状態変化をサーバー上で反映
     /// </summary>
-    [Server]public void ServerSkillState(bool _newState) {
+    [Server]
+    public void ServerSkillState(bool _newState) {
         //効果発動
         isSkillUse = _newState;
     }

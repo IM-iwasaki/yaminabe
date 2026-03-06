@@ -543,7 +543,8 @@ public class MainWeaponController : NetworkBehaviour {
     public int GenerateWeaponIndex(string _weaponName) {
         return _weaponName switch {
             "HandGun" or "revolver" or "Punch" => 1,
-            "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" or "Spear" or "IceMagic" => 2,
+            "Assult" or "BurstAssult" or "FireMagic" or "IceMagic" or "MagicRain" or "Spear" or "MagicRain" or "DarkTornado"
+            or "FlameMagic" or "CrystalAttack"  => 2,
             "RPG" or "Katana" => 3,
             "Sniper" or "Knife" or "PizzaCutter" => 4,
             "Minigun" or "Lightsaver" => 5,
