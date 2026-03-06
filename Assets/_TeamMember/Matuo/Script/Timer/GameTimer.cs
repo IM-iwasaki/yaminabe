@@ -9,7 +9,7 @@ using System;
 public class GameTimer : NetworkBehaviour {
     public static GameTimer Instance { get; private set; }
 
-    private float limitTime = 0f;
+    [SyncVar]private float limitTime = 0f;
 
     [SyncVar] private float elapsedTime = 0f; // サーバーとクライアントで同期
     private bool isRunning = false;
