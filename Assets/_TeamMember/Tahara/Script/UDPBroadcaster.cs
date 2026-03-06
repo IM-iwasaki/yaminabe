@@ -96,10 +96,17 @@ public class UDPBroadcaster : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// 該当のゲーム進行状況を変更
+    /// </summary>
+    /// <param name="_isPlaying"></param>
     public void SetGamePlaying(bool _isPlaying) {
         message.gamePlaying = _isPlaying;
     }
 
+    /// <summary>
+    /// IPアドレス送信終了
+    /// </summary>
     public void StopBroadcast() {
         CancelInvoke(nameof(SendMesseageToClient));
         client?.Close();
