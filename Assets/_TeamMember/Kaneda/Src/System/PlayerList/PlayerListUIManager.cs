@@ -89,7 +89,7 @@ public class PlayerListUIManager : NetworkBehaviour {
                 break;
             //  ê¬É`Å[ÉÄ
             case 1:
-                text.color = Color.blue;
+                text.color = Color.cyan;
                 break;
         }
     }

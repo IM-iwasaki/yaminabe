@@ -679,7 +679,7 @@ public abstract class CharacterBase : CreatureBase {
                 sendMessage = "4649";
                 break;
         }
-        ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + ":" + sendMessage);
+        ChatManager.Instance.CmdSendChatMessage(parameter.TeamID, "<" + parameter.PlayerName + "> " + sendMessage);
     }
 
     /// <summary>
@@ -690,7 +690,7 @@ public abstract class CharacterBase : CreatureBase {
         //チャット送信
         if (context.started) {
             int stampIndex = Random.Range(0, 4);
-            ChatManager.Instance.CmdSendStamp(stampIndex, parameter.PlayerName);
+            ChatManager.Instance.CmdSendStamp(parameter.TeamID, stampIndex, parameter.PlayerName);
         }
     }
 
