@@ -267,7 +267,7 @@ public class MainWeaponController : NetworkBehaviour {
             Vector3 diff = c.transform.position - firePoint.position;
             float dist = diff.magnitude;
 
-            // 密着距離なら角度無視
+            //追加　マツオ : 密着距離なら角度無視
             if (dist > 0.2f) {
 
                 Vector3 toTarget = diff.normalized;
