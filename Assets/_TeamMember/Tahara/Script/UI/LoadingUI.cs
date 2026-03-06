@@ -10,8 +10,6 @@ public class LoadingUI : MonoBehaviour {
     private GameObject loadingUI;
     [SerializeField, Header("回転スピード")]
     private float rotaSpeed = 5.0f;
-    [SerializeField, Header("回転する長さ")]
-    private float rotaTime = 5.0f;
     [SerializeField, Header("tipsの種類")]
     private TextMeshProUGUI tipsCategory;
     [SerializeField, Header("tipsの中身")]
@@ -51,8 +49,8 @@ public class LoadingUI : MonoBehaviour {
         gameObject.SetActive(true);
     }
 
-    public IEnumerator HideLoading() {
-        yield return new WaitForSeconds(rotaTime);
+    public IEnumerator HideLoading(float _waittime = 3.0f) {
+        yield return new WaitForSeconds(_waittime);
 
         isLoading = false;
         gameObject.SetActive(false);
