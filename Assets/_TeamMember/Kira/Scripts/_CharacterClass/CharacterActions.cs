@@ -122,6 +122,13 @@ public class CharacterActions : NetworkBehaviour {
     }
 
     /// <summary>
+    /// MPを回復する。外的要因によって発動するもの
+    /// </summary>
+    public void MPRegeneration(int _healValue) {
+        param.CmdRecoverMP(_healValue);
+    }
+
+    /// <summary>
     /// 移動処理関数
     /// </summary>
     private void MoveControl() {
@@ -283,13 +290,16 @@ public class CharacterActions : NetworkBehaviour {
     /// スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
     /// </summary>
     private void AbilityControl() {
+        //nullってたりゲーム中でなかったら帰す
+        if (param.equippedSkills[0] == null || !GameManager.Instance.IsGameRunning()) return;
+
         //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)
         param.equippedPassives[0].PassiveReflection(core);
         //スキル更新関数を呼ぶ(中身を未定義の場合は何もしない)
         param.equippedSkills[0].SkillEffectUpdate(core);
 
-        //スキル使用不可中、スキルクールタイム中かつスキルがインポートされていれば時間を計測
-        if (!isCanSkill && param.skillAfterTime <= param.equippedSkills[0].cooldown && param.equippedSkills[0] != null)
+        //スキル使用不可中、スキルクールタイム中なら時間を計測
+        if (!isCanSkill && param.skillAfterTime <= param.equippedSkills[0].cooldown)
             param.skillAfterTime += Time.deltaTime;
         //スキルクールタイムを過ぎていたら丁度になるよう補正
         else if (param.skillAfterTime > param.equippedSkills[0].cooldown) param.skillAfterTime = param.equippedSkills[0].cooldown;
