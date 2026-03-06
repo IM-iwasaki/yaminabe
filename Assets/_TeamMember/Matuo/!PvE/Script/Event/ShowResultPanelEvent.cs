@@ -15,6 +15,12 @@ public class ShowResultPanelEvent : PVEStageEvent {
         if (NetworkServer.active) {
             GameManager.Instance.EndGame();
         }
+        // PvEリザルトに個人スコアを送る
+        ResultManager.Instance.ShowPvEOnResult(new ResultManager.ResultData {
+            isTeamBattle = true,
+          
+            scores = new ResultScoreData[0],
+                 });
         // ホストがオプションを開いていたら閉じる
         if (isHost) {
             OptionMenu optionMenu = FindObjectOfType<OptionMenu>();
