@@ -76,6 +76,9 @@ public class TitleManager : MonoBehaviour {
         instance = this;
         DontDestroyOnLoad(gameObject);
         onButtonOnce = false;
+
+        if (LoadingUI.instance != null)
+            StartCoroutine(LoadingUI.instance.HideLoading());
     }
 
     /// <summary>

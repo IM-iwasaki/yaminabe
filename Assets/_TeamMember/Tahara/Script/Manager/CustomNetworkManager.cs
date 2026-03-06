@@ -225,7 +225,8 @@ public class CustomNetworkManager : NetworkManager {
             Destroy(gameObject);
             SceneManager.LoadScene("TitleScene");
         }
-
+        LoadingUI.instance.ShowLoading();
+        StartCoroutine(LoadingUI.instance.HideLoading());
     }
 
     public override void OnClientDisconnect() {
