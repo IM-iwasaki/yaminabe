@@ -263,10 +263,7 @@ public class MainWeaponController : NetworkBehaviour {
         Vector3 origin = firePoint.position;
         Vector3 forward = firePoint.forward;
 
-        // 攻撃判定を前にずらす
-        Vector3 center = origin + forward * (meleeData.range * 0.5f);
-
-        Collider[] hits = Physics.OverlapSphere(center, meleeData.range, attackLayer);
+        Collider[] hits = Physics.OverlapSphere(origin, meleeData.range, attackLayer);
 
         HashSet<GameObject> damagedTargets = new();
 
