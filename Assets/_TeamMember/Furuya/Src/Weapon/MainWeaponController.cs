@@ -3,6 +3,7 @@ using Mirror;
 using System.Collections;
 using static UnityEngine.UI.GridLayoutGroup;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -251,43 +252,69 @@ public class MainWeaponController : NetworkBehaviour {
         };
     }
 
-    // --- 近接攻撃 ---
-    void ServerMeleeAttack() {
+    // 変更　マツオ : 近接攻撃判定
+    private void ServerMeleeAttack() {
         if (weaponData is not MeleeData meleeData)
             return;
 
         int attackLayer = LayerMask.GetMask("Character");
-        Collider[] hits = Physics.OverlapSphere(firePoint.position, meleeData.range, attackLayer);
-        // プレイヤーの前方ベクトル（視線や武器の向き）
+        int wallLayer = LayerMask.GetMask("Ground");
+
+        Vector3 origin = firePoint.position;
         Vector3 forward = firePoint.forward;
 
+        // 攻撃判定を前にずらす
+        Vector3 center = origin + forward * (meleeData.range * 0.5f);
+
+        Collider[] hits = Physics.OverlapSphere(center, meleeData.range, attackLayer);
+
+        HashSet<GameObject> damagedTargets = new();
 
         foreach (var c in hits) {
+            if (c.gameObject == gameObject) continue;
+            if (damagedTargets.Contains(c.gameObject)) continue;
 
-            Vector3 diff = c.transform.position - firePoint.position;
+            var hp = c.GetComponent<CreatureBase>();
+            if (hp == null) continue;
+            if (hp.teamID == characterBase.teamID) continue;
+
+            // 敵の一番近い位置を取得
+            Vector3 closest = c.ClosestPoint(origin);
+            Vector3 diff = closest - origin;
+
             float dist = diff.magnitude;
 
-            //追加　マツオ : 密着距離なら角度無視
-            if (dist > 0.2f) {
+            // 密着距離なら角度無視
+            if (dist > 0.25f) {
+                Vector3 dir = diff.normalized;
 
-                Vector3 toTarget = diff.normalized;
-                float dot = Vector3.Dot(forward, toTarget);
-
-                float angle = meleeData.meleeAngle;
-                float threshold = Mathf.Cos(angle * Mathf.Deg2Rad);
+                float dot = Vector3.Dot(forward, dir);
+                float threshold = Mathf.Cos(meleeData.meleeAngle * Mathf.Deg2Rad);
 
                 if (dot < threshold) continue;
             }
 
-            var hp = c.GetComponent<CreatureBase>();
-            if (hp == null || !IsValidTarget(hp.gameObject) || hp.teamID == characterBase.teamID) continue;
+            // 壁越し防止
+            if (Physics.Raycast(origin, diff.normalized, out RaycastHit hit, dist, wallLayer)) {
+                if (hit.collider != c)
+                    continue;
+            }
 
-            hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
-            RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
+            damagedTargets.Add(c.gameObject);
+
+            hp.TakeDamage(
+                meleeData.damage,
+                characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId
+            );
+
+            RpcSpawnHitEffect(closest, meleeData.hitEffectType);
         }
+
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
+
 #if UNITY_EDITOR
-        MeleeAttackDebugArc.Create(firePoint.position, forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
+        MeleeAttackDebugArc.Create(origin, forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
     }
 
