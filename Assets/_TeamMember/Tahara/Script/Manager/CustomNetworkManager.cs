@@ -123,7 +123,8 @@ public class CustomNetworkManager : NetworkManager {
         //ローカルクライアントが抜けた場合
         if (_conn.connectionId > 0) {
             //参加者全員に通知
-            ChatManager.Instance.CmdSendSystemMessage("Leave Player");
+            if (ChatManager.Instance != null)
+                ChatManager.Instance.CmdSendSystemMessage("Leave Player");
             if (_conn.identity != null)
                 ServerManager.instance.connectPlayer.Remove(_conn.identity);
 
@@ -190,7 +191,7 @@ public class CustomNetworkManager : NetworkManager {
             }
         }
         Physics.simulationMode = SimulationMode.FixedUpdate;
-        
+
     }
 
     /// <summary>
@@ -213,6 +214,7 @@ public class CustomNetworkManager : NetworkManager {
         // ロード完了後に UI を消す
         StartCoroutine(LoadingUI.instance.HideLoading());
     }
+
     /// <summary>
     /// クライアントが止まった時の処理
     /// </summary>
@@ -226,7 +228,6 @@ public class CustomNetworkManager : NetworkManager {
             SceneManager.LoadScene("TitleScene");
         }
         LoadingUI.instance.ShowLoading();
-        StartCoroutine(LoadingUI.instance.HideLoading());
     }
 
     public override void OnClientDisconnect() {
