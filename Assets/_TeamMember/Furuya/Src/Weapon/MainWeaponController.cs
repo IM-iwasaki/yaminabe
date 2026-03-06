@@ -263,17 +263,25 @@ public class MainWeaponController : NetworkBehaviour {
 
 
         foreach (var c in hits) {
-            Vector3 toTarget = (c.transform.position - firePoint.position).normalized;
-            float dot = Vector3.Dot(forward, toTarget);
 
-            float angle = meleeData.meleeAngle;
-            float threshold = Mathf.Cos(angle * Mathf.Deg2Rad);
-            //角度チェック
-            if (dot < threshold) continue;
+            Vector3 diff = c.transform.position - firePoint.position;
+            float dist = diff.magnitude;
+
+            // 密着距離なら角度無視
+            if (dist > 0.2f) {
+
+                Vector3 toTarget = diff.normalized;
+                float dot = Vector3.Dot(forward, toTarget);
+
+                float angle = meleeData.meleeAngle;
+                float threshold = Mathf.Cos(angle * Mathf.Deg2Rad);
+
+                if (dot < threshold) continue;
+            }
 
             var hp = c.GetComponent<CreatureBase>();
             if (hp == null || !IsValidTarget(hp.gameObject) || hp.teamID == characterBase.teamID) continue;
-            //hp.TakeDamage(meleeData.damage + (int) characterBase.parameter.attack, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
+
             hp.TakeDamage(meleeData.damage, characterBase.parameter.PlayerName, characterBase.parameter.playerId);
             RpcSpawnHitEffect(c.transform.position, meleeData.hitEffectType);
         }
