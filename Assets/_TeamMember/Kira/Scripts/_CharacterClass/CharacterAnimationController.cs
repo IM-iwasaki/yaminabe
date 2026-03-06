@@ -111,7 +111,7 @@ public class CharacterAnimationController : NetworkBehaviour {
     /// ショットアニメーション停止を全クライアントに反映
     /// </summary>
     [ClientRpc]
-    private void RpcStopShootAnim() {
+    public void RpcStopShootAnim() {
         if (anim == null) return;
         anim.SetBool("Shoot", false);
     }
