@@ -78,7 +78,7 @@ public class TitleManager : MonoBehaviour {
         onButtonOnce = false;
 
         if (LoadingUI.instance != null)
-            StartCoroutine(LoadingUI.instance.HideLoading());
+            StartCoroutine(LoadingUI.instance.HideLoading(5.0f));
     }
 
     /// <summary>
