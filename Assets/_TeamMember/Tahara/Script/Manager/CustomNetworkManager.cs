@@ -1,7 +1,6 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static TeamData;
 /// <summary>
 /// 元あるNetworkManagerの派生クラス
 /// </summary>
@@ -173,7 +172,7 @@ public class CustomNetworkManager : NetworkManager {
             Vector3 bufferPos = new Vector3(Random.Range(-3.0f, 3.0f), 1.0f, Random.Range(-3.0f, 3.0f));
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
             if (sceneName == GameSceneManager.Instance.gameSceneName) {
-                var RespawnPosList = StageManager.Instance.GetTeamSpawnPoints((TeamColor)teamID);
+                var RespawnPosList = StageManager.Instance.GetTeamSpawnPoints((TeamData.TeamColor)teamID);
                 startPos.ServerTeleport(RespawnPosList[Random.Range(0, RespawnPosList.Count)].position + bufferPos, Quaternion.identity);
             }
             //ロビーシーンなら開始地点に転送

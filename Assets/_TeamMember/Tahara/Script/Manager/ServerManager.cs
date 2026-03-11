@@ -1,7 +1,6 @@
 using Mirror;
 using UnityEngine;
 using System.Collections.Generic;
-using static TeamData;
 using System.Linq;
 /// <summary>
 /// ServerManager
@@ -32,7 +31,7 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     public override void OnStartServer() {
         //リストを生成して、新しいデータを追加
-        int teamMax = (int)TeamColor.ColorMax;
+        int teamMax = (int)TeamData.TeamColor.ColorMax;
         teams = new List<TeamData>(teamMax);
         for (int i = 0; i < teamMax; i++) {
             teams.Add(new TeamData());
@@ -67,14 +66,14 @@ public class ServerManager : NetworkBehaviour {
 
         teams = new List<TeamData>();
         //ここで新たにチームを生成(PlayerのteamIDも設定しなおし)
-        for (int i = 0; i < (int)TeamColor.ColorMax; i++) {
+        for (int i = 0; i < (int)TeamData.TeamColor.ColorMax; i++) {
             teams.Add(new TeamData());
             //チームリストを作り直したので既にチーム所属済みなら同じチームに設定しなおし(Redから入れ始めるので)
             foreach (var player in allPlayers) {
                 if (player.GetComponent<GeneralCharacter>().parameter.TeamID == i) {
                     teams[i].teamPlayerList.Add(player);
                 }
-                if (teams[i].teamPlayerList.Count == TEAMMATE_MAX)
+                if (teams[i].teamPlayerList.Count == TeamData.TEAMMATE_MAX)
                     teams[i].isFullTeam = true;
             }
         }
@@ -83,7 +82,7 @@ public class ServerManager : NetworkBehaviour {
         noTeamPlayer = noTeamPlayer.OrderBy(x => Random.value).ToList();
         int teamIndex = 0;
         //均等に割り振り
-        if (teams[(int)TeamColor.Red].teamPlayerList.Count > teams[(int)TeamColor.Blue].teamPlayerList.Count)
+        if (teams[(int)TeamData.TeamColor.Red].teamPlayerList.Count > teams[(int)TeamData.TeamColor.Blue].teamPlayerList.Count)
             teamIndex = 1;
         foreach (var player in noTeamPlayer) {
             //所属しようとするチームが満員なら
@@ -112,6 +111,9 @@ public class ServerManager : NetworkBehaviour {
         isRandom = !isRandom;
     }
 
+    /// <summary>
+    /// ホスト切断時にチームのリストをリセットする関数
+    /// </summary>
     [Server]
     public void ResetTeamList() {
         foreach(var team in teams) {
@@ -126,7 +128,7 @@ public class ServerManager : NetworkBehaviour {
     public void SetAllPlayersToPvETeam() {
         // チーム初期化
         teams = new List<TeamData>();
-        for (int i = 0; i < (int)TeamColor.ColorMax; i++) {
+        for (int i = 0; i < (int)TeamData.TeamColor.ColorMax; i++) {
             teams.Add(new TeamData());
         }
 
