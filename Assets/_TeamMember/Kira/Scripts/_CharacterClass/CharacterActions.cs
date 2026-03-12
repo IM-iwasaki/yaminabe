@@ -353,6 +353,9 @@ public class CharacterActions : NetworkBehaviour {
             case "BlueTeam":
                 core.CmdJoinTeam(netIdentity, TeamColor.Blue);
                 break;
+            case "ResetTeam":
+                core.CmdJoinTeam(netIdentity, TeamColor.Invalid);
+                break;
             default:
                 break;
         }

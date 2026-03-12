@@ -12,12 +12,16 @@ public class LoadingUI : MonoBehaviour {
     private float rotaSpeed = 5.0f;
     [SerializeField, Header("tipsの種類")]
     private TextMeshProUGUI tipsCategory;
+    [SerializeField, Header("ルール説明")]
+    private TextMeshProUGUI ruleDiscription;
     [SerializeField, Header("tipsの中身")]
     private TextMeshProUGUI tipsText;
     [SerializeField, Header("チームカラー表示用UI")]
     private TextMeshProUGUI teamColorUI;
     [SerializeField, Header("tips文章リスト")]
     private List<ExplaneScentences> explaneDatas;
+    [SerializeField, Header("ルール説明用文章リスト")]
+    private ExplaneScentences ruleDiscriptionSentences;
     private float rotaZ = 0f;
 
 
@@ -82,6 +86,8 @@ public class LoadingUI : MonoBehaviour {
         }
         //メインのTipsを変更
         tipsText.text = explaneDatas[(int)_rule].explanes[tipsIndex];
+        //ルール説明も変更
+        ruleDiscription.text = ruleDiscriptionSentences.explanes[(int)_rule];
     }
 
     public void UpdateTeamColorUI(int _teamID = -1) {

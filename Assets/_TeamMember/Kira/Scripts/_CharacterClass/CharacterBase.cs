@@ -427,6 +427,16 @@ public abstract class CharacterBase : CreatureBase {
         int currentTeam = player.parameter.TeamID;
         int newTeam = (int)_color;
 
+        //チームから抜けるとき
+        if (newTeam == -1) {
+            ChatManager.Instance.CmdSendSystemMessage("you leave team now");
+            if (currentTeam == -1)
+                return;
+            ServerManager.instance.teams[currentTeam].teamPlayerList.Remove(_player);
+            player.parameter.TeamID = -1;
+            return;
+        }
+
         //加入しようとしてるチームが埋まっていたら
         if (ServerManager.instance.teams[newTeam].teamPlayerList.Count >= TEAMMATE_MAX) {
             ChatManager.Instance.CmdSendSystemMessage("team member is over");
@@ -437,12 +447,17 @@ public abstract class CharacterBase : CreatureBase {
             ChatManager.Instance.CmdSendSystemMessage("you join same team now");
             return;
         }
+
+
         //新たなチームに加入する時
         //今加入しているチームから抜けてIDをリセット
         if (player.parameter.TeamID != -1) {
             ServerManager.instance.teams[player.parameter.TeamID].teamPlayerList.Remove(_player);
             player.parameter.TeamID = -1;
         }
+
+        
+
 
         //新しいチームに加入
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);

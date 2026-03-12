@@ -94,6 +94,9 @@ public class UDPListener : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// IPアドレス受信終了
+    /// </summary>
     public void StopReceiveIP() {
         if (receiveCoroutine != null) {
             StopCoroutine(receiveCoroutine);
