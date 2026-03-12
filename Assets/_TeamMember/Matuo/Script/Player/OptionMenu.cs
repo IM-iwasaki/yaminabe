@@ -97,7 +97,7 @@ public class OptionMenu : MonoBehaviour {
     private TextMeshProUGUI reloadText;
     private TextMeshProUGUI titleText;
 
-    void Start() {
+    private void Start() {
         optionCanvas.enabled = false;
 
         // カメラ感度ロード
@@ -169,7 +169,7 @@ public class OptionMenu : MonoBehaviour {
 
         // ガチャとキャラ選択中ブロック
         if (!isOpen && (IsBlockedByGacha() || IsBlockedByCharacterSelect()))
-            return;       
+            return;
 
 
         isOpen = !isOpen;
@@ -178,7 +178,7 @@ public class OptionMenu : MonoBehaviour {
     }
 
 
-   
+
 
 
 

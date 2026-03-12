@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 public class ChatManager : NetworkSystemObject<ChatManager> {
     //  オブジェクト名の定数
@@ -42,9 +43,9 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
     /// <param name="stampId"></param>
     /// <param name="userName"></param>
     [Command(requiresAuthority = false)]
-    public void CmdSendStamp(int stampId, string userName) {
+    public void CmdSendStamp(int teamID, int stampId, string userName) {
         //  サーバーが全員に通知
-        RpcAddStamp(stampId, userName);
+        RpcAddStamp(teamID, stampId, userName);
     }
     /// <summary>
     ///  サーバーから全員へ同期
@@ -52,7 +53,7 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
     /// <param name="stampId"></param>
     /// <param name="userName"></param>
     [ClientRpc]
-    private void RpcAddStamp(int stampId, string userName) {
+    private void RpcAddStamp(int teamID, int stampId, string userName) {
 
         //  番号が越していたら0に設定
         if (stampId >= stampData.stampInfos.Count) stampId = 0;
@@ -62,7 +63,7 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
         Sprite stampImage = stampImages.stampImage;
 
         //  スタンプを生成
-        CreateStamp(stampImage, userName);
+        CreateStamp(teamID, stampImage, userName);
     }
 
     /// <summary>
@@ -70,7 +71,7 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
     /// </summary>
     /// <param name="stampImage"></param>
     /// <param name="userName"></param>
-    private void CreateStamp(Sprite stampImage, string userName = "player") {
+    private void CreateStamp(int teamID, Sprite stampImage, string userName = "player") {
         //  プレハブを生成する
         GameObject stampObj = Instantiate(stamp, chatRoot);
 
@@ -79,7 +80,7 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
         Transform imageObj = stampObj.transform.Find(IMAGE_OBJECT_NAME);
 
         //  ユーザー名を設定
-        SetUserName(nameObj, userName);
+        SetUserName(nameObj, userName, teamID);
         //  スタンプの画像を設定
         SetImage(imageObj, stampImage);
 
@@ -96,7 +97,7 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
     /// </summary>
     /// <param name="nameObj"></param>
     /// <param name="userName"></param>
-    private void SetUserName(Transform nameObj, string userName) {
+    private void SetUserName(Transform nameObj, string userName, int teamID) {
         //  取得できなければ空で通す 
         if (nameObj == null) return;
         //  コンポーネントを取得
@@ -105,6 +106,8 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
         if (tmp == null) return;
         //  userNameを入れ込む
         tmp.SetText("[" + userName + "]");
+        //  チームカラーで色を変更
+        ChangeTextColor(teamID, tmp);
     }
 
     /// <summary>
@@ -116,7 +119,7 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
         //  取得できなければスルー 
         if (imageObj == null) return;
         //  コンポーネントを取得
-        var image = imageObj.GetComponent<Image>();
+        var image = imageObj.GetComponent<UnityEngine.UI.Image>();
         //  取得できなければスルー
         if (image == null) return;
         //  画像を差し替える
@@ -131,14 +134,14 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
     /// <param name="message"></param>
     [Command(requiresAuthority = false)]
     public void CmdSendSystemMessage(string message) {
-        RpcAddMessage(message);
+        RpcAddSystemMessage(message);
     }
     /// <summary>
     ///  サーバーから全員へ同期
     /// </summary>
     /// <param name="message"></param>
     [ClientRpc]
-    private void RpcAddMessage(string message) {
+    private void RpcAddSystemMessage(string message) {
         //  システムメッセージを生成
         CreateSystemMessage(message);
     }
@@ -165,6 +168,74 @@ public class ChatManager : NetworkSystemObject<ChatManager> {
         fadeRoutines[textObj] = routine;
     }
     #endregion
+
+    #region チャットメッセージ
+
+    /// <summary>
+    ///  クライアントからサーバーへ送信
+    /// </summary>
+    /// <param name="message"></param>
+    [Command(requiresAuthority = false)]
+    public void CmdSendChatMessage(int teamID, string message) {
+        RpcAddChatMessage(teamID, message);
+    }
+    /// <summary>
+    ///  サーバーから全員へ同期
+    /// </summary>
+    /// <param name="message"></param>
+    [ClientRpc]
+    private void RpcAddChatMessage(int teamID, string message) {
+        //  チャットメッセージを生成
+        CreateChatMessage(teamID, message);
+    }
+
+    /// <summary>
+    /// システムメッセージをチャットに生成
+    /// </summary>
+    /// <param name="message"></param>
+    private void CreateChatMessage(int teamID, string message = "") {
+        //  プレハブを生成
+        GameObject textObj = Instantiate(systemText, chatRoot);
+        //  コンポーネントを取得
+        var tmp = textObj.GetComponent<TextMeshProUGUI>();
+        //  取得できなければスルー
+        if (tmp == null) return;
+        //  テキストを書き換える
+        tmp.SetText(message);
+
+        //  チームカラーで色を変更
+        ChangeTextColor(teamID, tmp);
+
+        //  高さ制限チェック
+        CheckHeightLimit();
+
+        //  フェードアウト処理
+        var routine = StartCoroutine(FadeAndDestroy(textObj));
+        fadeRoutines[textObj] = routine;
+    }
+
+    #endregion
+
+    /// <summary>
+    /// チームカラーによってテキストの色を変更する
+    /// </summary>
+    /// <param name="teamID"></param>
+    private void ChangeTextColor(int teamID, TextMeshProUGUI tmp) {
+        switch (teamID) {
+            //  未所属
+            case -1:
+                tmp.color = Color.white;
+                break;
+            //  赤チーム
+            case 0:
+                tmp.color = Color.red;
+                break;
+            //  青チーム
+            case 1:
+                tmp.color = Color.cyan;
+                break;
+        }
+    }
 
     /// <summary>
     /// 高さ制限チェック、超えたら古いものから削除

@@ -49,7 +49,7 @@ public class EnemyStatusBase : CreatureBase {
             int playerCount = NetworkServer.connections.Count;
             playerCount = Mathf.Max(1, playerCount);
 
-            float multiplier = 1f + 0.5f * (playerCount - 1);
+            float multiplier = Mathf.Pow(2f, playerCount - 1);
 
             finalHp = Mathf.RoundToInt(statusData.maxHp * multiplier);
         }

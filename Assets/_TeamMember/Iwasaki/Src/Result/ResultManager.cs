@@ -66,6 +66,15 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     }
 
 
+    [Server]
+    public void ShowPvEOnResult(ResultData data) {
+        var scoreList = PlayerListManager.Instance.GetResultDataList();
+        data.scores = scoreList.ToArray();
+
+        ShowPvEresult(data);
+
+
+    }
 
 
 
@@ -82,6 +91,13 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         StartCoroutine(ShowResultCoroutine(data));
     }
 
+    [Server]
+    public void ShowPvEresult(ResultData data) {
+        StartCoroutine(ShowPvEResultCoroutine(data));
+    }
+
+
+
     /// <summary>
     /// 1フレーム待機後にUI生成→スコア表示を行う安全処理。
     /// Mirrorの同期タイミングを考慮。
@@ -91,6 +107,14 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         yield return new WaitForEndOfFrame();
         RpcDisplayResult(data);            // 勝敗＆スコア表示
     }
+
+
+    private IEnumerator ShowPvEResultCoroutine(ResultData data) {
+        yield return new WaitForEndOfFrame();
+        RpcDisplayPvEResult(data);            // 勝敗＆スコア表示
+    }
+
+
 
     //================================================================
     // クライアント側：UI生成・表示
@@ -180,14 +204,41 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         }
     }
 
-    //================================================================
-    // リザルト削除
-    //================================================================
+    [ClientRpc]
+    private void RpcDisplayPvEResult(ResultData data) {
 
-    /// <summary>
-    /// リザルトUIを削除（再戦・ロビー戻り時など）
-    /// </summary>
-    public void HideResult() {
+        ScoreListUI ui = FindObjectOfType<ScoreListUI>();
+        if (ui != null)
+            ui.DisplayScores(new List<ResultScoreData>(data.scores));
+        else
+            Debug.LogWarning("[ResultManager] ScoreListUIが見つかりません。");
+
+        // チームIDで明示的に取得
+        float redScore = 0f;
+        float blueScore = 0f;
+
+        if (data.teamScores != null) {
+            foreach (var entry in data.teamScores) {
+                if (entry.teamId == 0) redScore = entry.teamScore;
+                else if (entry.teamId == 1) blueScore = entry.teamScore;
+            }
+        }
+
+
+
+    }
+
+
+
+
+        //================================================================
+        // リザルト削除
+        //================================================================
+
+        /// <summary>
+        /// リザルトUIを削除（再戦・ロビー戻り時など）
+        /// </summary>
+        public void HideResult() {
         if (currentUIRoot != null) {
             Destroy(currentUIRoot);
             currentUIRoot = null;
