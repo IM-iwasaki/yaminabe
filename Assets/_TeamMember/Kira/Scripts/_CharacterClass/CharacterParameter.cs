@@ -219,12 +219,12 @@ public class CharacterParameter : NetworkBehaviour {
 
         if (runtimeStatus.displayName == "ミリオネア") {
             maxHP = runtimeStatus.maxHP + (money / 100);
-            if (maxHP > 1000) maxHP = 1000;
+            if (maxHP > 300) maxHP = 300;
 
             attack = runtimeStatus.attack + (money / 1000);
             if (attack > 10) attack = 10;
 
-            moveSpeed = runtimeStatus.moveSpeed + (money / 1000);
+            moveSpeed = runtimeStatus.moveSpeed + (money / 10000);
             if (moveSpeed > 12) moveSpeed = 12;
         } else {
             maxHP = runtimeStatus.maxHP;
