@@ -285,7 +285,7 @@ public class MainWeaponController : NetworkBehaviour {
             float dist = diff.magnitude;
 
             // 密着距離なら角度無視
-            if (dist > 0.3f) {
+            if (dist > 0.5f) {
                 Vector3 dir = diff.normalized;
 
                 float dot = Vector3.Dot(forward, dir);
