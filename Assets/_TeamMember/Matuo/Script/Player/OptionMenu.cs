@@ -97,8 +97,13 @@ public class OptionMenu : MonoBehaviour {
     private TextMeshProUGUI reloadText;
     private TextMeshProUGUI titleText;
 
-    void Start() {
-        optionCanvas.enabled = false;
+    private void Start() {
+
+        if (!GetComponent<NetworkIdentity>().isLocalPlayer) {
+            enabled = false;
+            optionCanvas.enabled = false;
+            return;
+        }
 
         // カメラ感度ロード
         float saved = PlayerPrefs.GetFloat("CameraSensitivity", playerCamera.rotationSpeed);
