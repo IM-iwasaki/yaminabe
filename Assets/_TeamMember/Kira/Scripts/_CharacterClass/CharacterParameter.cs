@@ -173,6 +173,7 @@ public class CharacterParameter : NetworkBehaviour {
             "　：　インポートしたスキル..." + string.Join(", ", equippedSkills.Where(i => i != null).Select(i => i.skillName)));
         // パッシブの初期セットアップ
         equippedPassives[0].PassiveSetting();
+        skillAfterTime = equippedSkills[0].cooldown;
         // デフォルトステータスを代入
         InDefaultStatus();
 

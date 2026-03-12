@@ -158,8 +158,11 @@ public class CharacterActions : NetworkBehaviour {
 
         // 空中か地上で挙動を分ける
         Vector3 velocity = rb.velocity;
-        Vector3 targetVelocity = new(moveDirection.x * param.moveSpeed * param.speedMultiplier,velocity.y,moveDirection.z * param.moveSpeed * param.speedMultiplier
-);
+        Vector3 targetVelocity = new (
+            moveDirection.x * param.moveSpeed * param.speedMultiplier,
+            velocity.y,
+            moveDirection.z * param.moveSpeed * param.speedMultiplier
+        );
 
         //地面に立っていたら通常通り
         if (param.IsGrounded) {
@@ -290,8 +293,8 @@ public class CharacterActions : NetworkBehaviour {
     /// スキルとパッシブの制御用関数(死亡中は呼ばないでください。)
     /// </summary>
     private void AbilityControl() {
-        //nullってたりゲーム中でなかったら帰す
-        if (param.equippedSkills[0] == null || !GameManager.Instance.IsGameRunning()) return;
+        //nullってたら帰す
+        if (param.equippedSkills[0] == null) return;
 
         //パッシブを呼ぶ(パッシブの関数内で判定、発動を制御。)
         param.equippedPassives[0].PassiveReflection(core);
@@ -315,8 +318,9 @@ public class CharacterActions : NetworkBehaviour {
     /// <summary>
     /// CTを初期化する
     /// </summary>
-    public void ResetCooltime() {
-        GetComponent<CharacterParameter>().skillAfterTime = 0.0f;
+    public void ResetCooltime(bool _value = false) {
+        var param = GetComponent<CharacterParameter>();
+        param.skillAfterTime = _value ? param.equippedSkills[0].cooldown : 0.0f;
     }
 
     /// <summary>

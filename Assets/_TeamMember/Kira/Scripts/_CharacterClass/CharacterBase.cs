@@ -32,7 +32,7 @@ public abstract class CharacterBase : CreatureBase {
     // ホコを持っているか判定(PVE用)
     [SyncVar] private bool isHoldingHoko = false;
 
-    //  世界の外の落下判定のy座標
+    // 世界の外の落下判定のy座標
     [SerializeField] private float fallYposition = -50.0f;
 
     // リスポーン後の無敵判定用
