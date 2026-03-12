@@ -263,12 +263,10 @@ public class MainWeaponController : NetworkBehaviour {
         Vector3 origin = firePoint.position;
         Vector3 forward = firePoint.forward;
 
-        float range = meleeData.range;
+        // 攻撃判定を前にずらす
+        Vector3 center = origin + forward * (meleeData.range * 0.5f);
 
-        // 密着距離
-        float ignoreAngleDistance = 0.5f;
-
-        Collider[] hits = Physics.OverlapSphere(origin, range, attackLayer);
+        Collider[] hits = Physics.OverlapSphere(center, meleeData.range, attackLayer);
 
         HashSet<GameObject> damagedTargets = new();
 
@@ -286,22 +284,18 @@ public class MainWeaponController : NetworkBehaviour {
 
             float dist = diff.magnitude;
 
-            if (dist > range)
-                continue;
+            // 密着距離なら角度無視
+            if (dist > 0.3f) {
+                Vector3 dir = diff.normalized;
 
-            Vector3 dir = diff.normalized;
-
-            // 角度チェック 
-            if (dist > ignoreAngleDistance) {
                 float dot = Vector3.Dot(forward, dir);
                 float threshold = Mathf.Cos(meleeData.meleeAngle * Mathf.Deg2Rad);
 
-                if (dot < threshold)
-                    continue;
+                if (dot < threshold) continue;
             }
 
             // 壁越し防止
-            if (Physics.Raycast(origin, dir, out RaycastHit hit, dist, wallLayer)) {
+            if (Physics.Raycast(origin, diff.normalized, out RaycastHit hit, dist, wallLayer)) {
                 if (hit.collider != c)
                     continue;
             }
@@ -320,7 +314,7 @@ public class MainWeaponController : NetworkBehaviour {
         AudioManager.Instance.CmdPlayWorldSE(meleeData.se.ToString(), transform.position);
 
 #if UNITY_EDITOR
-        MeleeAttackDebugArc.Create(origin, forward, range, meleeData.meleeAngle, Color.yellow, 0.5f);
+        MeleeAttackDebugArc.Create(origin, forward, meleeData.range, meleeData.meleeAngle, Color.yellow, 0.5f);
 #endif
     }
 
