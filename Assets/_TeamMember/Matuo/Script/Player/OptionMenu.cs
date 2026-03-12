@@ -98,12 +98,7 @@ public class OptionMenu : MonoBehaviour {
     private TextMeshProUGUI titleText;
 
     private void Start() {
-
-        if (!GetComponent<NetworkIdentity>().isLocalPlayer) {
-            enabled = false;
-            optionCanvas.enabled = false;
-            return;
-        }
+        optionCanvas.enabled = false;
 
         // カメラ感度ロード
         float saved = PlayerPrefs.GetFloat("CameraSensitivity", playerCamera.rotationSpeed);
@@ -174,7 +169,7 @@ public class OptionMenu : MonoBehaviour {
 
         // ガチャとキャラ選択中ブロック
         if (!isOpen && (IsBlockedByGacha() || IsBlockedByCharacterSelect()))
-            return;       
+            return;
 
 
         isOpen = !isOpen;
@@ -183,7 +178,7 @@ public class OptionMenu : MonoBehaviour {
     }
 
 
-   
+
 
 
 
