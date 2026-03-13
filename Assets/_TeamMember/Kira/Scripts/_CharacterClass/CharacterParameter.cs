@@ -1,7 +1,6 @@
 using Mirror;
 using UnityEngine;
 using System.Linq;
-using static Mirror.BouncyCastle.Crypto.Digests.SkeinEngine;
 
 /// <summary>
 /// Character‚Ì•Ï”ŠÇ—
@@ -101,6 +100,8 @@ public class CharacterParameter : NetworkBehaviour {
 
     //LocalUI‚ÌQÆ‚¾‚¯‚Â
     private PlayerLocalUIController localUI;
+
+    //•ŠíŠÇ—‚ÌQÆ
     private MainWeaponController weaponController_main;
     private SubWeaponController weaponController_sub;
 

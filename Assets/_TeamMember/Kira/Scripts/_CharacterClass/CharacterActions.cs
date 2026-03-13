@@ -1,8 +1,6 @@
 using UnityEngine;
 using Mirror;
-using UnityEngine.EventSystems;
 using static TeamData;
-using UnityEngine.SocialPlatforms;
 
 public class CharacterActions : NetworkBehaviour {
     private CharacterBase core;
@@ -16,8 +14,6 @@ public class CharacterActions : NetworkBehaviour {
 
     //移動中か
     public bool isMoving { get; private set; } = false;
-    //移動を要求する方向
-    //protected Vector2 MoveInput;
     //実際に移動する方向
     public Vector3 moveDirection { get; private set; }
 
@@ -35,8 +31,6 @@ public class CharacterActions : NetworkBehaviour {
     private GachaSystem gachaSystem;
 
     private HudManager hud;
-
-
 
     private void Update() {
         // ローカルプレイヤー以外は処理しない
@@ -313,14 +307,6 @@ public class CharacterActions : NetworkBehaviour {
             //経過時間を固定
             param.skillAfterTime = Skill.cooldown;
         }        
-    }
-
-    /// <summary>
-    /// CTを初期化する
-    /// </summary>
-    public void ResetCooltime(bool _value = false) {
-        var param = GetComponent<CharacterParameter>();
-        param.skillAfterTime = _value ? param.equippedSkills[0].cooldown : 0.0f;
     }
 
     /// <summary>
