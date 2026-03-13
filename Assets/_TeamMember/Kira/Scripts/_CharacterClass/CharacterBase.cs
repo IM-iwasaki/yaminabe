@@ -438,7 +438,7 @@ public abstract class CharacterBase : CreatureBase {
         }
 
         //加入しようとしてるチームが埋まっていたら
-        if (ServerManager.instance.teams[newTeam].teamPlayerList.Count >= TEAMMATE_MAX) {
+        if (ServerManager.instance.teams[newTeam].teamPlayerList.Count >= ServerManager.instance.teammateMax) {
             ChatManager.Instance.CmdSendSystemMessage("team member is over");
             return;
         }

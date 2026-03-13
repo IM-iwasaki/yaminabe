@@ -16,6 +16,8 @@ public class ServerManager : NetworkBehaviour {
     [Header("チームデータの総数")]
     public List<TeamData> teams = null;
 
+    public int teammateMax { get; private set; } = 1;
+
     [System.NonSerialized] public bool isRandom = false;
     private void Awake() {
         if (instance != null && instance != this) {
@@ -73,7 +75,7 @@ public class ServerManager : NetworkBehaviour {
                 if (player.GetComponent<GeneralCharacter>().parameter.TeamID == i) {
                     teams[i].teamPlayerList.Add(player);
                 }
-                if (teams[i].teamPlayerList.Count == TeamData.TEAMMATE_MAX)
+                if (teams[i].teamPlayerList.Count == teammateMax)
                     teams[i].isFullTeam = true;
             }
         }
@@ -175,5 +177,18 @@ public class ServerManager : NetworkBehaviour {
             var param = player.GetComponent<GeneralCharacter>().parameter;
             param.ResetWeaponToDefault();
         }
+    }
+
+    /// <summary>
+    /// 参加人数に応じて1チームの最大人数を変更
+    /// </summary>
+    [Server]
+    public void ChangeTeammateMax() {
+        if (connectPlayer.Count <= 2)
+            teammateMax = 1;
+        else if (connectPlayer.Count > 2 && connectPlayer.Count <= 4)
+            teammateMax = 2;
+        else
+            teammateMax = 3;
     }
 }

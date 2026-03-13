@@ -67,6 +67,7 @@ public class CustomNetworkManager : NetworkManager {
             hostUI = host;
             hostUI.Init();
         }
+        ServerManager.instance.ChangeTeammateMax();
     }
 
     /// <summary>
@@ -250,7 +251,8 @@ public class CustomNetworkManager : NetworkManager {
         var udpBroadcaster = FindObjectOfType<UDPBroadcaster>();
         udpBroadcaster?.StopBroadcast();
         FindObjectOfType<UDPListener>()?.StopReceiveIP();
-        Destroy(udpBroadcaster.gameObject);
+        if (udpBroadcaster != null)
+            Destroy(udpBroadcaster.gameObject);
         Destroy(gameObject);
     }
 }

@@ -14,7 +14,7 @@ public class TeamData{
 
         ColorMax,
     }
-    public List<NetworkIdentity> teamPlayerList = new List<NetworkIdentity>(TEAMMATE_MAX);
-    public const int TEAMMATE_MAX = 3;
+    public List<NetworkIdentity> teamPlayerList = new List<NetworkIdentity>();
+    
     public bool isFullTeam;
 }
