@@ -23,6 +23,11 @@ public class CaptureHoko : NetworkBehaviour {
 
     private bool isActive = true;
 
+    [Header("スコア距離設定")]
+    public float spawnBlockDistance = 40f; // この距離以内ならカウント停止
+    public float fastDistance = 30f;         // 敵陣に近いと高速
+    public float fastMultiplier = 1.5f;
+
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
@@ -60,7 +65,13 @@ public class CaptureHoko : NetworkBehaviour {
 
             RpcUpdateHokoPosition(targetPos, holder.transform.rotation);
 
-            scoreTimer += Time.deltaTime;
+            var player = holder.GetComponent<CharacterBase>();
+            if (player == null) return;
+
+            float multiplier = GetScoreMultiplier(player);
+
+            scoreTimer += Time.deltaTime * multiplier;
+
             if (scoreTimer >= 1f) {
                 scoreTimer = 0f;
                 AddScoreToHolderTeam();
@@ -138,6 +149,9 @@ public class CaptureHoko : NetworkBehaviour {
         var player = holder.GetComponent<CharacterBase>();
         if (player == null) return;
 
+        if (IsNearOwnSpawn(player))
+            return;
+
         int teamId = player.parameter.TeamID;
         RuleManager.Instance.OnCaptureProgress(teamId, scorePerSecond);
     }
@@ -155,5 +169,55 @@ public class CaptureHoko : NetworkBehaviour {
             return -1;
 
         return player.parameter.TeamID;
+    }
+
+    /// <summary>
+    /// 敵陣との距離でスコア倍率を決める
+    /// </summary>
+    [Server]
+    private float GetScoreMultiplier(CharacterBase player) {
+        TeamData.TeamColor myTeam = player.parameter.TeamID == 0 ? TeamData.TeamColor.Red : TeamData.TeamColor.Blue;
+
+        TeamData.TeamColor enemyTeam = myTeam == TeamData.TeamColor.Red ? TeamData.TeamColor.Blue : TeamData.TeamColor.Red;
+
+        var enemySpawns = StageManager.Instance.GetTeamSpawnPoints(enemyTeam);
+
+        float enemyDist = float.MaxValue;
+
+        foreach (var sp in enemySpawns) {
+            if (sp == null) continue;
+
+            float d = Vector3.Distance(transform.position, sp.position);
+            if (d < enemyDist) enemyDist = d;
+        }
+
+        // 敵陣に近いと倍率アップ
+        if (enemyDist < fastDistance)
+            return fastMultiplier;
+
+        return 1f;
+    }
+
+    /// <summary>
+    /// ホコを持っているプレイヤーが自陣のリスポーン地点に近いか
+    /// </summary>
+    [Server]
+    private bool IsNearOwnSpawn(CharacterBase player) {
+
+        var spawnPoints = StageManager.Instance.GetTeamSpawnPoints(
+            player.parameter.TeamID == 0 ? TeamData.TeamColor.Red : TeamData.TeamColor.Blue
+        );
+
+        foreach (var sp in spawnPoints) {
+            if (sp == null) continue;
+
+            float dist = Vector3.Distance(transform.position, sp.position);
+
+            if (dist < spawnBlockDistance) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
