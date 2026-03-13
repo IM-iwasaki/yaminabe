@@ -255,8 +255,8 @@ public class SelectObjectManager : NetworkBehaviour {
         SetStatusText();
         //  テキストに変換
         statusText.SetText("HP : " + HP + "\n"
-                           + "ATK : " + ATK + "\n"
-                           + "SPD : " + SPD + "\n");
+                           + "SPD : " + SPD + "\n"
+                           + "ROLE : " + character.statusData.chatacterType + "\n");
     }
 
     /// <summary>
