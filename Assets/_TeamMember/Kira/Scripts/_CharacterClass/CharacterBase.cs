@@ -47,8 +47,8 @@ public abstract class CharacterBase : CreatureBase {
     public CharacterActions action { get; private set; }
     public CharacterAnimationController animCon { get; private set; }
 
-
     private bool isInitialize = false;
+
     #region ～初期化関係関数～
 
     /// <summary>
@@ -175,7 +175,6 @@ public abstract class CharacterBase : CreatureBase {
 
         ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready : " + parameter.ready);
     }
-
     [Command]
     public void CmdChangePlayerReadyFalse() {
         parameter.ready = false;
@@ -205,6 +204,7 @@ public abstract class CharacterBase : CreatureBase {
             // hitSE 再生
             PlayHitSE(_ID);
 
+        //自身の体力が0以下になったらログを送信して死亡処理
         if (parameter.HP <= 0) {
             parameter.HP = 0;
 
@@ -227,7 +227,6 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     public PlayerLocalUIController GetPlayerLocalUI() { return GetComponent<PlayerLocalUIController>(); }
 
-    #region 禁断の死亡処理(グロ注意)
     ///--------------------変更:タハラ---------------------
 
     /* なんかサーバーで処理できるようになったのでコマンド経由しなくていいです。
@@ -330,6 +329,7 @@ public abstract class CharacterBase : CreatureBase {
         Invoke(nameof(Respawn), PlayerConst.RESPAWN_TIME);
         Invoke(nameof(TargetRespawnEffect), PlayerConst.RESPAWN_TIME);
     }
+
     /// <summary>
     /// ローカル上で死亡演出 可読性向上のためまとめました
     /// </summary>
@@ -341,6 +341,9 @@ public abstract class CharacterBase : CreatureBase {
         FadeManager.Instance.StartFadeOut(2.5f);
     }
 
+    /// <summary>
+    /// HPの初期化、死亡状態の解除
+    /// </summary>
     [Server]
     public void ResetHealth() {
         //ここで体力と死亡状態を戻す
@@ -379,6 +382,11 @@ public abstract class CharacterBase : CreatureBase {
         StartCoroutine(InvincibleRoutine(3.0f));
     }
 
+    /// <summary>
+    /// 無敵状態の付与
+    /// </summary>
+    /// <param name="duration">効果時間</param>
+    /// <returns></returns>
     [Server]
     private IEnumerator InvincibleRoutine(float duration) {
         isInvincible = true;
@@ -415,8 +423,6 @@ public abstract class CharacterBase : CreatureBase {
             EffectPool.Instance.ReturnToPool(fx, 1.5f);
         }
     }
-
-    #endregion
 
     /// <summary>
     /// チーム参加処理(TeamIDを更新)
@@ -794,13 +800,13 @@ public abstract class CharacterBase : CreatureBase {
     /// <summary>
     ///  時間まで攻撃力を上げておく実行処理(コルーチン)
     /// </summary>
-    private IEnumerator AttackBuffRoutine(float _value, float _duration) {
-        parameter.attack = Mathf.RoundToInt(parameter.defaultAttack * _value);
-        yield return new WaitForSeconds(_duration);
-        parameter.attack = parameter.defaultAttack;
-        DestroyEffect();
-        attackCoroutine = null;
-    }
+    //private IEnumerator AttackBuffRoutine(float _value, float _duration) {
+    //    parameter.attack = Mathf.RoundToInt(parameter.defaultAttack * _value);
+    //    yield return new WaitForSeconds(_duration);
+    //    parameter.attack = parameter.defaultAttack;
+    //    DestroyEffect();
+    //    attackCoroutine = null;
+    //}
 
     /// <summary>
     /// 移動速度上昇バフ発動 [_valueは1.0fを100％とした相対値]
@@ -821,13 +827,13 @@ public abstract class CharacterBase : CreatureBase {
     /// <summary>
     ///  時間まで移動速度を上げておく実行処理(コルーチン)
     /// </summary>
-    private IEnumerator SpeedBuffRoutine(float _value, float _duration) {
-        parameter.moveSpeed = Mathf.RoundToInt(parameter.defaultMoveSpeed * _value);
-        yield return new WaitForSeconds(_duration);
-        parameter.moveSpeed = parameter.defaultMoveSpeed;
-        DestroyEffect();
-        speedCoroutine = null;
-    }
+    //private IEnumerator SpeedBuffRoutine(float _value, float _duration) {
+    //    parameter.moveSpeed = Mathf.RoundToInt(parameter.defaultMoveSpeed * _value);
+    //    yield return new WaitForSeconds(_duration);
+    //    parameter.moveSpeed = parameter.defaultMoveSpeed;
+    //    DestroyEffect();
+    //    speedCoroutine = null;
+    //}
 
     /// <summary>
     /// 古谷作成
@@ -846,13 +852,13 @@ public abstract class CharacterBase : CreatureBase {
     /// 古谷
     /// 時間まで被ダメを下げておく実行処理(コルーチン)
     /// </summary>
-    private IEnumerator DamageCutRoutine(int _value, float _duration) {
-        parameter.damageRatio = _value;
-        Debug.Log("被ダメージ倍率変更中");
-        yield return new WaitForSeconds(_duration);
-        parameter.damageRatio = 100;
-        damageCutCoroutine = null;
-    }
+    //private IEnumerator DamageCutRoutine(int _value, float _duration) {
+    //    parameter.damageRatio = _value;
+    //    Debug.Log("被ダメージ倍率変更中");
+    //    yield return new WaitForSeconds(_duration);
+    //    parameter.damageRatio = 100;
+    //    damageCutCoroutine = null;
+    //}
 
     [Command]
     public void CmdUseConsumable(ConsumableType type, float value, float time) {
