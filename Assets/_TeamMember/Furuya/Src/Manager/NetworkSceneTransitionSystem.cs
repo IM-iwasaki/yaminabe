@@ -16,6 +16,7 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
     [Server]
     public void ChangeScene(string sceneName) {
         Physics.simulationMode = SimulationMode.Script;
+        LoadingUI.instance.SetIsLoading(true);
         RpcStartFadeOut(sceneName);
         if (sceneName == GameSceneManager.Instance.lobbySceneName) {
             AudioManager.Instance.CmdPlayBGM("ƒƒr[", 2f);
