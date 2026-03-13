@@ -103,4 +103,8 @@ public class LoadingUI : MonoBehaviour {
             teamColorUI.text = "";
         }
     }
+
+    public void SetIsLoading(bool _isLoading) {
+        isLoading = _isLoading;
+    }
 }
