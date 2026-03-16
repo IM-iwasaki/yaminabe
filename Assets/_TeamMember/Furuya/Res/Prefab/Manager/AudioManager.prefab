@@ -64,7 +64,7 @@ MonoBehaviour:
     maxDistance: 500
   - name: "\u30B2\u30FC\u30E02"
     clip: {fileID: 8300000, guid: 3657741ca8398ae459495c3311b1975d, type: 3}
-    volume: 0.2
+    volume: 0.15
     pitch: 1
     minDistance: 1
     maxDistance: 500
@@ -76,14 +76,14 @@ MonoBehaviour:
     maxDistance: 500
   - name: "\u30B2\u30FC\u30E04"
     clip: {fileID: 8300000, guid: 937c789201533bb41a8035f60d5158dc, type: 3}
-    volume: 0.2
+    volume: 0.15
     pitch: 1
     minDistance: 1
     maxDistance: 500
   worldSEList:
   - name: Gun
     clip: {fileID: 8300000, guid: 87ef11dfc453fd04a9bd16cf08b59137, type: 3}
-    volume: 0.2
+    volume: 0.15
     pitch: 1
     minDistance: 1
     maxDistance: 25
@@ -92,7 +92,7 @@ MonoBehaviour:
     volume: 0.2
     pitch: 1
     minDistance: 1
-    maxDistance: 25
+    maxDistance: 40
   - name: RocketLauncher
     clip: {fileID: 8300000, guid: 20f1dc2bd918f4a41b55d6afcb19b4f6, type: 3}
     volume: 0.5
@@ -143,22 +143,28 @@ MonoBehaviour:
     maxDistance: 25
   - name: Chainsaw
     clip: {fileID: 8300000, guid: 22c378917b26e6d4fb43af562963b53e, type: 3}
-    volume: 0.15
+    volume: 0.1
     pitch: 1
     minDistance: 1
     maxDistance: 25
   - name: Lightsaber
     clip: {fileID: 8300000, guid: 237e4ecdceee1cf4c9d2a16301367670, type: 3}
-    volume: 0.2
+    volume: 0.25
     pitch: 1
     minDistance: 1
-    maxDistance: 25
+    maxDistance: 40
   - name: Spear
     clip: {fileID: 8300000, guid: ea9d84f5f8f41cc40ae192ab0237f3a4, type: 3}
     volume: 0.2
     pitch: 1
     minDistance: 1
-    maxDistance: 25
+    maxDistance: 40
+  - name: Hoko
+    clip: {fileID: 8300000, guid: f2d9470d62d909e4093fb26022bc67c1, type: 3}
+    volume: 0.5
+    pitch: 1
+    minDistance: 1
+    maxDistance: 200
   uiSEList:
   - name: "\u6C7A\u5B9A"
     clip: {fileID: 8300000, guid: 72c910bb3c186904190072182620c2a6, type: 3}
@@ -199,6 +205,12 @@ MonoBehaviour:
   - name: "\u6B66\u5668\u53D6\u5F97\u5931\u6557"
     clip: {fileID: 8300000, guid: 1e4e8cf9b8fcb0447a28ecdb23f607d1, type: 3}
     volume: 0.3
+    pitch: 1
+    minDistance: 1
+    maxDistance: 100
+  - name: SkillUsed
+    clip: {fileID: 8300000, guid: b5ee5e7cd7a768548bf0799260d3356d, type: 3}
+    volume: 1
     pitch: 1
     minDistance: 1
     maxDistance: 100

@@ -133,8 +133,10 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
 
     [Command(requiresAuthority = false)]
     public void CmdPlayUISE(string name, NetworkConnectionToClient conn = null) {
-        if (conn == null)
+        if (conn == null) {
+            TargetPlayUISE(conn, name);
             return;
+        }
 
         // ホストの場合は直接再生
         if (conn is LocalConnectionToClient) {
@@ -142,7 +144,6 @@ public class AudioManager : NetworkSystemObject<AudioManager> {
             return;
         }
 
-        TargetPlayUISE(conn, name);
     }
 
     [TargetRpc]

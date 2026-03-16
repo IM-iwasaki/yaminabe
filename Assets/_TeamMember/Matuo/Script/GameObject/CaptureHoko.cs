@@ -108,6 +108,8 @@ public class CaptureHoko : NetworkBehaviour {
         holder = player;
         scoreTimer = 0f; // スコア加算タイマーリセット
 
+        AudioManager.Instance.CmdPlayWorldSE("Hoko", transform.position);
+
         // 移動速度を下げる
         var param = player.GetComponent<CharacterParameter>();
         if (param != null) {

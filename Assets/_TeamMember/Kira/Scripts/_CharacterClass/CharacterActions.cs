@@ -250,6 +250,7 @@ public class CharacterActions : NetworkBehaviour {
             isCanSkill = false;
             //CT計測時間をリセット
             param.skillAfterTime = 0;
+            AudioManager.Instance.CmdPlayUISE("SkillUsed");
         }
     }
 
