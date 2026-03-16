@@ -27,7 +27,7 @@ public class Passive_Gurdian : PassiveBase {
 
         // 味方が近くにいる → 定期回復
         if (user.parameter.HasNearbyAlly) {
-            user.Heal(0.05f, 1.0f);
+            user.CmdHealCharacter(0.05f, 1.0f);
 
                 // スキル使用中、速度バフ中以外は速度上昇効果を戻す
             if (!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {

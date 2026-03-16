@@ -40,7 +40,7 @@ public abstract class CharacterBase : CreatureBase {
 
     public int bannerNum = 0;
 
-    protected List<List<TemporaryBuff>> temporaryBuffs = new List<List<TemporaryBuff>>((int)ParamaterType.max);
+    protected List<List<TemporaryBuff>> temporaryBuffs = new List<List<TemporaryBuff>>((int) ParamaterType.max);
 
     //各コンポーネントの参照
     public CharacterInput input { get; private set; }
@@ -66,7 +66,7 @@ public abstract class CharacterBase : CreatureBase {
         animCon = GetComponent<CharacterAnimationController>();
 
         //RpcChangeWeapon(weaponController_main.weaponData.appearanceID);
-        for (int i = 0; i < (int)ParamaterType.max; i++) {
+        for (int i = 0; i < (int) ParamaterType.max; i++) {
             temporaryBuffs.Add(new List<TemporaryBuff>());
         }
     }
@@ -194,11 +194,11 @@ public abstract class CharacterBase : CreatureBase {
         if (parameter.isDead || !GameManager.Instance.IsGameRunning()) return;
 
         //ダメージ倍率を適用
-        float damage = _damage * ((float)parameter.damageRatio / 100);
+        float damage = _damage * ((float) parameter.damageRatio / 100);
         //ダメージが0以下だったら1に補正する
         if (damage <= 0) damage = 1;
         //HPの減算処理
-        parameter.HP -= (int)damage;
+        parameter.HP -= (int) damage;
 
         if (_ID != -1)
             // hitSE 再生
@@ -363,7 +363,7 @@ public abstract class CharacterBase : CreatureBase {
         var stageManager = StageManager.Instance;
         if (stageManager == null) return;
 
-        var teamColor = (TeamData.TeamColor)parameter.TeamID;
+        var teamColor = (TeamData.TeamColor) parameter.TeamID;
         Transform spawnPoint = stageManager.GetSpawnPoint(teamColor);
 
         if (spawnPoint == null) {
@@ -431,7 +431,7 @@ public abstract class CharacterBase : CreatureBase {
     public void CmdJoinTeam(NetworkIdentity _player, TeamColor _color) {
         GeneralCharacter player = _player.GetComponent<GeneralCharacter>();
         int currentTeam = player.parameter.TeamID;
-        int newTeam = (int)_color;
+        int newTeam = (int) _color;
 
         //チームから抜けるとき
         if (newTeam == -1) {
@@ -462,7 +462,7 @@ public abstract class CharacterBase : CreatureBase {
             player.parameter.TeamID = -1;
         }
 
-        
+
 
 
         //新しいチームに加入
@@ -571,7 +571,7 @@ public abstract class CharacterBase : CreatureBase {
         }
 
         //バフデバフの処理
-        for (int paramIndex = (int)ParamaterType.max - 1; 0 <= paramIndex; paramIndex--) {
+        for (int paramIndex = (int) ParamaterType.max - 1; 0 <= paramIndex; paramIndex--) {
             //倍率の累計
             float influxValue = 1.0f;
             //倍率の最高値
@@ -600,7 +600,7 @@ public abstract class CharacterBase : CreatureBase {
             if (influxValue >= 2.0f) influxValue = maxInfluxValue;
 
             //値を反映(switchで分岐)
-            switch ((ParamaterType)paramIndex) {
+            switch ((ParamaterType) paramIndex) {
                 case ParamaterType.Attack:
                     parameter.attack = parameter.defaultAttack * influxValue;
                     break;
@@ -737,13 +737,19 @@ public abstract class CharacterBase : CreatureBase {
     [SerializeField] public float allyCheckRadius = 8f;
     [SerializeField] public LayerMask allyLayer;
 
-    #endregion  
+    #endregion
 
     #region ～バフ・ステータス操作系～
+
+    [Command]
+    public void CmdHealCharacter(float value, float time) {
+        Heal(value, time);
+    }
+
     /// <summary>
     /// HP回復(時間経過で徐々に回復)発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    [Command]
+    [Server]
     public void Heal(float _value, float _usingTime) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
@@ -787,7 +793,7 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [Command]
     public void AttackBuff(float _value, float _usingTime) {
-        temporaryBuffs[(int)ParamaterType.Attack].Add(new TemporaryBuff(_value, _usingTime));
+        temporaryBuffs[(int) ParamaterType.Attack].Add(new TemporaryBuff(_value, _usingTime));
 
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
 
@@ -815,7 +821,7 @@ public abstract class CharacterBase : CreatureBase {
 
     [Server]
     public void MoveSpeedBuff(float _value, float _usingTime) {
-        temporaryBuffs[(int)ParamaterType.moveSpeed].Add(new TemporaryBuff(_value, _usingTime));
+        temporaryBuffs[(int) ParamaterType.moveSpeed].Add(new TemporaryBuff(_value, _usingTime));
 
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         //  エフェクト再生
@@ -841,7 +847,7 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [Command]
     public void DamageCut(float _value, float _usingTime) {
-        temporaryBuffs[(int)ParamaterType.damageRate].Add(new TemporaryBuff(_value, _usingTime));
+        temporaryBuffs[(int) ParamaterType.damageRate].Add(new TemporaryBuff(_value, _usingTime));
 
         if (damageCutCoroutine != null) StopCoroutine(damageCutCoroutine);
 
@@ -866,6 +872,9 @@ public abstract class CharacterBase : CreatureBase {
         switch (type) {
             case ConsumableType.SpeedUp:
                 MoveSpeedBuff(value, time);
+                break;
+            case ConsumableType.Heal:
+                Heal(value, time);
                 break;
         }
     }

@@ -24,7 +24,7 @@ public class Passive_Quasar : PassiveBase {
             coolTime = 0;
         }
         else if (user.parameter.HP < user.parameter.maxHP / 2 && coolTime >= cooldown) {
-            user.Heal(0.005f,0.01f); 
+            user.CmdHealCharacter(0.005f,0.01f); 
             coolTime = 0;
         }
 
