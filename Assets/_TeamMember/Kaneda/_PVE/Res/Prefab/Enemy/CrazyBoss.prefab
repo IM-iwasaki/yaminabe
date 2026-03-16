@@ -26256,7 +26256,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   attackCooltime: 5
-  phaseEffect: {fileID: 0}
+  phaseEffect: {fileID: 3183138269522200388}
   maxHP: 0
 --- !u!114 &2645335185511703250
 MonoBehaviour:
@@ -37105,6 +37105,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a07569a678d18294da14da2fd909996b, type: 3}
+--- !u!1 &3183138269522200388 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8793510976239746625, guid: a07569a678d18294da14da2fd909996b, type: 3}
+  m_PrefabInstance: {fileID: 6207109004285851909}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9197629568933098122 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2990565645700352911, guid: a07569a678d18294da14da2fd909996b, type: 3}
