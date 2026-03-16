@@ -6,13 +6,11 @@ public class ShowResultPanelEvent : PVEStageEvent {
 
     [Header("表示するリザルトパネル")]
     [SerializeField] private GameObject resultPanel;
-    [SerializeField] private Button nextButton;      // ネクストボタン（ホスト専用）
-    [SerializeField] private Button returnLobbyButton;  // ロビー戻りボタン（ホスト専用）
+    [SerializeField] private Button nextButton;
+    [SerializeField] private Button returnLobbyButton;
 
-
-    private bool isResultActive = true;                 // 二重押し防止
+    private bool isResultActive = true;     // 二重押し防止
     private ResultManager resultManager;
-
 
     private void Start() {
         // ボタンイベント登録
@@ -22,31 +20,33 @@ public class ShowResultPanelEvent : PVEStageEvent {
             returnLobbyButton.onClick.AddListener(OnClickReturnLobby);
     }
 
-
-
-
     protected override void Execute() {
         if (resultPanel == null) return;
-        bool isHost = NetworkServer.active;
-        if (NetworkServer.active) {
+
+        bool isHost = NetworkServer.active;   // ホスト判定
+
+        if (isHost) {
             GameManager.Instance.EndGame();
         }
+
         // PvEリザルトに個人スコアを送る
         ResultManager.Instance.ShowPvEOnResult(new ResultManager.ResultData {
             isTeamBattle = true,
-          
             scores = new ResultScoreData[0],
-                 });
+        });
+
         // ホストがオプションを開いていたら閉じる
         if (isHost) {
             OptionMenu optionMenu = FindObjectOfType<OptionMenu>();
             if (optionMenu != null && optionMenu.isOpen) {
-                optionMenu.ToggleMenu(); // 閉じる
+                optionMenu.ToggleMenu();
             }
         }
 
+        // ここでホストだけボタン表示
         if (nextButton != null)
             nextButton.gameObject.SetActive(isHost);
+
         if (returnLobbyButton != null)
             returnLobbyButton.gameObject.SetActive(isHost);
 
@@ -54,14 +54,9 @@ public class ShowResultPanelEvent : PVEStageEvent {
 
         isResultActive = true;
 
-        if (NetworkServer.active && NetworkClient.isConnected) {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
-
-
-
 
     public void OnClickNextStage() {
         if (!NetworkServer.active) return;
@@ -84,9 +79,4 @@ public class ShowResultPanelEvent : PVEStageEvent {
         GameSceneManager.Instance.LoadLobbySceneForAll();
         PlayerListManager.Instance.ResetAllScores();
     }
-
-
-
-
-
 }
