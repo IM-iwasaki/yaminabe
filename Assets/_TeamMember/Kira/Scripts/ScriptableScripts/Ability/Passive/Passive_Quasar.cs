@@ -20,10 +20,10 @@ public class Passive_Quasar : PassiveBase {
     public override void PassiveReflection(CharacterBase user) {
         //HPが50％以上の時、攻撃中でもMPが回復する。そうでないとき、HPが少しずつ回復する。
         if (user.parameter.HP >= user.parameter.maxHP / 2 && coolTime >= cooldown) {
-            user.action.MPRegeneration(2);
+            user.action.MPRegeneration(1);
             coolTime = 0;
         }
-        else if (user.parameter.HP <= user.parameter.maxHP / 2 && coolTime >= cooldown) {
+        else if (user.parameter.HP < user.parameter.maxHP / 2 && coolTime >= cooldown) {
             user.Heal(0.005f,0.01f); 
             coolTime = 0;
         }
