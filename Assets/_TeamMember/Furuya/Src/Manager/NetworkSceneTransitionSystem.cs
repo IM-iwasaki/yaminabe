@@ -15,7 +15,6 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
     // サーバー側がシーンを切り替える（全クライアントにフェード命令）
     [Server]
     public void ChangeScene(string sceneName) {
-        Physics.simulationMode = SimulationMode.Script;
         LoadingUI.instance.SetIsLoading(true);
         RpcStartFadeOut(sceneName);
         if (sceneName == GameSceneManager.Instance.lobbySceneName) {
@@ -35,6 +34,7 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
     /// <param name="sceneName">遷移先の名前</param>
     [ClientRpc]
     private void RpcStartFadeOut(string sceneName) {
+        
         FadeManager.Instance.StartFadeOut(fadeDuration, () => {
             if (isServer) {
                 // フェードが終わったらサーバーがシーンを変更（全員追従）
@@ -50,6 +50,7 @@ public class NetworkSceneTransitionSystem : NetworkSystemObject<NetworkSceneTran
     [Server]
     private IEnumerator ServerChangeSceneDelayed(string sceneName) {
         yield return new WaitForSeconds(fadeDuration);
+        Physics.simulationMode = SimulationMode.Script;
         NetworkManager.singleton.ServerChangeScene(sceneName);
     }
 
