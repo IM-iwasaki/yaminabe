@@ -36,7 +36,7 @@ public class ConsumableItem : ItemBase {
 
         switch (type) {
             case ConsumableType.Heal:
-                character.Heal(value, usingTime);
+                character.CmdUseConsumable(ConsumableType.Heal, value, usingTime);
                 break;
             case ConsumableType.SpeedUp:
                 character.CmdUseConsumable(ConsumableType.SpeedUp, value, usingTime);
