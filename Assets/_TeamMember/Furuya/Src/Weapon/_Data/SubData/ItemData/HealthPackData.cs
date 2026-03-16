@@ -6,5 +6,5 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/Item/HealthPack")]
 public class HealthPackData : ItemData {
-    public int healAmount;
+    public float healAmount;
 }
