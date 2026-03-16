@@ -67,7 +67,7 @@ public class CustomNetworkManager : NetworkManager {
             hostUI = host;
             hostUI.Init();
         }
-        ServerManager.instance.ChangeTeammateMax();
+        
     }
 
     /// <summary>
@@ -99,6 +99,7 @@ public class CustomNetworkManager : NetworkManager {
         if (!ServerManager.instance.connectPlayer.Contains(_conn.identity))
             ServerManager.instance.connectPlayer.Add(_conn.identity);
         ChatManager.Instance.CmdSendSystemMessage(ServerManager.instance.connectPlayer.Count + "is Connected ");
+        ServerManager.instance.ChangeTeammateMax();
     }
 
     /// <summary>

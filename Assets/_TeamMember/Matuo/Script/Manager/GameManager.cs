@@ -9,16 +9,12 @@ using System.Collections;
 /// ルール終了処理
 /// </summary>
 public class GameManager : NetworkSystemObject<GameManager> {
-    #region 定数
-
+    // 定数
     private const int COUNTDOWN_SECONDS = 6;
     private const float GAME_START_DELAY = 7f;
     private const float DEFAULT_REMAINING_TIME = 0f;
 
-    #endregion
-
-    #region 変数
-
+    // 変数
     public CaptureHoko Hoko { get; private set; }
 
     [SyncVar]
@@ -31,10 +27,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
     [Header("制限時間(秒)")]
     [SerializeField] private float objectRuleTime = 300f;
     [SerializeField] private float deathMatchTime = 180f;
-
-    #endregion
-
-    #region 初期化
 
     /// <summary>
     /// 初期化処理
@@ -51,8 +43,6 @@ public class GameManager : NetworkSystemObject<GameManager> {
         // ルールマネージャ取得
         ruleManager = RuleManager.Instance;
     }
-
-    #endregion
 
     #region PVP処理
 
