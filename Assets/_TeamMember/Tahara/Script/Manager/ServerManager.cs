@@ -184,6 +184,7 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void ChangeTeammateMax() {
+        //参加人数が2人以下なら各チームの最大人数を1人にする
         if (connectPlayer.Count <= 2)
             teammateMax = 1;
         else if (connectPlayer.Count > 2 && connectPlayer.Count <= 4)
