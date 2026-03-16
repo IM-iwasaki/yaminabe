@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 using TMPro;
 using Mirror;
 
-public class OptionMenu : MonoBehaviour {
+public class OptionMenu : NetworkBehaviour {
     [Header("対象のPlayerCamera")]
     public PlayerCamera playerCamera;
 
@@ -98,6 +98,21 @@ public class OptionMenu : MonoBehaviour {
     private TextMeshProUGUI titleText;
 
     private void Start() {
+        // PlayerInputが未取得なら取得
+        if (playerInput == null)
+            playerInput = GetComponent<PlayerInput>();
+
+        // PlayerCameraも安全取得
+        if (playerCamera == null)
+            playerCamera = GetComponent<PlayerCamera>();
+
+        // ローカルプレイヤー以外はOptionMenuを無効化
+        if (!isLocalPlayer) {
+            optionCanvas.gameObject.SetActive(false);
+            enabled = false;
+            return;
+        }
+
         optionCanvas.enabled = false;
 
         // カメラ感度ロード
@@ -145,17 +160,15 @@ public class OptionMenu : MonoBehaviour {
 
         #endregion
 
-
         TitleButton = optionCanvas.transform
-          .Find("TitleButton")
-          ?.GetComponent<Button>();
+            .Find("TitleButton")
+            ?.GetComponent<Button>();
 
         titleText = TitleButton?.transform
-           .Find("Text")
-           ?.GetComponent<TextMeshProUGUI>();
+            .Find("Text")
+            ?.GetComponent<TextMeshProUGUI>();
 
         TitleButton?.onClick.AddListener(ReturnToTitle);
-
     }
 
     /// <summary>
@@ -166,22 +179,14 @@ public class OptionMenu : MonoBehaviour {
         if (!isOpen && ResultManager.IsResultShowing)
             return;
 
-
         // ガチャとキャラ選択中ブロック
         if (!isOpen && (IsBlockedByGacha() || IsBlockedByCharacterSelect()))
             return;
-
 
         isOpen = !isOpen;
         optionCanvas.enabled = isOpen;
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
     }
-
-
-
-
-
-
 
     /// <summary>
     /// 感度スライダーの値変更時
@@ -329,12 +334,15 @@ public class OptionMenu : MonoBehaviour {
     /// 指定Actionのバインディングをロード
     /// </summary>
     private void LoadRebind(string actionName) {
+        if (playerInput == null) return;
+
+        var action = playerInput.actions[actionName];
+        if (action == null) return;
+
         string saved = PlayerPrefs.GetString($"{actionName}_rebind", "");
         if (!string.IsNullOrEmpty(saved))
-            playerInput.actions[actionName].LoadBindingOverridesFromJson(saved);
+            action.LoadBindingOverridesFromJson(saved);
     }
-
-
 
     private void ReturnToTitle() {
         // ホストの場合
@@ -346,8 +354,4 @@ public class OptionMenu : MonoBehaviour {
             NetworkManager.singleton.StopClient();
         }
     }
-
-
-
-
 }
