@@ -15,18 +15,16 @@ public class Skill_Quasar : SkillBase {
     [SerializeField] private WeaponData weaponData;
     [SerializeField] private int time;
 
-     public override void Activate(CharacterBase user) {
-        StartExtraAttackDelay(user);
-    }
+    int originalWeapon;
 
-    public void StartExtraAttackDelay(CharacterBase user) {
+    public override void Activate(CharacterBase user) {
+        // 元武器を保存
+        isSkillUse = true;
+        originalWeapon = user.weaponController_main.weaponData.WeaponID;
         user.StartCoroutine(ExtraAttackRoutine(user));
     }
 
     private IEnumerator ExtraAttackRoutine(CharacterBase user) {
-        // 元武器を保存
-        var originalWeapon = user.weaponController_main.weaponData.WeaponID;
-
         // スキル武器へ変更
         user.weaponController_main.CmdSetWeaponData(weaponData.WeaponID);
 
@@ -36,6 +34,15 @@ public class Skill_Quasar : SkillBase {
         // 元に戻す
         if (user.weaponController_main.weaponData.WeaponID == weaponData.WeaponID) {
             user.weaponController_main.CmdSetWeaponData(originalWeapon);
+        }
+        isSkillUse = false;
+    }
+
+    public override void SkillEffectUpdate(CharacterBase user) {
+        //途中でスキル使用中に死亡したら元に戻して強制終了
+        if (isSkillUse && user.parameter.isDead) {
+            user.weaponController_main.CmdSetWeaponData(originalWeapon);
+            isSkillUse = false;
         }
     }
 }
