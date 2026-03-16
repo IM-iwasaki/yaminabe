@@ -21,6 +21,8 @@ public class PveBossController : NetworkBehaviour
     [Header("ボスの攻撃クールタイム")]
     [SerializeField] private float attackCooltime = 3.0f;
 
+    [SerializeField] private GameObject phaseEffect;
+
     //  攻撃クールタイムを計るタイマー
     private float attackTimer = 0;
 
@@ -35,6 +37,10 @@ public class PveBossController : NetworkBehaviour
     //  現在のターゲット
     public Transform currentTarget { get; private set; }
 
+    //  フェーズを作る（お遊び）
+    private bool changePhase = false;
+    public int maxHP;
+
     /// <summary>
     /// 初期化、コンポーネントを取得
     /// </summary>
@@ -44,6 +50,9 @@ public class PveBossController : NetworkBehaviour
         move = GetComponent<PveBossMoveController>();
         attack = GetComponent<PveBossAttackController>();
         anim = GetComponent<Animator>();
+
+        changePhase = false;
+        phaseEffect.SetActive(changePhase);
     }
 
     private void Update() {
@@ -52,6 +61,11 @@ public class PveBossController : NetworkBehaviour
 
         //  攻撃中は何もしない
         if (bossState == BossState.Attack) return;
+
+        if(changePhase == false && status.enemyParameter.HP <= maxHP / 2) {
+            ChangePhase();
+            Debug.Log(status.enemyParameter.HP + ":" + maxHP / 2);
+        }
 
         //  攻撃状態以外でタイマーを進める
         attackTimer += Time.deltaTime;
@@ -146,6 +160,15 @@ public class PveBossController : NetworkBehaviour
         attack.EndAttack();
         move.Resume();
         ChangeState(BossState.Idle);
+    }
+
+    /// <summary>
+    /// フェーズを変更させる（お遊び）
+    /// </summary>
+    private void ChangePhase() {
+        changePhase = true;
+        attackCooltime = 2.0f;
+        phaseEffect.SetActive(changePhase);
     }
 
 }

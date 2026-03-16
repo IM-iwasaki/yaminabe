@@ -12,6 +12,8 @@ public class EnemyStatusBase : CreatureBase {
     public EnemyStatusBaseData statusData;    // 敵のステータスデータ
     public EnemyParameter enemyParameter { get; private set; }
 
+    private PveBossController bossCon;
+
     private EnemyHealthView healthView;
 
     private PveBossHpBarController bossHpBar;
@@ -28,6 +30,8 @@ public class EnemyStatusBase : CreatureBase {
         enemyParameter = GetComponent<EnemyParameter>();
 
         healthView = GetComponent<EnemyHealthView>();
+
+        bossCon = GetComponent<PveBossController>();
 
         if (healthView == null) {
             bossHpBar = GetComponent<PveBossHpBarController>();
@@ -57,6 +61,7 @@ public class EnemyStatusBase : CreatureBase {
         enemyParameter.HP = finalHp;
         enemyParameter.attack = statusData.attack;
         enemyParameter.moveSpeed = (int)statusData.moveSpeed;
+        if(bossCon != null) bossCon.maxHP = enemyParameter.HP;
     }
 
     /// <summary>
