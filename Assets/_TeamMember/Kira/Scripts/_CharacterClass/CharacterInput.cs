@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class CharacterInput : NetworkBehaviour {
     private CharacterBase core;
-    [SerializeField] private InputActionAsset inputActions;
+    private PlayerInput playerInput;
 
     public Vector2 MoveInput { get; private set; }
     public bool isJumpPressed { get; private set; }
@@ -22,13 +22,20 @@ public class CharacterInput : NetworkBehaviour {
     #region 初期化 / クリーンアップ
 
     public void Initialize(CharacterBase core) {
+        // 自分のプレイヤー以外は入力を初期化しない
+        if (!isLocalPlayer) return;
+
         if (inputInitialized) return;
         inputInitialized = true;
 
         this.core = core;
         animCon = GetComponent<CharacterAnimationController>();
 
-        playerMap = inputActions.FindActionMap("Player");
+        // PlayerInput取得
+        playerInput = GetComponent<PlayerInput>();
+
+        // PlayerInputからActionMap取得
+        playerMap = playerInput.actions.FindActionMap("Player");
 
         foreach (var action in playerMap.actions) {
             action.started += OnActionStarted;
@@ -48,6 +55,7 @@ public class CharacterInput : NetworkBehaviour {
     }
 
     private void CleanupInput() {
+        if (!isLocalPlayer) return;
         if (!inputInitialized || playerMap == null) return;
 
         foreach (var action in playerMap.actions) {

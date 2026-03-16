@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5187006418399954991}
   - component: {fileID: 327840385888434660}
+  - component: {fileID: -8892164709964255043}
   m_Layer: 0
   m_Name: CameraOption
   m_TagString: Untagged
@@ -44,7 +45,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531b895a5ea30dc4fac1e2be73b30bdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   playerCamera: {fileID: 0}
   optionCanvas: {fileID: 0}
   sensitivitySlider: {fileID: 0}
   playerInput: {fileID: 0}
+--- !u!114 &-8892164709964255043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2287681627568181916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 1021131786
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

@@ -1477,6 +1477,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  weaponID: 0
   weaponData: {fileID: 11400000, guid: c7a01917bcaabcc47832e0fcbb847bf1, type: 2}
   firePoint: {fileID: 6941194111869628572}
 --- !u!114 &4791088185621935230
@@ -1510,10 +1511,13 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  teamID: -1
   localUI: {fileID: 1644173732893083620}
   CameraMenu: {fileID: 1489691290067661191}
   weaponController_main: {fileID: 5643352156902824376}
   weaponController_sub: {fileID: 4791088185621935230}
+  isSkillUse: 0
+  fallYposition: -50
   bannerNum: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
   allyCheckRadius: 8
@@ -1541,14 +1545,19 @@ MonoBehaviour:
   isReloading: 0
   attack: 0
   moveSpeed: 5
+  damageRatio: 100
+  fluctuationValue: []
   TeamID: -1
   PlayerName: Default
   playerId: -1
   ready: 1
+  speedMultiplier: 1
   footPoint: {fileID: 2724530862042955543}
   firePoint: {fileID: 6941194111869628572}
   isDead: 0
-  AttackTrigger: 0
+  attackTrigger: 0
+  canMove: 1
+  money: 0
 --- !u!114 &2542311035732884757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1564,7 +1573,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  inputActions: {fileID: -944628639613478452, guid: 278ca30efeb52354683c3f4edf4a9e8a, type: 3}
   SkillTriggered: 0
   InteractTriggered: 0
 --- !u!114 &8156959563813392699
@@ -1680,7 +1688,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   anim: {fileID: 0}
-  BaseAnimLayerCount: 2
 --- !u!1 &5360127861277474103
 GameObject:
   m_ObjectHideFlags: 0
@@ -2438,6 +2445,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 965074764579651371}
     m_Modifications:
+    - target: {fileID: -8892164709964255043, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
+      propertyPath: _assetId
+      value: 3820544063
+      objectReference: {fileID: 0}
     - target: {fileID: 327840385888434660, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
       propertyPath: playerInput
       value: 
@@ -2502,7 +2513,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -8892164709964255043, guid: c2dc230073d15c1468234564b34f50c6, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
