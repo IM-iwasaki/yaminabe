@@ -113,6 +113,10 @@ public class MainWeaponController : NetworkBehaviour {
                     ServerStartMagicCast(direction);
                 //ServerMagicAttack(direction);
                 break;
+            case WeaponType.Bomb:
+                if (weaponData is MainBombData bombData)
+                    ServerPlaceBomb(bombData);
+                break;
         }
         //アニメーション開始
         RpcPlayShootAnimation();
@@ -181,6 +185,10 @@ public class MainWeaponController : NetworkBehaviour {
                 if (weaponData is MainMagicData magicdata)
                     ServerStartMagicCast(direction);
                 break;
+            case WeaponType.Bomb:
+                if (weaponData is MainBombData bombData)
+                    ServerPlaceBomb(bombData);
+                break;
         }
         //アニメーション開始
         RpcPlayShootAnimation();
@@ -248,9 +256,12 @@ public class MainWeaponController : NetworkBehaviour {
             CharacterEnum.CharaterType.Gunner => weapon == WeaponType.Gun
                                               || weapon == WeaponType.MoneyGun,
             CharacterEnum.CharaterType.Wizard => weapon == WeaponType.Magic,
+            CharacterEnum.CharaterType.Bomberman => weapon == WeaponType.Bomb,
             _ => false
         };
     }
+
+    #region 近接攻撃
 
     // 変更　マツオ : 近接攻撃判定
     private void ServerMeleeAttack() {
@@ -330,7 +341,9 @@ public class MainWeaponController : NetworkBehaviour {
                 yield return new WaitForSeconds(delay);
         }
     }
+    #endregion
 
+    #region 銃
     // --- 銃撃処理（TPSレティクル方向） ---
     IEnumerator ServerBurstShoot(Vector3 direction, int multiShot, float shootDelay) {
         int count = Mathf.Max(1, multiShot);
@@ -388,6 +401,9 @@ public class MainWeaponController : NetworkBehaviour {
         RpcPlayMuzzleFlash(firePoint.position, gunData.muzzleFlashType);
         AudioManager.Instance.CmdPlayWorldSE(gunData.se.ToString(), transform.position);
     }
+    #endregion
+
+    #region 魔法
 
     // --- 魔法攻撃 ---
     void ServerMagicAttack(Vector3 direction) {
@@ -514,6 +530,42 @@ public class MainWeaponController : NetworkBehaviour {
         }
     }
 
+    #endregion
+
+    #region 爆弾
+    void ServerPlaceBomb(MainBombData data) {
+        if (data.projectilePrefab == null) return;
+
+        // 設置位置（少し前）
+        Vector3 pos = transform.position + transform.forward * 1.0f;
+
+        // 地面にスナップ
+        if (Physics.Raycast(pos + Vector3.up, Vector3.down, out RaycastHit hit, 5f)) {
+            pos = hit.point;
+        }
+
+        GameObject bombObj = ProjectilePool.Instance.SpawnFromPool(
+            data.projectilePrefab.name,
+            pos,
+            Quaternion.identity
+        );
+
+        if (bombObj == null) return;
+
+        if (bombObj.TryGetComponent(out Bomb bomb)) {
+            bomb.Init(
+                gameObject,
+                characterBase.parameter.PlayerName,
+                characterBase.parameter.playerId,
+                data.damage,
+                data.explosionRange,
+                data.fuseTime,
+                data.hitEffectType
+            );
+        }
+    }
+
+    #endregion
     // --- クライアントでヒットエフェクト再生 ---
     [ClientRpc]
     void RpcSpawnHitEffect(Vector3 pos, EffectType type) {

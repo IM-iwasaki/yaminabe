@@ -45,6 +45,11 @@ public enum ProjectileCategory {
     Other
 }
 
+public enum ExplosionType {
+    Center,
+    Cross
+}
+
 public enum ProjectileType {
     Linear,
     Parabola,
@@ -89,6 +94,7 @@ public enum WeaponType {
     Magic,
     Enemy,
     MoneyGun,
+    Bomb,
 }
 
 public enum SubWeaponType {

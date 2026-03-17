@@ -8,6 +8,7 @@ public class CharacterEnum {
         Melee = 0,
         Wizard,
         Gunner,
+        Bomberman,
     }
 
     /// <summary>
