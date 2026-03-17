@@ -52,7 +52,7 @@ public class CharacterParameter : NetworkBehaviour {
     [SyncVar] public int playerId = -1;
 
     [SyncVar(hook = nameof(OnReadyChanged))]
-    public bool isReady = true;
+    public bool isReady = false;
 
     public float defaultAttack { get; protected set; }
     public float defaultMoveSpeed { get; protected set; }
