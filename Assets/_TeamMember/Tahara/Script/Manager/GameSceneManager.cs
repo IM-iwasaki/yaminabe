@@ -42,7 +42,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 return;
             }
             //€”õ–¢Š®—¹‚È‚ç
-            if (!readyPlayer.parameter.ready) {
+            if (!readyPlayer.parameter.isReady) {
                 ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is not ready");
                 return;
             }
@@ -85,7 +85,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 return;
             }
 
-            if (!readyPlayer.parameter.ready) {
+            if (!readyPlayer.parameter.isReady) {
                 ChatManager.Instance.CmdSendSystemMessage(readyPlayer.parameter.PlayerName + " is not ready");
                 return;
             }
