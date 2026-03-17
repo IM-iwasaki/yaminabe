@@ -13,7 +13,7 @@ public class MainBombData : WeaponData {
     public ExplosionType explosionType = ExplosionType.Center;
 
     [Header("Center Explosion")]
-    public float explosionRadius = 3f;
+    public float explosionRange = 3f;
 
     [Header("Cross Explosion")]
     public float maxDistance = 5f;

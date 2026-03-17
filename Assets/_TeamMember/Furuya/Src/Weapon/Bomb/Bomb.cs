@@ -22,12 +22,15 @@ public class Bomb : NetworkBehaviour {
     // ===== 初期化（サーバー）=====
     [Server]
     public void Init(MainBombData bombData, GameObject ownerObj, string name, int id) {
-        owner = ownerObj;
+        // --- データ識別 ---
         weaponID = bombData.WeaponID;
 
+        // --- 所有者 ---
+        owner = ownerObj;
         ownerName = name;
         ownerID = id;
 
+        // --- 状態 ---
         timer = 0f;
         exploded = false;
     }
@@ -110,7 +113,7 @@ public class Bomb : NetworkBehaviour {
     // ===== 中心爆破 =====
     [Server]
     void ExplodeCenter() {
-        var hits = Physics.OverlapSphere(transform.position, data.explosionRadius);
+        var hits = Physics.OverlapSphere(transform.position, data.explosionRange);
 
         foreach (var c in hits) {
             ApplyDamage(c);

@@ -534,7 +534,7 @@ public class MainWeaponController : NetworkBehaviour {
 
     #region 爆弾
     void ServerPlaceBomb(MainBombData data) {
-        if (data.projectilePrefab == null) return;
+        if (data.bombPrefab == null) return;
 
         // 設置位置（少し前）
         Vector3 pos = transform.position + transform.forward * 1.0f;
@@ -545,7 +545,7 @@ public class MainWeaponController : NetworkBehaviour {
         }
 
         GameObject bombObj = ProjectilePool.Instance.SpawnFromPool(
-            data.projectilePrefab.name,
+            data.bombPrefab.name,
             pos,
             Quaternion.identity
         );
@@ -554,13 +554,10 @@ public class MainWeaponController : NetworkBehaviour {
 
         if (bombObj.TryGetComponent(out Bomb bomb)) {
             bomb.Init(
+                data,
                 gameObject,
                 characterBase.parameter.PlayerName,
-                characterBase.parameter.playerId,
-                data.damage,
-                data.explosionRange,
-                data.fuseTime,
-                data.hitEffectType
+                characterBase.parameter.playerId
             );
         }
     }
