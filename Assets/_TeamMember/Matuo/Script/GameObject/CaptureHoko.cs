@@ -28,10 +28,21 @@ public class CaptureHoko : NetworkBehaviour {
     public float fastDistance = 30f;         // ìGêwÇ…ãﬂÇ¢Ç∆çÇë¨
     public float fastMultiplier = 1.5f;
 
+    [Header("UI")]
+    public Canvas warningCanvas;
+    public float blinkSpeed = 1f;
+
+    private CanvasGroup warningCanvasGroup;
+    private bool showNearSpawnWarning = false;
+
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
         col.isTrigger = true;
+
+        if (warningCanvas != null) {
+            warningCanvasGroup = warningCanvas.GetComponent<CanvasGroup>();
+        }
     }
 
     public override void OnStartServer() {
@@ -68,6 +79,13 @@ public class CaptureHoko : NetworkBehaviour {
             var player = holder.GetComponent<CharacterBase>();
             if (player == null) return;
 
+            bool nearSpawn = IsNearOwnSpawn(player);
+
+            var conn = player.connectionToClient;
+            if (conn != null) {
+                TargetSetNearSpawnWarning(conn, nearSpawn);
+            }
+
             float multiplier = GetScoreMultiplier(player);
 
             scoreTimer += Time.deltaTime * multiplier;
@@ -77,6 +95,20 @@ public class CaptureHoko : NetworkBehaviour {
                 AddScoreToHolderTeam();
             }
         }
+
+        if (warningCanvasGroup == null) return;
+
+        if (!showNearSpawnWarning) {
+            if (warningCanvas.gameObject.activeSelf)
+                warningCanvas.gameObject.SetActive(false);
+            return;
+        }
+
+        if (!warningCanvas.gameObject.activeSelf)
+            warningCanvas.gameObject.SetActive(true);
+
+        float alpha = Mathf.PingPong(Time.time * blinkSpeed, 1f);
+        warningCanvasGroup.alpha = alpha;
     }
 
     [ClientRpc]
@@ -221,5 +253,12 @@ public class CaptureHoko : NetworkBehaviour {
         }
 
         return false;
+    }
+    /// <summary>
+    /// åxçêUIóp
+    /// </summary>
+    [TargetRpc]
+    private void TargetSetNearSpawnWarning(NetworkConnection target, bool active) {
+        showNearSpawnWarning = active;
     }
 }
