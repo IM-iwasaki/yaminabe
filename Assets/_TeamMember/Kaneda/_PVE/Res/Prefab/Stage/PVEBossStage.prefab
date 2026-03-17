@@ -1454,6 +1454,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PVEBaseArea
       objectReference: {fileID: 0}
+    - target: {fileID: 2278469618906949260, guid: 05e37377d983a9147a20e1e56b684b3e, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -2202,7 +2206,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: spawnInterval
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: activateRadius
@@ -2354,7 +2358,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: spawnInterval
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: activateRadius
@@ -2668,6 +2672,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5650633397879355693}
     m_Modifications:
+    - target: {fileID: 1812647470410331006, guid: 26aa35834e9cd0a4a88aedd259f5bc9a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.9
+      objectReference: {fileID: 0}
     - target: {fileID: 4634480825099470229, guid: 26aa35834e9cd0a4a88aedd259f5bc9a, type: 3}
       propertyPath: m_Name
       value: PVEGoalArea
@@ -2712,8 +2720,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7758067517122903305, guid: 26aa35834e9cd0a4a88aedd259f5bc9a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4.7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6888004776993456133, guid: 26aa35834e9cd0a4a88aedd259f5bc9a, type: 3}
+    - {fileID: 7885725842319155872, guid: 26aa35834e9cd0a4a88aedd259f5bc9a, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26aa35834e9cd0a4a88aedd259f5bc9a, type: 3}
@@ -2946,7 +2960,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: spawnInterval
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: activateRadius
@@ -3779,7 +3793,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: spawnInterval
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: activateRadius
@@ -4784,7 +4798,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: spawnInterval
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: activateRadius
@@ -5575,7 +5589,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: spawnInterval
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4690427639914673966, guid: e05e456e18c1ffb459b5927a198eb43c, type: 3}
       propertyPath: activateRadius
