@@ -15,22 +15,25 @@ public class Bomb : NetworkBehaviour {
     private float timer;
     private bool exploded;
 
+    private Vector3 baseScale;
+
     private GameObject owner;
     private string ownerName;
     private int ownerID;
 
+    void Awake() {
+        baseScale = transform.localScale;
+    }
+
     // ===== 初期化（サーバー）=====
     [Server]
     public void Init(MainBombData bombData, GameObject ownerObj, string name, int id) {
-        // --- データ識別 ---
         weaponID = bombData.WeaponID;
 
-        // --- 所有者 ---
         owner = ownerObj;
         ownerName = name;
         ownerID = id;
 
-        // --- 状態 ---
         timer = 0f;
         exploded = false;
     }
@@ -73,13 +76,11 @@ public class Bomb : NetworkBehaviour {
 
     // ===== 見た目 =====
     void UpdateVisual(float t) {
-        // 鼓動
         float speed = Mathf.Lerp(1f, 10f, t);
         float amp = Mathf.Lerp(0.05f, 0.3f, t);
         float scale = 1f + Mathf.Sin(Time.time * speed) * amp;
-        transform.localScale = Vector3.one * scale;
+        transform.localScale = baseScale * scale;
 
-        // 色
         if (t > 0.8f) {
             float blink = Mathf.Sin(Time.time * 20f);
             rend.material.color = blink > 0 ? data.dangerColor : Color.white;
@@ -116,7 +117,7 @@ public class Bomb : NetworkBehaviour {
         var hits = Physics.OverlapSphere(transform.position, data.explosionRange);
 
         foreach (var c in hits) {
-            ApplyDamage(c);
+            ApplyDamage(c, transform.position);
 
             if (data.chainReaction)
                 TryChain(c);
@@ -143,12 +144,17 @@ public class Bomb : NetworkBehaviour {
         for (float d = data.interval; d <= distance; d += data.interval) {
             Vector3 pos = transform.position + dir * d;
 
+            // 地面スナップ
+            if (Physics.Raycast(pos + Vector3.up, Vector3.down, out var groundHit, 2f)) {
+                pos = groundHit.point + Vector3.up * 0.1f;
+            }
+
             RpcPlayExplosionEffect(pos);
 
-            var hits = Physics.OverlapSphere(pos, 0.5f);
+            var hits = Physics.OverlapSphere(pos, 1.0f); // 誘爆・ヒット安定
 
             foreach (var c in hits) {
-                ApplyDamage(c);
+                ApplyDamage(c, pos);
 
                 if (data.chainReaction)
                     TryChain(c);
@@ -160,9 +166,15 @@ public class Bomb : NetworkBehaviour {
 
     // ===== ダメージ =====
     [Server]
-    void ApplyDamage(Collider col) {
+    void ApplyDamage(Collider col, Vector3 origin) {
         var target = col.GetComponent<CharacterBase>();
         if (!target) return;
+
+        // 壁チェック
+        Vector3 targetPos = target.transform.position;
+        if (Physics.Linecast(origin, targetPos, data.wallLayer)) {
+            return;
+        }
 
         if (!data.damageSelf && target.gameObject == owner) return;
         if (!data.damageAlly && IsAlly(target)) return;
@@ -195,7 +207,8 @@ public class Bomb : NetworkBehaviour {
     // ===== エフェクト同期 =====
     [ClientRpc]
     void RpcPlayExplosionEffect(Vector3 pos) {
-        Instantiate(explosionEffectPrefab, pos, Quaternion.identity);
+        var obj = Instantiate(explosionEffectPrefab, pos, Quaternion.identity);
+        Destroy(obj, 2f); // エフェクトの長さに合わせる
     }
 
     // ===== 削除 =====
@@ -204,4 +217,6 @@ public class Bomb : NetworkBehaviour {
         yield return new WaitForSeconds(1f);
         NetworkServer.Destroy(gameObject);
     }
+
+
 }

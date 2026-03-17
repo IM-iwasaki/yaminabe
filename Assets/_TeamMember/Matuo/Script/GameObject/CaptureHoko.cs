@@ -35,6 +35,11 @@ public class CaptureHoko : NetworkBehaviour {
     private CanvasGroup warningCanvasGroup;
     private bool showNearSpawnWarning = false;
 
+    [Header("リセット設定")]
+    public float resetTime = 30f; // 放置されたら戻る時間
+    private float dropTimer = 0f;
+    private bool isDropped = false;
+
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
@@ -95,6 +100,15 @@ public class CaptureHoko : NetworkBehaviour {
                 AddScoreToHolderTeam();
             }
         }
+
+        // ホコが落ちてるときのリセット処理
+        if (holder == null && isDropped) {
+            dropTimer += Time.deltaTime;
+
+            if (dropTimer >= resetTime) {
+                ResetToCenter();
+            }
+        }
     }
 
     /// <summary>
@@ -148,6 +162,9 @@ public class CaptureHoko : NetworkBehaviour {
         holder = player;
         scoreTimer = 0f;
 
+        isDropped = false;
+        dropTimer = 0f;
+
         AudioManager.Instance.CmdPlayWorldSE("Hoko", transform.position);
 
         // 移動速度を下げる
@@ -175,6 +192,8 @@ public class CaptureHoko : NetworkBehaviour {
         }
 
         holder = null;
+        isDropped = true;
+        dropTimer = 0f;
         canBePickedUp = false;
         Invoke(nameof(EnablePickup), pickupCooldown);
         RuleManager.Instance.NotifyObjectStateChanged();
@@ -277,5 +296,22 @@ public class CaptureHoko : NetworkBehaviour {
         }
 
         showNearSpawnWarning = active;
+    }
+
+    [Server]
+    private void ResetToCenter() {
+        isDropped = false;
+        dropTimer = 0f;
+
+        Vector3 centerPos = new Vector3(0f, 2f, 0f);
+
+        transform.position = centerPos;
+        transform.rotation = Quaternion.identity;
+
+        RpcUpdateHokoPosition(centerPos, Quaternion.identity);
+
+        canBePickedUp = true;
+
+        RuleManager.Instance.NotifyObjectStateChanged();
     }
 }
