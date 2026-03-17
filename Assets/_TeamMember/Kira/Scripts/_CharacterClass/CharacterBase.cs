@@ -172,14 +172,10 @@ public abstract class CharacterBase : CreatureBase {
     [Command]
     public void CmdChangePlayerReady() {
         parameter.ready = !parameter.ready;
-
-        ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready : " + parameter.ready);
     }
     [Command]
     public void CmdChangePlayerReadyFalse() {
         parameter.ready = false;
-
-        ChatManager.Instance.CmdSendSystemMessage(parameter.PlayerName + " ready : " + parameter.ready);
     }
 
     /// <summary>

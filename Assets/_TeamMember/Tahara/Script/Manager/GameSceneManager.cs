@@ -46,9 +46,6 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is not ready");
                 return;
             }
-            else {
-                ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is ready!!");
-            }
         }
         //ƒ`[ƒ€Œˆ‚ß
         ServerManager.instance.RandomTeamDecide();
@@ -91,9 +88,6 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             if (!readyPlayer.parameter.ready) {
                 ChatManager.Instance.CmdSendSystemMessage(readyPlayer.parameter.PlayerName + " is not ready");
                 return;
-            }
-            else {
-                ChatManager.Instance.CmdSendSystemMessage(readyPlayer.parameter.PlayerName + " is ready!!");
             }
         }
         RuleManager.Instance.currentRule = GameRuleType.PvE;
