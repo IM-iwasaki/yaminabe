@@ -66,7 +66,7 @@ public class PlayerListUIManager : NetworkBehaviour {
     /// <param name="player"></param>
     public void CanReadyPlayerUI(CharacterParameter player, GameObject nameText) {
         Transform checkBox = nameText.transform.GetChild(0);
-        checkBox.gameObject.SetActive(player.ready);
+        checkBox.gameObject.SetActive(player.isReady);
     }
 
     /// <summary>

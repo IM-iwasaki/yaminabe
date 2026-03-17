@@ -326,6 +326,7 @@ public class CharacterActions : NetworkBehaviour {
                 core.localUI.OnChangeInteractUI();
                 break;
             case "SelectCharacterObject":
+                if (param.isReady) return;
                 // ƒtƒ‰ƒO‚ð—§‚Ä‚é
                 isCanInteruct = true;
                 useCollider = _collider;
@@ -333,18 +334,22 @@ public class CharacterActions : NetworkBehaviour {
                 core.localUI.OnChangeInteractUI();
                 break;
             case "Gacha":
+                if (param.isReady) return;
                 isCanInteruct = true;
                 useCollider = _collider;
                 useTag = "Gacha";
                 core.localUI.OnChangeInteractUI();
                 break;
             case "RedTeam":
+                if (param.isReady) return;
                 core.CmdJoinTeam(netIdentity, TeamColor.Red);
                 break;
             case "BlueTeam":
+                if (param.isReady) return;
                 core.CmdJoinTeam(netIdentity, TeamColor.Blue);
                 break;
             case "ResetTeam":
+                if (param.isReady) return;
                 core.CmdJoinTeam(netIdentity, TeamColor.Invalid);
                 break;
             default:
