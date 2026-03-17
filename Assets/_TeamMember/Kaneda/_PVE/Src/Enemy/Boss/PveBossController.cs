@@ -21,8 +21,6 @@ public class PveBossController : NetworkBehaviour
     [Header("ボスの攻撃クールタイム")]
     [SerializeField] private float attackCooltime = 3.0f;
 
-    [SerializeField] private GameObject phaseEffect;
-
     //  攻撃クールタイムを計るタイマー
     private float attackTimer = 0;
 
@@ -52,7 +50,6 @@ public class PveBossController : NetworkBehaviour
         anim = GetComponent<Animator>();
 
         changePhase = false;
-        phaseEffect.SetActive(changePhase);
     }
 
     private void Update() {
@@ -168,7 +165,6 @@ public class PveBossController : NetworkBehaviour
     private void ChangePhase() {
         changePhase = true;
         attackCooltime = 2.0f;
-        phaseEffect.SetActive(changePhase);
     }
 
 }
