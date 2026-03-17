@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: FlameMagic
   weaponID: 25
   type: 2
-  damage: 15
+  damage: 25
   cooldown: 0.2
   appearanceID: 7
   muzzleFlashType: 1
@@ -24,7 +24,7 @@ MonoBehaviour:
   reloadTime: 0
   cost: 1
   projectilePrefab: {fileID: 8793510976239746625, guid: 1e0001acf6283af43939bd91013bfd55, type: 3}
-  projectileSpeed: 15
+  projectileSpeed: 25
   MPCost: 3
   chargeEffectType: 0
   chargeTime: 0
