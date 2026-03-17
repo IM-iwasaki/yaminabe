@@ -28,10 +28,21 @@ public class CaptureHoko : NetworkBehaviour {
     public float fastDistance = 30f;         // 敵陣に近いと高速
     public float fastMultiplier = 1.5f;
 
+    [Header("UI")]
+    public Canvas warningCanvas;
+    public float blinkSpeed = 1f;
+
+    private CanvasGroup warningCanvasGroup;
+    private bool showNearSpawnWarning = false;
+
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
         col.isTrigger = true;
+
+        if (warningCanvas != null) {
+            warningCanvasGroup = warningCanvas.GetComponent<CanvasGroup>();
+        }
     }
 
     public override void OnStartServer() {
@@ -68,6 +79,13 @@ public class CaptureHoko : NetworkBehaviour {
             var player = holder.GetComponent<CharacterBase>();
             if (player == null) return;
 
+            bool nearSpawn = IsNearOwnSpawn(player);
+
+            var conn = player.connectionToClient;
+            if (conn != null) {
+                TargetSetNearSpawnWarning(conn, nearSpawn);
+            }
+
             float multiplier = GetScoreMultiplier(player);
 
             scoreTimer += Time.deltaTime * multiplier;
@@ -77,6 +95,28 @@ public class CaptureHoko : NetworkBehaviour {
                 AddScoreToHolderTeam();
             }
         }
+    }
+
+    /// <summary>
+    /// クライアント側UI処理
+    /// </summary>
+    private void LateUpdate() {
+        UpdateWarningUI();
+    }
+
+    private void UpdateWarningUI() {
+        if (warningCanvasGroup == null) return;
+
+        if (!showNearSpawnWarning) {
+            if (warningCanvas.gameObject.activeSelf)
+                warningCanvas.gameObject.SetActive(false);
+            return;
+        }
+
+        if (!warningCanvas.gameObject.activeSelf)
+            warningCanvas.gameObject.SetActive(true);
+
+        warningCanvasGroup.alpha = Mathf.PingPong(Time.time * blinkSpeed, 1f);
     }
 
     [ClientRpc]
@@ -106,7 +146,7 @@ public class CaptureHoko : NetworkBehaviour {
         if (holder != null) return;
 
         holder = player;
-        scoreTimer = 0f; // スコア加算タイマーリセット
+        scoreTimer = 0f;
 
         AudioManager.Instance.CmdPlayWorldSE("Hoko", transform.position);
 
@@ -124,10 +164,14 @@ public class CaptureHoko : NetworkBehaviour {
     public void Drop() {
         if (holder == null) return;
 
-        // 移動速度を元に戻す
+        var player = holder.GetComponent<CharacterBase>();
+        if (player != null && player.connectionToClient != null) {
+            TargetSetNearSpawnWarning(player.connectionToClient, false);
+        }
+
         var param = holder.GetComponent<CharacterParameter>();
         if (param != null) {
-            param.speedMultiplier = 1f; // 元に戻す
+            param.speedMultiplier = 1f;
         }
 
         holder = null;
@@ -221,5 +265,17 @@ public class CaptureHoko : NetworkBehaviour {
         }
 
         return false;
+    }
+    /// <summary>
+    /// 警告UI用
+    /// </summary>
+    [TargetRpc]
+    private void TargetSetNearSpawnWarning(NetworkConnection target, bool active) {
+        if (holder == null || !holder.isLocalPlayer) {
+            showNearSpawnWarning = false;
+            return;
+        }
+
+        showNearSpawnWarning = active;
     }
 }
