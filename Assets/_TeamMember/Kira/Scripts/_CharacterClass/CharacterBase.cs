@@ -116,7 +116,7 @@ public abstract class CharacterBase : CreatureBase {
 
             //タハラ
             //準備状態を明示的に初期化。ホストでなければ非準備状態
-            if (isClient && !isServer) parameter.isReady = false;
+            parameter.isReady = false;
         }
     }
     public override void OnStartClient() {
