@@ -36,7 +36,7 @@ public class CaptureHoko : NetworkBehaviour {
     private bool showNearSpawnWarning = false;
 
     [Header("リセット設定")]
-    public float resetTime = 10f; // 放置されたら戻る時間
+    public float resetTime = 30f; // 放置されたら戻る時間
     private float dropTimer = 0f;
     private bool isDropped = false;
 
