@@ -32,6 +32,13 @@ public class CharacterActions : NetworkBehaviour {
 
     private HudManager hud;
 
+    // 張り付き判定用
+    private int wallLayer;
+    private int pveWallLayer;
+    private int ground;
+    private int pveGround;
+    private bool isTouchingWall;
+
     private void Update() {
         // ローカルプレイヤー以外は処理しない
         if (!isLocalPlayer) return;
@@ -88,6 +95,11 @@ public class CharacterActions : NetworkBehaviour {
         input = core.input;
         rb = core.GetComponent<Rigidbody>();
 
+        wallLayer = LayerMask.NameToLayer("Wall");
+        pveWallLayer = LayerMask.NameToLayer("PVEWall");
+        ground = LayerMask.NameToLayer("Ground");
+        pveGround = LayerMask.NameToLayer("PVEGround");
+
         // シーンに1つだけ存在する想定
         characterSelectManager = FindObjectOfType<CharacterSelectManager>();
         gachaSystem = FindObjectOfType<GachaSystem>();
@@ -143,6 +155,27 @@ public class CharacterActions : NetworkBehaviour {
         //2つのベクトルを合成
         moveDirection = forward * input.MoveInput.y + right * input.MoveInput.x;
 
+        // 追加　マツオ : 張り付き防止処理
+        isTouchingWall = false;
+
+        if (moveDirection.sqrMagnitude > 0.001f) {
+            RaycastHit hit;
+            float checkDistance = 0.6f;
+            Vector3 origin = transform.position + Vector3.up * 0.5f;
+
+            if (Physics.Raycast(origin, moveDirection.normalized, out hit, checkDistance)) {
+                int hitLayer = hit.collider.gameObject.layer;
+
+                if (hitLayer == wallLayer || hitLayer == pveWallLayer || hitLayer == ground || hitLayer == pveGround) {
+                    // 壁フラグON
+                    isTouchingWall = true;
+
+                    // 壁方向の力を削除
+                    moveDirection = Vector3.ProjectOnPlane(moveDirection, hit.normal);
+                }
+            }
+        }
+
         // カメラの向いている方向をプレイヤーの正面に
         Vector3 aimForward = forward; // 水平面だけを考慮
         if (aimForward != Vector3.zero) {
@@ -158,13 +191,29 @@ public class CharacterActions : NetworkBehaviour {
             moveDirection.z * param.moveSpeed * param.speedMultiplier
         );
 
-        //地面に立っていたら通常通り
-        if (param.IsGrounded) {
-            rb.velocity = targetVelocity;
+        // 追加　マツオ : 張り付き防止処理
+        Vector3 newVelocity = targetVelocity;
+
+        // 壁のときは押し付けない
+        if (isTouchingWall && moveDirection.sqrMagnitude > 0.001f) {
+            RaycastHit hit;
+            Vector3 origin = transform.position + Vector3.up * 0.5f;
+
+            if (Physics.Raycast(origin, moveDirection.normalized, out hit, 0.6f)) {
+                int layer = hit.collider.gameObject.layer;
+
+                if (layer == wallLayer || layer == pveWallLayer) {
+                    // 壁方向の速度を完全カット
+                    newVelocity = Vector3.ProjectOnPlane(newVelocity, hit.normal);
+                }
+            }
         }
-        else {
-            // 空中では地上速度に向けてゆるやかに補間（慣性を残す）
-            rb.velocity = Vector3.Lerp(velocity, targetVelocity, Time.deltaTime * 2f);
+
+        // 実際の速度適用
+        if (param.IsGrounded) {
+            rb.velocity = newVelocity;
+        } else {
+            rb.velocity = Vector3.Lerp(velocity, newVelocity, Time.deltaTime * 2f);
         }
     }    
 
@@ -188,8 +237,10 @@ public class CharacterActions : NetworkBehaviour {
         }
         // ベクトルが下方向に働いている時
         else if (rb.velocity.y < 0) {
+            // 壁に触れてるときは強く落とす
+            float fallMultiplier = isTouchingWall ? 2.5f : PlayerConst.JUMP_DOWNFORCE;
             //追加の重力補正を掛ける
-            rb.velocity += (PlayerConst.JUMP_DOWNFORCE - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
+            rb.velocity += (fallMultiplier - 1) * Physics.gravity.y * Time.deltaTime * Vector3.up;
         }       
     }
 
