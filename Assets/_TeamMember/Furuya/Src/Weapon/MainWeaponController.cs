@@ -541,7 +541,8 @@ public class MainWeaponController : NetworkBehaviour {
 
         // 地面にスナップ
         if (Physics.Raycast(pos + Vector3.up, Vector3.down, out RaycastHit hit, 5f)) {
-            pos = hit.point;
+            float offsetY = 1.0f; // 爆弾の半径に合わせる
+            pos = hit.point + Vector3.up * offsetY;
         }
 
         GameObject bombObj = ProjectilePool.Instance.SpawnFromPool(
