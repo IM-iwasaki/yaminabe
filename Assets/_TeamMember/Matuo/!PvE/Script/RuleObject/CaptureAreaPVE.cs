@@ -114,6 +114,12 @@ public class CaptureAreaPVE : NetworkBehaviour {
         if (cleared) return;
         if (!GameManager.Instance.IsGameRunning()) return;
 
+        // Ú‘±l”‚ª•Ï‚í‚Á‚½‚çXV
+        int currentConnections = ServerManager.instance.connectPlayer.Count;
+        if (maxPlayerCount != currentConnections) {
+            maxPlayerCount = currentConnections;
+        }
+
         RemoveDeadPlayers();
 
         if (!CanIncreaseScore()) return;
