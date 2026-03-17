@@ -352,13 +352,15 @@ public abstract class CharacterBase : CreatureBase {
     /// </summary>
     [Server]
     virtual public void Respawn() {
+        //そもそも死亡していなかったら帰す
         if (!parameter.isDead) return;
-
+        //ゲーム中でなければ帰す
         if (!GameManager.Instance.IsGameRunning()) return;
 
+        //ステージ情報を取得
         var stageManager = StageManager.Instance;
         if (stageManager == null) return;
-
+        //現在のチームを取得し、チームに応じたリスポーン地点を取得
         var teamColor = (TeamData.TeamColor) parameter.TeamID;
         Transform spawnPoint = stageManager.GetSpawnPoint(teamColor);
 
@@ -372,8 +374,10 @@ public abstract class CharacterBase : CreatureBase {
         NetworkTransformHybrid NTH = GetComponent<NetworkTransformHybrid>();
         NTH.ServerTeleport(spawnPoint.position + bufferPos, spawnPoint.rotation);
 
+        //復活時の処理(無敵状態の開始、無敵状態をサーバーで同期、HPの初期化、エフェクトのクリア)
         parameter.StartInvincible();
         ResetHealth();
+        DestroyEffect();
         // 無敵状態を開始（3秒間）
         StartCoroutine(InvincibleRoutine(3.0f));
     }
@@ -457,9 +461,6 @@ public abstract class CharacterBase : CreatureBase {
             ServerManager.instance.teams[player.parameter.TeamID].teamPlayerList.Remove(_player);
             player.parameter.TeamID = -1;
         }
-
-
-
 
         //新しいチームに加入
         ServerManager.instance.teams[newTeam].teamPlayerList.Add(_player);
@@ -767,7 +768,11 @@ public abstract class CharacterBase : CreatureBase {
         float healBuffer = 0f; //   小数の回復を蓄積
 
         while (elapsed < _duration) {
-            if (parameter.isDead) yield break; // 死亡時は即終了
+            // 死亡時は即終了
+            if (parameter.isDead){
+                DestroyEffect();
+                yield break;
+            }
 
             healBuffer += healPerSec * Time.deltaTime; // 累積
             if (healBuffer >= 1f) {
