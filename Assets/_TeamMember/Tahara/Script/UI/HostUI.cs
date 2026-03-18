@@ -40,6 +40,10 @@ public class HostUI : NetworkBehaviour {
     /// </summary>
     [SerializeField]
     private Button gameStartButton = null;
+
+    [SerializeField]
+    private Button allRandomButton = null;
+
     /// <summary>
     /// PvEボタン
     /// </summary>
@@ -52,6 +56,7 @@ public class HostUI : NetworkBehaviour {
         uiRootObject.SetActive(false);
         if (GameSceneManager.Instance != null) { 
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
+            allRandomButton.onClick.AddListener(AllRandomGame);
         }
         rule.text = ruleNames[ruleIndex];
         stage.text = StageManager.Instance.stages[stageIndex].stageName;
@@ -118,6 +123,17 @@ public class HostUI : NetworkBehaviour {
         isVisibleUI = !isVisibleUI;
         uiRootObject.SetActive(isVisibleUI);
         Cursor.lockState = isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    /// <summary>
+    /// ランダムでルールとステージを変更
+    /// </summary>
+    public void AllRandomGame() {
+        int ruleNum = Random.Range(0, ruleNames.Count);
+        int stageNum = Random.Range(0, StageManager.Instance.stages.Count);
+
+        ruleIndex = ruleNum;
+        stageIndex = stageNum;
     }
 
     #region ガチャ中ブロック
