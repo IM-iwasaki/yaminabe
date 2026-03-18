@@ -388,7 +388,7 @@ public abstract class CharacterBase : CreatureBase {
     /// <param name="duration">効果時間</param>
     /// <returns></returns>
     [Server]
-    private IEnumerator InvincibleRoutine(float duration) {
+    public IEnumerator InvincibleRoutine(float duration) {
         isInvincible = true;
         yield return new WaitForSeconds(duration);
         isInvincible = false;
@@ -800,25 +800,11 @@ public abstract class CharacterBase : CreatureBase {
 
         //  エフェクト再生
         PlayEffect(ATTACK_BUFF_EFFECT);
-
-        //attackCoroutine = StartCoroutine(AttackBuffRoutine(_value, _usingTime));
     }
-
-    /// <summary>
-    ///  時間まで攻撃力を上げておく実行処理(コルーチン)
-    /// </summary>
-    //private IEnumerator AttackBuffRoutine(float _value, float _duration) {
-    //    parameter.attack = Mathf.RoundToInt(parameter.defaultAttack * _value);
-    //    yield return new WaitForSeconds(_duration);
-    //    parameter.attack = parameter.defaultAttack;
-    //    DestroyEffect();
-    //    attackCoroutine = null;
-    //}
 
     /// <summary>
     /// 移動速度上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
-    //[Command]
 
     [Server]
     public void MoveSpeedBuff(float _value, float _usingTime) {
@@ -827,20 +813,7 @@ public abstract class CharacterBase : CreatureBase {
         if (speedCoroutine != null) StopCoroutine(speedCoroutine);
         //  エフェクト再生
         PlayEffect(SPEED_BUFF_EFFECT);
-
-        //speedCoroutine = StartCoroutine(SpeedBuffRoutine(_value, _usingTime));
     }
-
-    /// <summary>
-    ///  時間まで移動速度を上げておく実行処理(コルーチン)
-    /// </summary>
-    //private IEnumerator SpeedBuffRoutine(float _value, float _duration) {
-    //    parameter.moveSpeed = Mathf.RoundToInt(parameter.defaultMoveSpeed * _value);
-    //    yield return new WaitForSeconds(_duration);
-    //    parameter.moveSpeed = parameter.defaultMoveSpeed;
-    //    DestroyEffect();
-    //    speedCoroutine = null;
-    //}
 
     /// <summary>
     /// 古谷作成
@@ -851,21 +824,7 @@ public abstract class CharacterBase : CreatureBase {
         temporaryBuffs[(int) ParamaterType.damageRate].Add(new TemporaryBuff(_value, _usingTime));
 
         if (damageCutCoroutine != null) StopCoroutine(damageCutCoroutine);
-
-        //damageCutCoroutine = StartCoroutine(DamageCutRoutine(_value, _usingTime));
     }
-
-    /// <summary>
-    /// 古谷
-    /// 時間まで被ダメを下げておく実行処理(コルーチン)
-    /// </summary>
-    //private IEnumerator DamageCutRoutine(int _value, float _duration) {
-    //    parameter.damageRatio = _value;
-    //    Debug.Log("被ダメージ倍率変更中");
-    //    yield return new WaitForSeconds(_duration);
-    //    parameter.damageRatio = 100;
-    //    damageCutCoroutine = null;
-    //}
 
     [Command]
     public void CmdUseConsumable(ConsumableType type, float value, float time) {
