@@ -1122,6 +1122,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   attackRange: 3
+  dashChance: 0.2
+  dashDuration: 1.5
+  dashSpeed: 20
+  dashHitInterval: 0.2
 --- !u!114 &903121373027397556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1156,6 +1160,9 @@ MonoBehaviour:
   syncInterval: 0
   teamID: -2
   statusData: {fileID: 11400000, guid: e9a0b604c1b2b5843bacf96921c22edd, type: 2}
+  randomRange: 0.05
+  criticalChance: 0.2
+  criticalMultiplier: 1.5
 --- !u!114 &269792937383424157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1236,6 +1243,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  fillImage: {fileID: 6490178199787724862}
+  orange: {r: 1, g: 0.5, b: 0, a: 1}
+  criticalPopScale: 2.3
+  criticalPopTime: 0.15
 --- !u!136 &-8415657473983316905
 CapsuleCollider:
   m_ObjectHideFlags: 0
