@@ -40,12 +40,21 @@ public class Bomb : NetworkBehaviour {
 
     // ===== 初期化（サーバー）=====
     [Server]
-    public void Init(MainBombData bombData, GameObject ownerObj, string name, int id) {
+    public void Init(MainBombData bombData, GameObject ownerObj, string name, int id, Vector3 forward) {
         weaponID = bombData.WeaponID;
 
         owner = ownerObj;
         ownerName = name;
         ownerID = id;
+
+        timer = 0f;
+        exploded = false;
+
+        var rb = GetComponent<Rigidbody>();
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        rb.AddForce(forward * bombData.throwForce, ForceMode.Impulse);
     }
 
     // ===== クライアント側データ取得 =====
@@ -112,9 +121,10 @@ public class Bomb : NetworkBehaviour {
                 break;
 
             case ExplosionType.Cross:
-                activeExplosionLines = 4;
+                var dirs = GetDirs();
+                activeExplosionLines = dirs.Length;
 
-                foreach (var dir in GetDirs())
+                foreach (var dir in dirs)
                     StartCoroutine(ExplodeLine(dir));
                 break;
         }
@@ -141,13 +151,20 @@ public class Bomb : NetworkBehaviour {
     }
 
     // ===== 十字爆破 =====
-    Vector3[] GetDirs() => new Vector3[]
-    {
-        Vector3.forward,
-        Vector3.back,
-        Vector3.left,
-        Vector3.right
-    };
+    Vector3[] GetDirs() {
+        int count = data.explosionLines;
+
+        Vector3[] dirs = new Vector3[count];
+
+        for (int i = 0; i < count; i++) {
+            float angle = (360f / count) * i;
+            float rad = angle * Mathf.Deg2Rad;
+
+            dirs[i] = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
+        }
+
+        return dirs;
+    }
 
     [Server]
     IEnumerator ExplodeLine(Vector3 dir) {
@@ -188,7 +205,7 @@ public class Bomb : NetworkBehaviour {
     // ===== ダメージ =====
     [Server]
     void ApplyDamage(Collider col, Vector3 origin) {
-        var target = col.GetComponent<CharacterBase>();
+        var target = col.GetComponent<CreatureBase>();
         if (!target) return;
 
         Vector3 targetPos = target.transform.position;
@@ -200,11 +217,11 @@ public class Bomb : NetworkBehaviour {
         target.TakeDamage(data.damage, ownerName, ownerID);
     }
 
-    bool IsAlly(CharacterBase target) {
-        var ownerChar = owner.GetComponent<CharacterBase>();
+    bool IsAlly(CreatureBase target) {
+        var ownerChar = owner.GetComponent<CreatureBase>();
         if (!ownerChar) return false;
 
-        return ownerChar.parameter.TeamID == target.parameter.TeamID;
+        return ownerChar.parameter.TeamID == target.teamID;
     }
 
     // ===== 誘爆 =====

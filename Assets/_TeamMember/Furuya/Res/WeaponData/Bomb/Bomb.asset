@@ -15,24 +15,26 @@ MonoBehaviour:
   weaponName: Bomb
   weaponID: 500
   type: 5
-  damage: 250
+  damage: 50
   cooldown: 1
   appearanceID: 13
   muzzleFlashType: 0
-  hitEffectType: 0
+  hitEffectType: 5
   maxAmmo: 0
   reloadTime: 0
   cost: 1
   bombPrefab: {fileID: 3758307679959063053, guid: eed1bc344fcf072429806915e6d2b0a6, type: 3}
   explodeTime: 2
+  throwForce: 15
   damageSelf: 1
   damageAlly: 1
   chainReaction: 1
   explosionType: 1
   explosionRange: 5
-  maxDistance: 15
+  maxDistance: 20
   interval: 1
-  delayBetween: 0.05
+  delayBetween: 0.1
+  explosionLines: 4
   wallLayer:
     serializedVersion: 2
     m_Bits: 69640

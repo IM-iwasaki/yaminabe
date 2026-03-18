@@ -5,6 +5,7 @@ public class MainBombData : WeaponData {
     [Header("Bomb Settings")]
     public GameObject bombPrefab;
     public float explodeTime = 3f;
+    public float throwForce = 20f;
 
     public bool damageSelf = false;
     public bool damageAlly = false;
@@ -19,6 +20,7 @@ public class MainBombData : WeaponData {
     public float maxDistance = 5f;
     public float interval = 1f;
     public float delayBetween = 0.05f;
+    public int explosionLines = 4;
     public LayerMask wallLayer;
 
     [Header("Visual")]

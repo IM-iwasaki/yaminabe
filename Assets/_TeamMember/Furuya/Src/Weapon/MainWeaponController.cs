@@ -115,7 +115,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Bomb:
                 if (weaponData is MainBombData bombData)
-                    ServerPlaceBomb(bombData);
+                    ServerPlaceBomb(bombData, direction);
                 break;
         }
         //アニメーション開始
@@ -187,7 +187,7 @@ public class MainWeaponController : NetworkBehaviour {
                 break;
             case WeaponType.Bomb:
                 if (weaponData is MainBombData bombData)
-                    ServerPlaceBomb(bombData);
+                    ServerPlaceBomb(bombData, direction);
                 break;
         }
         //アニメーション開始
@@ -533,17 +533,11 @@ public class MainWeaponController : NetworkBehaviour {
     #endregion
 
     #region 爆弾
-    void ServerPlaceBomb(MainBombData data) {
+    void ServerPlaceBomb(MainBombData data, Vector3 direction) {
         if (data.bombPrefab == null) return;
 
-        // 設置位置（少し前）
-        Vector3 pos = transform.position + transform.forward * 1.0f;
-
-        // 地面にスナップ
-        if (Physics.Raycast(pos + Vector3.up, Vector3.down, out RaycastHit hit, 5f)) {
-            float offsetY = 0.75f; // 爆弾の半径に合わせる
-            pos = hit.point + Vector3.up * offsetY;
-        }
+        // 前方に生成（高さそのまま）
+        Vector3 pos = transform.position + transform.forward * 1.0f + Vector3.up * 0.5f;
 
         GameObject bombObj = ProjectilePool.Instance.SpawnFromPool(
             data.bombPrefab.name,
@@ -558,7 +552,8 @@ public class MainWeaponController : NetworkBehaviour {
                 data,
                 gameObject,
                 characterBase.parameter.PlayerName,
-                characterBase.parameter.playerId
+                characterBase.parameter.playerId,
+                direction
             );
         }
     }
