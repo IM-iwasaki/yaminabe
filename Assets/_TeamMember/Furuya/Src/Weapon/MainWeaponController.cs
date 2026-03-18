@@ -541,7 +541,7 @@ public class MainWeaponController : NetworkBehaviour {
 
         // 地面にスナップ
         if (Physics.Raycast(pos + Vector3.up, Vector3.down, out RaycastHit hit, 5f)) {
-            float offsetY = 1.0f; // 爆弾の半径に合わせる
+            float offsetY = 0.75f; // 爆弾の半径に合わせる
             pos = hit.point + Vector3.up * offsetY;
         }
 

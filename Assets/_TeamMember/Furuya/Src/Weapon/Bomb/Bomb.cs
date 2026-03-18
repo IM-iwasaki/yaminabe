@@ -21,8 +21,16 @@ public class Bomb : NetworkBehaviour {
     private string ownerName;
     private int ownerID;
 
+    private int activeExplosionLines; // ←追加
+
     void Awake() {
         baseScale = transform.localScale;
+    }
+
+    void OnEnable() {
+        timer = 0f;
+        exploded = false;
+        activeExplosionLines = 0;
     }
 
     // ===== 初期化（サーバー）=====
@@ -33,9 +41,6 @@ public class Bomb : NetworkBehaviour {
         owner = ownerObj;
         ownerName = name;
         ownerID = id;
-
-        timer = 0f;
-        exploded = false;
     }
 
     // ===== クライアント側データ取得 =====
@@ -44,9 +49,6 @@ public class Bomb : NetworkBehaviour {
 
         if (weapon is MainBombData bombData) {
             data = bombData;
-        }
-        else {
-            Debug.LogError($"Bomb: ID {newID} はMainBombDataではない");
         }
     }
 
@@ -76,8 +78,8 @@ public class Bomb : NetworkBehaviour {
 
     // ===== 見た目 =====
     void UpdateVisual(float t) {
-        float speed = Mathf.Lerp(1f, 10f, t);
-        float amp = Mathf.Lerp(0.05f, 0.3f, t);
+        float speed = 2f + t * 2f;
+        float amp = 0.05f + t * 0.1f;
         float scale = 1f + Mathf.Sin(Time.time * speed) * amp;
         transform.localScale = baseScale * scale;
 
@@ -100,15 +102,16 @@ public class Bomb : NetworkBehaviour {
         switch (data.explosionType) {
             case ExplosionType.Center:
                 ExplodeCenter();
+                Deactivate();
                 break;
 
             case ExplosionType.Cross:
+                activeExplosionLines = 4;
+
                 foreach (var dir in GetDirs())
                     StartCoroutine(ExplodeLine(dir));
                 break;
         }
-
-        StartCoroutine(DestroyAfter());
     }
 
     // ===== 中心爆破 =====
@@ -144,14 +147,13 @@ public class Bomb : NetworkBehaviour {
         for (float d = data.interval; d <= distance; d += data.interval) {
             Vector3 pos = transform.position + dir * d;
 
-            // 地面スナップ
             if (Physics.Raycast(pos + Vector3.up, Vector3.down, out var groundHit, 2f)) {
                 pos = groundHit.point + Vector3.up * 0.1f;
             }
 
             RpcPlayExplosionEffect(pos);
 
-            var hits = Physics.OverlapSphere(pos, 1.0f); // 誘爆・ヒット安定
+            var hits = Physics.OverlapSphere(pos, 1.0f);
 
             foreach (var c in hits) {
                 ApplyDamage(c, pos);
@@ -162,6 +164,13 @@ public class Bomb : NetworkBehaviour {
 
             yield return new WaitForSeconds(data.delayBetween);
         }
+
+        // ===== 終了管理 =====
+        activeExplosionLines--;
+
+        if (activeExplosionLines <= 0) {
+            Deactivate();
+        }
     }
 
     // ===== ダメージ =====
@@ -170,11 +179,8 @@ public class Bomb : NetworkBehaviour {
         var target = col.GetComponent<CharacterBase>();
         if (!target) return;
 
-        // 壁チェック
         Vector3 targetPos = target.transform.position;
-        if (Physics.Linecast(origin, targetPos, data.wallLayer)) {
-            return;
-        }
+        if (Physics.Linecast(origin, targetPos, data.wallLayer)) return;
 
         if (!data.damageSelf && target.gameObject == owner) return;
         if (!data.damageAlly && IsAlly(target)) return;
@@ -208,15 +214,21 @@ public class Bomb : NetworkBehaviour {
     [ClientRpc]
     void RpcPlayExplosionEffect(Vector3 pos) {
         var obj = Instantiate(explosionEffectPrefab, pos, Quaternion.identity);
-        Destroy(obj, 2f); // エフェクトの長さに合わせる
+        Destroy(obj, 2f);
     }
 
     // ===== 削除 =====
     [Server]
-    IEnumerator DestroyAfter() {
-        yield return new WaitForSeconds(1f);
-        NetworkServer.Destroy(gameObject);
+    public void Deactivate() {
+
+        // パーティクル残り対策
+        foreach (var ps in GetComponentsInChildren<ParticleSystem>()) {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+
+        if (ProjectilePool.Instance != null)
+            ProjectilePool.Instance.DespawnToPool(gameObject);
+        else
+            NetworkServer.Destroy(gameObject);
     }
-
-
 }
