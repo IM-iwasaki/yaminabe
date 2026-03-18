@@ -31,9 +31,11 @@ public class Skill_Hacker : SkillBase {
 
             // 移動速度を30%に低下（4秒）
             enemy.MoveSpeedBuff(0.3f, 4.0f);
+            // CTを25%削る
+            enemy.parameter.skillAfterTime -= enemy.parameter.equippedSkills[0].cooldown / 4;
 
             // 被ダメージ1.25倍（4秒）
-            enemy.DamageCut(125, 4.0f);
+            //enemy.DamageCut(125, 4.0f);
         }
     }
 }

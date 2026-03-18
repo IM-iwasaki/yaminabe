@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Passive_Hacker : PassiveBase {
 
     // CTï‚ê≥î{ó¶
-    private const float ENEMY_CT_RATE = 0.5f; // îºå∏
+    private const float SELF_CT_RATE_DEATHMATCH = 2.0f; // 2î{
     private const float SELF_CT_RATE = 3.0f; // 3î{
 
     public override void PassiveReflection(CharacterBase user) {
@@ -14,8 +14,10 @@ public class Passive_Hacker : PassiveBase {
         if (!GameManager.Instance.IsGameRunning()) return;
 
         // ÉfÉXÉ}ÉbÉ`ÇÕÇ±Ç±Ç≈ÇÕàµÇÌÇ»Ç¢ÅiéÀåÇë§Ç≈èàóùÅj
-        if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch)
+        if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch) {
+            user.parameter.skillAfterTime += Time.deltaTime * SELF_CT_RATE_DEATHMATCH;
             return;
+        }
 
         bool enemyAffectingRule = false;
 
@@ -30,7 +32,7 @@ public class Passive_Hacker : PassiveBase {
                 if (p.parameter.TeamID == myTeam) continue;
 
                 // ìGÇÃCTå∏ë¨
-                p.parameter.skillAfterTime -= Time.deltaTime * ENEMY_CT_RATE;
+                //p.parameter.skillAfterTime -= Time.deltaTime * ENEMY_CT_RATE;
                 enemyAffectingRule = true;
             }
         }
@@ -45,7 +47,7 @@ public class Passive_Hacker : PassiveBase {
                 if (enemy != null && enemy.parameter.TeamID != myTeam) {
 
                     // ìGÇÃCTå∏ë¨
-                    enemy.parameter.skillAfterTime -= Time.deltaTime * ENEMY_CT_RATE;
+                    //enemy.parameter.skillAfterTime -= Time.deltaTime * ENEMY_CT_RATE;
                     enemyAffectingRule = true;
                 }
             }

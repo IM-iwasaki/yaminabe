@@ -8,7 +8,7 @@ public class Passive_Magnum : PassiveBase {
     // パッシブ名　：生存本能
     // タイプ      ：HP発動型
     // 効果        ：HPが半分以下になった時、短い間速度↑↑↑、さらに無敵になる。
-    //               一度発動すると15秒間は発動しない。
+    //               一度発動すると20秒間は発動しない。
 
 
     public override void PassiveSetting() {
