@@ -129,6 +129,7 @@ public class HostUI : NetworkBehaviour {
     /// ランダムでルールとステージを変更
     /// </summary>
     public void AllRandomGame() {
+        AudioManager.Instance.CmdPlayUISE("選択");
         int ruleNum = Random.Range(0, ruleNames.Count);
         int stageNum = Random.Range(0, StageManager.Instance.stages.Count);
 
