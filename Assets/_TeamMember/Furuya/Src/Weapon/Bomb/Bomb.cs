@@ -6,6 +6,7 @@ public class Bomb : NetworkBehaviour {
     [Header("参照")]
     [SerializeField] private Renderer rend;
     [SerializeField] private GameObject explosionEffectPrefab;
+    [SerializeField] private GameObject visualRoot; // ←追加（本体＋導火線）
 
     [SyncVar(hook = nameof(OnWeaponIDChanged))]
     private int weaponID;
@@ -21,7 +22,7 @@ public class Bomb : NetworkBehaviour {
     private string ownerName;
     private int ownerID;
 
-    private int activeExplosionLines; // ←追加
+    private int activeExplosionLines;
 
     void Awake() {
         baseScale = transform.localScale;
@@ -31,6 +32,10 @@ public class Bomb : NetworkBehaviour {
         timer = 0f;
         exploded = false;
         activeExplosionLines = 0;
+
+        // 見た目復帰
+        if (visualRoot != null)
+            visualRoot.SetActive(true);
     }
 
     // ===== 初期化（サーバー）=====
@@ -97,6 +102,7 @@ public class Bomb : NetworkBehaviour {
     void Explode() {
         exploded = true;
 
+        RpcHideVisual(); // ←追加
         RpcPlayExplosionEffect(transform.position);
 
         switch (data.explosionType) {
@@ -112,6 +118,13 @@ public class Bomb : NetworkBehaviour {
                     StartCoroutine(ExplodeLine(dir));
                 break;
         }
+    }
+
+    // ===== 見た目非表示 =====
+    [ClientRpc]
+    void RpcHideVisual() {
+        if (visualRoot != null)
+            visualRoot.SetActive(false);
     }
 
     // ===== 中心爆破 =====
@@ -147,13 +160,13 @@ public class Bomb : NetworkBehaviour {
         for (float d = data.interval; d <= distance; d += data.interval) {
             Vector3 pos = transform.position + dir * d;
 
-            if (Physics.Raycast(pos + Vector3.up, Vector3.down, out var groundHit, 2f)) {
+            if (Physics.Raycast(pos + Vector3.up, Vector3.down, out var groundHit, 10f)) {
                 pos = groundHit.point + Vector3.up * 0.1f;
             }
 
             RpcPlayExplosionEffect(pos);
 
-            var hits = Physics.OverlapSphere(pos, 1.0f);
+            var hits = Physics.OverlapSphere(pos, 2.0f);
 
             foreach (var c in hits) {
                 ApplyDamage(c, pos);
@@ -165,7 +178,6 @@ public class Bomb : NetworkBehaviour {
             yield return new WaitForSeconds(data.delayBetween);
         }
 
-        // ===== 終了管理 =====
         activeExplosionLines--;
 
         if (activeExplosionLines <= 0) {
@@ -221,7 +233,6 @@ public class Bomb : NetworkBehaviour {
     [Server]
     public void Deactivate() {
 
-        // パーティクル残り対策
         foreach (var ps in GetComponentsInChildren<ParticleSystem>()) {
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
