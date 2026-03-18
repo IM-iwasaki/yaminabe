@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 /// <summary>
 /// 敵ベース
@@ -28,6 +29,14 @@ public class EnemyBase : NetworkBehaviour {
 
     [Header("攻撃距離設定")]
     [SerializeField] private float attackRange = 2.0f;
+
+    [Header("突進攻撃設定")]
+    [SerializeField] private float dashChance = 0.2f;
+    [SerializeField] private float dashDuration = 1.5f;
+    [SerializeField] private float dashSpeed = 20f;
+    [SerializeField] private float dashHitInterval = 0.2f;
+
+    private bool isDashing = false;
 
     /// <summary>
     /// サーバー開始時の初期化
@@ -64,7 +73,16 @@ public class EnemyBase : NetworkBehaviour {
         float distance = Vector3.Distance(transform.position, target.position);
 
         if (distance > attackRange) {
-            // 攻撃距離外 → 追いかける
+
+            // 突進中なら何もしない
+            if (isDashing) return;
+
+            // ランダムで突進開始
+            if (Random.value < dashChance * Time.deltaTime) {
+                StartCoroutine(DashCoroutine());
+                return;
+            }
+
             agent.isStopped = false;
             agent.SetDestination(target.position);
         } else {
@@ -115,5 +133,75 @@ public class EnemyBase : NetworkBehaviour {
         }
 
         target = nearest;
+    }
+
+    /// <summary>
+    /// 突進攻撃
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator DashCoroutine() {
+
+        isDashing = true;
+
+        agent.isStopped = true;
+        agent.updatePosition = false;
+        agent.updateRotation = false;
+
+        Vector3 dir = (target.position - transform.position);
+        dir.y = 0f;
+        dir.Normalize();
+
+        transform.rotation = Quaternion.LookRotation(dir);
+
+        float elapsed = 0f;
+        float hitTimer = 0f;
+
+        while (elapsed < dashDuration) {
+
+            float delta = Time.deltaTime;
+            elapsed += delta;
+            hitTimer += delta;
+
+            float moveDistance = dashSpeed * delta;
+
+            // 壁チェック
+            if (Physics.Raycast(transform.position, dir, moveDistance, wallLayer)) {
+                // 壁に当たるので突進終了
+                break;
+            }
+
+            Vector3 nextPos = transform.position + dir * moveDistance;
+
+            // NavMesh外チェック
+            NavMeshHit moveHit;
+            if (NavMesh.SamplePosition(nextPos, out moveHit, 1.0f, NavMesh.AllAreas)) {
+                transform.position = moveHit.position;
+            } else {
+                // NavMesh外に出るので突進終了
+                break;
+            }
+
+            // 多段ヒット
+            if (hitTimer >= dashHitInterval) {
+                weapon.ServerRequestAttack(dir);
+                hitTimer = 0f;
+            }
+
+            yield return null;
+        }
+
+        // NavMeshに安全に戻す
+        NavMeshHit endHit;
+        if (NavMesh.SamplePosition(transform.position, out endHit, 2.0f, NavMesh.AllAreas)) {
+            agent.Warp(endHit.position);
+        } else {
+            Debug.LogWarning("NavMeshに戻れない");
+        }
+
+        agent.updatePosition = true;
+        agent.updateRotation = true;
+        agent.isStopped = false;
+
+        isDashing = false;
     }
 }
