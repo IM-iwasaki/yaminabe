@@ -141,6 +141,13 @@ public class CharacterParameter : NetworkBehaviour {
         equippedSkills[0].isSkillUse = false;
 
         CmdSetMoney(PlayerWallet.Instance.GetMoney());
+        //確実に非準備状態にするために初期化タイミングでfalse
+        CmdNotReady();
+    }
+
+    [Command]
+    private void CmdNotReady() {
+        isReady = false;
     }
 
     public override void OnStartLocalPlayer() {
