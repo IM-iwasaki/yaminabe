@@ -1,4 +1,5 @@
 using UnityEngine;
+using Mirror;
 
 [CreateAssetMenu(menuName = "Character/Passive/Magnum_生存本能")]
 public class Passive_Magnum : PassiveBase {
@@ -6,8 +7,8 @@ public class Passive_Magnum : PassiveBase {
     //
     // パッシブ名　：生存本能
     // タイプ      ：HP発動型
-    // 効果        ：自身の残り体力が20％以下になった時、移動スピードが5秒間600%アップする
-    //               この効果は一度発動すると15秒間は発動しない。
+    // 効果        ：HPが半分以下になった時、短い間速度↑↑↑、さらに無敵になる。
+    //               一度発動すると15秒間は発動しない。
 
 
     public override void PassiveSetting() {
@@ -34,9 +35,15 @@ public class Passive_Magnum : PassiveBase {
         //発動中にHPが条件を満たしたら発動。
         if (isPassiveActive && user.parameter.HP <= user.parameter.maxHP / 5 ) {
 
-            user.MoveSpeedBuff(2f,5.0f);
+            user.MoveSpeedBuff(2.0f,2.0f);
+            // 無敵状態を開始（2秒間）
+            CmdInvincibleRequast(user,2.0f);
             //発動状態を解除
             isPassiveActive= false;
         }
+    }
+
+    [Command]private void CmdInvincibleRequast(CharacterBase user, float _effectTime) {
+        user.StartCoroutine(user.InvincibleRoutine(_effectTime));
     }
 }
