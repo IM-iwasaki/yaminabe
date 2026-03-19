@@ -9,6 +9,7 @@ using System.Linq; // ← スコア集計用
 /// </summary>
 public class ResultDebug : NetworkBehaviour {
     private ResultManager resultManager;
+    private bool toggle = false;
 
     void Start() {
         resultManager = FindObjectOfType<ResultManager>();
