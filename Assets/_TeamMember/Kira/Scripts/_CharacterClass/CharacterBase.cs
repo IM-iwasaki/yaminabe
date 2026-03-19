@@ -661,13 +661,19 @@ public abstract class CharacterBase : CreatureBase {
             if (enemy == null) continue;
 
             // 移動方向を逆転させる（4秒）
-            enemy.MoveSpeedBuff(-1.0f, 4.0f);
+            enemy.RpcMoveSpeedBuff(-1.0f, 4.0f);
             // CTを25%削る
             enemy.parameter.skillAfterTime -= enemy.parameter.equippedSkills[0].cooldown / 4;
 
             // 被ダメージ1.25倍（4秒）
             //enemy.DamageCut(125, 4.0f);
         }
+    }
+
+    [ClientRpc]
+    private void RpcMoveSpeedBuff(float _value, float _usingTime) {
+        if (!isLocalPlayer) return;
+        MoveSpeedBuff(_value, _usingTime);
     }
 
     /// <summary>
