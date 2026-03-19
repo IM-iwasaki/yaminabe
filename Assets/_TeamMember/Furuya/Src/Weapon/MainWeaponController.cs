@@ -229,7 +229,7 @@ public class MainWeaponController : NetworkBehaviour {
         //見た目変更
         animCon.SetWeaponLayer(GenerateWeaponIndex(weaponData.weaponName));
 
-        Debug.LogWarning($"'{data.weaponName}' を使用します");
+        Debug.Log($"'{data.weaponName}' を使用します");
     }
 
     private void OnWeaponIDChanged(int oldID, int newID) {

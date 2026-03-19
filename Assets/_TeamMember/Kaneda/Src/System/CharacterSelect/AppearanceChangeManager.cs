@@ -10,8 +10,6 @@ public class AppearanceChangeManager : MonoBehaviour {
     //  インスタンス化
     public static AppearanceChangeManager instance;
 
-    private GameObject currentSkin = null;
-
     [Header("キャラクターデータ")]
     [SerializeField] public CharacterDatabase data;
 

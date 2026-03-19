@@ -12,8 +12,6 @@ public class EnemySpawnManager : NetworkBehaviour {
     [Header("全体制御")]
     public float spawnInterval = 2.0f;      // スポーン試行間隔（秒）
 
-    private float timer = 0f;               // 時間計測用
-
     private List<EnemySpawnPoint> spawnPoints = new(); // Scene内スポナー一覧
 
     private bool bossAlive = false;

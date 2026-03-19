@@ -9,7 +9,7 @@ public class ShowResultPanelEvent : PVEStageEvent {
     [SerializeField] private Button nextButton;
     [SerializeField] private Button returnLobbyButton;
 
-    private bool isResultActive = true;     // “ñd‰Ÿ‚µ–h~
+    private bool isResultActive = false;     // “ñd‰Ÿ‚µ–h~
     private ResultManager resultManager;
 
     private void Start() {
