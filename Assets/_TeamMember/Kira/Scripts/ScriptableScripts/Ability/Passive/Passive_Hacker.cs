@@ -1,26 +1,26 @@
 using UnityEngine;
-using System.Collections.Generic;
+using Mirror;
+using Mirror.BouncyCastle.Security;
 
 [CreateAssetMenu(menuName = "Character/Passive/Hacker_RuleBreaker")]
 public class Passive_Hacker : PassiveBase {
+    // ハッカー用CT補正倍率
+    public const float SELF_CT_RATE_DEATHMATCH = 1.5f; // 2倍
+    public const float SELF_CT_RATE = 2.0f; // 3倍
 
-    // CT補正倍率
-    private const float SELF_CT_RATE_DEATHMATCH = 2.0f; // 2倍
-    private const float SELF_CT_RATE = 3.0f; // 3倍
 
     public override void PassiveReflection(CharacterBase user) {
-
+        if (!user.isLocalPlayer) return;
         // ゲーム中でなければ何もしない
         if (!GameManager.Instance.IsGameRunning()) return;
 
-        // デスマッチはここでは扱わない（射撃側で処理）
+        // デスマッチ中のみ発動
         if (RuleManager.Instance.currentRule == GameRuleType.DeathMatch) {
             user.parameter.skillAfterTime += Time.deltaTime * SELF_CT_RATE_DEATHMATCH;
             return;
         }
 
         bool enemyAffectingRule = false;
-
         int myTeam = user.parameter.TeamID;
 
         // ===== エリア判定 =====
@@ -56,6 +56,6 @@ public class Passive_Hacker : PassiveBase {
         // ===== 自身のCT加速 =====
         if (enemyAffectingRule) {
             user.parameter.skillAfterTime += Time.deltaTime * SELF_CT_RATE;
-        }
+        }       
     }
 }

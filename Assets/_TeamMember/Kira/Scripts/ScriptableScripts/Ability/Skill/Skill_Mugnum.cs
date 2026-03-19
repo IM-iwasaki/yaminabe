@@ -12,7 +12,7 @@ public class Skill_Mugnum : SkillBase {
     //
 
     public override void Activate(CharacterBase user) {
-        user.MoveSpeedBuff(0.0f, 1.0f);
-        user.CmdHealCharacter(1.0f,0.1f);
+        user.MoveSpeedBuff(0.0001f, 1.0f);
+        user.CmdHealCharacter(1.0f, 0.2f);
     }
 }

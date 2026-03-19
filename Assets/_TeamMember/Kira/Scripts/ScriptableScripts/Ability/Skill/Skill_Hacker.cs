@@ -1,4 +1,5 @@
 using UnityEngine;
+using Mirror;
 
 /// <summary>
 /// スキル：ハッキング
@@ -9,33 +10,8 @@ using UnityEngine;
 public class Skill_Hacker : SkillBase {
 
     public override void Activate(CharacterBase user) {
-
-        CharacterParameter selfParam = user.GetComponent<CharacterParameter>();
-        if (selfParam == null) return;
-
-        // 全キャラクター取得
-        CharacterParameter[] allPlayers =
-            FindObjectsOfType<CharacterParameter>();
-
-        foreach (CharacterParameter target in allPlayers) {
-
-            // 自分は除外
-            if (target == selfParam) continue;
-
-            // 未所属 or 同チームは除外
-            if (target.TeamID == -1) continue;
-            if (target.TeamID == selfParam.TeamID) continue;
-
-            CharacterBase enemy = target.GetComponent<CharacterBase>();
-            if (enemy == null) continue;
-
-            // 移動速度を30%に低下（4秒）
-            enemy.MoveSpeedBuff(0.3f, 4.0f);
-            // CTを25%削る
-            enemy.parameter.skillAfterTime -= enemy.parameter.equippedSkills[0].cooldown / 4;
-
-            // 被ダメージ1.25倍（4秒）
-            //enemy.DamageCut(125, 4.0f);
-        }
-    }
+        if (user.isLocalPlayer) return;
+        Debug.Log("スキル発火");
+        user.CmdHackingActivate();    
+    }    
 }

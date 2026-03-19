@@ -616,7 +616,72 @@ public abstract class CharacterBase : CreatureBase {
         }
     }
 
+    /// <summary>
+    /// サーバーにハッカーのスキルを使用する意思を送信
+    /// </summary>
+    /// <param name="user"></param>
+    [Command]
+    public void CmdHackingActivate() {
+        Debug.Log("Cmd呼ばれた");
+        //サーバーでハッカーのスキルを制御(効果が特殊なためBaseでサーバー制御)
+        var user = connectionToClient?.identity?.GetComponent<CharacterBase>();
+        if (user == null) {
+            Debug.Log("user nullってる！");
+            return;
+        }
+
+        //if (parameter.skillAfterTime < parameter.equippedSkills[0].cooldown)return;
+
+        ServerHackingActivate(user);
+    }
+
+    /// <summary>
+    /// サーバーでハッカーのスキルを制御(効果が特殊なためBaseでサーバー制御)
+    /// </summary>
+    /// <param name="user"></param>
+    [Server]
+    private void ServerHackingActivate(CharacterBase user) {
+        CharacterParameter selfParam = user.GetComponent<CharacterParameter>();
+        if (selfParam == null) return;
+
+        // 全キャラクター取得
+        CharacterParameter[] allPlayers =
+            FindObjectsOfType<CharacterParameter>();
+
+        foreach (CharacterParameter target in allPlayers) {
+
+            // 自分は除外
+            if (target == selfParam) continue;
+
+            // 未所属 or 同チームは除外
+            if (target.TeamID == -1) continue;
+            if (target.TeamID == selfParam.TeamID) continue;
+
+            CharacterBase enemy = target.GetComponent<CharacterBase>();
+            if (enemy == null) continue;
+
+            // 移動方向を逆転させる（4秒）
+            enemy.MoveSpeedBuff(-1.0f, 4.0f);
+            // CTを25%削る
+            enemy.parameter.skillAfterTime -= enemy.parameter.equippedSkills[0].cooldown / 4;
+
+            // 被ダメージ1.25倍（4秒）
+            //enemy.DamageCut(125, 4.0f);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="_effectTime"></param>
+    [Command]public void CmdInvincibleRequast(CharacterBase user, float _effectTime) {
+        user.StartCoroutine(user.InvincibleRoutine(_effectTime));
+    }
+
     #endregion
+
+    #region おれのじゃないやつ
 
     #region 入力受付・入力実行・判定関数
 
@@ -656,8 +721,6 @@ public abstract class CharacterBase : CreatureBase {
     }
 
     #endregion
-
-    #region おれのじゃないやつ
 
     #region チーム管理関連
 
@@ -806,7 +869,7 @@ public abstract class CharacterBase : CreatureBase {
     /// 移動速度上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
 
-    [Server]
+    [Command]
     public void MoveSpeedBuff(float _value, float _usingTime) {
         temporaryBuffs[(int) ParamaterType.moveSpeed].Add(new TemporaryBuff(_value, _usingTime));
 

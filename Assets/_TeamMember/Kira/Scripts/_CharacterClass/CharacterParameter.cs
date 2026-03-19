@@ -91,7 +91,7 @@ public class CharacterParameter : NetworkBehaviour {
 
     public bool canMove = true;
     //スキル使用後経過時間
-    [System.NonSerialized] public float skillAfterTime = 0.0f;
+    [System.NonSerialized][SyncVar] public float skillAfterTime = 0.0f;
 
     //接地しているか
     public bool IsGrounded { get; private set; }
