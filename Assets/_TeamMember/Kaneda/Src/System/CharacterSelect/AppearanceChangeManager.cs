@@ -9,8 +9,9 @@ using UnityEngine;
 public class AppearanceChangeManager : MonoBehaviour {
     //  インスタンス化
     public static AppearanceChangeManager instance;
-
+#pragma warning disable CS0414
     private GameObject currentSkin = null;
+#pragma warning restore CS0414
 
     [Header("キャラクターデータ")]
     [SerializeField] public CharacterDatabase data;

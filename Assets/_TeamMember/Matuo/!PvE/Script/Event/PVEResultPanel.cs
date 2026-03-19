@@ -6,8 +6,10 @@ public class PVEResultPanel : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI pvewinnerText;
 
     // ââèoê›íË
+#pragma warning disable CS0414
     [SerializeField] private float textDelay = 0.4f;     // ï\é¶íxâÑ
     [SerializeField] private float popTime = 0.35f;      
+#pragma warning restore CS0414
     [SerializeField] private float pulseAmount = 0.05f;  
     [SerializeField] private float pulseSpeed = 2f;      
     [SerializeField] private float delay = 0.3f;      // ï\é¶íxâÑ

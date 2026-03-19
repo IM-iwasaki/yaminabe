@@ -39,7 +39,6 @@ public class PlayerWallet : MonoBehaviour {
 #pragma warning disable CS0414
     private bool keepMoneyUIVisible = false;
 #pragma warning restore CS0414
-
     private void Awake() {
         // ƒVƒ“ƒOƒ‹ƒgƒ“ˆ—
         if (Instance != null && Instance != this) {

@@ -9,7 +9,9 @@ using System.Linq; // ← スコア集計用
 /// </summary>
 public class ResultDebug : NetworkBehaviour {
     private ResultManager resultManager;
+#pragma warning disable CS0414
     private bool toggle = false;
+#pragma warning restore CS0414
 
     void Start() {
         resultManager = FindObjectOfType<ResultManager>();
