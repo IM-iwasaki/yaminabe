@@ -259,7 +259,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &6841149765819692291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -524,7 +524,7 @@ MonoBehaviour:
   TeamID: -1
   PlayerName: Default
   playerId: -1
-  ready: 1
+  isReady: 1
   speedMultiplier: 1
   footPoint: {fileID: 4495729123959489646}
   firePoint: {fileID: 8141860258521693391}
