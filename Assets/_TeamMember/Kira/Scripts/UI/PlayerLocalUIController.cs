@@ -45,8 +45,8 @@ public class PlayerLocalUIController : NetworkBehaviour {
     private Slider mpBar_slider = null;
     [SerializeField]
     private Image hpBarImage = null;
-#pragma warning disable CS0414
     [SerializeField]
+#pragma warning disable CS0414
     private Image mpBarImage = null;
 #pragma warning restore CS0414
 
