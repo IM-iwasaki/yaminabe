@@ -10,8 +10,7 @@ namespace MasterStylizedProjectile
         public BulletShooter shooter;
         public Dropdown dropdown;
         public AudioClip changeClip;
-
-        AudioSource audio;
+        new AudioSource audio;
         private void Start()
         {
             dropdown = GetComponent<Dropdown>();

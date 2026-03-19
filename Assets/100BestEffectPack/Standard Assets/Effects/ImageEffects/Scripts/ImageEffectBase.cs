@@ -13,7 +13,7 @@ namespace UnityStandardAssets.ImageEffects
 
         private Material m_Material;
 
-
+        [Obsolete]
         protected virtual void Start()
         {
             // Disable if we don't support image effects

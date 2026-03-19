@@ -8,7 +8,6 @@ public class Passive_Hacker : PassiveBase {
     public const float SELF_CT_RATE_DEATHMATCH = 1.5f; // 2î{
     public const float SELF_CT_RATE = 2.0f; // 3î{
 
-
     public override void PassiveReflection(CharacterBase user) {
         if (!user.isLocalPlayer) return;
         // ÉQÅ[ÉÄíÜÇ≈Ç»ÇØÇÍÇŒâΩÇ‡ÇµÇ»Ç¢

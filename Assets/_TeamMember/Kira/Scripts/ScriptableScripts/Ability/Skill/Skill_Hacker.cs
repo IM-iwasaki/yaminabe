@@ -10,7 +10,7 @@ using Mirror;
 public class Skill_Hacker : SkillBase {
 
     public override void Activate(CharacterBase user) {
-        if (user.isLocalPlayer) return;
+        if (!user.isLocalPlayer) return;
         Debug.Log("ƒXƒLƒ‹”­‰Î");
         user.CmdHackingActivate();    
     }    
