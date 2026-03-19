@@ -15,7 +15,7 @@ public abstract class SkillBase : ScriptableObject {
     public Sprite skillIcon;
     //スキルのクールダウン
     [Header("スキルのクールダウン時間を設定してください。")]
-    [Range(0.1f,30.0f)]public float cooldown;
+    [Range(0.1f,60.0f)]public float cooldown;
     //スキルが発動中か
     [System.NonSerialized]public bool isSkillUse;
 

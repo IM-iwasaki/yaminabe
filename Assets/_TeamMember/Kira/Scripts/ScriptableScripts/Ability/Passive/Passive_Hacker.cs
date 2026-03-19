@@ -5,8 +5,8 @@ using Mirror.BouncyCastle.Security;
 [CreateAssetMenu(menuName = "Character/Passive/Hacker_RuleBreaker")]
 public class Passive_Hacker : PassiveBase {
     // ÉnÉbÉJÅ[ópCTï‚ê≥î{ó¶
-    public const float SELF_CT_RATE_DEATHMATCH = 1.5f; // 2î{
-    public const float SELF_CT_RATE = 2.0f; // 3î{
+    public const float SELF_CT_RATE_DEATHMATCH = 1.2f; // 1.2î{
+    public const float SELF_CT_RATE = 2.0f; // 2î{
 
     public override void PassiveReflection(CharacterBase user) {
         if (!user.isLocalPlayer) return;
