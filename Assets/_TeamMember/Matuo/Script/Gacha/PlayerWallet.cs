@@ -36,7 +36,9 @@ public class PlayerWallet : MonoBehaviour {
     /// <summary>
     /// 常時表示するかどうか（Lobbyなど）
     /// </summary>
+#pragma warning disable CS0414
     private bool keepMoneyUIVisible = false;
+#pragma warning restore CS0414
 
     private void Awake() {
         // シングルトン処理

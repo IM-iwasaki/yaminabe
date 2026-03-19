@@ -13,8 +13,6 @@ public class Skill_Gurdian : SkillBase {
     //　CT      ：12秒
     //
 
-    int SkillDamage = 50;
-
     public override void Activate(CharacterBase user) {
         //フラグを立てる
         isSkillUse = true;

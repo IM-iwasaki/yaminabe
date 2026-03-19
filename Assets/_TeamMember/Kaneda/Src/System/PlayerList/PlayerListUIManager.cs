@@ -8,7 +8,9 @@ public class PlayerListUIManager : NetworkBehaviour {
     public static PlayerListUIManager Instance;
 
     //  サーバーマネージャーを取得
+#pragma warning disable CS0414
     private ServerManager server = null;
+#pragma warning restore CS0414
 
     [Header("生成させるプレイヤーリストプレハブ")]
     [SerializeField] private GameObject playerListUI;

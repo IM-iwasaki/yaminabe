@@ -797,7 +797,9 @@ public abstract class CharacterBase : CreatureBase {
     private readonly int ATTACK_BUFF_EFFECT = 0;
     private readonly int SPEED_BUFF_EFFECT = 1;
     private readonly int HEAL_BUFF_EFFECT = 2;
+#pragma warning disable CS0414
     private readonly int DEBUFF_EFFECT = 3;
+#pragma warning restore CS0414
 
     //近くにいるか判別
     [SerializeField] public float allyCheckRadius = 8f;

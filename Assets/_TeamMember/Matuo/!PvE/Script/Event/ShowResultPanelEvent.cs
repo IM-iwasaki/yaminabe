@@ -9,7 +9,9 @@ public class ShowResultPanelEvent : PVEStageEvent {
     [SerializeField] private Button nextButton;
     [SerializeField] private Button returnLobbyButton;
 
+#pragma warning disable CS0414
     private bool isResultActive = false;     // “ñd‰Ÿ‚µ–h~
+#pragma warning restore CS0414
     private ResultManager resultManager;
 
     private void Start() {
