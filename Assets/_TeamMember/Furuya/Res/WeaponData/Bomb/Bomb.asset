@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: Bomb
   weaponID: 500
   type: 5
-  damage: 50
+  damage: 30
   cooldown: 1
   appearanceID: 13
   muzzleFlashType: 0
@@ -31,8 +31,8 @@ MonoBehaviour:
   chainReaction: 1
   explosionType: 1
   explosionRange: 5
-  maxDistance: 20
-  interval: 1
+  maxDistance: 15
+  interval: 2
   delayBetween: 0.1
   explosionLines: 4
   wallLayer:
