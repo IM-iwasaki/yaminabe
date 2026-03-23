@@ -662,8 +662,11 @@ public abstract class CharacterBase : CreatureBase {
 
             // 移動方向を逆転させる（4秒）
             enemy.RpcMoveSpeedBuff(-1.0f, 4.0f);
-            // CTを25%削る
-            enemy.parameter.skillAfterTime -= enemy.parameter.equippedSkills[0].cooldown / 4;
+            // CTを約14%削る(0より低くはならない) 
+            enemy.parameter.skillAfterTime -= enemy.parameter.equippedSkills[0].cooldown / 7;
+            if (enemy.parameter.skillAfterTime < 0.0f) 
+                enemy.parameter.skillAfterTime = 0.0f;
+
 
             // 被ダメージ1.25倍（4秒）
             //enemy.DamageCut(125, 4.0f);
