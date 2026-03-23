@@ -877,7 +877,7 @@ public abstract class CharacterBase : CreatureBase {
     /// 移動速度上昇バフ発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
 
-    [Command]
+    [Server]
     public void MoveSpeedBuff(float _value, float _usingTime) {
         temporaryBuffs[(int) ParamaterType.moveSpeed].Add(new TemporaryBuff(_value, _usingTime));
 
