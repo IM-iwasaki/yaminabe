@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3744319c5a4bea645a75fd9293b7d8ca, type: 3}
-  m_Name: DarkTornado
+  m_Name: Tornado
   m_EditorClassIdentifier: 
-  weaponName: DarkTornado
+  weaponName: Tornado
   weaponID: 21
   type: 2
-  damage: 40
+  damage: 60
   cooldown: 1.5
   appearanceID: 7
   muzzleFlashType: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
   reloadTime: 0
   cost: 1
   projectilePrefab: {fileID: 4025044562685867901, guid: 1520f70797d973049b0e6db372546d9a, type: 3}
-  projectileSpeed: 10
+  projectileSpeed: 15
   MPCost: 10
   chargeEffectType: 0
   chargeTime: 0
