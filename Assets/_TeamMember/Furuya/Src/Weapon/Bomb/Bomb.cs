@@ -111,8 +111,9 @@ public class Bomb : NetworkBehaviour {
     void Explode() {
         exploded = true;
 
-        RpcHideVisual(); // Å©í«â¡
+        RpcHideVisual();
         RpcPlayExplosionEffect(transform.position);
+        AudioManager.Instance.CmdPlayWorldSE("Explode", transform.position);
 
         switch (data.explosionType) {
             case ExplosionType.Center:
