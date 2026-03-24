@@ -676,7 +676,8 @@ public abstract class CharacterBase : CreatureBase {
     [ClientRpc]
     private void RpcMoveSpeedBuff(float _value, float _usingTime) {
         if (!isLocalPlayer) return;
-        MoveSpeedBuff(_value, _usingTime);
+        //MoveSpeedBuff(_value, _usingTime);
+        CmdUseSkill_MoveSpeed(_value, _usingTime);
     }
 
     /// <summary>
@@ -925,7 +926,7 @@ public abstract class CharacterBase : CreatureBase {
     }
 
     [Command]
-    public void CmdUseSkill(float value, float time) {
+    public void CmdUseSkill_MoveSpeed(float value, float time) {
         MoveSpeedBuff(value, time);
     }
 
