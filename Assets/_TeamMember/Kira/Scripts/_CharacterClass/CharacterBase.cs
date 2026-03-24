@@ -676,7 +676,8 @@ public abstract class CharacterBase : CreatureBase {
     [ClientRpc]
     private void RpcMoveSpeedBuff(float _value, float _usingTime) {
         if (!isLocalPlayer) return;
-        MoveSpeedBuff(_value, _usingTime);
+        //MoveSpeedBuff(_value, _usingTime);
+        CmdUseSkill_MoveSpeed(_value, _usingTime);
     }
 
     /// <summary>
@@ -740,6 +741,17 @@ public abstract class CharacterBase : CreatureBase {
     public void OnReadyPlayer(InputAction.CallbackContext context) {
         if (!isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene")
             return;
+
+        // ガチャ中チェック
+        var gacha = FindObjectOfType<GachaSystem>();
+        if (gacha != null && gacha.IsGachaActive())
+            return;
+
+        // キャラ選択中チェック
+        var select = FindObjectOfType<CharacterSelectManager>();
+        if (select != null && select.IsCharacterSelectActive())
+            return;
+
 
         if (context.started) {
             CmdChangePlayerReady();
@@ -914,7 +926,7 @@ public abstract class CharacterBase : CreatureBase {
     }
 
     [Command]
-    public void CmdUseSkill(float value, float time) {
+    public void CmdUseSkill_MoveSpeed(float value, float time) {
         MoveSpeedBuff(value, time);
     }
 
