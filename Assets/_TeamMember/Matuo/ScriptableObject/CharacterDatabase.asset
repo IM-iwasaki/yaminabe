@@ -57,11 +57,15 @@ MonoBehaviour:
     skins:
     - skinName: Default
       skinPrefab: {fileID: 79219089695756003, guid: 305fedcca4257d54195c4b1ef41babcf, type: 3}
+    - skinName: Another
+      skinPrefab: {fileID: 79219089695756003, guid: c40f2f15361a1b746b9bf13b95d5685b, type: 3}
   - characterName: CountdownYamada
     statusData: {fileID: 11400000, guid: 12335e2374651bd4aa79891f1c2abe92, type: 2}
     skins:
     - skinName: Default
       skinPrefab: {fileID: 6067343141195501496, guid: bfa86db3f8ed33249ab7a9f8f240761d, type: 3}
+    - skinName: Another
+      skinPrefab: {fileID: 6067343141195501496, guid: 98eb3938ac3a52c4385602b217c82e94, type: 3}
   - characterName: SafeModeSuzuki
     statusData: {fileID: 11400000, guid: 3742ed35f3948c94cac901cfaf11a085, type: 2}
     skins:

@@ -46,11 +46,6 @@ MonoBehaviour:
     rarity: 0
     rate: 10
     resultPrefab: {fileID: 359554459282209763, guid: 05cfe51bc12d4f3479a6084c8ffd3287, type: 3}
-  - characterName: PaytoWinJon
-    itemName: Default
-    rarity: 0
-    rate: 10
-    resultPrefab: {fileID: 79219089695756003, guid: 305fedcca4257d54195c4b1ef41babcf, type: 3}
   - characterName: CountdownYamada
     itemName: Default
     rarity: 0
@@ -93,6 +88,11 @@ MonoBehaviour:
     rarity: 2
     rate: 10
     resultPrefab: {fileID: 359554459282209763, guid: 152c75bc37b1f924ab1fcd00e8cdbb56, type: 3}
+  - characterName: CountdownYamada
+    itemName: Another
+    rarity: 2
+    rate: 10
+    resultPrefab: {fileID: 6067343141195501496, guid: 98eb3938ac3a52c4385602b217c82e94, type: 3}
   legendaryItems:
   - characterName: SprintChicken
     itemName: Gold
@@ -104,3 +104,13 @@ MonoBehaviour:
     rarity: 3
     rate: 10
     resultPrefab: {fileID: 3108797039877070855, guid: ea8ee7ded32385c48a0ec769b5ee454f, type: 3}
+  - characterName: PaytoWinJon
+    itemName: Default
+    rarity: 3
+    rate: 10
+    resultPrefab: {fileID: 79219089695756003, guid: 305fedcca4257d54195c4b1ef41babcf, type: 3}
+  - characterName: PaytoWinJon
+    itemName: Another
+    rarity: 3
+    rate: 10
+    resultPrefab: {fileID: 79219089695756003, guid: c40f2f15361a1b746b9bf13b95d5685b, type: 3}
