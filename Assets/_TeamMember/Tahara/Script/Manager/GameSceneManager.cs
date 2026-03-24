@@ -63,6 +63,10 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     public void LoadLobbySceneForAll() {
         if (!isChanged) {
             isChanged = true;
+            foreach (var player in ServerManager.instance.connectPlayer) {
+                var character = player.GetComponent<GeneralCharacter>();
+                character.parameter.isReady = false;
+            }
             FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(lobbySceneName);
             FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(false);

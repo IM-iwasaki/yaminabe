@@ -171,8 +171,6 @@ public class ServerManager : NetworkBehaviour {
         foreach (var player in connectPlayer) {
             GeneralCharacter resetPlayer = player.GetComponent<GeneralCharacter>();
             resetPlayer.TargetResetStatus(player.connectionToClient);
-            // 準備状態をリセット
-            resetPlayer.parameter.isReady = false;
             // 万が一の死亡状態解除
             resetPlayer.ResetHealth();
             // 追加 マツオ : 武器リセット用
