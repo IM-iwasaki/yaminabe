@@ -13,7 +13,7 @@ public class Passive_Bomberman : PassiveBase {
         if (!isPassiveActive){
             isPassiveActive = true;
             //クールタイム計測をリセット
-            coolTime = 10;
+            coolTime = 15;
         }
     }
 
