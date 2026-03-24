@@ -16,7 +16,7 @@ MonoBehaviour:
   weaponID: 500
   type: 5
   damage: 40
-  cooldown: 1
+  cooldown: 1.5
   appearanceID: 13
   muzzleFlashType: 0
   hitEffectType: 5
@@ -26,7 +26,7 @@ MonoBehaviour:
   bombPrefab: {fileID: 3758307679959063053, guid: eed1bc344fcf072429806915e6d2b0a6, type: 3}
   explodeTime: 2
   throwForce: 20
-  damageSelf: 0
+  damageSelf: 1
   damageAlly: 0
   chainReaction: 1
   explosionType: 1
