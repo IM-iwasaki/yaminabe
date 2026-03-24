@@ -26,12 +26,12 @@ MonoBehaviour:
     rarity: 3
     rate: 1
   commonItems:
-  - characterName: Chicken
+  - characterName: SprintChicken
     itemName: Default
     rarity: 0
     rate: 10
     resultPrefab: {fileID: 3548868566056176881, guid: 98d6a2fbec6271046aea2df749876bb7, type: 3}
-  - characterName: Bob
+  - characterName: DoubleSpellTakahashi
     itemName: Default
     rarity: 0
     rate: 10
@@ -41,33 +41,33 @@ MonoBehaviour:
     rarity: 0
     rate: 10
     resultPrefab: {fileID: 909545961731707779, guid: 12e30b5d4edd24c4fb1a6680ad1a7c21, type: 3}
-  - characterName: Yasuke
+  - characterName: LastSamuraiYasuke
     itemName: Default
     rarity: 0
     rate: 10
     resultPrefab: {fileID: 359554459282209763, guid: 05cfe51bc12d4f3479a6084c8ffd3287, type: 3}
-  - characterName: Jon
+  - characterName: PaytoWinJon
     itemName: Default
     rarity: 0
     rate: 10
     resultPrefab: {fileID: 79219089695756003, guid: 305fedcca4257d54195c4b1ef41babcf, type: 3}
-  - characterName: Bomberman
+  - characterName: CountdownYamada
     itemName: Default
     rarity: 0
     rate: 10
     resultPrefab: {fileID: 6067343141195501496, guid: bfa86db3f8ed33249ab7a9f8f240761d, type: 3}
-  - characterName: Magnum
+  - characterName: SafeModeSuzuki
     itemName: Default
     rarity: 0
     rate: 10
     resultPrefab: {fileID: 5824428352053320391, guid: cd9445ba50f7bb64b9b1df9178fd42e4, type: 3}
-  - characterName: Hacker
+  - characterName: ControlFlipTanaka
     itemName: Default
     rarity: 0
     rate: 10
     resultPrefab: {fileID: 7345634737031458466, guid: 199774cc427245c468b11dca49619c88, type: 3}
   rareItems:
-  - characterName: Alien
+  - characterName: FlyingAlien
     itemName: Another
     rarity: 1
     rate: 10
@@ -77,29 +77,29 @@ MonoBehaviour:
     rarity: 1
     rate: 10
     resultPrefab: {fileID: 909545961731707779, guid: 8701c3395e407eb4f93b84f0114d2b7c, type: 3}
-  - characterName: Bob
+  - characterName: DoubleSpellTakahashi
     itemName: Another
     rarity: 1
     rate: 10
     resultPrefab: {fileID: 1338158378579552491, guid: 864a22dd80969c24f8eb0238852bb64c, type: 3}
   epicItems:
-  - characterName: Chicken
+  - characterName: SprintChicken
     itemName: Crazy
     rarity: 2
     rate: 10
     resultPrefab: {fileID: 3548868566056176881, guid: 80df7670b3ce0484e934d23878f7de37, type: 3}
-  - characterName: Yasuke
+  - characterName: LastSamuraiYasuke
     itemName: Another
     rarity: 2
     rate: 10
     resultPrefab: {fileID: 359554459282209763, guid: 152c75bc37b1f924ab1fcd00e8cdbb56, type: 3}
   legendaryItems:
-  - characterName: Chicken
+  - characterName: SprintChicken
     itemName: Gold
     rarity: 3
     rate: 10
     resultPrefab: {fileID: 3548868566056176881, guid: 15fa7e1f49cf3284ba1465b20791ea8b, type: 3}
-  - characterName: Alien
+  - characterName: FlyingAlien
     itemName: Gold
     rarity: 3
     rate: 10

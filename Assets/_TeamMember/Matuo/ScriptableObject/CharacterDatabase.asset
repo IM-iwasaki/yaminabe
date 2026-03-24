@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CharacterDatabase
   m_EditorClassIdentifier: 
   characters:
-  - characterName: Alien
+  - characterName: FlyingAlien
     statusData: {fileID: 11400000, guid: 2df71940b09f4534ebc63c99a488e652, type: 2}
     skins:
     - skinName: Default
@@ -22,7 +22,7 @@ MonoBehaviour:
       skinPrefab: {fileID: 3108797039877070855, guid: 9147bb052d83cb748a579c1a6451d39e, type: 3}
     - skinName: Gold
       skinPrefab: {fileID: 3108797039877070855, guid: ea8ee7ded32385c48a0ec769b5ee454f, type: 3}
-  - characterName: Chicken
+  - characterName: SprintChicken
     statusData: {fileID: 11400000, guid: 858d6782e6c183046af5d743d9d5b7e1, type: 2}
     skins:
     - skinName: Default
@@ -31,7 +31,7 @@ MonoBehaviour:
       skinPrefab: {fileID: 3548868566056176881, guid: 80df7670b3ce0484e934d23878f7de37, type: 3}
     - skinName: Gold
       skinPrefab: {fileID: 3548868566056176881, guid: 15fa7e1f49cf3284ba1465b20791ea8b, type: 3}
-  - characterName: Bob
+  - characterName: DoubleSpellTakahashi
     statusData: {fileID: 11400000, guid: 2b2b23650934ee54687ca8d729b424b1, type: 2}
     skins:
     - skinName: Default
@@ -45,29 +45,29 @@ MonoBehaviour:
       skinPrefab: {fileID: 909545961731707779, guid: 12e30b5d4edd24c4fb1a6680ad1a7c21, type: 3}
     - skinName: Ice
       skinPrefab: {fileID: 909545961731707779, guid: 8701c3395e407eb4f93b84f0114d2b7c, type: 3}
-  - characterName: Yasuke
+  - characterName: LastSamuraiYasuke
     statusData: {fileID: 11400000, guid: a01b9869b8d65cc41bdd356a0150f393, type: 2}
     skins:
     - skinName: Default
       skinPrefab: {fileID: 359554459282209763, guid: 05cfe51bc12d4f3479a6084c8ffd3287, type: 3}
     - skinName: Another
       skinPrefab: {fileID: 359554459282209763, guid: 152c75bc37b1f924ab1fcd00e8cdbb56, type: 3}
-  - characterName: Jon
+  - characterName: PaytoWinJon
     statusData: {fileID: 11400000, guid: e8029cf1f714a914081addd77d517e77, type: 2}
     skins:
     - skinName: Default
       skinPrefab: {fileID: 79219089695756003, guid: 305fedcca4257d54195c4b1ef41babcf, type: 3}
-  - characterName: Bomberman
+  - characterName: CountdownYamada
     statusData: {fileID: 11400000, guid: 12335e2374651bd4aa79891f1c2abe92, type: 2}
     skins:
     - skinName: Default
       skinPrefab: {fileID: 6067343141195501496, guid: bfa86db3f8ed33249ab7a9f8f240761d, type: 3}
-  - characterName: Magnum
+  - characterName: SafeModeSuzuki
     statusData: {fileID: 11400000, guid: 3742ed35f3948c94cac901cfaf11a085, type: 2}
     skins:
     - skinName: Default
       skinPrefab: {fileID: 5824428352053320391, guid: cd9445ba50f7bb64b9b1df9178fd42e4, type: 3}
-  - characterName: Hacker
+  - characterName: ControlFlipTanaka
     statusData: {fileID: 11400000, guid: 3277a6993008c9749ac21f8b64b2453e, type: 2}
     skins:
     - skinName: Default
