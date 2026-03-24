@@ -34,8 +34,8 @@ public class Passive_Magnum : PassiveBase {
 
         //発動中にHPが条件を満たしたら発動。
         if (isPassiveActive && user.parameter.HP <= user.parameter.maxHP / 2 ) {
-
-            user.MoveSpeedBuff(2.0f,2.0f);
+            //user.MoveSpeedBuff(2.0f,2.0f);
+            user.CmdUseSkill_MoveSpeed(2.0f,2.0f);
             // 無敵状態を開始（2秒間）
             user.CmdInvincibleRequast(user,2.0f);
             //発動状態を解除
