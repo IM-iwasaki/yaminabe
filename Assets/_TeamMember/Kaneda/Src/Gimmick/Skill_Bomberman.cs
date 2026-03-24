@@ -33,7 +33,7 @@ public class Skill_Bomberman : SkillBase {
     private IEnumerator ExtraAttackRoutine(CharacterBase user, float delay, int repeatCount, Vector3 dir) {
         for (int i = 0; i < repeatCount; i++) {
 
-            float angle = Random.Range(-45f, 45f);
+            float angle = Random.Range(-30f, 30f);
             Vector3 randomDir = Quaternion.Euler(0f, angle, 0f) * dir;
 
             yield return new WaitForSeconds(delay);
