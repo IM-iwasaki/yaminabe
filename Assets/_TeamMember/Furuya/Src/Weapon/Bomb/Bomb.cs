@@ -125,6 +125,7 @@ public class Bomb : NetworkBehaviour {
                 var dirs = GetDirs();
                 activeExplosionLines = dirs.Length;
 
+                ExplodeCenter();
                 foreach (var dir in dirs)
                     StartCoroutine(ExplodeLine(dir));
                 break;
@@ -184,7 +185,7 @@ public class Bomb : NetworkBehaviour {
 
             RpcPlayExplosionEffect(pos);
 
-            var hits = Physics.OverlapSphere(pos, 2.0f);
+            var hits = Physics.OverlapSphere(pos, 3.0f);
 
             foreach (var c in hits) {
                 ApplyDamage(c, pos);
@@ -212,7 +213,10 @@ public class Bomb : NetworkBehaviour {
         Vector3 targetPos = target.transform.position;
         if (Physics.Linecast(origin, targetPos, data.wallLayer)) return;
 
-        if (!data.damageSelf && target.gameObject == owner) return;
+        if (data.damageSelf && target.gameObject == owner) {
+            target.TakeDamage(data.damage / 2, ownerName, ownerID);
+            return;
+        }
         if (!data.damageAlly && IsAlly(target)) return;
 
         target.TakeDamage(data.damage, ownerName, ownerID);
