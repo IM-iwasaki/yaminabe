@@ -741,6 +741,17 @@ public abstract class CharacterBase : CreatureBase {
         if (!isLocalPlayer || SceneManager.GetActiveScene().name == "GameScene")
             return;
 
+        // ガチャ中チェック
+        var gacha = FindObjectOfType<GachaSystem>();
+        if (gacha != null && gacha.IsGachaActive())
+            return;
+
+        // キャラ選択中チェック
+        var select = FindObjectOfType<CharacterSelectManager>();
+        if (select != null && select.IsCharacterSelectActive())
+            return;
+
+
         if (context.started) {
             CmdChangePlayerReady();
         }
