@@ -25,11 +25,6 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
-        if (TitleManager.instance.isHost) {
-            HostUI.isVisibleUI = false;
-            HostUI.ShowOrHideUI();
-        }
-
         //メッセージ送信クラスにゲーム状態を更新させる
         FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
 
@@ -41,6 +36,11 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 ChatManager.Instance.CmdSendSystemMessage("Not found player Info");
                 return;
             }
+
+            if (player.isServer) {
+                HostUI.ShowOrHideUI();
+            }
+
             //準備未完了なら
             if (!readyPlayer.parameter.isReady) {
                 ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is not ready");
