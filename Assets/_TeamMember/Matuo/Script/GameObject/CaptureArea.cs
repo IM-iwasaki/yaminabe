@@ -102,4 +102,18 @@ public class CaptureArea : NetworkBehaviour {
 
         return firstTeam ?? -1;
     }
+
+    /// <summary>
+    /// 指定チームがエリア内にいるか（延長判定用）
+    /// </summary>
+    public bool IsTeamInArea(int teamId) {
+        foreach (var p in playersInArea) {
+            if (p == null || p.parameter == null || p.parameter.isDead)
+                continue;
+
+            if (p.parameter.TeamID == teamId)
+                return true;
+        }
+        return false;
+    }
 }
