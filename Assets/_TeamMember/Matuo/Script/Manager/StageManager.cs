@@ -13,6 +13,7 @@ public class StageManager : NetworkSystemObject<StageManager> {
     [Header("PvEステージ一覧")]
     public List<PVEStageData> pveStages = new();
 
+    public StageData currentStageData;
     public CaptureHoko currentHoko;
 
     private GameObject currentStageInstance;
@@ -51,6 +52,8 @@ public class StageManager : NetworkSystemObject<StageManager> {
         // 既存ステージを削除
         if (currentStageInstance != null)
             NetworkServer.Destroy(currentStageInstance);
+
+        currentStageData = stageData;
 
         // ステージ生成
         currentStageInstance = Instantiate(stageData.stagePrefab);

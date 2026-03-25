@@ -40,6 +40,8 @@ public class CaptureHoko : NetworkBehaviour {
     private float dropTimer = 0f;
     private bool isDropped = false;
 
+    private StageData Stage => StageManager.Instance.currentStageData;
+
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
@@ -241,9 +243,14 @@ public class CaptureHoko : NetworkBehaviour {
     /// </summary>
     [Server]
     private float GetScoreMultiplier(CharacterBase player) {
-        TeamData.TeamColor myTeam = player.parameter.TeamID == 0 ? TeamData.TeamColor.Red : TeamData.TeamColor.Blue;
 
-        TeamData.TeamColor enemyTeam = myTeam == TeamData.TeamColor.Red ? TeamData.TeamColor.Blue : TeamData.TeamColor.Red;
+        TeamData.TeamColor myTeam = player.parameter.TeamID == 0
+            ? TeamData.TeamColor.Red
+            : TeamData.TeamColor.Blue;
+
+        TeamData.TeamColor enemyTeam = myTeam == TeamData.TeamColor.Red
+            ? TeamData.TeamColor.Blue
+            : TeamData.TeamColor.Red;
 
         var enemySpawns = StageManager.Instance.GetTeamSpawnPoints(enemyTeam);
 
@@ -256,8 +263,9 @@ public class CaptureHoko : NetworkBehaviour {
             if (d < enemyDist) enemyDist = d;
         }
 
-        // “Gw‚É‹ß‚¢‚Æ”{—¦ƒAƒbƒv
-        if (enemyDist < fastDistance)
+        float fastDist = Stage.hokoFastDistance;
+
+        if (enemyDist < fastDist)
             return fastMultiplier;
 
         return 1f;
@@ -269,6 +277,8 @@ public class CaptureHoko : NetworkBehaviour {
     [Server]
     private bool IsNearOwnSpawn(CharacterBase player) {
 
+        float blockDistance = Stage.hokoSpawnBlockDistance;
+
         var spawnPoints = StageManager.Instance.GetTeamSpawnPoints(
             player.parameter.TeamID == 0 ? TeamData.TeamColor.Red : TeamData.TeamColor.Blue
         );
@@ -278,7 +288,7 @@ public class CaptureHoko : NetworkBehaviour {
 
             float dist = Vector3.Distance(transform.position, sp.position);
 
-            if (dist < spawnBlockDistance) {
+            if (dist < blockDistance) {
                 return true;
             }
         }
