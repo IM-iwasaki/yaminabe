@@ -681,7 +681,7 @@ public abstract class CharacterBase : CreatureBase {
     }
 
     /// <summary>
-    /// 
+    /// 無敵状態へ移行する要求
     /// </summary>
     /// <param name="user"></param>
     /// <param name="_effectTime"></param>

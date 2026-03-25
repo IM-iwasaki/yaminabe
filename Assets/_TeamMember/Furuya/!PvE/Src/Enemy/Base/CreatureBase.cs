@@ -25,6 +25,8 @@ public class CreatureBase : NetworkBehaviour
         if (damage <= 0) damage = 1;
         //HP‚ÌŒ¸ŽZˆ—
         parameter.HP -= (int) damage;
+        //’Ç‰ÁFƒLƒ‰@UŒ‚‚ðŽó‚¯‚½uŠÔ‚Ìƒtƒ‰ƒO‚ð—§‚Ä‚é
+        parameter.hitDamage = true;
 
         // hitSE Ä¶
         PlayHitSE(_ID);

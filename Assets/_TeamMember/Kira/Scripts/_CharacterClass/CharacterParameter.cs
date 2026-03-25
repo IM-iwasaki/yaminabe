@@ -88,7 +88,9 @@ public class CharacterParameter : NetworkBehaviour {
     public bool attackTrigger;
     //攻撃開始時間
     public float attackStartTime { get; private set; } = 0.0f;
-
+    //攻撃を受けた瞬間か
+    [SyncVar]public bool hitDamage = false;
+    //移動可能か
     public bool canMove = true;
     //スキル使用後経過時間
     [System.NonSerialized][SyncVar] public float skillAfterTime = 0.0f;
