@@ -13,12 +13,12 @@ public class CaptureArea : NetworkBehaviour {
     public Collider areaCollider;
 
     public HashSet<CharacterBase> playersInArea { get; private set; } = new();// エリア内プレイヤー
-    private float timer = 0f;
+    private float scoreTimer = 0f;
 
     private void Awake() {
         if (areaCollider == null)
             areaCollider = GetComponent<Collider>();
-
+        
         areaCollider.isTrigger = true;
     }
 
@@ -66,14 +66,20 @@ public class CaptureArea : NetworkBehaviour {
 
         // 両チームいるなら止める
         if (multipleTeams || firstTeam == null) {
-            timer = 0f;
+            scoreTimer = 0f;
             return;
         }
 
-        // 単独チームのみ加算
-        timer += Time.deltaTime;
-        if (timer >= 1f) {
-            timer = 0f;
+        // 同じチーム人数
+        int count = playersInArea.Count;
+
+        // 倍率
+        float multiplier = Mathf.Pow(1.5f, count - 1);
+
+        scoreTimer += Time.deltaTime * multiplier;
+
+        while (scoreTimer >= 1f) {
+            scoreTimer -= 1f;
             RuleManager.Instance.OnCaptureProgress(firstTeam.Value, scorePerSecond);
         }
     }
