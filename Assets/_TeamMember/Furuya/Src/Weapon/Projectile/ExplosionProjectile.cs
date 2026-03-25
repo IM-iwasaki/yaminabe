@@ -59,6 +59,7 @@ public class ExplosionProjectile : NetworkBehaviour {
 
         if (other.TryGetComponent<MagicHitbox>(out _)) return;
         if (other.TryGetComponent<ProjectileHitbox>(out _)) return;
+        if (other.TryGetComponent<Shield>(out _)) return;
 
         Explode();
     }

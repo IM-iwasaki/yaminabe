@@ -371,11 +371,14 @@ public class MainWeaponController : NetworkBehaviour {
 
         if (proj == null) return;
 
+        int teamID = characterBase?.parameter.TeamID ?? 0;
+
         if (proj.TryGetComponent(out Projectile projScript)) {
             projScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
                 characterBase.parameter.playerId,
+                teamID,
                 gunData.hitEffectType,
                 gunData.projectileSpeed,
                 gunData.damage
