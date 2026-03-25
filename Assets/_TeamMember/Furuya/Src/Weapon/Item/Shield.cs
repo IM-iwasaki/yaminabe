@@ -8,7 +8,7 @@ using UnityEngine;
 using static ShieldData;
 
 public class Shield : NetworkBehaviour {
-    [SyncVar] private int ownerTeamID;
+    [SyncVar] public int ownerTeamID;
     private int ID;
 
     [Server]
@@ -20,6 +20,7 @@ public class Shield : NetworkBehaviour {
 
     [Server]
     void OnTriggerEnter(Collider other) {
+        if (!isServer) return;
         // プレイヤー・敵は無視
         if (other.TryGetComponent<CreatureBase>(out _))
             return;
