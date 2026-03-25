@@ -278,22 +278,19 @@ public class SubWeaponController : NetworkBehaviour {
     private void SpawnShieldBarricade(ShieldData data) {
         if (data.barricadePrefab == null) return;
 
-        Vector3 spawnPos =
-            transform.position +
-            transform.forward * data.distanceFromPlayer;
-
         Quaternion rot = Quaternion.LookRotation(transform.forward);
 
-        GameObject obj = Instantiate(
-            data.barricadePrefab,
-            spawnPos,
-            rot
+        GameObject ShieldObject = ProjectilePool.Instance.SpawnFromPool(
+            data.barricadePrefab.name,
+            transform.position,
+            Quaternion.identity
         );
 
-        NetworkServer.Spawn(obj);
+        int teamID = characterBase?.parameter.TeamID ?? 0;
 
-        // àÍíËéûä‘å„Ç…è¡Ç∑
-        StartCoroutine(DestroyAfterTime(obj, data.duration));
+        if (ShieldObject.TryGetComponent(out Shield shield)) {
+            shield.Init(teamID, data.duration);
+        }
     }
 
     /// <summary>

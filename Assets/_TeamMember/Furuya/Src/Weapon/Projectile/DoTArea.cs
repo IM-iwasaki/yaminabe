@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 
 public class DoTArea : NetworkBehaviour {
-    [SyncVar] private int ownerTeamID;
+    [SyncVar] public int ownerTeamID;
     private int ID;
     private string ownerName;
     private EffectType hitEffectType;
@@ -125,7 +125,7 @@ public class DoTArea : NetworkBehaviour {
     /// 非アクティブ化
     /// </summary>
     [Server]
-    private void Deactivate() {
+    public void Deactivate() {
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         initialized = false;

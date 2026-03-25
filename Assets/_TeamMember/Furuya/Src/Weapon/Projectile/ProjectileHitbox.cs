@@ -18,7 +18,7 @@ public class ProjectileHitbox : MonoBehaviour
         if (other.TryGetComponent<DoTArea>(out _))
             return;
 
-        if (other.gameObject.tag == "Magic")
+        if (other.gameObject.tag == "Magic" || other.gameObject.tag == "Shield")
             return;
 
         if (other.TryGetComponent<ExplosionProjectile>(out _))
