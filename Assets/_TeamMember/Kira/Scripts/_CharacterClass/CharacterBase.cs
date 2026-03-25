@@ -705,7 +705,7 @@ public abstract class CharacterBase : CreatureBase {
         if (context.started) {
             if (CameraMenu.isOpen)
                 CameraMenu.ToggleMenu();
-            HostUI.ShowOrHideUI();
+            HostUI.ToggleHostUI();
         }
     }
 
@@ -714,7 +714,7 @@ public abstract class CharacterBase : CreatureBase {
             return;
         if (context.started) {
             if (HostUI.isVisibleUI) {
-                HostUI.ShowOrHideUI();
+                HostUI.ToggleHostUI();
             }
 
             CameraMenu.ToggleMenu();

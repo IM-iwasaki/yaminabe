@@ -36,17 +36,18 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 ChatManager.Instance.CmdSendSystemMessage("Not found player Info");
                 return;
             }
-
-            if (player.isServer) {
-                HostUI.ShowOrHideUI();
-            }
-
             //準備未完了なら
             if (!readyPlayer.parameter.isReady) {
                 ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is not ready");
                 return;
             }
         }
+
+        //全員が準備完了なのでUIを消す
+        if (TitleManager.instance.isHost && HostUI.isVisibleUI) {
+            HostUI.ToggleHostUI();
+        }
+
         //チーム決め
         ServerManager.instance.RandomTeamDecide();
         //フェードアウト
