@@ -8,9 +8,10 @@ public class Projectile : NetworkBehaviour {
     private float speed;
 
     private Rigidbody rb;
-    private GameObject owner;
-    private string ownerName;
-    private int ID;
+    public GameObject owner;
+    public string ownerName;
+    public int ID;
+    public int teamID;
     private EffectType hitEffectType;
     private bool initialized;
     public float lifetime = 5f;
@@ -19,10 +20,11 @@ public class Projectile : NetworkBehaviour {
         rb = GetComponent<Rigidbody>();
     }
 
-    public void Init(GameObject shooter, string _name, int _ID, EffectType hitEffect, float _speed, int _damage) {
+    public void Init(GameObject shooter, string _name, int _ID,int _teamID, EffectType hitEffect, float _speed, int _damage) {
         owner = shooter;
         ownerName = _name;
         ID = _ID;
+        teamID = _teamID;
         hitEffectType = hitEffect;
         speed = _speed;
         damage = _damage;

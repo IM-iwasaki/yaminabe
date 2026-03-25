@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   subWeaponName: LandMine
   type: 1
-  weaponID: 104
+  weaponID: 110
   damage: 250
   throwForce: 10
-  maxUses: 3
+  maxUses: 5
   rechargeTime: 5
   startFull: 1
   ObjectPrefab: {fileID: 8826065376023065134, guid: c34c1e93a4dd83041a561226f48b238a, type: 3}
@@ -29,4 +29,4 @@ MonoBehaviour:
   activationOnce: 1
   activationEffect: 5
   explosionRadius: 3
-  canDamageAllies: 1
+  canDamageAllies: 0

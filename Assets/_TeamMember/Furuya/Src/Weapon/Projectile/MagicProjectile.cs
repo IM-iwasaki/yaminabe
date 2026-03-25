@@ -16,6 +16,7 @@ public class MagicProjectile : NetworkBehaviour {
     private GameObject owner;
     private string ownerName;
     private int ID;
+    public int teamID;
     private EffectType hitEffectType;
     private bool initialized;
     [SerializeField]private float lifetime = 5f;
@@ -23,10 +24,11 @@ public class MagicProjectile : NetworkBehaviour {
     /// <summary>
     /// 弾の初期化（発射時に呼ぶ）
     /// </summary>
-    public void Init(GameObject shooter, string _name, int _ID, ProjectileType _type, EffectType hitEffect, float _speed, float _initialHeightSpeed, int _damage, Vector3 direction) {
+    public void Init(GameObject shooter, string _name, int _ID, int _teamID, ProjectileType _type, EffectType hitEffect, float _speed, float _initialHeightSpeed, int _damage, Vector3 direction) {
         owner = shooter;
         ownerName = _name;
         ID = _ID;
+        teamID = _teamID;
         type = _type;
         hitEffectType = hitEffect;
         speed = _speed;
@@ -133,7 +135,7 @@ public class MagicProjectile : NetworkBehaviour {
     /// 非アクティブ化
     /// </summary>
     [Server]
-    private void Deactivate() {
+    public void Deactivate() {
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         initialized = false;

@@ -5,4 +5,6 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObject/SubWeapons/MagicData")]
 public class SubMagicData : SubWeaponData {
+    [Header("Settings")]
+    public float duration;
 }

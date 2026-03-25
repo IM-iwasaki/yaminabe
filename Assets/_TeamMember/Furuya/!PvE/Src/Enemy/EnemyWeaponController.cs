@@ -129,6 +129,7 @@ public class EnemyWeaponController : NetworkBehaviour {
                 gameObject,
                 "Boss",
                 -1,
+                -1,
                 magic.magicType,
                 magic.hitEffectType,
                 magic.projectileSpeed,

@@ -4,6 +4,7 @@ using System.Collections;
 using static UnityEngine.UI.GridLayoutGroup;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// メイン武器コントローラー
@@ -371,11 +372,14 @@ public class MainWeaponController : NetworkBehaviour {
 
         if (proj == null) return;
 
+        int teamID = characterBase?.parameter.TeamID ?? 0;
+
         if (proj.TryGetComponent(out Projectile projScript)) {
             projScript.Init(
                 gameObject,
                 characterBase.parameter.PlayerName,
                 characterBase.parameter.playerId,
+                teamID,
                 gunData.hitEffectType,
                 gunData.projectileSpeed,
                 gunData.damage
@@ -417,6 +421,8 @@ public class MainWeaponController : NetworkBehaviour {
 
         GameObject proj;
 
+        int teamID = characterBase?.parameter.TeamID ?? 0;
+
         if (magicData.magicType == ProjectileType.DoT) {
             Vector3 spawnPos = transform.position;
             Quaternion rot = Quaternion.identity;
@@ -448,6 +454,7 @@ public class MainWeaponController : NetworkBehaviour {
                 gameObject,
                 characterBase.parameter.PlayerName,
                 characterBase.parameter.playerId,
+                teamID,
                 magicData.magicType,
                 magicData.hitEffectType,
                 magicData.projectileSpeed,
@@ -457,7 +464,6 @@ public class MainWeaponController : NetworkBehaviour {
             );
         }
         else if (proj.TryGetComponent(out DoTArea dotArea)) {
-            int teamID = characterBase?.parameter.TeamID ?? 0;
             dotArea.Init(
                 teamID,
                 characterBase.parameter.PlayerName,
