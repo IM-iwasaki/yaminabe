@@ -18,7 +18,7 @@ MonoBehaviour:
   damage: 0
   throwForce: 10
   maxUses: 3
-  rechargeTime: 15
+  rechargeTime: 3
   startFull: 1
   ObjectPrefab: {fileID: 0}
   projectileSpeed: 0
@@ -26,4 +26,3 @@ MonoBehaviour:
   itemType: 1
   barricadePrefab: {fileID: 6089396137872044431, guid: 5531fba1e1f8970438891189d50e0a51, type: 3}
   duration: 5
-  reaction: 0
