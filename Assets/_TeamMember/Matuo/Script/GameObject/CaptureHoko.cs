@@ -24,8 +24,6 @@ public class CaptureHoko : NetworkBehaviour {
     private bool isActive = true;
 
     [Header("スコア距離設定")]
-    public float spawnBlockDistance = 40f; // この距離以内ならカウント停止
-    public float fastDistance = 30f;         // 敵陣に近いと高速
     public float fastMultiplier = 1.5f;
 
     [Header("UI")]
@@ -285,7 +283,7 @@ public class CaptureHoko : NetworkBehaviour {
 
         foreach (var sp in spawnPoints) {
             if (sp == null) continue;
-
+            
             float dist = Vector3.Distance(transform.position, sp.position);
 
             if (dist < blockDistance) {
