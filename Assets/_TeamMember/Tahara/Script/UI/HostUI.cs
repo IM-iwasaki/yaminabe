@@ -109,7 +109,7 @@ public class HostUI : NetworkBehaviour {
     /// ホストのUIの表示非表示を担当true->見える、false->見えない
     /// </summary>
     /// <param name="_isVisibleFlag"></param>
-    public static void ShowOrHideUI() {
+    public static void ToggleHostUI() {
         // HostUI を探す
         HostUI hostUI = FindObjectOfType<HostUI>();
         if (hostUI == null) return;
