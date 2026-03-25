@@ -26,7 +26,7 @@ public class TeleportPoint : MonoBehaviour {
     [Header("ペア指定時のTP先（ランダム時はnull）")]
     public TeleportPoint linkedPoint = null;       // ペア先
     [Header("TPポイント全体のタグ名（ランダムTPで使用）")]
-    public string tpTag = "Teleport";              // 全TP共通タグ
+    public string tpTag = "TeleportPoint";              // 全TP共通タグ
     [Header("TPできるまでクールタイム（秒）")]
     public float cooldown = 2f;                    // 全TP共通のクールタイム
     [Header("TP前滞在時間（秒）")]
