@@ -48,6 +48,8 @@ public class LoadingUI : MonoBehaviour {
     }
 
     public void ShowLoading(GameRuleType _rule = GameRuleType.Hoko) {
+        if (tipsCategory == null || tipsText == null || ruleDiscription == null)
+            return;
         UpdateTips(_rule);
         isLoading = true;
         gameObject.SetActive(true);
