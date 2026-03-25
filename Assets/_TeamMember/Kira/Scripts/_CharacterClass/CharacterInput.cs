@@ -77,7 +77,6 @@ public class CharacterInput : NetworkBehaviour {
         SkillTriggered = false;
         InteractTriggered = false;
         isJumpPressed = false;
-        core.parameter.hitDamage = false;
 
         if (core != null) core.parameter.attackTrigger = false;
     }
