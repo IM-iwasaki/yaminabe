@@ -328,15 +328,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             var area = FindObjectOfType<CaptureArea>();
             if (area == null) return false;
 
-            // エリア内にいるプレイヤーを確認
-            foreach (var player in area.playersInArea) {
-                if (player.parameter.TeamID == teamId) {
-                    // 負けチームのプレイヤーが1人でもいれば延長
-                    return true;
-                }
-            }
-
-            return false;
+            return area.IsTeamInArea(teamId);
         }
 
         // Hokoルールの場合
