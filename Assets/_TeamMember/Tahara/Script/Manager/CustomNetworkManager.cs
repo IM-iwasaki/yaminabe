@@ -202,15 +202,15 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="sceneOperation"></param>
     /// <param name="customHandling"></param>
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
-        //base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+        base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
         FadeManager.Instance.StartFadeIn(0.5f);
+        LoadingUI.instance.ShowLoading(RuleManager.Instance.currentRule);
         if (GameSceneManager.Instance)
             GameSceneManager.Instance.ResetIsChangedScene();
     }
 
     public override void OnClientSceneChanged() {
         base.OnClientSceneChanged();
-        LoadingUI.instance.ShowLoading(RuleManager.Instance.currentRule);
 
         // ÉçÅ[ÉhäÆóπå„Ç… UI Çè¡Ç∑
         StartCoroutine(LoadingUI.instance.HideLoading());
