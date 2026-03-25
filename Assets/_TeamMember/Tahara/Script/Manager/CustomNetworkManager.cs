@@ -11,6 +11,10 @@ public class CustomNetworkManager : NetworkManager {
     [SerializeField]
     private HostUI hostUI = null;
     /// <summary>
+    /// タイトルからロビーに行ったか
+    /// </summary>
+    private bool titleToLobby = true;
+    /// <summary>
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
     public override void Start() {
@@ -67,7 +71,7 @@ public class CustomNetworkManager : NetworkManager {
             hostUI = host;
             hostUI.Init();
         }
-        
+
     }
 
     /// <summary>
@@ -95,9 +99,11 @@ public class CustomNetworkManager : NetworkManager {
         var characterData = FindAnyObjectByType<AppearanceChangeManager>().data.characters[0];
 
         player.GetComponent<GeneralCharacter>().parameter.StatusInport(characterData.statusData);
+        //プレイヤー追加処理
         NetworkServer.AddPlayerForConnection(_conn, player);
         if (!ServerManager.instance.connectPlayer.Contains(_conn.identity))
             ServerManager.instance.connectPlayer.Add(_conn.identity);
+        
         ChatManager.Instance.CmdSendSystemMessage(ServerManager.instance.connectPlayer.Count + "is Connected ");
         ServerManager.instance.ChangeTeammateMax();
     }
@@ -204,7 +210,14 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
         FadeManager.Instance.StartFadeIn(0.5f);
-        LoadingUI.instance.ShowLoading(RuleManager.Instance.currentRule);
+        //タイトルからロビーだとルール確定していないのでHokoでtipsを固定
+        if (titleToLobby) {
+            LoadingUI.instance.ShowLoading();
+            titleToLobby = false;
+        }
+            
+        else
+            LoadingUI.instance.ShowLoading(RuleManager.Instance.currentRule);
         if (GameSceneManager.Instance)
             GameSceneManager.Instance.ResetIsChangedScene();
     }
@@ -221,7 +234,7 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     public override void OnStopClient() {
         base.OnStopClient();
-
+        titleToLobby = true;
         FindObjectOfType<UDPListener>()?.StopReceiveIP();
         if (!Application.isBatchMode) {
             Cursor.lockState = CursorLockMode.None;
@@ -242,6 +255,7 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnApplicationQuit() {
         // サーバー or クライアントとして接続中なら安全に終了
         if (NetworkServer.active || NetworkClient.isConnected) {
+            titleToLobby = true;
             StopHost();
         }
     }
