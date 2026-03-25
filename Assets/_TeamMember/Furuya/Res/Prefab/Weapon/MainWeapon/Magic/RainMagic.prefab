@@ -28624,8 +28624,12 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  interval: 0.2
-  targetTag: Player
+  ownerTeamID: 0
+  lifetime: 5
+  interval: 0.15
+  targetTags:
+  - Player
+  - Enemy
 --- !u!114 &8888231653439800650
 MonoBehaviour:
   m_ObjectHideFlags: 0

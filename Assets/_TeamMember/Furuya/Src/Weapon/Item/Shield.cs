@@ -35,12 +35,12 @@ public class Shield : NetworkBehaviour {
         }
 
         // --- DoTÉGÉäÉA ---
-        if (other.TryGetComponent<DoTArea>(out var dot)) {
+        if (other.TryGetComponent<MagicProjectile>(out var Mproj)) {
             // ñ°ï˚ Å® í âﬂ
-            if (dot.ownerTeamID == ownerTeamID)
+            if (Mproj.teamID == ownerTeamID)
                 return;
 
-            dot.Deactivate();
+            Mproj.Deactivate();
             return;
         }
     }
