@@ -28,6 +28,10 @@ public abstract class PassiveBase : ScriptableObject {
     /// </summary>
     public virtual void PassiveSetting() { }
 
+    public virtual void RespawnPassiveSetting() { 
+        PassiveSetting();
+    }
+
     /// <summary>
     /// Abstruct : パッシブ固有の動作(引数はパッシブの発動者) 毎フレーム呼ばれます。
     /// </summary>
