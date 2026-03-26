@@ -19,6 +19,8 @@ public abstract class SkillBase : ScriptableObject {
     //スキルが発動中か
     [System.NonSerialized]public bool isSkillUse;
 
+    public virtual void SkillSetting() { }
+
     /// <summary>
     /// Abstruct : スキル固有の動作(引数はスキルの発動者。) 発火時1回のみ通過します。
     /// </summary>
