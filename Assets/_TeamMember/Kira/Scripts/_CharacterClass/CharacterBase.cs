@@ -659,17 +659,10 @@ public abstract class CharacterBase : CreatureBase {
 
             CharacterBase enemy = target.GetComponent<CharacterBase>();
             if (enemy == null) continue;
-
-            // 移動方向を逆転させる（4秒）
-            enemy.RpcMoveSpeedBuff(-1.0f, 4.0f);
-            // CTを約14%削る(0より低くはならない) 
-            enemy.parameter.skillAfterTime -= enemy.parameter.equippedSkills[0].cooldown / 7;
-            if (enemy.parameter.skillAfterTime < 0.0f) 
-                enemy.parameter.skillAfterTime = 0.0f;
-
+            enemy.RpcMoveSpeedBuff(0.0f, 1.5f);
 
             // 被ダメージ1.25倍（4秒）
-            //enemy.DamageCut(125, 4.0f);
+            enemy.DamageCut(125, 4.0f);
         }
     }
 
