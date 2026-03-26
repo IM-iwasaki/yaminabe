@@ -10,7 +10,7 @@ public class Passive_Hacker : PassiveBase {
         // ƒQ[ƒ€’†‚Å‚È‚¯‚ê‚Î‰½‚à‚µ‚È‚¢
         if (!GameManager.Instance.IsGameRunning()) return;
 
-
+        user.CmdHackingActivate();
 
     }
 }
