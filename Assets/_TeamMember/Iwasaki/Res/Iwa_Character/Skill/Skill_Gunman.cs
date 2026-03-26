@@ -12,6 +12,6 @@ public class Skill_Gunman : SkillBase {
 
     public override void Activate(CharacterBase user) {
         //‰ñ•œã¸ŠJn
-        user.CmdHealCharacter(0.4f, 3.0f);
+        user.CmdHealCharacter(0.4f, 3.0f, true);
     }
 }

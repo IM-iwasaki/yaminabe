@@ -33,7 +33,7 @@ public class Passive_Assault : PassiveBase {
 
         //”­“®’†‚ÉHP‚ªğŒ‚ğ–‚½‚µ‚½‚ç”­“®B
         if (isPassiveActive && user.parameter.HP <= user.parameter.maxHP / 2 ) {
-            user.CmdHealCharacter(0.5f,0.5f);
+            user.CmdHealCharacter(0.5f,0.5f, true);
             //”­“®ó‘Ô‚ğ‰ğœ
             isPassiveActive= false;
         }

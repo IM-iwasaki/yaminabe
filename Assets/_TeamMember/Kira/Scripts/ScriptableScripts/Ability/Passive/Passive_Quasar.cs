@@ -30,7 +30,7 @@ public class Passive_Quasar : PassiveBase {
         //UŒ‚’†‚Å‚àMP‚ª‰ñ•œ‚·‚éB‚»‚¤‚Å‚È‚¢‚Æ‚«AHP‚ª­‚µ‚¸‚Â‰ñ•œ‚·‚éB
         if (coolTime >= cooldown) {
             user.action.MPRegeneration(MPheal);
-            user.CmdHealCharacter(HPheal,0.025f); 
+            user.CmdHealCharacter(HPheal,0.025f, false); 
             coolTime = 0;
         }
 
