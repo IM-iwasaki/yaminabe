@@ -1039,6 +1039,17 @@ public abstract class CharacterBase : CreatureBase {
     #endregion
 
     #endregion
+
+    //ハッカー専用
+    [Command]
+    public void CmdWarp(Vector3 pos) {
+        RpcWarp(pos);
+    }
+
+    [ClientRpc]
+    void RpcWarp(Vector3 pos) {
+        transform.position = pos;
+    }
 }
 
 /// <summary>
