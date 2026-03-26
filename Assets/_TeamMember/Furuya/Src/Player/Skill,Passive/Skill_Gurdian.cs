@@ -19,7 +19,7 @@ public class Skill_Gurdian : SkillBase {
         //停止
         //user.parameter.moveSpeed = 0;
         //被ダメ大幅軽減
-        user.DamageCut(0.3f, 2.0f);
+        user.DamageCut(0.2f, 2.0f);
         //スキル使用後効果を予約
         user.StartCoroutine(SkillEndEffect(user));
     }
@@ -32,7 +32,7 @@ public class Skill_Gurdian : SkillBase {
         user.RemoveBuff();
         //損傷HPの50％回復。最大回復量は50。
         int recoveryHP = (user.parameter.maxHP - user.parameter.HP) / 2;
-        if (recoveryHP > 50) recoveryHP = 50;
+        //if (recoveryHP > 50) recoveryHP = 50;
         user.parameter.HP += recoveryHP;
         //フラグを下ろす
         isSkillUse = false;
