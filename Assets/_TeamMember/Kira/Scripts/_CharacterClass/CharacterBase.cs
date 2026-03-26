@@ -662,7 +662,7 @@ public abstract class CharacterBase : CreatureBase {
             enemy.RpcMoveSpeedBuff(0.0f, 1.5f);
 
             // 被ダメージ1.25倍（4秒）
-            enemy.DamageCut(125, 4.0f);
+            enemy.DamageCut(1.25f, 4.0f);
         }
     }
 
