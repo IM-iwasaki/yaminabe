@@ -824,19 +824,26 @@ public abstract class CharacterBase : CreatureBase {
 
     #region ～バフ・ステータス操作系～
 
+    /// <summary>
+    /// HPを回復する処理、どのくらい回復か、効果時間、エフェクト表示するか
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="time"></param>
+    /// <param name="viewEffect"></param>
     [Command]
-    public void CmdHealCharacter(float value, float time) {
-        Heal(value, time);
+    public void CmdHealCharacter(float value, float time, bool viewEffect) {
+        Heal(value, time, viewEffect);
     }
 
     /// <summary>
     /// HP回復(時間経過で徐々に回復)発動 [_valueは1.0fを100％とした相対値]
     /// </summary>
     [Server]
-    public void Heal(float _value, float _usingTime) {
+    public void Heal(float _value, float _usingTime, bool viewEffect) {
         if (healCoroutine != null) StopCoroutine(healCoroutine);
 
         //  エフェクト再生
+        if(viewEffect)
         PlayEffect(HEAL_BUFF_EFFECT);
 
         // 総回復量を maxHP の割合で計算（例：_value=0.2 → 20％回復）
@@ -920,7 +927,7 @@ public abstract class CharacterBase : CreatureBase {
                 MoveSpeedBuff(value, time);
                 break;
             case ConsumableType.Heal:
-                Heal(value, time);
+                Heal(value, time, true);
                 break;
         }
     }
