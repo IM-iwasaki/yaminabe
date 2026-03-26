@@ -13,6 +13,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
     [SyncVar]
     private bool isOvertime = false;    // 延長戦用
+    private int overtimeLosingTeam = -1;
 
     public Dictionary<GameRuleType, float> winScores = new() {
         { GameRuleType.Area, 100f },
@@ -78,8 +79,16 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
     /// </summary>
     [Server]
     private void StartOvertime() {
-        isOvertime = true;          // サーバー側で状態変更
-        RpcStartOvertime();         // 全クライアントに通知
+        isOvertime = true;
+
+        float red = teamScores.ContainsKey(0) ? teamScores[0] : 0f;
+        float blue = teamScores.ContainsKey(1) ? teamScores[1] : 0f;
+
+        if (red > blue) overtimeLosingTeam = 1;
+        else if (blue > red) overtimeLosingTeam = 0;
+        else overtimeLosingTeam = -1;
+
+        RpcStartOvertime();
     }
 
     /// <summary>
@@ -204,17 +213,13 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
         // 延長中の終了判定
         if (isOvertime) {
-            int losingTeam = -1;
-
-            if (red > blue) losingTeam = 1;
-            else if (blue > red) losingTeam = 0;
 
             // 同点ならまだ継続
-            if (losingTeam == -1)
+            if (overtimeLosingTeam == -1)
                 return;
 
-            // 負けチームが保持していない → 終了
-            if (!IsTeamControllingObject(losingTeam)) {
+            // 負けチームだけを見る
+            if (!IsTeamControllingObject(overtimeLosingTeam)) {
                 int winner = red > blue ? 0 : 1;
 
                 SendTeamResultToAll(winner);
@@ -316,8 +321,6 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
 
     /// <summary>
     /// 指定チームが現在オブジェクトに関与しているか判定
-    /// Area → 負けチームのプレイヤーが1人でもエリア内にいればOK
-    /// Hoko → ホコ保持していればOK
     /// </summary>
     private bool IsTeamControllingObject(int teamId) {
         if (teamId == -1)
