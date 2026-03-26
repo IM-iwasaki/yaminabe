@@ -26,6 +26,8 @@ public class Skill_Chaser : SkillBase {
         user.CmdSkillState(true);
         //時間リセット
         useTime = 0;
+        //  MPを全快させる
+        user.parameter.MP = user.parameter.maxMP;
     }
 
     public override void SkillEffectUpdate(CharacterBase user) {

@@ -23,14 +23,14 @@ public class Passive_Quasar : PassiveBase {
         //HP50“ˆÈã‚ÅMP‰ñ•œ—Êã¸
         if (user.parameter.HP >= user.parameter.maxHP / 2) MPheal *= 2;
         //HP‚ÌŠî‘b‰ñ•œ—Ê
-        float HPheal = 0.005f;
+        float HPheal = 0.0025f;
         //MP50“ˆÈã‚ÅHP‰ñ•œ—Êã¸
-        if (user.parameter.MP >= user.parameter.maxMP / 2) HPheal *= 2;
+        if (user.parameter.MP >= user.parameter.maxMP / 2) HPheal *= 1.5f;
 
         //UŒ‚’†‚Å‚àMP‚ª‰ñ•œ‚·‚éB‚»‚¤‚Å‚È‚¢‚Æ‚«AHP‚ª­‚µ‚¸‚Â‰ñ•œ‚·‚éB
         if (coolTime >= cooldown) {
             user.action.MPRegeneration(MPheal);
-            user.CmdHealCharacter(HPheal,0.01f); 
+            user.CmdHealCharacter(HPheal,0.025f); 
             coolTime = 0;
         }
 

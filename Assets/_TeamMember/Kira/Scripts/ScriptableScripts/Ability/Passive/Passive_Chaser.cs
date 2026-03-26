@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [CreateAssetMenu(menuName = "Character/Skill/Chaser_マジックチェイン")]
 public class Passive_Chaser : PassiveBase {
@@ -20,9 +21,17 @@ public class Passive_Chaser : PassiveBase {
     //パッシブ蓄積数の最大数
     private readonly int passiveMaxChains = 50;
 
+    private int currentChains = 0;
+
     public override void PassiveSetting() {
+        currentChains = passiveChains;
         passiveChains = 0;
         intervalTime = 0;
+    }
+
+    public override void RespawnPassiveSetting() {
+        base.RespawnPassiveSetting();
+        passiveChains = currentChains;
     }
 
     public override void PassiveReflection(CharacterBase user) {

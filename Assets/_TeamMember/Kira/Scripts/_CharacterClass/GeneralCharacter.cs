@@ -58,7 +58,7 @@ public class GeneralCharacter : CharacterBase {
         base.Respawn();
         if (!isLocalPlayer) return;
         //パッシブのセットアップ
-        parameter.equippedPassives[0].PassiveSetting();
+        parameter.equippedPassives[0].RespawnPassiveSetting();
     }
 
     // 追加 マツオ : クライアントステータスリセット用
