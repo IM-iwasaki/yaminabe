@@ -141,6 +141,8 @@ public class GameManager : NetworkSystemObject<GameManager> {
         currentPveStage = stage;
         isGameRunning = false;
 
+        ServerManager.instance.ResetCharacterStatusOnGameStart();
+
         // ステージ生成
         StageManager.Instance.SpawnPveStage(stage);
 
