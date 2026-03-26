@@ -49,8 +49,8 @@ MonoBehaviour:
   tpType: 0
   linkedPoint: {fileID: 0}
   tpTag: TeleportPoint
-  cooldown: 3
-  preDelay: 0.5
+  cooldown: 5
+  preDelay: 0.1
   postDelay: 0.5
 --- !u!65 &3882215846353778182
 BoxCollider:
