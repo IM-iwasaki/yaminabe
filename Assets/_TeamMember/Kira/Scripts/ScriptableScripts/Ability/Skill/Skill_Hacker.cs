@@ -9,9 +9,27 @@ using Mirror;
 [CreateAssetMenu(menuName = "Character/Skill/Hacker_ハッキング")]
 public class Skill_Hacker : SkillBase {
 
+    private bool hasSavedPosition = false;
+    private Vector3 savedPosition;
+
     public override void Activate(CharacterBase user) {
         if (!user.isLocalPlayer) return;
-        Debug.Log("スキル発火");
-        user.CmdHackingActivate();    
-    }    
+
+        if (!hasSavedPosition) {
+            //保存
+            savedPosition = user.transform.position;
+            hasSavedPosition = true;
+
+            Debug.Log("位置保存");
+        }
+        else {
+            //ワープ
+            user.CmdWarp(savedPosition);
+
+            //リセット
+            hasSavedPosition = false;
+
+            Debug.Log("ワープ＆リセット");
+        }
+    }
 }
