@@ -3,8 +3,11 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
 using Mirror;
+using UnityEngine.SceneManagement;
 
 public class OptionMenu : NetworkBehaviour {
+    private const string LOBBY_SCENE = "LobbyScene";
+
     [Header("ëŒè€ÇÃPlayerCamera")]
     public PlayerCamera playerCamera;
 
@@ -169,6 +172,26 @@ public class OptionMenu : NetworkBehaviour {
             ?.GetComponent<TextMeshProUGUI>();
 
         TitleButton?.onClick.AddListener(ReturnToTitle);
+    }
+
+    private void OnEnable() {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable() {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        UpdateTitleButtonVisibility();
+    }
+
+    private void UpdateTitleButtonVisibility() {
+        if (!isLocalPlayer) return;
+        if (TitleButton == null) return;
+
+        bool isLobby = SceneManager.GetActiveScene().name == LOBBY_SCENE;
+        TitleButton.gameObject.SetActive(isLobby);
     }
 
     /// <summary>
