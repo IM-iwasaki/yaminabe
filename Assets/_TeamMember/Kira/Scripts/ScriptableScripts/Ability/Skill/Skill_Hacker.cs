@@ -12,6 +12,10 @@ public class Skill_Hacker : SkillBase {
     private bool hasSavedPosition = false;
     private Vector3 savedPosition;
 
+    public override void SkillSetting() {
+        hasSavedPosition = false;
+    }
+
     public override void Activate(CharacterBase user) {
         if (!user.isLocalPlayer) return;
 
