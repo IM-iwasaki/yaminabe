@@ -17,8 +17,6 @@ public class ServerManager : NetworkBehaviour {
     public List<TeamData> teams = null;
 
     public int teammateMax { get; private set; } = 1;
-
-    [System.NonSerialized] public bool isRandom = false;
     private void Awake() {
         if (instance != null && instance != this) {
             Destroy(gameObject);
@@ -54,14 +52,12 @@ public class ServerManager : NetworkBehaviour {
     /// プレイヤーをランダムなチームに振り分ける
     /// </summary>
     /// <param name="_allRandomTeam"></param>
-    private void JoinRandomTeam(bool _allRandomTeam = false) {
+    private void JoinRandomTeam() {
         //チームに所属していない人を抜き出す
         List<NetworkIdentity> allPlayers = new List<NetworkIdentity>(connectPlayer);
-        //全員ランダムver
-        if (_allRandomTeam) {
-            foreach (var player in allPlayers)
-                player.GetComponent<GeneralCharacter>().parameter.TeamID = -1;
-        }
+
+        foreach (var player in allPlayers)
+            player.GetComponent<GeneralCharacter>().parameter.TeamID = -1;
 
         //未所属プレイヤーを抽出
         List<NetworkIdentity> noTeamPlayer = allPlayers.Where(p => p.GetComponent<GeneralCharacter>().parameter.TeamID == -1).ToList();
@@ -103,14 +99,7 @@ public class ServerManager : NetworkBehaviour {
     /// ランダムチーム生成
     /// </summary>
     public void RandomTeamDecide() {
-        JoinRandomTeam(isRandom);
-    }
-
-    /// <summary>
-    /// 全員ランダムかどうかをトグルで設定
-    /// </summary>
-    public void OnToggleChangeAllRandom() {
-        isRandom = !isRandom;
+        JoinRandomTeam();
     }
 
     /// <summary>
@@ -118,7 +107,7 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void ResetTeamList() {
-        foreach(var team in teams) {
+        foreach (var team in teams) {
             team.teamPlayerList.Clear();
         }
     }
