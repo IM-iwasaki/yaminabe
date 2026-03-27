@@ -13,7 +13,7 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// タイトルからロビーに行ったか
     /// </summary>
-    private bool titleToLobby = true;
+    private static bool titleToLobby = true;
     /// <summary>
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
@@ -103,7 +103,7 @@ public class CustomNetworkManager : NetworkManager {
         NetworkServer.AddPlayerForConnection(_conn, player);
         if (!ServerManager.instance.connectPlayer.Contains(_conn.identity))
             ServerManager.instance.connectPlayer.Add(_conn.identity);
-        
+
         ChatManager.Instance.CmdSendSystemMessage(ServerManager.instance.connectPlayer.Count + "is Connected ");
         ServerManager.instance.ChangeTeammateMax();
     }
@@ -210,12 +210,10 @@ public class CustomNetworkManager : NetworkManager {
     public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
         FadeManager.Instance.StartFadeIn(0.5f);
-        //タイトルからロビーだとルール確定していないのでHokoでtipsを固定
-        if (titleToLobby) {
+        //もしルールマネージャーがnullならルール確定していないのでHokoでtipsを固定
+        if (RuleManager.Instance == null) {
             LoadingUI.instance.ShowLoading();
-            titleToLobby = false;
         }
-            
         else
             LoadingUI.instance.ShowLoading(RuleManager.Instance.currentRule);
         if (GameSceneManager.Instance)
