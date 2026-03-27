@@ -71,8 +71,12 @@ MonoBehaviour:
     skins:
     - skinName: Default
       skinPrefab: {fileID: 5824428352053320391, guid: cd9445ba50f7bb64b9b1df9178fd42e4, type: 3}
+    - skinName: Another
+      skinPrefab: {fileID: 5824428352053320391, guid: ddf17739457f38d4fa772b6945be49fc, type: 3}
   - characterName: ControlFlipTanaka
     statusData: {fileID: 11400000, guid: 3277a6993008c9749ac21f8b64b2453e, type: 2}
     skins:
     - skinName: Default
       skinPrefab: {fileID: 7345634737031458466, guid: 199774cc427245c468b11dca49619c88, type: 3}
+    - skinName: Another
+      skinPrefab: {fileID: 7345634737031458466, guid: d96c5ab69b3530a4a9d93c2a474d912f, type: 3}
