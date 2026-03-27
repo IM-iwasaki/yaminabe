@@ -39,6 +39,10 @@ public class CharacterActions : NetworkBehaviour {
     private int pveGround;
     private bool isTouchingWall;
 
+    // 世界の外の落下判定のy座標
+    [SerializeField] private float fallYposition = -50.0f;
+    private bool hasSentFall = false;
+
     private void Update() {
         // ローカルプレイヤー以外は処理しない
         if (!isLocalPlayer) return;
@@ -81,7 +85,11 @@ public class CharacterActions : NetworkBehaviour {
         param.GroundCheck(core.parameter.footPoint.position);
 
         //  世界の外にもし落ちてしまったら(基本落ちない)
-        core.CheckOutsideAndFall();
+        if (!hasSentFall && transform.position.y <= fallYposition) {
+            hasSentFall = true;
+            core.CheckOutsideAndFall();
+        }
+        if(hasSentFall && transform.position.y > fallYposition + 1f) hasSentFall = false;
 
         AbilityControl();
     }

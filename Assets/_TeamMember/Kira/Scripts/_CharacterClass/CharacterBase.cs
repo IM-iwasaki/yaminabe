@@ -32,9 +32,6 @@ public abstract class CharacterBase : CreatureBase {
     // ホコを持っているか判定(PVE用)
     [SyncVar] private bool isHoldingHoko = false;
 
-    // 世界の外の落下判定のy座標
-    [SerializeField] private float fallYposition = -50.0f;
-
     // リスポーン後の無敵判定用
     [SyncVar] private bool isInvincible = false;
 
@@ -717,10 +714,9 @@ public abstract class CharacterBase : CreatureBase {
     /// <summary>
     /// 追加:カネダ 世界の外に落ちた際の判定と処理
     /// </summary>
+    [Command]
     public void CheckOutsideAndFall() {
-        if (transform.position.y <= fallYposition) {
-            TakeDamage(9999, "Fall", -1);
-        }
+        TakeDamage(9999, "Fall", -1);
     }
 
     #endregion
