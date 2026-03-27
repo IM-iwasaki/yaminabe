@@ -103,6 +103,11 @@ public class CaptureHoko : NetworkBehaviour {
 
         // ホコが落ちてるときのリセット処理
         if (holder == null && isDropped) {
+            if(transform.position.y <= -10.0f) {
+                ResetToCenter();
+                return;
+            }
+
             dropTimer += Time.deltaTime;
 
             if (dropTimer >= resetTime) {
