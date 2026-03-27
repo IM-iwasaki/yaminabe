@@ -656,7 +656,7 @@ public abstract class CharacterBase : CreatureBase {
 
             CharacterBase enemy = target.GetComponent<CharacterBase>();
             if (enemy == null) continue;
-            enemy.RpcMoveSpeedBuff(0.0f, 1.5f);
+            enemy.RpcMoveSpeedBuff(0.0f, 2.5f);
 
             // 被ダメージ1.25倍（4秒）
             //enemy.DamageCut(1.25f, 4.0f);
@@ -1044,6 +1044,11 @@ public abstract class CharacterBase : CreatureBase {
 
     [ClientRpc]
     void RpcWarp(Vector3 pos) {
+        StartCoroutine(WarpDelay(pos));
+    }
+
+    IEnumerator WarpDelay(Vector3 pos) {
+        yield return new WaitForSeconds(1.5f); // ディレイ
         transform.position = pos;
     }
 }
