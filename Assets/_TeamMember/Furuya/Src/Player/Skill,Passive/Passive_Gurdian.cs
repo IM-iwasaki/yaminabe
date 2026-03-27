@@ -36,7 +36,7 @@ public class Passive_Gurdian : PassiveBase {
         } 
         else {
             if (!user.parameter.equippedSkills[0].isSkillUse && user.speedCoroutine == null) {
-                user.CmdUseSkill_MoveSpeed(1.5f, 1);
+                user.CmdUseSkill_MoveSpeed(1.2f, 1);
             }
         }
     }

@@ -16,12 +16,12 @@ public class GeneralCharacterStatus : CharacterStatus {
     [Header("体力補正値。\nStatusBase + [maxHPCorrection] の値になります。")]
     [Range(-50, 200)] public int maxHPCorrection = 0;    
     [Header("移動速度補正値。\nStatusBase + [speedCorrection]の値になります。")]
-    [Range(-5, 8)] public int speedCorrection = 0;
+    [Range(-5, 8)] public float speedCorrection = 0;
     [Header("攻撃力補正値。\n[attack]の値になります。")]
     [Range(0, 50)] public int attack = 0;
     [Header("魔力値。\n[maxMP] の値になります。")]
     [Range(0, 200)] public int maxMP = 0;
 
     public override int maxHP => baseStatus.maxHP + maxHPCorrection;
-    public override int moveSpeed => baseStatus.moveSpeed + speedCorrection;
+    public override float moveSpeed => baseStatus.moveSpeed + speedCorrection;
 }

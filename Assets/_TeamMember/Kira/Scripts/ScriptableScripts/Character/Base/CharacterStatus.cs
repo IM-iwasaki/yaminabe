@@ -24,7 +24,7 @@ public abstract class CharacterStatus : ScriptableObject {
     //
 
     public virtual int maxHP => baseStatus.maxHP;
-    public virtual int moveSpeed => baseStatus.moveSpeed;
+    public virtual float moveSpeed => baseStatus.moveSpeed;
 
     public virtual int baseAttack => baseStatus.attack;
 }

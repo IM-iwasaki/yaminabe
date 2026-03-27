@@ -55,7 +55,7 @@ public class SelectObjectManager : NetworkBehaviour {
     //  表示する用のステータスデータ格納
     private int HP = 0;
     private int ATK = 0;
-    private int SPD = 0;
+    private float SPD = 0;
 
     //  ネットワーク用
     private bool networkCanChange = false;
@@ -268,7 +268,8 @@ public class SelectObjectManager : NetworkBehaviour {
 
         //  ステータスデータがなければ全て0にする
         if (characterStatuses == null) {
-            HP = ATK = SPD = 0;
+            HP = ATK = 0; 
+            SPD = 0.0f;
             return;
         }
 
