@@ -247,7 +247,7 @@ public class SubWeaponController : NetworkBehaviour {
 
             case ItemType.HealthPack: {
                 if (itemData is HealthPackData hpData)
-                    characterBase.Heal(hpData.healAmount, 1, true);
+                    characterBase.Heal(hpData.healAmount, 3, true);
                 break;
             }
 
