@@ -27,8 +27,11 @@ public class Skill_Hacker : SkillBase {
             Debug.Log("位置保存");
         }
         else {
+            user.CmdUseSkill_MoveSpeed(0.0001f, 2.0f);
             //ワープ
             user.CmdWarp(savedPosition);
+
+            user.DamageCut(1.2f, 5.0f);
 
             //リセット
             hasSavedPosition = false;
