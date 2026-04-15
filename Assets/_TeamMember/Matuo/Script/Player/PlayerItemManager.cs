@@ -35,15 +35,37 @@ public class PlayerItemManager : MonoBehaviour {
         if (playerData.items == null)
             playerData.items = new List<string>();
 
-        // デフォルトキャラクターと最初のスキンを登録
-        if (playerData.items.Count == 0) {
-            var defaultCharacter = characterDatabase?.characters;
-            if (defaultCharacter != null && defaultCharacter.Count > 0 && defaultCharacter[0].skins.Count > 0) {
-                string defaultItemName = $"{defaultCharacter[0].characterName}_{defaultCharacter[0].skins[0].skinName}";
-                playerData.items.Add(defaultItemName);
+        // オーキャン用で一旦消してる
+        //// デフォルトキャラクターと最初のスキンを登録
+        //if (playerData.items.Count == 0) {
+        //    var defaultCharacter = characterDatabase?.characters;
+        //    if (defaultCharacter != null && defaultCharacter.Count > 0 && defaultCharacter[0].skins.Count > 0) {
+        //        string defaultItemName = $"{defaultCharacter[0].characterName}_{defaultCharacter[0].skins[0].skinName}";
+        //        playerData.items.Add(defaultItemName);
+        //    }
+        //}
+
+        // 全キャラ＆全スキンを解放
+        playerData.items.Clear();
+
+        if (characterDatabase != null && characterDatabase.characters != null)
+        {
+            foreach (var character in characterDatabase.characters)
+            {
+                if (character.skins == null) continue;
+
+                foreach (var skin in character.skins)
+                {
+                    string itemName = $"{character.characterName}_{skin.skinName}";
+                    if (!playerData.items.Contains(itemName))
+                    {
+                        playerData.items.Add(itemName);
+                    }
+                }
             }
         }
 
+        SavePlayerData(); // デバッグ状態を即保存
         SyncDebugList();
     }
 
