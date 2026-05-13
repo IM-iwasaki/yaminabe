@@ -235,6 +235,17 @@
                 },
                 {
                     "name": "",
+                    "id": "b8f0ea5c-78f7-4b0e-8a9b-7258c9e6a13e",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Fire_Main",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "4b8140f5-e0ee-495a-9ff7-0f846afd2400",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -246,11 +257,22 @@
                 },
                 {
                     "name": "",
-                    "id": "ce5c7633-9ec5-4717-a05c-6fa3841fed5f",
-                    "path": "",
+                    "id": "fd75c2d8-f8ca-4ff4-8376-3d54d2291ee2",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ce5c7633-9ec5-4717-a05c-6fa3841fed5f",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -279,6 +301,17 @@
                 },
                 {
                     "name": "",
+                    "id": "60e129ad-b264-478c-995b-886b70895f89",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Skill",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "2012e742-ae14-46ca-b2eb-53e81b1adce5",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
@@ -290,8 +323,19 @@
                 },
                 {
                     "name": "",
+                    "id": "e8fa6b98-de8b-433f-8390-f0d783f4601d",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ShowHostUI",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "4351e083-2a42-4b2d-a592-89302047285d",
-                    "path": "",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -323,11 +367,33 @@
                 },
                 {
                     "name": "",
+                    "id": "40a3a21b-ee8c-4eff-a08e-7a12d2800cf9",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Ready",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "8a571369-f2af-4957-982e-4937a912a94a",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
+                    "action": "CameraMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f34e8ba9-2cae-4883-87ed-e291a1147b9d",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "CameraMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -384,6 +450,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "SubWeapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "81b2ac93-f9a7-4ba8-bc65-cacd6aa9d444",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "SubWeapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b584beb7-83f7-4d67-8f3e-34eaa8a64906",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Fire_Sub",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
