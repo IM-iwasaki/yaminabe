@@ -382,7 +382,7 @@ MonoBehaviour:
     m_ActionId: ad8273d9-08c2-4a4e-aa05-e8a75845a0cd
     m_ActionName: Player/SubWeapon[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -491,7 +491,6 @@ MonoBehaviour:
   weaponController_main: {fileID: 6621664334883643172}
   weaponController_sub: {fileID: 205382949362171920}
   isSkillUse: 0
-  fallYposition: -50
   bannerNum: 0
   buffEffect: {fileID: 11400000, guid: e4a21b14f76b93d4cb1378e2b78bf452, type: 2}
   allyCheckRadius: 8
@@ -530,6 +529,7 @@ MonoBehaviour:
   firePoint: {fileID: 8141860258521693391}
   isDead: 0
   attackTrigger: 0
+  hitDamage: 0
   canMove: 1
   money: 0
 --- !u!114 &7720380049160173364
@@ -549,6 +549,7 @@ MonoBehaviour:
   syncInterval: 0
   SkillTriggered: 0
   InteractTriggered: 0
+  lookInput: {x: 0, y: 0}
 --- !u!114 &-5686997786179355792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -564,6 +565,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  fallYposition: -50
 --- !u!114 &8790688429599344454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1416,6 +1418,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2965182569160454427, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
+      propertyPath: m_DefaultControlScheme
+      value: Keyboard&Mouse
+      objectReference: {fileID: 0}
     - target: {fileID: 5245321708682595989, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
       propertyPath: player
       value: 
@@ -1432,6 +1438,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5245321708682595989, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
+      propertyPath: characterInput
+      value: 
+      objectReference: {fileID: 7720380049160173364}
     - target: {fileID: 5245321708682595989, guid: cd3f0dba419deb04694f9f21dbacfff2, type: 3}
       propertyPath: normalOffset.z
       value: -4

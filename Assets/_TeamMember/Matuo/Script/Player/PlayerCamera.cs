@@ -55,6 +55,9 @@ public class PlayerCamera : MonoBehaviour {
     private float savedYaw;
     private float savedPitch;
 
+    [SerializeField]CharacterInput characterInput;
+    private const float GAMEPAD_SENSITIVITY = 2.0f;
+
     /// <summary>
     /// 現在フェード処理中のオブジェクトを管理
     /// </summary>
@@ -68,13 +71,7 @@ public class PlayerCamera : MonoBehaviour {
         currentOffset = normalOffset;
         targetOffset = normalOffset;
         currentCameraDistance = normalOffset.magnitude;
-    }
 
-    /// <summary>
-    /// 入力アクションシステム
-    /// </summary>
-    public void OnLook(InputAction.CallbackContext context) {
-        lookInput = context.ReadValue<Vector2>();
     }
 
     /// <summary>
@@ -163,6 +160,9 @@ public class PlayerCamera : MonoBehaviour {
         if (isDeathView)
             return;
 
+        if (characterInput == null)
+            return;
+        lookInput = characterInput.lookInput;
         // 入力による回転（近距離で減衰）
         Vector3 playerPos = player.position + Vector3.up * 1.5f;
         float camDist = Vector3.Distance(playerPos, transform.position);
@@ -172,7 +172,12 @@ public class PlayerCamera : MonoBehaviour {
         pitch -= lookInput.y * rotationSpeed * rotFactor * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+        Quaternion rotation;
+        if (characterInput.isGamepad) {
+            rotation = Quaternion.Euler(pitch * GAMEPAD_SENSITIVITY, yaw * GAMEPAD_SENSITIVITY, 0f);
+        } else {
+            rotation = Quaternion.Euler(pitch, yaw, 0f);
+        }        
 
         targetOffset = rotation * normalOffset;
         currentOffset = Vector3.Lerp(currentOffset, targetOffset, moveSpeed * Time.deltaTime);

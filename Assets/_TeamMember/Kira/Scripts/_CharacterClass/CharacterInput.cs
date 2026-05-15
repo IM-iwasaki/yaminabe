@@ -19,6 +19,9 @@ public class CharacterInput : NetworkBehaviour {
     private InputActionMap playerMap;
     private bool inputInitialized;
 
+    public Vector2 lookInput;
+    public bool isGamepad = false;
+
     #region 初期化 / クリーンアップ
 
     public void Initialize(CharacterBase core) {
@@ -30,6 +33,8 @@ public class CharacterInput : NetworkBehaviour {
 
         this.core = core;
         animCon = GetComponent<CharacterAnimationController>();
+
+
 
         // PlayerInput取得
         playerInput = GetComponent<PlayerInput>();
@@ -69,6 +74,16 @@ public class CharacterInput : NetworkBehaviour {
     }
 
     #endregion
+
+    private void Update() {
+        if (Gamepad.current != null && Gamepad.current.wasUpdatedThisFrame) {
+            playerInput.SwitchCurrentControlScheme(Gamepad.current);
+            isGamepad = true;
+        } else {
+            playerInput.SwitchCurrentControlScheme("Keyboard&Mouse",Keyboard.current,Mouse.current);
+            isGamepad = false;
+        }
+    }
 
     private void LateUpdate() {
         //押した瞬間・離した瞬間を管理する変数のリセット
@@ -140,6 +155,9 @@ public class CharacterInput : NetworkBehaviour {
             case "Move":
                 OnMove(ctx);
                 break;
+            case "Look":
+                OnLook(ctx);
+                break;
             case "Jump":
                 OnJump(ctx);
                 break;
@@ -167,6 +185,9 @@ public class CharacterInput : NetworkBehaviour {
                 MoveInput = Vector2.zero;
                 animCon.CmdResetAnimation();
                 break;
+            case "Look":
+                lookInput = Vector2.zero;
+                return;
             case "Fire_Main":
             case "Fire_Sub":
                 OnAttack(ctx);
@@ -191,6 +212,13 @@ public class CharacterInput : NetworkBehaviour {
         if (core.parameter.isDead) MoveInput = Vector2.zero;
 
         animCon.ControllMoveAnimation(moveX, moveZ);
+    }
+
+    /// <summary>
+    /// 入力アクションシステム
+    /// </summary>
+    public void OnLook(InputAction.CallbackContext context) {
+        lookInput = context.ReadValue<Vector2>();
     }
 
     /// <summary>
