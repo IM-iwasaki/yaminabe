@@ -56,7 +56,7 @@ public class PlayerCamera : MonoBehaviour {
     private float savedPitch;
 
     [SerializeField]CharacterInput characterInput;
-    private const float GAMEPAD_SENSITIVITY = 2.0f;
+    private const float GAMEPAD_SENSITIVITY = 12.0f;
 
     /// <summary>
     /// 現在フェード処理中のオブジェクトを管理
@@ -165,7 +165,7 @@ public class PlayerCamera : MonoBehaviour {
 
         lookInput = characterInput.lookInput;
 
-        Debug.Log(characterInput.isGamepad);
+        Debug.Log(lookInput);
 
         // 入力による回転（近距離で減衰）
         Vector3 playerPos = player.position + Vector3.up * 1.5f;
@@ -174,14 +174,13 @@ public class PlayerCamera : MonoBehaviour {
 
         if (characterInput.isGamepad) {
             yaw += lookInput.x * rotationSpeed * rotFactor * Time.deltaTime * GAMEPAD_SENSITIVITY;
-            pitch -= lookInput.y * rotationSpeed * rotFactor * Time.deltaTime * GAMEPAD_SENSITIVITY;
-            pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+            pitch -= lookInput.y * rotationSpeed * rotFactor * Time.deltaTime * GAMEPAD_SENSITIVITY;           
         } else {
             yaw += lookInput.x * rotationSpeed * rotFactor * Time.deltaTime;
             pitch -= lookInput.y * rotationSpeed * rotFactor * Time.deltaTime;
-            pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
         }
-        
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);     
 
         targetOffset = rotation * normalOffset;

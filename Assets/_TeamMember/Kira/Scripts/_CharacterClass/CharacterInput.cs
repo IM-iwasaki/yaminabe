@@ -21,6 +21,8 @@ public class CharacterInput : NetworkBehaviour {
 
     public Vector2 lookInput;
     public bool isGamepad = false;
+    private float lastGamepadInputTime;
+    [SerializeField] private float gamepadTimeout = 2f;
 
     #region 初期化 / クリーンアップ
 
@@ -76,12 +78,36 @@ public class CharacterInput : NetworkBehaviour {
     #endregion
 
     private void Update() {
-        if (Gamepad.current != null && Gamepad.current.wasUpdatedThisFrame) {
-            playerInput.SwitchCurrentControlScheme(Gamepad.current);
-            isGamepad = true;
+        bool gamepadInput =
+        Gamepad.current != null &&
+        (
+            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.01f ||
+            Gamepad.current.rightStick.ReadValue().sqrMagnitude > 0.01f ||
+            Gamepad.current.buttonSouth.isPressed
+        );
+
+        if (gamepadInput) {
+            lastGamepadInputTime = Time.time;
+        }
+
+        bool useGamepad =
+            Time.time - lastGamepadInputTime < gamepadTimeout;
+
+        if (useGamepad) {
+            if (!isGamepad) {
+                playerInput.SwitchCurrentControlScheme(Gamepad.current);
+                isGamepad = true;
+            }
         } else {
-            playerInput.SwitchCurrentControlScheme("Keyboard&Mouse",Keyboard.current,Mouse.current);
-            isGamepad = false;
+            if (isGamepad) {
+                playerInput.SwitchCurrentControlScheme(
+                    "Keyboard&Mouse",
+                    Keyboard.current,
+                    Mouse.current
+                );
+
+                isGamepad = false;
+            }
         }
     }
 
@@ -187,7 +213,7 @@ public class CharacterInput : NetworkBehaviour {
                 break;
             case "Look":
                 lookInput = Vector2.zero;
-                return;
+                break;
             case "Fire_Main":
             case "Fire_Sub":
                 OnAttack(ctx);
@@ -217,8 +243,8 @@ public class CharacterInput : NetworkBehaviour {
     /// <summary>
     /// 入力アクションシステム
     /// </summary>
-    public void OnLook(InputAction.CallbackContext context) {
-        lookInput = context.ReadValue<Vector2>();
+    public void OnLook(InputAction.CallbackContext ctx) {
+        lookInput = ctx.ReadValue<Vector2>();
     }
 
     /// <summary>
