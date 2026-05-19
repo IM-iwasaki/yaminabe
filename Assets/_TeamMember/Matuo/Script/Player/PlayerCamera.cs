@@ -162,22 +162,27 @@ public class PlayerCamera : MonoBehaviour {
 
         if (characterInput == null)
             return;
+
         lookInput = characterInput.lookInput;
+
+        Debug.Log(characterInput.isGamepad);
+
         // “ü—Í‚É‚æ‚é‰ñ“]i‹ß‹——£‚ÅŒ¸Šj
         Vector3 playerPos = player.position + Vector3.up * 1.5f;
         float camDist = Vector3.Distance(playerPos, transform.position);
         float rotFactor = camDist < closeDistance ? closeRotationFactor : 1f;
 
-        yaw += lookInput.x * rotationSpeed * rotFactor * Time.deltaTime;
-        pitch -= lookInput.y * rotationSpeed * rotFactor * Time.deltaTime;
-        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
-
-        Quaternion rotation;
         if (characterInput.isGamepad) {
-            rotation = Quaternion.Euler(pitch * GAMEPAD_SENSITIVITY, yaw * GAMEPAD_SENSITIVITY, 0f);
+            yaw += lookInput.x * rotationSpeed * rotFactor * Time.deltaTime * GAMEPAD_SENSITIVITY;
+            pitch -= lookInput.y * rotationSpeed * rotFactor * Time.deltaTime * GAMEPAD_SENSITIVITY;
+            pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
         } else {
-            rotation = Quaternion.Euler(pitch, yaw, 0f);
-        }        
+            yaw += lookInput.x * rotationSpeed * rotFactor * Time.deltaTime;
+            pitch -= lookInput.y * rotationSpeed * rotFactor * Time.deltaTime;
+            pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+        }
+        
+        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);     
 
         targetOffset = rotation * normalOffset;
         currentOffset = Vector3.Lerp(currentOffset, targetOffset, moveSpeed * Time.deltaTime);
