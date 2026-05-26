@@ -105,10 +105,7 @@ public class CharacterInput : NetworkBehaviour {
         //最後にパッドを触った時間を計測
         //if (gamepadInput) lastGamepadInputTime = Time.time;
 
-        if (gamepadInput) {
-            Debug.Log("Gamepad detected");
-            lastGamepadInputTime = Time.time;
-        }
+        if (gamepadInput) lastGamepadInputTime = Time.time;
 
         //直近にパッド入力があった場合有効化
         bool useGamepad =
@@ -239,7 +236,7 @@ public class CharacterInput : NetworkBehaviour {
             case "Fire_Main":
             case "Fire_Sub":
                 OnAttack(ctx);
-                break;
+            break;
         }
     }
 
