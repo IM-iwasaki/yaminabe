@@ -376,5 +376,10 @@ public class OptionMenu : NetworkBehaviour {
         else if (NetworkClient.isConnected) {
             NetworkManager.singleton.StopClient();
         }
+        else if (NetworkServer.active)
+        {
+            NetworkManager.singleton.StopHost();
+        }
+        SceneManager.LoadScene("TitleScene");
     }
 }
