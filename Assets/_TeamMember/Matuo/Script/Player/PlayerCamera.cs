@@ -165,7 +165,7 @@ public class PlayerCamera : MonoBehaviour {
 
         lookInput = characterInput.lookInput;
 
-        Debug.Log(lookInput);
+        //Debug.Log(lookInput);
 
         // “ü—Í‚É‚æ‚é‰ñ“]i‹ß‹——£‚ÅŒ¸Šj
         Vector3 playerPos = player.position + Vector3.up * 1.5f;

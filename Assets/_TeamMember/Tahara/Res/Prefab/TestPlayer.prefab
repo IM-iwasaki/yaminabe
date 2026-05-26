@@ -550,6 +550,8 @@ MonoBehaviour:
   SkillTriggered: 0
   InteractTriggered: 0
   lookInput: {x: 0, y: 0}
+  isGamepad: 0
+  gamepadTimeout: 2
 --- !u!114 &-5686997786179355792
 MonoBehaviour:
   m_ObjectHideFlags: 0

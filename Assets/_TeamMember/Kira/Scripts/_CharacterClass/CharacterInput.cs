@@ -21,7 +21,13 @@ public class CharacterInput : NetworkBehaviour {
 
     public Vector2 lookInput;
     public bool isGamepad = false;
-    private float lastGamepadInputTime;
+
+    //最後にパッドを触った時間
+    //(-999.0fであるのは、宣言時に初期値を設定しない場合に値が0になる点と、実装上
+    // 0だと起動時にパッドを接続していなくてもパッドを使用していると誤認されてしまうため。)
+    private float lastGamepadInputTime = -999.0f;
+
+    //どれくらいパッドから入力がなかったら自動でキーボードマウスに戻るか。
     [SerializeField] private float gamepadTimeout = 2f;
 
     #region 初期化 / クリーンアップ
@@ -36,8 +42,6 @@ public class CharacterInput : NetworkBehaviour {
         this.core = core;
         animCon = GetComponent<CharacterAnimationController>();
 
-
-
         // PlayerInput取得
         playerInput = GetComponent<PlayerInput>();
 
@@ -51,6 +55,14 @@ public class CharacterInput : NetworkBehaviour {
         }
 
         playerMap.Enable();
+
+        //明示的に初期化する。
+        playerInput.SwitchCurrentControlScheme(
+            "Keyboard&Mouse",
+            Keyboard.current,Mouse.current
+        );
+        isGamepad = false;
+        lastGamepadInputTime = -999f;
     }
 
     public override void OnStopClient() {
@@ -78,6 +90,11 @@ public class CharacterInput : NetworkBehaviour {
     #endregion
 
     private void Update() {
+        //自分ではない、または入力が初期化されていない場合は帰る
+        if (!isLocalPlayer || playerInput == null)
+            return;
+
+        //現在の入力デバイスがパッドだった場合入力値を読み込む
         bool gamepadInput =
         Gamepad.current != null &&
         (
@@ -85,29 +102,31 @@ public class CharacterInput : NetworkBehaviour {
             Gamepad.current.rightStick.ReadValue().sqrMagnitude > 0.01f ||
             Gamepad.current.buttonSouth.isPressed
         );
+        //最後にパッドを触った時間を計測
+        //if (gamepadInput) lastGamepadInputTime = Time.time;
 
-        if (gamepadInput) {
-            lastGamepadInputTime = Time.time;
-        }
+        if (gamepadInput) lastGamepadInputTime = Time.time;
 
+        //直近にパッド入力があった場合有効化
         bool useGamepad =
-            Time.time - lastGamepadInputTime < gamepadTimeout;
+            Gamepad.current != null && Time.time - lastGamepadInputTime < gamepadTimeout;
 
-        if (useGamepad) {
-            if (!isGamepad) {
-                playerInput.SwitchCurrentControlScheme(Gamepad.current);
-                isGamepad = true;
-            }
-        } else {
-            if (isGamepad) {
-                playerInput.SwitchCurrentControlScheme(
-                    "Keyboard&Mouse",
-                    Keyboard.current,
-                    Mouse.current
-                );
-
-                isGamepad = false;
-            }
+        //パッドに変更する
+        if (useGamepad &&　!isGamepad && Gamepad.current != null) {
+            playerInput.SwitchCurrentControlScheme(
+                "Gamepad",
+                Gamepad.current
+            );
+            isGamepad = true;
+        }
+        //キーボードマウスに変更する
+        if (!useGamepad &&　isGamepad && Keyboard.current != null && Mouse.current != null) {
+            playerInput.SwitchCurrentControlScheme(
+                "Keyboard&Mouse",
+                Keyboard.current,
+                Mouse.current
+            );
+            isGamepad = false;
         }
     }
 
@@ -217,7 +236,7 @@ public class CharacterInput : NetworkBehaviour {
             case "Fire_Main":
             case "Fire_Sub":
                 OnAttack(ctx);
-                break;
+            break;
         }
     }
 
