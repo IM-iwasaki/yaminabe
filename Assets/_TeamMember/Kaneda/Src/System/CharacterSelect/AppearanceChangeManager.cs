@@ -54,6 +54,11 @@ public class AppearanceChangeManager : MonoBehaviour {
         GameObject prefab = data.characters[characterCount].skins[skinCount].skinPrefab;
         //  プレイヤーの子オブジェクトに生成
         var characterSkin = Instantiate(prefab, spawnPos, parent.rotation, parent);
+        if(player.GetComponent<CharacterBase>() == null)
+        {
+            Debug.LogWarning("キャラクターベースがnullやデー");
+            return;
+        }
         //  プレイヤーのステータスを置き換える
         player.GetComponent<CharacterBase>().parameter.StatusInport(data.characters[characterCount].statusData);
         //  プレイヤーのIDを取得・格納
