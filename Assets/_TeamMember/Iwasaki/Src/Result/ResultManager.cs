@@ -132,10 +132,10 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         IsResultShowing = true;
 
         // ホストのみカーソル表示
-        if (NetworkServer.active && NetworkClient.active) {
+        
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-        }
+        
 
         // プレハブを生成
         GameObject ui = Instantiate(resultUIPrefab);
