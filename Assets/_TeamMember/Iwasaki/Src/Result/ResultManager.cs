@@ -245,7 +245,7 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
             currentResultPanel = null;
 
             // ƒJ[ƒ\ƒ‹‚ğŒ³‚É–ß‚·
-            Cursor.lockState = CursorLockMode.Locked;
+           // Cursor.lockState = CursorLockMode.Locked;
         }
     }
 
