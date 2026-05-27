@@ -4,7 +4,8 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// 元あるNetworkManagerの派生クラス
 /// </summary>
-public class CustomNetworkManager : NetworkManager {
+public class CustomNetworkManager : NetworkManager
+{
     /// <summary>
     /// ホスト専用UI
     /// </summary>
@@ -17,18 +18,22 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// タイトルシーンから移動してきたときに通る処理
     /// </summary>
-    public override void Start() {
+    public override void Start()
+    {
 #if DEBUG
-        if (TitleManager.instance == null) {
+        if (TitleManager.instance == null)
+        {
             base.Start();
             return;
         }
 #endif
-        if (TitleManager.instance.isHost) {
+        if (TitleManager.instance.isHost)
+        {
             //ホストとして開始
             StartHost();
         }
-        else if (TitleManager.instance.isClient) {
+        else if (TitleManager.instance.isClient)
+        {
             //クライアントとして開始
             networkAddress = TitleManager.instance.ipAddress;
             StartClient();
@@ -40,18 +45,22 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// サーバー開始時処理
     /// </summary>
-    public override void OnStartServer() {
+    public override void OnStartServer()
+    {
         base.OnStartServer();
 
         // サーバーが起動したタイミングで SystemManager に Network 系の Spawn を任せる
-        if (SystemManager.Instance != null) {
+        if (SystemManager.Instance != null)
+        {
             SystemManager.Instance.SpawnNetworkSystems();
         }
-        else {
+        else
+        {
             Debug.LogWarning("SystemManager が見つかりません。SystemManager は最初のシーンに配置しておいてください。");
         }
         //起動時タイトルマネージャーのインスタンスが存在していたら、
-        if (TitleManager.instance != null) {
+        if (TitleManager.instance != null)
+        {
             //その後は不必要なので更新しないようにする
             TitleManager.instance.enabled = false;
         }
@@ -60,12 +69,14 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// クライアント開始時
     /// </summary>
-    public override void OnStartClient() {
+    public override void OnStartClient()
+    {
         base.OnStartClient();
 
         //if (Application.isBatchMode) return;
         GameObject uiRoot = GameObject.Find("GameUI");
-        if (NetworkServer.active) {
+        if (NetworkServer.active)
+        {
 
             HostUI host = Instantiate(hostUI, uiRoot.transform);
             hostUI = host;
@@ -79,9 +90,11 @@ public class CustomNetworkManager : NetworkManager {
     /// 主にサーバー接続可能人数を判定
     /// </summary>
     /// <param name="_conn"></param>
-    public override void OnServerConnect(NetworkConnectionToClient _conn) {
+    public override void OnServerConnect(NetworkConnectionToClient _conn)
+    {
         //もし参加人数が既定の数超えていたら
-        if (NetworkServer.connections.Count >= maxConnections) {
+        if (NetworkServer.connections.Count >= maxConnections)
+        {
             _conn.Disconnect();
             return;
         }
@@ -93,7 +106,8 @@ public class CustomNetworkManager : NetworkManager {
     /// サーバーに参加したことを伝える(具体的にはconnectPlayerに参加したタイミングでAddする)
     /// </summary>
     /// <param name="_conn"></param>
-    public override void OnServerAddPlayer(NetworkConnectionToClient _conn) {
+    public override void OnServerAddPlayer(NetworkConnectionToClient _conn)
+    {
 
         GameObject player = Instantiate(playerPrefab);
         var characterData = FindAnyObjectByType<AppearanceChangeManager>().data.characters[0];
@@ -111,9 +125,11 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// クライアントが参加した時の処理
     /// </summary>
-    public override void OnClientConnect() {
+    public override void OnClientConnect()
+    {
         base.OnClientConnect();
-        if (TitleManager.instance.isClient) {
+        if (TitleManager.instance.isClient)
+        {
             Destroy(FindObjectOfType<UDPBroadcaster>().gameObject);
         }
         LoadingUI.instance.ShowLoading();
@@ -125,22 +141,24 @@ public class CustomNetworkManager : NetworkManager {
     /// クライアントが抜けたタイミングでconnectPlayerからRemoveする
     /// </summary>
     /// <param name="_conn"></param>
-    public override void OnServerDisconnect(NetworkConnectionToClient _conn) {
+    public override void OnServerDisconnect(NetworkConnectionToClient _conn)
+    {
 
         ////ローカルクライアントが抜けた場合
         //if (_conn.connectionId > 0) {
-            //参加者全員に通知
-            if (ChatManager.Instance != null)
-                ChatManager.Instance.CmdSendSystemMessage("Leave Player");
-            if (_conn.identity != null)
-            {
-                ServerManager.instance.connectPlayer.Remove(_conn.identity);
-                ServerManager.instance.RemoveTeammate(_conn.identity);
-            }
-                
+        //参加者全員に通知
+        if (ChatManager.Instance != null)
+            ChatManager.Instance.CmdSendSystemMessage("Leave Player");
+        if (_conn.identity != null)
+        {
+            ServerManager.instance.connectPlayer.Remove(_conn.identity);
+            ServerManager.instance.RemoveTeammate(_conn.identity);
+        }
 
-            base.OnServerDisconnect(_conn);
-            return;
+
+        base.OnServerDisconnect(_conn);
+        ServerManager.instance.ChangeTeammateMax();
+        return;
         //}
     }
     /// <summary>
@@ -148,8 +166,10 @@ public class CustomNetworkManager : NetworkManager {
     /// 主にルール系の変更とかを担当させるべき
     /// </summary>
     /// <param name="newSceneName"></param>
-    public override void OnServerChangeScene(string newSceneName) {
-        if (newSceneName == GameSceneManager.Instance.gameSceneName || newSceneName == GameSceneManager.Instance.pveSceneName) {
+    public override void OnServerChangeScene(string newSceneName)
+    {
+        if (newSceneName == GameSceneManager.Instance.gameSceneName || newSceneName == GameSceneManager.Instance.pveSceneName)
+        {
             if (HostUI.isVisibleUI)
                 HostUI.ToggleHostUI();
             GameSceneManager.Instance.ResetIsChangedScene();
@@ -162,19 +182,23 @@ public class CustomNetworkManager : NetworkManager {
     /// シーンが完全に切り替わってから呼ばれる関数、主にゲームスタートを担う
     /// </summary>
     /// <param name="sceneName"></param>
-    public override void OnServerSceneChanged(string sceneName) {
+    public override void OnServerSceneChanged(string sceneName)
+    {
         //ゲームシーンに遷移したならゲームスタート
-        if (sceneName == GameSceneManager.Instance.gameSceneName) {
+        if (sceneName == GameSceneManager.Instance.gameSceneName)
+        {
             int stageIndex = Mathf.Abs(hostUI.stageIndex % StageManager.Instance.stages.Count);
             GameManager.Instance.StartPvpGame(RuleManager.Instance.currentRule, StageManager.Instance.stages[stageIndex]);
             // 全クライアントに送る
             //CountdownManager.Instance.SendCountdown(6);
         }
-        else if (sceneName == GameSceneManager.Instance.pveSceneName) {
+        else if (sceneName == GameSceneManager.Instance.pveSceneName)
+        {
             GameManager.Instance.StartPveGameFromList(false); // trueにすればランダム
         }
         //プレイヤー1人1人をチーム毎のリスポーン地点に移動させる
-        foreach (var playerObj in ServerManager.instance.connectPlayer) {
+        foreach (var playerObj in ServerManager.instance.connectPlayer)
+        {
             //必要な変数をキャッシュ
             GeneralCharacter character = playerObj.GetComponent<GeneralCharacter>();
             var conn = playerObj.connectionToClient;
@@ -183,12 +207,14 @@ public class CustomNetworkManager : NetworkManager {
             Vector3 respawnPos;
             Vector3 bufferPos = new Vector3(Random.Range(-3.0f, 3.0f), 1.0f, Random.Range(-3.0f, 3.0f));
             //ゲームシーンなら指定のリスポーン箇所を取得し、転送
-            if (sceneName == GameSceneManager.Instance.gameSceneName) {
+            if (sceneName == GameSceneManager.Instance.gameSceneName)
+            {
                 var RespawnPosList = StageManager.Instance.GetTeamSpawnPoints((TeamData.TeamColor)teamID);
                 startPos.ServerTeleport(RespawnPosList[Random.Range(0, RespawnPosList.Count)].position + bufferPos, Quaternion.identity);
             }
             //ロビーシーンなら開始地点に転送
-            else if (sceneName == GameSceneManager.Instance.lobbySceneName) {
+            else if (sceneName == GameSceneManager.Instance.lobbySceneName)
+            {
                 //重なることを考慮してランダムで座標をずらす
                 respawnPos = new Vector3(Random.Range(1, ServerManager.instance.connectPlayer.Count), 5, 0);
                 startPos.ServerTeleport(respawnPos + bufferPos, Quaternion.identity);
@@ -197,7 +223,8 @@ public class CustomNetworkManager : NetworkManager {
                 character.parameter.TargetSkillUIUpdate(conn);
             }
             //PvEシーンはスポーン位置を一か所(余裕を持たせて)に固定
-            else if (sceneName == GameSceneManager.Instance.pveSceneName) {
+            else if (sceneName == GameSceneManager.Instance.pveSceneName)
+            {
                 startPos.ServerTeleport(bufferPos, Quaternion.identity);
             }
         }
@@ -211,11 +238,13 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="newSceneName"></param>
     /// <param name="sceneOperation"></param>
     /// <param name="customHandling"></param>
-    public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {
+    public override void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling)
+    {
         base.OnClientChangeScene(newSceneName, sceneOperation, customHandling);
         FadeManager.Instance.StartFadeIn(0.5f);
         //もしルールマネージャーがnullならルール確定していないのでHokoでtipsを固定
-        if (RuleManager.Instance == null) {
+        if (RuleManager.Instance == null)
+        {
             LoadingUI.instance.ShowLoading();
         }
         else
@@ -224,7 +253,8 @@ public class CustomNetworkManager : NetworkManager {
             GameSceneManager.Instance.ResetIsChangedScene();
     }
 
-    public override void OnClientSceneChanged() {
+    public override void OnClientSceneChanged()
+    {
         base.OnClientSceneChanged();
 
         // ロード完了後に UI を消す
@@ -234,11 +264,13 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// クライアントが止まった時の処理
     /// </summary>
-    public override void OnStopClient() {
+    public override void OnStopClient()
+    {
         base.OnStopClient();
         titleToLobby = true;
         FindObjectOfType<UDPListener>()?.StopReceiveIP();
-        if (!Application.isBatchMode) {
+        if (!Application.isBatchMode)
+        {
             Cursor.lockState = CursorLockMode.None;
             Destroy(gameObject);
             SceneManager.LoadScene("TitleScene");
@@ -246,7 +278,8 @@ public class CustomNetworkManager : NetworkManager {
         LoadingUI.instance.ShowLoading();
     }
 
-    public override void OnClientDisconnect() {
+    public override void OnClientDisconnect()
+    {
         base.OnClientDisconnect();
 
     }
@@ -254,16 +287,19 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// アプリ終了時の解放処理
     /// </summary>
-    public override void OnApplicationQuit() {
+    public override void OnApplicationQuit()
+    {
         // サーバー or クライアントとして接続中なら安全に終了
-        if (NetworkServer.active || NetworkClient.isConnected) {
+        if (NetworkServer.active || NetworkClient.isConnected)
+        {
             titleToLobby = true;
             StopHost();
         }
     }
 
 
-    public override void OnStopHost() {
+    public override void OnStopHost()
+    {
         base.OnStopHost();
         var udpBroadcaster = FindObjectOfType<UDPBroadcaster>();
         udpBroadcaster?.StopBroadcast();
