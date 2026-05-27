@@ -19,6 +19,7 @@ public class LandMine : TrapBase {
     int damage,
     bool canDamageAllies,
     int _ID,
+    string _name,
     EffectType explosionEffect
     ) {
         base.Init(trapData);
@@ -26,6 +27,7 @@ public class LandMine : TrapBase {
         this.damage = damage;
         this.canDamageAllies = canDamageAllies;
         this.ID = _ID;
+        this.ownerName = _name;
         this.explosionEffect = explosionEffect;
 
         hasTriggered = false;
