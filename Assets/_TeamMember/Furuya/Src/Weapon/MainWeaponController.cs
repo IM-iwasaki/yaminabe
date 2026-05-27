@@ -602,19 +602,29 @@ public class MainWeaponController : NetworkBehaviour {
     /// </summary>
     [Server]
     public void ReloadRequest() {
-        //射撃中やリロード中ならやめる
-        if (characterBase.input.AttackPressed && characterBase.parameter.isReloading) return;
-        //使っている武器が銃でなければやめる
-        if (weaponData.type != WeaponType.Gun) return;
 
-        //リロード中にする
+        if (characterBase.parameter.isReloading)
+            return;
+
+        if (weaponData.type != WeaponType.Gun)
+            return;
+
         characterBase.parameter.isReloading = true;
-        //リロードを行う
-        Invoke(nameof(Reload), weaponData.reloadTime);
+
+        reloadCoroutine = StartCoroutine(ReloadRoutine());
     }
+
     /// <summary>
     /// リロードの本実行
     /// </summary>
+    /// 
+    private Coroutine reloadCoroutine;
+
+    IEnumerator ReloadRoutine() {
+        yield return new WaitForSeconds(weaponData.reloadTime);
+        Reload();
+    }
+
     [Server]
     void Reload() {
         ammo = weaponData.maxAmmo;
