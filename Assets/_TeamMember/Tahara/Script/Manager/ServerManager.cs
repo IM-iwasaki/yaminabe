@@ -113,6 +113,18 @@ public class ServerManager : NetworkBehaviour {
     }
 
     /// <summary>
+    /// チームから除籍
+    /// </summary>
+    /// <param name="_identity"></param>
+    [Server]
+    public void RemoveTeammate(NetworkIdentity _identity)
+    {
+        //所属チームを
+        int currentTeam = _identity.GetComponent<GeneralCharacter>().parameter.TeamID;
+        teams[currentTeam].teamPlayerList.Remove(_identity);
+    }
+
+    /// <summary>
     /// 追加 マツオ：全プレイヤーをチーム0に設定(PVE用)
     /// </summary>
     [Server]
@@ -173,13 +185,6 @@ public class ServerManager : NetworkBehaviour {
     /// </summary>
     [Server]
     public void ChangeTeammateMax() {
-        float calcTeammateMax = connectPlayer.Count / teams.Count;
-        //小数点残るなら繰り上げ
-        if(calcTeammateMax - (int)calcTeammateMax > 0)
-        {
-            teammateMax = (int)calcTeammateMax + 1;
-            return;
-        }
-        teammateMax = (int)calcTeammateMax;
+        teammateMax = Mathf.CeilToInt((float)connectPlayer.Count / teams.Count);
     }
 }

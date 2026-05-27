@@ -127,17 +127,21 @@ public class CustomNetworkManager : NetworkManager {
     /// <param name="_conn"></param>
     public override void OnServerDisconnect(NetworkConnectionToClient _conn) {
 
-        //ローカルクライアントが抜けた場合
-        if (_conn.connectionId > 0) {
+        ////ローカルクライアントが抜けた場合
+        //if (_conn.connectionId > 0) {
             //参加者全員に通知
             if (ChatManager.Instance != null)
                 ChatManager.Instance.CmdSendSystemMessage("Leave Player");
             if (_conn.identity != null)
+            {
                 ServerManager.instance.connectPlayer.Remove(_conn.identity);
+                ServerManager.instance.RemoveTeammate(_conn.identity);
+            }
+                
 
             base.OnServerDisconnect(_conn);
             return;
-        }
+        //}
     }
     /// <summary>
     /// シーンが変わった時に発火

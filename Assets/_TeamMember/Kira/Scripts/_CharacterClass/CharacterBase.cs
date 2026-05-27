@@ -435,7 +435,7 @@ public abstract class CharacterBase : CreatureBase {
             ChatManager.Instance.CmdSendSystemMessage("you leave team now");
             if (currentTeam == -1)
                 return;
-            ServerManager.instance.teams[currentTeam].teamPlayerList.Remove(_player);
+            ServerManager.instance.RemoveTeammate(_player);
             player.parameter.TeamID = -1;
             return;
         }
