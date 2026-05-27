@@ -439,17 +439,19 @@ public abstract class CharacterBase : CreatureBase {
             player.parameter.TeamID = -1;
             return;
         }
+        //既に同じチームに入っていたら
+        if (newTeam == currentTeam)
+        {
+            ChatManager.Instance.CmdSendSystemMessage("you join same team now");
+            return;
+        }
 
         //加入しようとしてるチームが埋まっていたら
         if (ServerManager.instance.teams[newTeam].teamPlayerList.Count >= ServerManager.instance.teammateMax) {
             ChatManager.Instance.CmdSendSystemMessage("team member is over");
             return;
         }
-        //既に同じチームに入っていたら
-        if (newTeam == currentTeam) {
-            ChatManager.Instance.CmdSendSystemMessage("you join same team now");
-            return;
-        }
+        
 
 
         //新たなチームに加入する時
