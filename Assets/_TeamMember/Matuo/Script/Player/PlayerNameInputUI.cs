@@ -9,6 +9,7 @@ public class PlayerNameInputUI : MonoBehaviour {
     [SerializeField] private Button changeButton;
     [SerializeField] private TextMeshProUGUI currentNameText;
     [SerializeField] private GameObject inputPanel;
+    private const int MAX_NAME_LENGTH = 15; // 名前の最大文字数
 
     private void Start() {
         // UIイベント登録
@@ -20,6 +21,8 @@ public class PlayerNameInputUI : MonoBehaviour {
 
         // 最初は入力パネルを閉じておく
         if (inputPanel != null) inputPanel.SetActive(false);
+        if (inputField != null)
+            inputField.characterLimit = 15;
     }
 
     private void LoadAndShowCurrentName() {
@@ -32,6 +35,8 @@ public class PlayerNameInputUI : MonoBehaviour {
     private void OnConfirmClicked() {
         string newName = inputField.text.Trim();
         if (string.IsNullOrEmpty(newName)) return;
+        if (newName.Length > MAX_NAME_LENGTH)
+            newName = newName.Substring(0, MAX_NAME_LENGTH);
 
         // データ保存
         PlayerData data = PlayerSaveData.Load();
