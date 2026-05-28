@@ -3117,6 +3117,7 @@ GameObject:
   - component: {fileID: 2982683616672780666}
   - component: {fileID: 687719556813336399}
   - component: {fileID: 6594613120680517173}
+  - component: {fileID: 6594613120680517174}
   m_Layer: 5
   m_Name: TAB
   m_TagString: Untagged
@@ -3192,6 +3193,7 @@ GameObject:
   - component: {fileID: 2798782448807487150}
   - component: {fileID: 2618406809200164162}
   - component: {fileID: 7051471354208391770}
+  - component: {fileID: 7051471354208391771}
   m_Layer: 5
   m_Name: C
   m_TagString: Untagged
@@ -3546,6 +3548,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6594613120680517174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1342791688357820076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cf276dd89e6f8a4e823a4d6b15e34ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  input: {fileID: 0}
+  targetImage: {fileID: 6594613120680517173}
+  keyboardSprite: {fileID: 21300000, guid: 3998d8f30bb5d8c45b018f1f5f6debd2, type: 3}
+  gamepadSprite: {fileID: 21300000, guid: 534958a7d894c9743a84b670c81fb97f, type: 3}
 --- !u!224 &6600022185240626312
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3705,6 +3723,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7051471354208391771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2619080732959752273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cf276dd89e6f8a4e823a4d6b15e34ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  input: {fileID: 0}
+  targetImage: {fileID: 7051471354208391770}
+  keyboardSprite: {fileID: 21300000, guid: 1b57cd3f0e6e2704993c299f6ab770a5, type: 3}
+  gamepadSprite: {fileID: 21300000, guid: 798ca95a489cb67458efffee7348189e, type: 3}
 --- !u!224 &9043564143646671248
 RectTransform:
   m_ObjectHideFlags: 0

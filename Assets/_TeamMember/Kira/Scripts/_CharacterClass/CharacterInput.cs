@@ -21,6 +21,7 @@ public class CharacterInput : NetworkBehaviour {
 
     public Vector2 lookInput;
     public bool isGamepad = false;
+    public System.Action<bool> OnControlSchemeChanged;
 
     //最後にパッドを触った時間
     //(-999.0fであるのは、宣言時に初期値を設定しない場合に値が0になる点と、実装上
@@ -111,22 +112,20 @@ public class CharacterInput : NetworkBehaviour {
         bool useGamepad =
             Gamepad.current != null && Time.time - lastGamepadInputTime < gamepadTimeout;
 
-        //パッドに変更する
-        if (useGamepad &&　!isGamepad && Gamepad.current != null) {
-            playerInput.SwitchCurrentControlScheme(
-                "Gamepad",
-                Gamepad.current
-            );
+        // パッドに変更
+        if (useGamepad && !isGamepad && Gamepad.current != null) {
+            playerInput.SwitchCurrentControlScheme("Gamepad", Gamepad.current);
             isGamepad = true;
+
+            OnControlSchemeChanged?.Invoke(true);
         }
-        //キーボードマウスに変更する
-        if (!useGamepad &&　isGamepad && Keyboard.current != null && Mouse.current != null) {
-            playerInput.SwitchCurrentControlScheme(
-                "Keyboard&Mouse",
-                Keyboard.current,
-                Mouse.current
-            );
+
+        // キーボードに変更
+        if (!useGamepad && isGamepad && Keyboard.current != null && Mouse.current != null) {
+            playerInput.SwitchCurrentControlScheme("Keyboard&Mouse", Keyboard.current, Mouse.current);
             isGamepad = false;
+
+            OnControlSchemeChanged?.Invoke(false);
         }
     }
 
