@@ -25,7 +25,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
-        
+       
         //メッセージ送信クラスにゲーム状態を更新させる
         FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
 
@@ -42,19 +42,21 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is not ready");
                 return;
             }
+           
         }
 
         //全員が準備完了なのでUIを消す
         if (TitleManager.instance.isHost && HostUI.isVisibleUI) {
             HostUI.ToggleHostUI();
         }
-        Cursor.lockState = CursorLockMode.Locked;
+
         //チーム決め
         ServerManager.instance.RandomTeamDecide();
         //フェードアウト
         if (!isChanged) {
             isChanged = true;
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 
@@ -63,7 +65,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadLobbySceneForAll() {
-        
+     
         if (!isChanged) {
             isChanged = true;
             foreach (var player in ServerManager.instance.connectPlayer) {
@@ -83,7 +85,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadPvESceneForAll() {
-        
+      
         // 全員の準備チェック
         foreach (var player in ServerManager.instance.connectPlayer) {
 
@@ -99,7 +101,6 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 return;
             }
         }
-        Cursor.lockState = CursorLockMode.Locked;
         RuleManager.Instance.currentRule = GameRuleType.PvE;
         // 全員準備完了ならPvEチームへ
         ServerManager.instance.SetAllPlayersToPvETeam();
@@ -109,6 +110,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(pveSceneName);
             FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 

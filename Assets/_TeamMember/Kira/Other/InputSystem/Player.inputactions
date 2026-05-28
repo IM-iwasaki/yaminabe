@@ -269,7 +269,7 @@
                 {
                     "name": "",
                     "id": "ce5c7633-9ec5-4717-a05c-6fa3841fed5f",
-                    "path": "<Gamepad>/buttonNorth",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -324,7 +324,7 @@
                 {
                     "name": "",
                     "id": "e8fa6b98-de8b-433f-8390-f0d783f4601d",
-                    "path": "<Gamepad>/leftStickPress",
+                    "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -335,10 +335,10 @@
                 {
                     "name": "",
                     "id": "4351e083-2a42-4b2d-a592-89302047285d",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -368,7 +368,7 @@
                 {
                     "name": "",
                     "id": "40a3a21b-ee8c-4eff-a08e-7a12d2800cf9",
-                    "path": "<Gamepad>/start",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -411,6 +411,17 @@
                 },
                 {
                     "name": "",
+                    "id": "5f714eab-96a7-410c-81d9-33a5c7560ebf",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "SendStamp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "7b2d8ac7-0559-475e-ba69-75c69835ce5d",
                     "path": "<Keyboard>/upArrow",
                     "interactions": "",
@@ -435,6 +446,39 @@
                     "name": "",
                     "id": "ffce4948-4620-4b5a-9b1d-7da960e149ad",
                     "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SendMessage",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a63bf04b-3b0b-4a77-a6b1-663d32522997",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "SendMessage",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "435f03b8-b16c-455d-8bfc-7248aefac738",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "SendMessage",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d419660d-b341-4bdf-b1bf-1055077bb13d",
+                    "path": "<Gamepad>/dpad/right",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
