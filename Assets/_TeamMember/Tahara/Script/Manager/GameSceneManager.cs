@@ -25,7 +25,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
-        Cursor.lockState = CursorLockMode.Locked;
+        
         //メッセージ送信クラスにゲーム状態を更新させる
         FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
 
@@ -48,7 +48,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         if (TitleManager.instance.isHost && HostUI.isVisibleUI) {
             HostUI.ToggleHostUI();
         }
-
+        Cursor.lockState = CursorLockMode.Locked;
         //チーム決め
         ServerManager.instance.RandomTeamDecide();
         //フェードアウト
@@ -63,7 +63,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadLobbySceneForAll() {
-        Cursor.lockState = CursorLockMode.Locked;
+        
         if (!isChanged) {
             isChanged = true;
             foreach (var player in ServerManager.instance.connectPlayer) {
@@ -71,6 +71,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 character.parameter.isReady = false;
             }
             FadeManager.Instance.StartFadeOut(0.5f);
+            Cursor.lockState = CursorLockMode.Locked;
             NetworkSceneTransitionSystem.Instance.ChangeScene(lobbySceneName);
             FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(false);
         }
@@ -82,7 +83,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadPvESceneForAll() {
-        Cursor.lockState = CursorLockMode.Locked;
+        
         // 全員の準備チェック
         foreach (var player in ServerManager.instance.connectPlayer) {
 
@@ -98,6 +99,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 return;
             }
         }
+        Cursor.lockState = CursorLockMode.Locked;
         RuleManager.Instance.currentRule = GameRuleType.PvE;
         // 全員準備完了ならPvEチームへ
         ServerManager.instance.SetAllPlayersToPvETeam();
