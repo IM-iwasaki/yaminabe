@@ -25,7 +25,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadGameSceneForAll() {
-        Cursor.lockState = CursorLockMode.Locked;
+       
         //メッセージ送信クラスにゲーム状態を更新させる
         FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
 
@@ -42,6 +42,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 ChatManager.Instance.CmdSendSystemMessage(player.GetComponent<CharacterBase>().parameter.PlayerName + " is not ready");
                 return;
             }
+           
         }
 
         //全員が準備完了なのでUIを消す
@@ -55,6 +56,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
         if (!isChanged) {
             isChanged = true;
             NetworkSceneTransitionSystem.Instance.ChangeScene(gameSceneName);
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 
@@ -63,7 +65,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadLobbySceneForAll() {
-        Cursor.lockState = CursorLockMode.Locked;
+     
         if (!isChanged) {
             isChanged = true;
             foreach (var player in ServerManager.instance.connectPlayer) {
@@ -71,6 +73,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 character.parameter.isReady = false;
             }
             FadeManager.Instance.StartFadeOut(0.5f);
+            Cursor.lockState = CursorLockMode.Locked;
             NetworkSceneTransitionSystem.Instance.ChangeScene(lobbySceneName);
             FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(false);
         }
@@ -82,7 +85,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadPvESceneForAll() {
-        Cursor.lockState = CursorLockMode.Locked;
+      
         // 全員の準備チェック
         foreach (var player in ServerManager.instance.connectPlayer) {
 
@@ -107,6 +110,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
             FadeManager.Instance.StartFadeOut(0.5f);
             NetworkSceneTransitionSystem.Instance.ChangeScene(pveSceneName);
             FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(true);
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 

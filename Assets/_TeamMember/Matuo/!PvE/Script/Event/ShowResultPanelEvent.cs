@@ -52,10 +52,10 @@ public class ShowResultPanelEvent : PVEStageEvent {
         if (returnLobbyButton != null)
             returnLobbyButton.gameObject.SetActive(isHost);
 
-        if (isHost) {
+        
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-        }
+        
 
         resultPanel.SetActive(true);
         isResultActive = true;

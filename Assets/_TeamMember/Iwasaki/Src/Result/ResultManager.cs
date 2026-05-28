@@ -131,8 +131,8 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
         // ===== リザルト中フラグON =====
         IsResultShowing = true;
 
-        // ホストのみカーソル表示
         
+        // カーソル表示
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         
