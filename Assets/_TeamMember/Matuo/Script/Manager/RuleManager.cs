@@ -212,14 +212,33 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
         }
 
         // 延長中の終了判定
-        if (isOvertime) {
+        if (isOvertime)
+        {
 
-            // 同点ならまだ継続
+            // 延長開始時同点なら継続
             if (overtimeLosingTeam == -1)
                 return;
 
-            // 負けチームだけを見る
-            if (!IsTeamControllingObject(overtimeLosingTeam)) {
+            // 延長開始時に負けていたチームが逆転したら即終了
+            if (overtimeLosingTeam == 0 && red > blue)
+            {
+                SendTeamResultToAll(0);
+                PlayerRankingManager.Instance.ApplyRateAllPlayers(0);
+                GameManager.Instance.EndGame();
+                return;
+            }
+
+            if (overtimeLosingTeam == 1 && blue >= red)
+            {
+                SendTeamResultToAll(1);
+                PlayerRankingManager.Instance.ApplyRateAllPlayers(1);
+                GameManager.Instance.EndGame();
+                return;
+            }
+
+            // 負けていたチームが関与を失ったら終了
+            if (!IsTeamControllingObject(overtimeLosingTeam))
+            {
                 int winner = red > blue ? 0 : 1;
 
                 SendTeamResultToAll(winner);
