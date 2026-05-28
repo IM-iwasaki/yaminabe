@@ -65,7 +65,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
     /// </summary>
     [Server]
     public void LoadLobbySceneForAll() {
-     
+        Cursor.lockState = CursorLockMode.Locked;
         if (!isChanged) {
             isChanged = true;
             foreach (var player in ServerManager.instance.connectPlayer) {
@@ -73,7 +73,7 @@ public class GameSceneManager : NetworkSystemObject<GameSceneManager> {
                 character.parameter.isReady = false;
             }
             FadeManager.Instance.StartFadeOut(0.5f);
-            Cursor.lockState = CursorLockMode.Locked;
+          
             NetworkSceneTransitionSystem.Instance.ChangeScene(lobbySceneName);
             FindAnyObjectByType<UDPBroadcaster>().SetGamePlaying(false);
         }
