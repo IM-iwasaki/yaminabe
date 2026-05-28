@@ -85,8 +85,8 @@ public class CharacterActions : NetworkBehaviour {
         param.GroundCheck(core.parameter.footPoint.position);
 
         //  ¢ŠE‚ÌŠO‚É‚à‚µ—‚¿‚Ä‚µ‚Ü‚Á‚½‚ç(Šî–{—‚¿‚È‚¢)
-        if (!hasSentFall && transform.position.y <= fallYposition) {
-            hasSentFall = true;
+        if (/*!hasSentFall && */transform.position.y <= fallYposition) {
+            //hasSentFall = true;
             core.CheckOutsideAndFall();
         }
         if(hasSentFall && transform.position.y > fallYposition + 1f) hasSentFall = false;

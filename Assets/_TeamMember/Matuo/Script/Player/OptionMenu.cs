@@ -380,6 +380,5 @@ public class OptionMenu : NetworkBehaviour {
         {
             NetworkManager.singleton.StopHost();
         }
-        SceneManager.LoadScene("TitleScene");
     }
 }

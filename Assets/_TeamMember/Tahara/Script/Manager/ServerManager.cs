@@ -119,8 +119,11 @@ public class ServerManager : NetworkBehaviour {
     [Server]
     public void RemoveTeammate(NetworkIdentity _identity)
     {
-        //所属チームを
+        //所属チームを抜ける
         int currentTeam = _identity.GetComponent<GeneralCharacter>().parameter.TeamID;
+        //無所属なら処理しない
+        if (currentTeam < 0)
+            return;
         teams[currentTeam].teamPlayerList.Remove(_identity);
     }
 
