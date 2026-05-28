@@ -228,7 +228,7 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
                 return;
             }
 
-            if (overtimeLosingTeam == 1 && blue >= red)
+            if (overtimeLosingTeam == 1 && blue > red)
             {
                 SendTeamResultToAll(1);
                 PlayerRankingManager.Instance.ApplyRateAllPlayers(1);
