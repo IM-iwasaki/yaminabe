@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
@@ -10,9 +11,11 @@ public class CursorUI : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
+        ToggleCursor(false);
     }
     public void ToggleCursor(bool _isOpen)
     {
+        if (Gamepad.current == null) return;
         if (_isOpen)
         {
             cursorUI.gameObject.SetActive(true);

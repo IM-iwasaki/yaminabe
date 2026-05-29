@@ -6,7 +6,8 @@ using UnityEngine;
 /// <summary>
 /// ガチャシステム本体
 /// </summary>
-public class GachaSystem : MonoBehaviour {
+public class GachaSystem : MonoBehaviour
+{
     private readonly string SKIN_TAG = "Skin";
 
     [Header("ガチャ設定")]
@@ -45,31 +46,42 @@ public class GachaSystem : MonoBehaviour {
 
     public event Action<GachaItem> OnItemPulled;
 
-    private void Awake() {
+    //追加：田原
+    private CursorUI cursor;
+    private void Awake()
+    {
         // 最初はガチャUIを非表示
         if (gachaUI != null)
             gachaUI.SetActive(false);
 
         // 結果演出完了通知を受け取る
-        if (gachaResult != null) {
-            gachaResult.OnResultAnimationFinished += () => {
+        if (gachaResult != null)
+        {
+            gachaResult.OnResultAnimationFinished += () =>
+            {
                 isResultFinished = true;
             };
         }
+
     }
 
-    private void Update() {
+    private void Update()
+    {
         // ガチャ画面を閉じたら結果表示を破棄
         if (!isOpen && gachaResult != null)
             gachaResult.Clear();
+        if (cursor == null)
+            cursor = FindAnyObjectByType<CursorUI>();
     }
 
     #region オプション中ブロック
 
     private OptionMenu cachedOptionMenu;
 
-    private OptionMenu Option {
-        get {
+    private OptionMenu Option
+    {
+        get
+        {
             if (cachedOptionMenu == null)
                 cachedOptionMenu = FindObjectOfType<OptionMenu>();
             return cachedOptionMenu;
@@ -79,16 +91,19 @@ public class GachaSystem : MonoBehaviour {
     /// <summary>
     /// オプションメニューが開いている間はガチャを禁止
     /// </summary>
-    public bool IsBlockedByOptionMenu() {
+    public bool IsBlockedByOptionMenu()
+    {
         if (Option == null) return false;
         return Option.isOpen;
     }
 
-    private void SetGachaState(bool open) {
+    private void SetGachaState(bool open)
+    {
         isGacha = open;
     }
 
-    public bool IsGachaActive() {
+    public bool IsGachaActive()
+    {
         return isGacha;
     }
 
@@ -99,7 +114,8 @@ public class GachaSystem : MonoBehaviour {
     /// <summary>
     /// ガチャ選択画面開始
     /// </summary>
-    public void StartGachaSelect(GameObject player) {
+    public void StartGachaSelect(GameObject player)
+    {
         if (cameraManager != null && cameraManager.IsCameraTransitioning())
             return;
         if (IsBlockedByOptionMenu()) return;
@@ -116,7 +132,11 @@ public class GachaSystem : MonoBehaviour {
         PlayerWallet.Instance?.ShowMoneyUI();
 
         if (gachaUI != null)
+        {
             gachaUI.SetActive(false);
+            cursor.ToggleCursor(false);
+        }
+
 
         if (cameraManager != null && cameraTargetPoint != null)
             cameraManager.MoveCamera(player, cameraTargetPoint.position, cameraTargetPoint.rotation);
@@ -134,7 +154,8 @@ public class GachaSystem : MonoBehaviour {
     /// <summary>
     /// ガチャ画面終了
     /// </summary>
-    public void EndGachaSelect() {
+    public void EndGachaSelect()
+    {
         // 結果演出が終わっていない間は出られない
         if (!isResultFinished) return;
         if (currentPlayer == null) return;
@@ -142,7 +163,11 @@ public class GachaSystem : MonoBehaviour {
         OffGachaAnim();
 
         if (gachaUI != null)
+        {
             gachaUI.SetActive(false);
+            cursor.ToggleCursor(false);
+        }
+            
 
         PlayerWallet.Instance?.HideMoneyUI();
 
@@ -162,16 +187,23 @@ public class GachaSystem : MonoBehaviour {
         currentPlayer = null;
     }
 
-    private IEnumerator ShowUIAfterDelay(CameraChangeController camController) {
+    private IEnumerator ShowUIAfterDelay(CameraChangeController camController)
+    {
         float duration = camController != null ? camController.moveDuration : 1.5f;
         yield return new WaitForSeconds(duration);
 
         if (gachaUI != null)
+        {
             gachaUI.SetActive(true);
+            cursor.ToggleCursor(true);
+        }
+
     }
 
-    private Transform FindChildWithTag(Transform parent, string tag) {
-        foreach (Transform child in parent) {
+    private Transform FindChildWithTag(Transform parent, string tag)
+    {
+        foreach (Transform child in parent)
+        {
             if (child.CompareTag(tag)) return child;
 
             Transform found = FindChildWithTag(child, tag);
@@ -184,7 +216,8 @@ public class GachaSystem : MonoBehaviour {
 
     #region カーソル制御
 
-    private void ChangeCursorView() {
+    private void ChangeCursorView()
+    {
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
@@ -195,7 +228,8 @@ public class GachaSystem : MonoBehaviour {
     /// <summary>
     /// 単発ガチャを引く
     /// </summary>
-    public void PullSingle() {
+    public void PullSingle()
+    {
         if (isPulling) return;
         if (!isResultFinished) return;
         if (!PlayerWallet.Instance.SpendMoney(gachaCost)) return;
@@ -206,7 +240,8 @@ public class GachaSystem : MonoBehaviour {
     /// <summary>
     /// 10連ガチャを引く
     /// </summary>
-    public void PullMultiple(int count) {
+    public void PullMultiple(int count)
+    {
         if (isPulling || count <= 0) return;
         if (!isResultFinished) return;
 
@@ -223,7 +258,8 @@ public class GachaSystem : MonoBehaviour {
     /// <summary>
     /// 単発ガチャの一連の処理
     /// </summary>
-    private IEnumerator PullSingleFlow() {
+    private IEnumerator PullSingleFlow()
+    {
         // ガチャ実行中ロック
         isPulling = true;
         isResultFinished = false;
@@ -231,7 +267,8 @@ public class GachaSystem : MonoBehaviour {
 
         // 先に抽選
         GachaItem item = PullSingleInternal();
-        if (item != null) {
+        if (item != null)
+        {
             PlayerItemManager.Instance.UnlockGachaItem(item);
             // 抽選結果通知
             OnItemPulled?.Invoke(item);
@@ -251,7 +288,8 @@ public class GachaSystem : MonoBehaviour {
     /// <summary>
     /// 10連の一連の処理
     /// </summary>
-    private IEnumerator PullMultipleFlow(int count) {
+    private IEnumerator PullMultipleFlow(int count)
+    {
         // ガチャ実行中ロック
         isPulling = true;
         isResultFinished = false;
@@ -260,7 +298,8 @@ public class GachaSystem : MonoBehaviour {
         List<GachaItem> results = new();
 
         // 抽選処理
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
             GachaItem item = PullSingleInternal();
             if (item == null) continue;
 
@@ -282,14 +321,17 @@ public class GachaSystem : MonoBehaviour {
 
     #region 抽選処理
 
-    private GachaItem PullSingleInternal() {
+    private GachaItem PullSingleInternal()
+    {
         int roll = UnityEngine.Random.Range(0, 100);
         int current = 0;
         Rarity rarity = Rarity.Common;
 
-        foreach (var r in data.rarityRates) {
+        foreach (var r in data.rarityRates)
+        {
             current += r.rate;
-            if (roll < current) {
+            if (roll < current)
+            {
                 rarity = r.rarity;
                 break;
             }
@@ -304,7 +346,8 @@ public class GachaSystem : MonoBehaviour {
         int value = UnityEngine.Random.Range(0, total);
         int weight = 0;
 
-        foreach (var item in pool) {
+        foreach (var item in pool)
+        {
             weight += item.rate;
             if (value < weight) return item;
         }
@@ -312,9 +355,11 @@ public class GachaSystem : MonoBehaviour {
         return null;
     }
 
-    private Rarity GetHighestRarity(List<GachaItem> items) {
+    private Rarity GetHighestRarity(List<GachaItem> items)
+    {
         Rarity highest = Rarity.Common;
-        foreach (var item in items) {
+        foreach (var item in items)
+        {
             if (item.rarity > highest)
                 highest = item.rarity;
         }
@@ -328,7 +373,8 @@ public class GachaSystem : MonoBehaviour {
     private void OnGachaAnim() => gachaAnim.SetBool("Open", true);
     private void OffGachaAnim() => gachaAnim.SetBool("Open", false);
 
-    private IEnumerator PlayGachaAnimationAndWait(Rarity rarity) {
+    private IEnumerator PlayGachaAnimationAndWait(Rarity rarity)
+    {
         OffGachaAnim();
         yield return null;
 

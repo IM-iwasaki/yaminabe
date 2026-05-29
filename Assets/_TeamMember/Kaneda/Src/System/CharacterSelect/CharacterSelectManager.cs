@@ -7,7 +7,8 @@ using UnityEngine;
 /// キャラクター選択モード管理マネージャー
 /// ・UI表示/非表示、プレイヤー操作停止、CameraChangeController呼び出しを管理
 /// </summary>
-public class CharacterSelectManager : NetworkBehaviour {
+public class CharacterSelectManager : NetworkBehaviour
+{
 
     #region 変数定義
 
@@ -40,12 +41,16 @@ public class CharacterSelectManager : NetworkBehaviour {
     [SerializeField] private GameObject rotateObject;
     #endregion
 
+    private CursorUI cursor;
     #region Awake,Start,Update
-    private void Awake() {
+    private void Awake()
+    {
         selectUI.SetActive(false);
+        cursor = FindAnyObjectByType<CursorUI>();
     }
 
-    private void Update() {
+    private void Update()
+    {
         //  オブジェクトを回転させる
         rotateObject.transform.Rotate(characterRotation * Time.deltaTime);
     }
@@ -56,11 +61,13 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// キャラクター選択モードを開始
     /// </summary>
     /// <param name="player">操作中のプレイヤー</param>
-    public void StartCharacterSelect(GameObject player) {
+    public void StartCharacterSelect(GameObject player)
+    {
         if (cameraManager != null && cameraManager.IsCameraTransitioning())
             return;
         // OptionMenu が開いているならキャラ選択を開かない
-        if (IsBlockedByOptionMenu()) {
+        if (IsBlockedByOptionMenu())
+        {
             return;
         }
         if (currentPlayer != null) return;
@@ -72,18 +79,22 @@ public class CharacterSelectManager : NetworkBehaviour {
         SetCharacterSelectState(true);
 
         // キャラ選択中は所持金UIを非表示
-        if (PlayerWallet.Instance != null) {
+        if (PlayerWallet.Instance != null)
+        {
             PlayerWallet.Instance.HideMoneyUI();
         }
 
         // UIを非表示（移動開始前）
-        if (selectUI != null) {
+        if (selectUI != null)
+        {
             selectUI.SetActive(false);
             guideUI.SetActive(false);
+            cursor.ToggleCursor(false);
         }
 
         // カメラ移動開始
-        if (cameraManager != null && cameraTargetPoint != null) {
+        if (cameraManager != null && cameraTargetPoint != null)
+        {
             cameraManager.MoveCamera(
                 player,
                 cameraTargetPoint.position,
@@ -109,7 +120,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// <summary>
     /// キャラクター選択モードを終了
     /// </summary>
-    public void EndCharacterSelect() {
+    public void EndCharacterSelect()
+    {
 
         if (currentPlayer == null) return;
 
@@ -117,12 +129,15 @@ public class CharacterSelectManager : NetworkBehaviour {
         selectObj.ConfirmPlayerChange(currentPlayer);
 
         // UIを非表示（戻る操作開始時）
-        if (selectUI != null) {
+        if (selectUI != null)
+        {
             selectUI.SetActive(false);
             guideUI.SetActive(true);
+            cursor.ToggleCursor(false);
         }
         // LobbySceneなら所持金UIを再表示
-        if (PlayerWallet.Instance != null) {
+        if (PlayerWallet.Instance != null)
+        {
             PlayerWallet.Instance.ShowMoneyUI();
         }
 
@@ -136,7 +151,8 @@ public class CharacterSelectManager : NetworkBehaviour {
         skin.gameObject.SetActive(true);
 
         //  プレイヤー側のローカルUIを表示させる
-        if (currentPlayer.GetComponent<PlayerLocalUIController>()) {
+        if (currentPlayer.GetComponent<PlayerLocalUIController>())
+        {
             currentPlayer.GetComponent<PlayerLocalUIController>().OnLocalUIObject();
         }
 
@@ -152,13 +168,18 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// </summary>
     /// <param name="camController"></param>
     /// <returns></returns>
-    private System.Collections.IEnumerator ShowUIAfterDelay(CameraChangeController camController) {
+    private System.Collections.IEnumerator ShowUIAfterDelay(CameraChangeController camController)
+    {
         // CameraChangeController の移動時間と同じだけ待つ
         float duration = camController != null ? camController.moveDuration : 1.5f;
         yield return new WaitForSeconds(duration);
 
         if (selectUI != null)
+        {
             selectUI.SetActive(true);
+            cursor.ToggleCursor(true);
+        }
+
     }
 
     /// <summary>
@@ -167,10 +188,12 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// <param name="parent"></param>
     /// <param name="tag"></param>
     /// <returns></returns>
-    private Transform FindChildWithTag(Transform parent, string tag) {
+    private Transform FindChildWithTag(Transform parent, string tag)
+    {
 
         // まず直接の子を確認
-        foreach (Transform child in parent) {
+        foreach (Transform child in parent)
+        {
             if (child.CompareTag(tag))
                 return child;
 
@@ -190,7 +213,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// <summary>
     /// カーソルをOnOffする
     /// </summary>
-    private void ChangeCursorView() {
+    private void ChangeCursorView()
+    {
         isOpen = !isOpen;
 
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
@@ -209,7 +233,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// キャラ選択状態をまとめて切り替える
     /// </summary>
     /// <param name="active">true なら選択画面中</param>
-    private void SetCharacterSelectState(bool active) {
+    private void SetCharacterSelectState(bool active)
+    {
         isCharacterSelect = active;
 
         // 将来「キャラ選択中だけ有効にしたい処理」が増えたら
@@ -219,7 +244,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// <summary>
     /// 現在キャラ選択画面中かどうかを外から確認する用
     /// </summary>
-    public bool IsCharacterSelectActive() {
+    public bool IsCharacterSelectActive()
+    {
         return isCharacterSelect;
     }
     #endregion
@@ -235,9 +261,12 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// シーン内から OptionMenu を自動で探してくるゲッター
     /// 初回だけ FindObjectOfType し、その後はキャッシュを使う
     /// </summary>
-    private OptionMenu Option {
-        get {
-            if (cachedOptionMenu == null) {
+    private OptionMenu Option
+    {
+        get
+        {
+            if (cachedOptionMenu == null)
+            {
                 cachedOptionMenu = FindObjectOfType<OptionMenu>();
             }
             return cachedOptionMenu;
@@ -248,7 +277,8 @@ public class CharacterSelectManager : NetworkBehaviour {
     /// オプションメニューが開いているため
     /// ガチャを開けない状態かどうか
     /// </summary>
-    public bool IsBlockedByOptionMenu() {
+    public bool IsBlockedByOptionMenu()
+    {
         // OptionMenu が無いならブロックしない
         if (Option == null) return false;
 
