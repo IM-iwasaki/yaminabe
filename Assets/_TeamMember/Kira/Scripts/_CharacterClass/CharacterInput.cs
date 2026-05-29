@@ -104,8 +104,6 @@ public class CharacterInput : NetworkBehaviour {
             Gamepad.current.buttonSouth.isPressed
         );
         //最後にパッドを触った時間を計測
-        //if (gamepadInput) lastGamepadInputTime = Time.time;
-
         if (gamepadInput) lastGamepadInputTime = Time.time;
 
         //直近にパッド入力があった場合有効化

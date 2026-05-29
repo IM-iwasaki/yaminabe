@@ -17,7 +17,12 @@ public class VirtualCursorRayCaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(eventSystem == null)
+        {
+            eventSystem = FindAnyObjectByType<EventSystem>();
+        }
         pointerData = new PointerEventData(eventSystem);
+
         pointerData.position = cursor.position;
 
         //Raycast
@@ -42,7 +47,7 @@ public class VirtualCursorRayCaster : MonoBehaviour
         }
 
         //PointerDown
-        if(Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)
+        if(Gamepad.current != null && Gamepad.current.buttonWest.wasPressedThisFrame)
         {
             if(currentObjects.Count > 0)
             {
@@ -51,6 +56,23 @@ public class VirtualCursorRayCaster : MonoBehaviour
             }
         }
 
+        // PointerUp + Click
+        if (Gamepad.current != null && Gamepad.current.buttonWest.wasReleasedThisFrame)
+        {
+            if (pressedObject != null)
+            {
+                // PointerUp
+                ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerUpHandler);
+
+                // Click（Down と Up が同じオブジェクトならクリック扱い）
+                if (currentObjects.Contains(pressedObject))
+                {
+                    ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerClickHandler);
+                }
+
+                pressedObject = null;
+            }
+        }
         lastHits = currentObjects;
     }
 }
