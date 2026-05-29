@@ -24,6 +24,23 @@ public class VirtualCursorRayCaster : MonoBehaviour
         }
         pointerData = new PointerEventData(eventSystem);
 
+        RectTransform rt = cursor;
+        Vector2 pos = rt.anchoredPosition;
+
+        // カーソルのサイズ
+        float halfW = rt.sizeDelta.x * 0.5f;
+        float halfH = rt.sizeDelta.y * 0.5f;
+
+        // Canvas のサイズ
+        Canvas canvas = GetComponentInParent<Canvas>();
+        float maxX = canvas.pixelRect.width - halfW;
+        float maxY = canvas.pixelRect.height - halfH;
+
+        pos.x = Mathf.Clamp(pos.x, halfW, maxX);
+        pos.y = Mathf.Clamp(pos.y, halfH, maxY);
+
+        rt.anchoredPosition = pos;
+
         pointerData.position = cursor.position;
 
         //Raycast

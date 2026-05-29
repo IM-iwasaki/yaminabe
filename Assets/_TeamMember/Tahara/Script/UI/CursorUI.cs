@@ -11,8 +11,9 @@ public class CursorUI : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
-        ToggleCursor(false);
+        ToggleCursor(true);
     }
+
     public void ToggleCursor(bool _isOpen)
     {
         if (Gamepad.current == null) return;
