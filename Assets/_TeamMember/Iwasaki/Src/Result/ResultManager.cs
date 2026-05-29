@@ -50,7 +50,6 @@ public class ResultManager : NetworkSystemObject<ResultManager> {
     }
 
 
-
     // --------------------------
     // RuleManager から呼ばれる
     // リザルトのデータを全てリザルトに送る

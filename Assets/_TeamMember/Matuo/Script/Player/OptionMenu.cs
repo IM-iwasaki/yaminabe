@@ -87,6 +87,9 @@ public class OptionMenu : NetworkBehaviour {
 
     private TextMeshProUGUI statusText;
 
+    //追加:タハラ
+    private CursorUI cursor;
+
     // ボタン選択状態管理
     private Button selectedButton;
     private Color normalColor = new Color(0.8f, 0.8f, 0.8f);
@@ -172,6 +175,8 @@ public class OptionMenu : NetworkBehaviour {
             ?.GetComponent<TextMeshProUGUI>();
 
         TitleButton?.onClick.AddListener(ReturnToTitle);
+        cursor = FindAnyObjectByType<CursorUI>();
+        cursor.ToggleCursor(false);
     }
 
     private void OnEnable() {
@@ -208,7 +213,9 @@ public class OptionMenu : NetworkBehaviour {
 
         isOpen = !isOpen;
         optionCanvas.enabled = isOpen;
+        this.enabled = isOpen;
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
+        cursor.ToggleCursor(isOpen);
     }
 
     /// <summary>
@@ -368,6 +375,8 @@ public class OptionMenu : NetworkBehaviour {
     }
 
     private void ReturnToTitle() {
+        cursor.DestoryObject();
+        
         // ホストの場合
         if (NetworkServer.active && NetworkClient.isConnected) {
             NetworkManager.singleton.StopHost();
