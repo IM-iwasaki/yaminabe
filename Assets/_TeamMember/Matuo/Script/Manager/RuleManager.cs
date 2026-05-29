@@ -320,7 +320,6 @@ public class RuleManager : NetworkSystemObject<RuleManager> {
             1 => "Blue",
             _ => "Draw"
         };
-
         List<ResultManager.TeamScoreEntry> teamScoreList = new();
         foreach (var kvp in teamScores) {
             teamScoreList.Add(new ResultManager.TeamScoreEntry {

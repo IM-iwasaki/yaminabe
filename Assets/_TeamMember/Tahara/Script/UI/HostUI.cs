@@ -50,12 +50,12 @@ public class HostUI : NetworkBehaviour {
     [SerializeField]
     private Button PvEButton = null;
 
-    //private static CursorUI cursor;
+    private static CursorUI cursor;
     public void Init() {
         uiRootObject = GameObject.Find("Background");
         uiRootObject.SetActive(false);
 
-        //cursor = FindAnyObjectByType<CursorUI>();
+        cursor = FindAnyObjectByType<CursorUI>();
         if (GameSceneManager.Instance != null) { 
             gameStartButton.onClick.AddListener(GameSceneManager.Instance.LoadGameSceneForAll);
             allRandomButton.onClick.AddListener(AllRandomGame);
@@ -125,7 +125,7 @@ public class HostUI : NetworkBehaviour {
         uiRootObject.SetActive(isVisibleUI);
         Canvas.ForceUpdateCanvases();
         Cursor.lockState = isVisibleUI ? CursorLockMode.None : CursorLockMode.Locked;
-        //cursor.ToggleCursor(isVisibleUI);
+        cursor.ToggleCursor(isVisibleUI);
     }
 
     /// <summary>

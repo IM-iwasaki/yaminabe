@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class VirtualCursorRayCaster : MonoBehaviour
 {
@@ -33,6 +34,11 @@ public class VirtualCursorRayCaster : MonoBehaviour
         foreach (var hit in currentHits)
             currentObjects.Add(hit.gameObject);
 
+        foreach (var hit in currentHits)
+        {
+            Debug.Log("Hit: " + hit.gameObject.name);
+        }
+
         //PointerEnter
         foreach (var obj in currentObjects){
             if (!lastHits.Contains(obj))
@@ -51,8 +57,19 @@ public class VirtualCursorRayCaster : MonoBehaviour
         {
             if(currentObjects.Count > 0)
             {
-                pressedObject = currentObjects[0];
-                ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerDownHandler);
+                var hit = currentHits[0];
+
+                // Button を探す（Text や Image の親に Button がある場合）
+                var button = hit.gameObject.GetComponent<Button>()
+                             ?? hit.gameObject.GetComponentInParent<Button>();
+
+                if (button != null)
+                {
+                    pointerData.pointerPressRaycast = hit;
+                    pressedObject = button.gameObject;
+
+                    ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerDownHandler);
+                }
             }
         }
 

@@ -43,6 +43,8 @@ public class ResultPanel : NetworkBehaviour {
 
     private bool isResultActive = true;                 // 二重押し防止
     private ResultManager resultManager;
+    //追加:タハラ
+    private CursorUI cursor;
 
     private void Start() {
         resultManager = FindObjectOfType<ResultManager>();
@@ -52,6 +54,8 @@ public class ResultPanel : NetworkBehaviour {
             rematchButton.onClick.AddListener(OnClickRematch);
         if (returnLobbyButton != null)
             returnLobbyButton.onClick.AddListener(OnClickReturnLobby);
+
+        cursor = FindAnyObjectByType<CursorUI>();
     }
 
 
@@ -78,6 +82,7 @@ public class ResultPanel : NetworkBehaviour {
                 deathMatchPanel?.SetActive(true);
                 break;
         }
+        cursor.ToggleCursor(true);
     }
 
 
@@ -301,6 +306,7 @@ public class ResultPanel : NetworkBehaviour {
             GameSceneManager.Instance.LoadGameSceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（再戦処理は後で追加）
             PlayerListManager.Instance.ResetAllScores();
+            cursor.ToggleCursor(false);
         }
     }
 
@@ -322,6 +328,7 @@ public class ResultPanel : NetworkBehaviour {
             GameSceneManager.Instance.LoadLobbySceneForAll();
             resultManager.HideResult(); // 仮: UI削除のみ（シーン切り替え処理は後で追加）
             PlayerListManager.Instance.ResetAllScores();
+            cursor.ToggleCursor(false);
         }         
     }
 }
