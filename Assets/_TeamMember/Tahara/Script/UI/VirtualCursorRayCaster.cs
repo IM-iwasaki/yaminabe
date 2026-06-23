@@ -18,12 +18,33 @@ public class VirtualCursorRayCaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(eventSystem == null)
+        EnsureEventSystem();
+        UpdateCursorPosition();
+        UpdatePointerData();
+        RaycastUI();
+
+        HandlePointerEnterExit();
+        HandlePointerPress();
+        HandlePointerRelease();
+
+    }
+
+    /// <summary>
+    /// イベントシステムの存在チェック
+    /// </summary>
+    private void EnsureEventSystem()
+    {
+        if (eventSystem == null)
         {
             eventSystem = FindAnyObjectByType<EventSystem>();
         }
-        pointerData = new PointerEventData(eventSystem);
+    }
 
+    /// <summary>
+    /// カーソルの更新
+    /// </summary>
+    private void UpdateCursorPosition()
+    {
         RectTransform rt = cursor;
         Vector2 pos = rt.anchoredPosition;
 
@@ -40,13 +61,35 @@ public class VirtualCursorRayCaster : MonoBehaviour
         pos.y = Mathf.Clamp(pos.y, halfH, maxY);
 
         rt.anchoredPosition = pos;
+    }
+
+    /// <summary>
+    /// ポインターデータの更新
+    /// </summary>
+    private void UpdatePointerData()
+    {
+        pointerData = new PointerEventData(eventSystem);
 
         pointerData.position = cursor.position;
 
+    }
+
+    /// <summary>
+    /// UIへレイキャスト
+    /// </summary>
+    private void RaycastUI()
+    {
         //Raycast
         currentHits.Clear();
         eventSystem.RaycastAll(pointerData, currentHits);
 
+    }
+
+    /// <summary>
+    /// PointerEnter / PointerExit
+    /// </summary>
+    private void HandlePointerEnterExit()
+    {
         List<GameObject> currentObjects = new List<GameObject>();
         foreach (var hit in currentHits)
             currentObjects.Add(hit.gameObject);
@@ -57,56 +100,70 @@ public class VirtualCursorRayCaster : MonoBehaviour
         }
 
         //PointerEnter
-        foreach (var obj in currentObjects){
+        foreach (var obj in currentObjects)
+        {
             if (!lastHits.Contains(obj))
-            ExecuteEvents.Execute(obj.gameObject, pointerData, ExecuteEvents.pointerEnterHandler);
+                ExecuteEvents.Execute(obj.gameObject, pointerData, ExecuteEvents.pointerEnterHandler);
         }
         //PointerExit
-        foreach(var lastObj in lastHits)
+        foreach (var lastObj in lastHits)
         {
-            if (!currentObjects.Contains(lastObj)){
+            if (!currentObjects.Contains(lastObj))
+            {
                 ExecuteEvents.Execute(lastObj.gameObject, pointerData, ExecuteEvents.pointerExitHandler);
             }
         }
 
-        //PointerDown
-        if(Gamepad.current != null && Gamepad.current.buttonWest.wasPressedThisFrame)
-        {
-            if(currentObjects.Count > 0)
-            {
-                var hit = currentHits[0];
-
-                // Button を探す（Text や Image の親に Button がある場合）
-                var button = hit.gameObject.GetComponent<Button>()
-                             ?? hit.gameObject.GetComponentInParent<Button>();
-
-                if (button != null)
-                {
-                    pointerData.pointerPressRaycast = hit;
-                    pressedObject = button.gameObject;
-
-                    ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerDownHandler);
-                }
-            }
-        }
-
-        // PointerUp + Click
-        if (Gamepad.current != null && Gamepad.current.buttonWest.wasReleasedThisFrame)
-        {
-            if (pressedObject != null)
-            {
-                // PointerUp
-                ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerUpHandler);
-
-                // Click（Down と Up が同じオブジェクトならクリック扱い）
-                if (currentObjects.Contains(pressedObject))
-                {
-                    ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerClickHandler);
-                }
-
-                pressedObject = null;
-            }
-        }
         lastHits = currentObjects;
     }
+
+
+    private void HandlePointerPress()
+    {
+        //PointerDown
+        if (Gamepad.current == null) return;
+        if (!Gamepad.current.buttonWest.wasPressedThisFrame) return;
+
+        if (currentHits.Count == 0) return;
+
+        var hit = currentHits[0];
+
+        // Button を探す（Text や Image の親に Button がある場合にも対応）
+        var button = hit.gameObject.GetComponent<Button>()
+                     ?? hit.gameObject.GetComponentInParent<Button>();
+
+        if (button != null)
+        {
+            pointerData.pointerPressRaycast = hit;
+            pressedObject = button.gameObject;
+
+            ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerDownHandler);
+        }
+    }
+
+    private void HandlePointerRelease()
+    {
+        // PointerUp + Click
+        if (Gamepad.current == null) return;
+        if (!Gamepad.current.buttonWest.wasReleasedThisFrame) return;
+
+        if (pressedObject == null) return;
+
+        // PointerUp
+        ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerUpHandler);
+
+        // Click（Down と Up が同じオブジェクトならクリック扱い）
+        foreach(var hit in currentHits)
+        {
+            if (hit.gameObject == pressedObject)
+            {
+                ExecuteEvents.Execute(pressedObject, pointerData, ExecuteEvents.pointerClickHandler);
+            }
+        }
+
+        pressedObject = null;
+
+    }
+    
+
 }
