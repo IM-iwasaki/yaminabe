@@ -117,7 +117,9 @@ public class VirtualCursorRayCaster : MonoBehaviour
         lastHits = currentObjects;
     }
 
-
+    /// <summary>
+    /// PointerPress
+    /// </summary>
     private void HandlePointerPress()
     {
         //PointerDown
@@ -141,6 +143,9 @@ public class VirtualCursorRayCaster : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// PointerRelease
+    /// </summary>
     private void HandlePointerRelease()
     {
         // PointerUp + Click
